@@ -1,44 +1,13 @@
-// ─── Skill ───────────────────────────────────────────────
-export type SkillType = 'teach' | 'learn'
+/**
+ * Общие утилитарные типы, не привязанные к бизнес-сущностям.
+ * Доменные типы (User, Skill, ...) живут в `entities/<name>/model/types.ts`.
+ */
 
-export interface Skill {
-  id: string
-  title: string
-  description: string
-  type: SkillType
-  category: string
-  tags: string[]
-  imageUrl: string | null
-  authorId: string
-  createdAt: string
-}
+/** Идентификатор сущности */
+export type ID = string
 
-// ─── User ────────────────────────────────────────────────
-export interface User {
-  id: string
-  name: string
-  email: string
-  avatarUrl: string | null
-  createdAt: string
-}
+/** Дата в формате ISO 8601, например `2025-10-28T12:00:00.000Z` */
+export type ISODateString = string
 
-// ─── Request ─────────────────────────────────────────────
-export type RequestStatus = 'pending' | 'accepted' | 'rejected' | 'inProgress' | 'done'
-
-export interface SwapRequest {
-  id: string
-  skillId: string
-  fromUserId: string
-  toUserId: string
-  status: RequestStatus
-  createdAt: string
-  updatedAt: string
-}
-
-// ─── Auth ────────────────────────────────────────────────
-export interface AuthUser {
-  id: string
-  name: string
-  email: string
-  token: string
-}
+/** Статус асинхронной загрузки для Redux-слайсов */
+export type LoadingStatus = 'idle' | 'loading' | 'succeeded' | 'failed'

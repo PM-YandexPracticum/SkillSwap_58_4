@@ -1,0 +1,12 @@
+# src/entities/user/lib
+
+> **SkillSwap** — платформа обмена навыками (только фронтенд: React + TypeScript + Redux Toolkit).
+> Архитектура — Feature-Sliced Design, подробности в [docs/architecture/fsd.md](../../../../docs/architecture/fsd.md).
+
+## Зачем эта папка
+
+Сегмент **lib** слайса `user` — чистые вспомогательные функции. Первые кандидаты на unit-тесты.
+
+## Что внутри
+
+- `getAge.ts` — Считает полный возраст по дате рождения («Санкт-Петербург, 34 года»)

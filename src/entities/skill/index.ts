@@ -1,0 +1,6 @@
+export type { Skill } from './model/types'
+export { skillsReducer, type SkillsState } from './model/skillsSlice'
+export { selectSkills, selectSkillsStatus } from './model/selectors'
+export { getSkills, getSkillById, createSkill } from './api/skillApi'
+export { SkillTag } from './ui/SkillTag'
+export { SkillInfo } from './ui/SkillInfo'

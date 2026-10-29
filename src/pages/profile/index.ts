@@ -1,0 +1,6 @@
+export { ProfilePage } from './ui/ProfilePage'
+export { ProfileRequests } from './ui/ProfileRequests'
+export { ProfileExchanges } from './ui/ProfileExchanges'
+export { ProfileFavorites } from './ui/ProfileFavorites'
+export { ProfileSkills } from './ui/ProfileSkills'
+export { ProfilePersonal } from './ui/ProfilePersonal'

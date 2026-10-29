@@ -2,6 +2,10 @@
 
 Платформа обмена навыками.
 
+📚 **Документация команды — [docs/](docs/README.md)**: ТЗ, правила разработки, архитектура, задачи.
+📋 **Канбан-доска задач — [GitHub Project #133](https://github.com/orgs/PM-YandexPracticum/projects/133/views/1)**, план по фазам — [docs/tasks/roadmap.md](docs/tasks/roadmap.md).
+В каждой папке `src/` есть `README.md` с описанием, зачем она нужна и что в ней лежит.
+
 ---
 
 ## Быстрый старт
@@ -17,47 +21,43 @@ npm run dev
 
 ## State management
 
-Проект использует **Redux Toolkit**. Store настроен в `src/store/index.ts`.
+Проект использует **Redux Toolkit**. Store настроен в `src/app/store/index.ts`, слайсы подключаются в `src/app/store/rootReducer.ts`.
 
-Для работы со store используй типизированные хуки из `src/store/hooks.ts` — `useAppDispatch` и `useAppSelector` вместо оригинальных из react-redux.
+Для работы со store используй типизированные хуки из `@/shared/lib/store` — `useAppDispatch` и `useAppSelector` вместо оригинальных из react-redux.
 
 ---
 
-## Структура проекта
+## Структура проекта (FSD)
+
+Подробно — в [docs/architecture/fsd.md](docs/architecture/fsd.md): правила импортов, структура слайса, карта «макет → код».
 
 ```
 src/
-├── api/                  # fetch-функции для загрузки JSON-моков
-├── app/
-│   ├── providers/        # StoreProvider, RouterProvider
-│   └── styles/           # global.css с CSS-переменными
-├── entities/             # Доменные модели: Skill, User, Request
-│   ├── skill/
-│   ├── user/
-│   └── request/
-├── features/             # Фичи: auth, skills, favorites, requests
-├── pages/                # Страницы приложения
-├── shared/
-│   ├── hooks/            # useDebounce, useLocalStorage
-│   ├── lib/              # constants, helpers
-│   ├── types/            # общие TypeScript-типы
-│   └── ui/               # атомарные компоненты
-├── store/                # Redux store и типизированные хуки
-└── widgets/              # Составные блоки: Header, SkillCard, FiltersBar
+├── app/            # providers, router (RequireAuth), store, layouts, styles
+├── pages/          # catalog, skill, all-skills, favorites, profile, login, register (3 шага), about, not-found, server-error
+├── widgets/        # header, footer, categories-menu, filters-panel, offer-card, offers-section,
+│                   # offers-carousel, skill-details, notifications-panel, profile-sidebar
+├── features/       # auth-by-email, auth-oauth, register, logout, catalog-filter, skill-search,
+│                   # favorite-toggle, exchange-propose, notifications-read,
+│                   # theme-toggle, profile-edit, avatar-upload, skill-create
+├── entities/       # user, skill, category, city, session, exchange, notification
+└── shared/         # api, config, lib (hooks, store, helpers), types, ui, assets
 
-public/
-└── db/
-    ├── skills.json       # Добавь сюда моки навыков
-    └── users.json        # Добавь сюда моки пользователей
+src/shared/api/mock-db/
+├── createMockCollection.ts   # «база» в браузере: образцы + изменения в localStorage
+└── seed/                     # образцы по 2–3 на сущность — остальное команда заполняет по образцу
 ```
+
+Импорт только вниз: `app → pages → widgets → features → entities → shared`, и только через `index.ts` слайса.
 
 ---
 
 ## Моки данных
 
-Файлы `public/db/skills.json` и `public/db/users.json` **пустые**.
+Данные — внутри приложения, в `src/shared/api/mock-db/seed/` по 2–3 образца на сущность. Изменения сохраняются в localStorage.
+Читать и писать данные — только через `entities/*/api`: потом этот слой можно заменить на настоящую БД. Демо-вход — в [docs/architecture/fsd.md](docs/architecture/fsd.md).
 
-Структура объектов описана в `src/shared/types/index.ts`.
+Структура объектов описана в `model/types.ts` соответствующей сущности: `src/entities/user`, `skill`, `category`, `city`, `exchange`, `notification`.
 
 ---
 
@@ -78,21 +78,18 @@ public/
 
 ## Роутинг
 
-Маршруты объявлены в `src/shared/lib/constants.ts` → `ROUTES`.
+Маршруты объявлены в `src/shared/config/routes.ts` → `ROUTES` и `PROFILE_ROUTES`.
 
 Lazy-загрузка уже настроена в `src/app/providers/RouterProvider.tsx`.
 
-Для защищённых маршрутов добавь компонент `PrivateRoute` в `src/features/auth/ui/`.
+Закрытые маршруты (`/profile/*`, `/favorites`) обёрнуты в `RequireAuth`, шаги 2 и 3 регистрации — в `RegisterStepGuard` (оба — `src/app/router/`).
 
 ---
 
 ## Переменные окружения
 
-Создай `.env.local` для локальных настроек (в `.gitignore` уже исключён):
-
-```
-VITE_APP_TITLE=SkillSwap
-```
+Сейчас не нужны: все данные внутри приложения, ключей и адресов серверов нет.
+Если понадобятся — `.env.local` (он уже в `.gitignore`), имена переменных начинаются с `VITE_`.
 
 Доступ в коде: `import.meta.env.VITE_APP_TITLE`
 
@@ -100,46 +97,28 @@ VITE_APP_TITLE=SkillSwap
 
 ## Git-процесс
 
-```
-main        ← только стабильный код, не трогаем напрямую
-└── develop ← основная ветка разработки, PR только сюда
-    └── feature/catalog-filters   ← твоя задача
-        └── → PR → code review → merge в develop
-```
+Коротко (подробно — [docs/rules/git-workflow.md](docs/rules/git-workflow.md)):
 
-Перед началом каждой задачи:
-```bash
-git checkout develop
-git pull
-git checkout -b feature/название-задачи
-```
-
-После завершения:
-```bash
-git push -u origin feature/название-задачи
-# открываешь PR из своей ветки → в develop
-```
-
-Ветки называй: `feature/`, `fix/`, `refactor/`, `docs/`, `chore/`
-
-Коммиты по [Conventional Commits](https://www.conventionalcommits.org/ru/):
-```
-feat: добавить фильтр по категориям
-fix: исправить отображение карточки на мобильном
-refactor: вынести логику избранного в хук
-```
-
-PR — не больше ~200 строк изменений. Вливает только тимлид или его заместитель. `--force` и `merge --no-ff` в `develop` запрещены.
+- работаем от `develop`, `main` не трогаем; одна задача = одна ветка = один PR в `develop`;
+- ветка начинается с ID задачи: `feature/p2-02-buttons`;
+- одновременно — только одна задача; в коммит — только свои файлы, никогда `git add .`;
+- `package.json` и зависимости меняет только тимлид;
+- коммиты по [Conventional Commits](https://www.conventionalcommits.org/ru/): `feat: …`, `fix: …`;
+- PR проверяет и вливает тимлид или помощник.
 
 ---
 
-## CI
+## Проверки качества
 
-GitHub Actions запускается на каждый push и PR:
-- `npm run lint`
-- `tsc --noEmit`
-- `npm run test`
-- `npm run build`
+CI/CD в проекте нет — всё проверяется локально.
+Файл `.github/workflows/ci.yml` из стартового шаблона оставлен как есть: GitHub может показывать его проверки в PR, но мы его не развиваем и на него не опираемся.
 
-Если CI красный — PR не мержится.
+| Команда | Что проверяет |
+|---|---|
+| `npm run lint` | ESLint + Stylelint |
+| `npx tsc --noEmit` | типы TypeScript |
+| `npm run test` | unit- и компонентные тесты |
+| `npm run build` | сборка проходит |
 
+Если команда включит Husky (необязательная часть задачи P1-14), проверки будут запускаться сами: форматирование и линтер — перед коммитом, всё вместе — перед push.
+Красные проверки — PR не мержится.
