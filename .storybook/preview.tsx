@@ -6,13 +6,22 @@
  * - фон и размер холста — как в макете (десктоп);
  * - переключатель темы появится только с необязательной задачей P9-03.
  */
+
+import type { Preview } from '@storybook/react-vite'
+
 import '../src/app/styles/global.css'
 
-const preview = {
+const preview: Preview = {
   parameters: {
     layout: 'centered',
-    controls: { expanded: true },
+    controls: {
+      expanded: true,
+      matchers: {
+       color: /(background|color)$/i,
+       date: /Date$/i,
+      },
+    },
   },
-}
+};
 
-export default preview
+export default preview;

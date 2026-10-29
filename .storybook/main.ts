@@ -6,13 +6,18 @@
  * Где лежат stories: рядом с компонентом, `Component.stories.tsx`.
  * Правила — docs/rules/storybook.md.
  */
-const config = {
-  stories: ['../src/**/*.stories.@(ts|tsx)'],
-  addons: ['@storybook/addon-docs', '@storybook/addon-a11y'],
-  framework: {
-    name: '@storybook/react-vite',
-    options: {},
-  },
-}
 
-export default config
+import type { StorybookConfig } from '@storybook/react-vite';
+
+const config: StorybookConfig = {
+  "stories": [
+    "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"
+  ],
+  "addons": [
+    "@storybook/addon-a11y",
+    "@storybook/addon-docs",
+    "@storybook/addon-designs"
+  ],
+  "framework": "@storybook/react-vite"
+};
+export default config;
