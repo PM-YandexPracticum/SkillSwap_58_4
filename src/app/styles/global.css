@@ -34,9 +34,9 @@
   --space-52: 52px;
 
   /* Typography */
-  --font-main: Roboto, Helvetica, Arial, sans-serif;
-  --font-title: Jost, Helvetica, Arial, sans-serif;
-  --font-name: "Open Sans", Helvetica, Arial, sans-serif;
+  --font-main: "Roboto", "Helvetica", "Arial", sans-serif;
+  --font-title: "Jost", "Helvetica", "Arial", sans-serif;
+  --font-name: "Open Sans", "Helvetica", "Arial", sans-serif;
   --font-size-xs: 0.75rem; /* 12 */
   --font-size-base: 1rem; /* 16 */
   --font-size-lg: 1.25rem; /* 20 */
@@ -51,6 +51,7 @@
   --radius-tag: 20px;
   --radius-avatar: 50%;
 
+  /* Layout */
   --container-width: 1368px;
   --container-width-narrow: 1136px;
 }
