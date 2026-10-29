@@ -1,0 +1,50 @@
+[
+  {
+    "id": "u01",
+    "name": "Иван",
+    "email": "ivan@example.com",
+    "password": "SkillSwap2025",
+    "avatarUrl": "/images/avatars/u01.jpg",
+    "birthDate": "1992-03-15T10:00:00.000Z",
+    "gender": "male",
+    "cityId": "spb",
+    "about": "Привет! Люблю ритм, кофе по утрам и людей, которые не боятся пробовать новое.",
+    "teachSkillId": "s01",
+    "learnSubcategoryIds": ["time-management", "english", "photo"],
+    "likedUserIds": [],
+    "likesCount": 158,
+    "createdAt": "2026-06-30T10:00:00.000Z"
+  },
+  {
+    "id": "u02",
+    "name": "Анна",
+    "email": "anna@example.com",
+    "password": "SkillSwap2025",
+    "avatarUrl": "/images/avatars/u02.jpg",
+    "birthDate": "2000-07-02T10:00:00.000Z",
+    "gender": "female",
+    "cityId": "kzn",
+    "about": "",
+    "teachSkillId": "s02",
+    "learnSubcategoryIds": ["personal-brand"],
+    "likedUserIds": ["u01", "u03"],
+    "likesCount": 41,
+    "createdAt": "2026-09-14T10:00:00.000Z"
+  },
+  {
+    "id": "u03",
+    "name": "Мария",
+    "email": "maria@example.com",
+    "password": "SkillSwap2025",
+    "avatarUrl": "/images/avatars/u03.jpg",
+    "birthDate": "1995-10-28T10:00:00.000Z",
+    "gender": "female",
+    "cityId": "msk",
+    "about": "Люблю учиться новому, особенно если это можно делать за чаем и в пижаме. Всегда готова пообщаться и обменяться чем-то интересным!",
+    "teachSkillId": "s03",
+    "learnSubcategoryIds": ["music", "french"],
+    "likedUserIds": ["u01"],
+    "likesCount": 7,
+    "createdAt": "2026-10-20T10:00:00.000Z"
+  }
+]

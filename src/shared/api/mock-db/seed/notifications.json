@@ -1,0 +1,18 @@
+[
+  {
+    "id": "n01",
+    "userId": "u03",
+    "toUserId": "u01",
+    "exchangeId": "e01",
+    "isRead": false,
+    "createdAt": "2026-10-25T12:00:00.000Z"
+  },
+  {
+    "id": "n02",
+    "userId": "u03",
+    "toUserId": "u02",
+    "exchangeId": "e02",
+    "isRead": true,
+    "createdAt": "2026-10-26T18:30:00.000Z"
+  }
+]

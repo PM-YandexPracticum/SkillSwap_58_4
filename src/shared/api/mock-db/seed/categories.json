@@ -1,0 +1,141 @@
+[
+  {
+    "id": "business",
+    "title": "Бизнес и карьера",
+    "icon": "briefcase",
+    "color": "#EEE7F7",
+    "subcategories": [
+      {
+        "id": "team-management",
+        "categoryId": "business",
+        "title": "Управление командой"
+      },
+      {
+        "id": "marketing",
+        "categoryId": "business",
+        "title": "Маркетинг и реклама"
+      },
+      {
+        "id": "sales",
+        "categoryId": "business",
+        "title": "Продажи и переговоры"
+      },
+      {
+        "id": "personal-brand",
+        "categoryId": "business",
+        "title": "Личный бренд"
+      },
+      {
+        "id": "resume",
+        "categoryId": "business",
+        "title": "Резюме и собеседование"
+      },
+      {
+        "id": "time-management",
+        "categoryId": "business",
+        "title": "Тайм-менеджмент"
+      },
+      {
+        "id": "project-management",
+        "categoryId": "business",
+        "title": "Проектное управление"
+      },
+      {
+        "id": "entrepreneurship",
+        "categoryId": "business",
+        "title": "Предпринимательство"
+      }
+    ]
+  },
+  {
+    "id": "creativity",
+    "title": "Творчество и искусство",
+    "icon": "palette",
+    "color": "#F7E7F2",
+    "subcategories": [
+      {
+        "id": "drawing",
+        "categoryId": "creativity",
+        "title": "Рисование и иллюстрация"
+      },
+      {
+        "id": "photo",
+        "categoryId": "creativity",
+        "title": "Фотография"
+      },
+      {
+        "id": "video-editing",
+        "categoryId": "creativity",
+        "title": "Видеомонтаж"
+      },
+      {
+        "id": "music",
+        "categoryId": "creativity",
+        "title": "Музыка и звук"
+      },
+      {
+        "id": "acting",
+        "categoryId": "creativity",
+        "title": "Актёрское мастерство"
+      },
+      {
+        "id": "creative-writing",
+        "categoryId": "creativity",
+        "title": "Креативное письмо"
+      },
+      {
+        "id": "art-therapy",
+        "categoryId": "creativity",
+        "title": "Арт-терапия"
+      },
+      {
+        "id": "diy",
+        "categoryId": "creativity",
+        "title": "Декор и DIY"
+      }
+    ]
+  },
+  {
+    "id": "languages",
+    "title": "Иностранные языки",
+    "icon": "globe",
+    "color": "#EBE5C5",
+    "subcategories": [
+      {
+        "id": "english",
+        "categoryId": "languages",
+        "title": "Английский"
+      },
+      {
+        "id": "french",
+        "categoryId": "languages",
+        "title": "Французский"
+      },
+      {
+        "id": "spanish",
+        "categoryId": "languages",
+        "title": "Испанский"
+      },
+      {
+        "id": "german",
+        "categoryId": "languages",
+        "title": "Немецкий"
+      },
+      {
+        "id": "chinese",
+        "categoryId": "languages",
+        "title": "Китайский"
+      },
+      {
+        "id": "japanese",
+        "categoryId": "languages",
+        "title": "Японский"
+      },
+      {
+        "id": "exam-prep",
+        "categoryId": "languages",
+        "title": "Подготовка к экзаменам (IELTS, TOEFL)"
+      }
+    ]
+  }
+]

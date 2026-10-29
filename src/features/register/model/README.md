@@ -1,0 +1,14 @@
+# src/features/register/model
+
+> **SkillSwap** — платформа обмена навыками (только фронтенд: React + TypeScript + Redux Toolkit).
+> Архитектура — Feature-Sliced Design, подробности в [docs/architecture/fsd.md](../../../../docs/architecture/fsd.md).
+
+## Зачем эта папка
+
+Сегмент **model** слайса `register` — данные и логика: типы, Redux-слайс, селекторы, схемы валидации.
+
+## Что внутри
+
+- `registerSlice.ts` — Черновик регистрации из 3 шагов. «Назад» не стирает введённое, «Закрыть ×» — сбрасывает черновик. TODO: stepCompleted(step), returnToSet(path), draftUpdated(partial), registerReset
+- `schema.ts` — Шаг 1: email + пароль. Уникальность email проверяется отдельно — по загруженным пользователям. TODO: перейти на emailField() / passwordField() из @/shared/lib/validation
+- `types.ts` — Данные, накопленные по всем шагам. Хранятся в Redux, поэтому только сериализуемые значения: файлы фото (`File`) не кладём в store — здесь только их превью `blob:`; сами файлы держит страница регистрации
