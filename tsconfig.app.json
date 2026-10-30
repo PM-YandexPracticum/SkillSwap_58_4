@@ -13,6 +13,7 @@
     "resolveJsonModule": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "types": ["vitest/globals", "@testing-library/jest-dom/vitest"],
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -23,9 +24,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": [
-    "src",
-    ".storybook/**/*.ts",
-    ".storybook/**/*.tsx",
-  ]
+  "include": ["src", ".storybook/**/*.ts", ".storybook/**/*.tsx"]
 }
