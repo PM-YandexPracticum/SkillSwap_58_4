@@ -1,7 +1,7 @@
 /** Что показать, если фото нет */
 export const IMAGE_PLACEHOLDERS = {
-  AVATAR: '/images/avatars/placeholder.svg',
-  SKILL: '/images/skills/placeholder.svg',
+  AVATAR: '/images/avatars/placeholder.jpg',
+  SKILL: '/images/skills/placeholder.jpg',
 } as const
 
 /**
