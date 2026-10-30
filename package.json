@@ -19,7 +19,8 @@
     "test:coverage": "vitest run --coverage",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "prepare": "husky"
+    "prepare": "husky",
+    "verify": "npm run lint && npm run test"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.3.0",
