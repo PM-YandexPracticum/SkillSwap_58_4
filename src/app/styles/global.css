@@ -18,7 +18,7 @@
   --color-tag-education: #E7F2F6;
   --color-tag-home: #F7EBE5;
   --color-tag-health: #E9F7E7;
-  --color-tag-other: #E8ECF7;
+  --color-tag-more: #E8ECF7;
 
   /* Spacing */
   --space-4: 4px;
@@ -32,6 +32,10 @@
   --space-40: 40px;
   --space-48: 48px;
   --space-52: 52px;
+  --space-60: 60px;
+  --space-80: 80px;
+  --space-100: 100px;
+  --space-132: 132px;
 
   /* Typography */
   --font-main: "Roboto", "Helvetica", "Arial", sans-serif;
@@ -47,9 +51,9 @@
   --font-weight-semibold: 600;
 
   /* Borders */
-  --radius-button: 12px;
-  --radius-tag: 20px;
-  --radius-avatar: 50%;
+  --radius-s: 12px;
+  --radius-m: 20px;
+  --radius-l: 50%;
 
   /* Layout */
   --container-width: 1368px;
