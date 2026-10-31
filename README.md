@@ -102,7 +102,7 @@ Lazy-загрузка уже настроена в `src/app/providers/RouterProv
 - работаем от `develop`, `main` не трогаем; одна задача = одна ветка = один PR в `develop`;
 - ветка начинается с ID задачи: `feature/p2-02-buttons`;
 - одновременно — только одна задача; в коммит — только свои файлы, никогда `git add .`;
-- `package.json` и зависимости меняет только тимлид;
+- `package.json` и зависимости меняют только тимлид и помощник (задачи 👑);
 - коммиты по [Conventional Commits](https://www.conventionalcommits.org/ru/): `feat: …`, `fix: …`;
 - PR проверяет и вливает тимлид или помощник.
 
