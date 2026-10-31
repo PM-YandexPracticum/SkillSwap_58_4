@@ -2,7 +2,7 @@
   {
     "id": "u32",
     "name": "Ольга",
-    "email": "olga@example.com",
+    "email": "olga32@example.com",
     "password": "SkillSwap2025",
     "avatarUrl": "/images/avatars/u32.jpg",
     "birthDate": "1990-04-12T10:00:00.000Z",
@@ -18,7 +18,7 @@
   {
     "id": "u33",
     "name": "Дмитрий",
-    "email": "dmitry@example.com",
+    "email": "dmitry33@example.com",
     "password": "SkillSwap2025",
     "avatarUrl": "/images/avatars/u33.jpg",
     "birthDate": "1987-09-03T10:00:00.000Z",
@@ -26,7 +26,7 @@
     "cityId": "ekb",
     "about": "",
     "teachSkillId": "s33",
-    "learnSubcategoryIds": ["fitness", "photo", "repair"],
+    "learnSubcategoryIds": ["photo", "repair"],
     "likedUserIds": ["u02", "u32", "u34", "u36", "u38"],
     "likesCount": 214,
     "createdAt": "2026-06-11T14:40:00.000Z"
@@ -50,7 +50,7 @@
   {
     "id": "u35",
     "name": "Артём",
-    "email": "artem@example.com",
+    "email": "artem35@example.com",
     "password": "SkillSwap2025",
     "avatarUrl": "/images/avatars/u35.jpg",
     "birthDate": "1993-02-08T10:00:00.000Z",
@@ -58,7 +58,7 @@
     "cityId": "krd",
     "about": "Развожу растения уже семь лет. Расскажу, как подобрать зелёных друзей под ваш свет и график.",
     "teachSkillId": "s35",
-    "learnSubcategoryIds": ["plants", "yoga", "german"],
+    "learnSubcategoryIds": ["yoga", "german"],
     "likedUserIds": ["u01", "u32", "u34", "u36", "u39", "u40"],
     "likesCount": 131,
     "createdAt": "2026-06-25T17:30:00.000Z"
@@ -76,13 +76,13 @@
     "teachSkillId": "s36",
     "learnSubcategoryIds": ["home-finance", "drawing"],
     "likedUserIds": [],
-    "likesCount": 89,
+    "likesCount": 87,
     "createdAt": "2026-07-01T11:20:00.000Z"
   },
   {
     "id": "u37",
     "name": "Сергей",
-    "email": "sergey@example.com",
+    "email": "sergey37@example.com",
     "password": "SkillSwap2025",
     "avatarUrl": "/images/avatars/u37.jpg",
     "birthDate": "1984-11-26T10:00:00.000Z",
@@ -146,7 +146,7 @@
   {
     "id": "u41",
     "name": "Павел",
-    "email": "pavel@example.com",
+    "email": "pavel41@example.com",
     "password": "SkillSwap2025",
     "avatarUrl": "/images/avatars/u41.jpg",
     "birthDate": "1986-06-05T10:00:00.000Z",
@@ -154,7 +154,7 @@
     "cityId": "arkh",
     "about": "",
     "teachSkillId": "s41",
-    "learnSubcategoryIds": ["work-life-balance", "sales", "cooking"],
+    "learnSubcategoryIds": ["sales", "cooking"],
     "likedUserIds": ["u02", "u36", "u40"],
     "likesCount": 121,
     "createdAt": "2026-08-12T18:00:00.000Z"
@@ -186,7 +186,7 @@
     "cityId": "krs",
     "about": "",
     "teachSkillId": "s43",
-    "learnSubcategoryIds": ["repair", "yoga", "marketing", "speed-reading"],
+    "learnSubcategoryIds": ["yoga", "marketing", "speed-reading"],
     "likedUserIds": ["u01", "u39", "u42"],
     "likesCount": 277,
     "createdAt": "2026-08-27T15:15:00.000Z"
@@ -210,7 +210,7 @@
   {
     "id": "u45",
     "name": "Роман",
-    "email": "roman@example.com",
+    "email": "roman45@example.com",
     "password": "SkillSwap2025",
     "avatarUrl": "/images/avatars/u45.jpg",
     "birthDate": "1988-04-28T10:00:00.000Z",

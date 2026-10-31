@@ -25,7 +25,7 @@
     "description": "Соберём рацион без запретов: быстрые рецепты, сбалансированные тарелки и заготовки на неделю.",
     "categoryId": "health",
     "subcategoryId": "nutrition",
-    "images": ["/images/skills/s34-1.jpg", "/images/skills/s34-2.jpg", "/images/skills/s34-3.jpg", "/images/skills/s34-4.jpg"],
+    "images": ["/images/skills/s34-1.jpg", "/images/skills/s34-2.jpg", "/images/skills/s34-3.jpg"],
     "authorId": "u34",
     "createdAt": "2026-06-18T08:05:00.000Z"
   },
@@ -85,7 +85,12 @@
     "description": "Практики внимания в быту: дыхание, сканирование тела, mindful-паузы среди задач.",
     "categoryId": "health",
     "subcategoryId": "mindfulness",
-    "images": ["/images/skills/s40-1.jpg", "/images/skills/s40-2.jpg", "/images/skills/s40-3.jpg", "/images/skills/s40-4.jpg"],
+    "images": [
+      "/images/skills/s40-1.jpg",
+      "/images/skills/s40-2.jpg",
+      "/images/skills/s40-3.jpg",
+      "/images/skills/s40-4.jpg"
+    ],
     "authorId": "u40",
     "createdAt": "2026-08-03T10:25:00.000Z"
   },
