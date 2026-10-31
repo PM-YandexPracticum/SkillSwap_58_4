@@ -2,7 +2,7 @@
   {
     "id": "business",
     "title": "Бизнес и карьера",
-    "icon": "briefcase",
+    "icon": "business",
     "color": "#EEE7F7",
     "subcategories": [
       {
@@ -50,7 +50,7 @@
   {
     "id": "creativity",
     "title": "Творчество и искусство",
-    "icon": "palette",
+    "icon": "creative",
     "color": "#F7E7F2",
     "subcategories": [
       {
@@ -98,7 +98,7 @@
   {
     "id": "languages",
     "title": "Иностранные языки",
-    "icon": "globe",
+    "icon": "languages",
     "color": "#EBE5C5",
     "subcategories": [
       {
