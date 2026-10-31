@@ -1,0 +1,27 @@
+.avatar {
+  display: block;
+  border-radius: var(--radius-l); /* 50% */
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.sm {
+  --avatar-size: 48px; /* шапка, 1:2996 */
+
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+}
+
+.md {
+  --avatar-size: 100px; /* карточка, 1:2861 */
+
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+}
+
+.lg {
+  --avatar-size: 244px; /* профиль, 1:2370 */
+
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+}
