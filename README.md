@@ -72,7 +72,12 @@ src/shared/api/mock-db/
 | `npm run format` | Форматирование через Prettier |
 | `npm run test` | Запуск тестов |
 | `npm run test:watch` | Тесты в watch-режиме |
-| `npm run test:coverage` | Покрытие (цель ≥ 70%) |
+| `npm run test:coverage` | Отчёт о покрытии тестами. Порог 70 % — цель к финишу (P8-07): пока тестов мало, команда сообщает, что порог не достигнут, — это нормально |
+| `npm run e2e` | Автотесты сценариев в браузере (Playwright, папка `e2e/`). Перед первым запуском: `npx playwright install chromium` |
+| `npm run storybook` | Storybook — каталог UI-компонентов |
+| `npm run build-storybook` | Сборка Storybook |
+| `npm run commit` | Коммит по шагам в формате Conventional Commits |
+| `npm run verify` | Линтер и тесты — то же, что хук перед push |
 
 ---
 
