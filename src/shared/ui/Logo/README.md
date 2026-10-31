@@ -7,8 +7,9 @@
 
 UI-компонент **Logo**. Логотип SkillSwap (иконка + текст), ведёт на главную.
 
-## Что внутри
+## Состав
 
-- `Logo.stories.tsx` — Stories компонента Logo — ЗАГЛУШКА. Пакеты Storybook ставит задача P1-11; после неё добавить типы: `const meta: Meta<typeof Logo>` и `export const Default: StoryObj<typeof meta>`
-- `Logo.tsx` — Логотип SkillSwap (иконка + текст), ведёт на главную
-- `index.ts` — публичный API — импортировать снаружи только отсюда
+- `Logo.tsx` — ссылка на главную с иконкой SkillSwap; текст можно скрыть через `withText={false}`.
+- `Logo.css` — размеры и типографика логотипа.
+- `Logo.stories.tsx` — варианты с текстом и только с иконкой.
+- `index.ts` — публичный API компонента.

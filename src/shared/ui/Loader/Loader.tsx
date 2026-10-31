@@ -1,12 +1,15 @@
+import './Loader.css'
+
 export interface LoaderProps {
-  /** Дополнительный CSS-класс */
   className?: string
 }
 
-/**
- * Индикатор загрузки (fallback для Suspense и загрузки моков).
- */
-export function Loader(_props: LoaderProps) {
-  // TODO: реализовать по макету
-  return null
+export function Loader({ className }: LoaderProps) {
+  const loaderClassName = className ? `loader ${className}` : 'loader'
+
+  return (
+    <span className={loaderClassName} role="status" aria-label="Загрузка">
+      <span className="loader__spinner" aria-hidden="true" />
+    </span>
+  )
 }

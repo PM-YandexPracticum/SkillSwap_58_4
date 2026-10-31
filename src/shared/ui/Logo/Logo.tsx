@@ -1,12 +1,19 @@
+import logoIcon from '../../assets/icons/logo.svg'
+import './Logo.css'
+
 export interface LogoProps {
-  /** Показывать ли текст рядом с иконкой */
   withText?: boolean
 }
 
-/**
- * Логотип SkillSwap (иконка + текст), ведёт на главную.
- */
-export function Logo(_props: LogoProps) {
-  // TODO: реализовать по макету
-  return null
+export function Logo({ withText = true }: LogoProps) {
+  return (
+    <a
+      className="logo"
+      href="/"
+      aria-label={withText ? undefined : 'SkillSwap — главная'}
+    >
+      <img className="logo__icon" src={logoIcon} alt="" width={40} height={40} />
+      {withText && <span className="logo__text">SkillSwap</span>}
+    </a>
+  )
 }

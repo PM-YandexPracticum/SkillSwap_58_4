@@ -9,6 +9,7 @@ UI-компонент **Loader**. Индикатор загрузки (fallback 
 
 ## Что внутри
 
-- `Loader.stories.tsx` — Stories компонента Loader — ЗАГЛУШКА. Пакеты Storybook ставит задача P1-11; после неё добавить типы: `const meta: Meta<typeof Loader>` и `export const Default: StoryObj<typeof meta>`
-- `Loader.tsx` — Индикатор загрузки (fallback для Suspense и загрузки моков)
-- `index.ts` — публичный API — импортировать снаружи только отсюда
+- `Loader.tsx` — доступный спиннер для состояний загрузки данных и ленты карточек.
+- `Loader.css` — оформление и анимация спиннера.
+- `Loader.stories.tsx` — обычный спиннер, загрузка страницы и загрузка ленты.
+- `index.ts` — публичный API компонента.
