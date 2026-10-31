@@ -30,6 +30,11 @@ app → pages → widgets → features → entities → shared
   import { UserCard } from '@/entities/user/ui/UserCard'   // ✗
   ```
 - `shared/ui` — без общего barrel-файла, импорт по компоненту: `@/shared/ui/Button`.
+- Внутри своего слайса — относительные импорты (`./model`, `../ui/UserCard`).
+
+Эти правила проверяет `npm run lint` (правило `no-restricted-imports` в `eslint.config.js`, задача P1-12):
+нарушение — ошибка с подсказкой, как сделать правильно. Единственное исключение — тесты (`*.test.ts(x)`)
+могут импортировать `@/app/test`, где лежит `renderWithProviders`.
 
 ## 2. Структура слайса
 
