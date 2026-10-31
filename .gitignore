@@ -10,6 +10,11 @@ dist-ssr
 # Coverage
 coverage
 
+# Playwright
+test-results
+playwright-report
+playwright/.cache
+
 # Env
 .env
 .env.local

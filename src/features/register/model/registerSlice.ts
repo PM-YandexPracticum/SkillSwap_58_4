@@ -7,17 +7,11 @@ export interface RegisterState {
    * прямой заход по адресу `/register/step-2` без шага 1 перекидывает на шаг 1 (`RegisterStepGuard`).
    */
   completedStep: 0 | 1 | 2 | 3
-  /**
-   * Куда вернуть пользователя после «Готово»: страница, с которой гость нажал «Предложить обмен» / лайк,
-   * или каталог, если пришёл через «Зарегистрироваться».
-   */
-  returnTo: string | null
   draft: RegisterDraft
 }
 
 const initialState: RegisterState = {
   completedStep: 0,
-  returnTo: null,
   draft: {
     email: '',
     password: '',
@@ -34,7 +28,8 @@ const initialState: RegisterState = {
 
 /**
  * Черновик регистрации из 3 шагов. «Назад» не стирает введённое, «Закрыть ×» — сбрасывает черновик.
- * TODO: stepCompleted(step), returnToSet(path), draftUpdated(partial), registerReset
+ * После «Готово» пользователь всегда попадает в каталог (ТЗ наставника, 2.6).
+ * TODO: stepCompleted(step), draftUpdated(partial), registerReset
  */
 export const registerSlice = createSlice({
   name: 'register',
