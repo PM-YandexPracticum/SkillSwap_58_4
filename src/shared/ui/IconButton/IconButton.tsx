@@ -1,3 +1,5 @@
+import styles from './IconButton.module.css'
+
 export interface IconButtonProps {
   /** Подпись для скринридера — обязательна, т.к. текста нет */
   ariaLabel: string
@@ -10,5 +12,9 @@ export interface IconButtonProps {
  */
 export function IconButton(_props: IconButtonProps) {
   // TODO: реализовать по макету
-  return null
+  return (
+    <button className={styles.iconButton} type="button" aria-label={_props.ariaLabel}>
+      {_props.icon}
+    </button>
+  )
 }

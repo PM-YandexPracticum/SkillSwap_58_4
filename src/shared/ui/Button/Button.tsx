@@ -1,3 +1,5 @@
+import styles from './Button.module.css'
+
 export interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'ghost'
   type?: 'button' | 'submit'
@@ -11,5 +13,12 @@ export interface ButtonProps {
  */
 export function Button(_props: ButtonProps) {
   // TODO: реализовать по макету
-  return null
+  return (
+    <button
+      className={`${styles.button} ${styles[_props.variant || 'primary']}`}
+      disabled={_props.disabled}
+    >
+      {_props.children}
+    </button>
+  )
 }

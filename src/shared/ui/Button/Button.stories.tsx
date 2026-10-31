@@ -16,8 +16,19 @@ const meta = {
 export default meta
 
 /** Базовое состояние */
-export const Default = {
+export const Primary = {
   args: { variant: 'primary', children: 'Подробнее' },
 }
 
+export const Secondary = {
+  args: { variant: 'secondary', children: 'Войти' },
+}
+
+export const Ghost = {
+  args: { variant: 'ghost', children: 'Смотреть все' },
+}
+
+export const Disabled = {
+  args: { variant: 'primary', children: 'Подробнее', disabled: true },
+}
 // TODO: по одной story на каждое состояние из списка выше
