@@ -2,7 +2,7 @@
 
 Кто какую задачу сделал и что получилось, и кто что делает сейчас. Отчёт нужен для наставников и итоговой защиты проекта.
 
-**На 01.11.2026:** сделано 22 задачи — фаза 0 (9), фаза 1 (11 из 14), фаза 2 (2 из 18); в работе 7.
+**На 01.11.2026:** сделано 25 задач — фаза 0 (9), фаза 1 (11 из 14), фаза 2 (5 из 18); в работе 7.
 
 ## Как заполнять
 
@@ -20,10 +20,11 @@
 |---|---|---|---|
 | P1-04 Подготовка к тестам 🟡 | kkiitlin | 30.10 | срок 🟡 — сегодня |
 | P1-07 Моки, часть 2 🟢 | Nick-Shvd | 30.10 | ⚠️ дольше срока; справочники и обе соседние части уже в `develop` |
-| P2-01 Logo и Loader 🟢 | Stanislave0 | 31.10 | на правках после ревью ([#113](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/113)) |
+| P2-03 Tag и плашка 🟢 | alicevdr | 01.11 | в срок |
 | P2-05 Поля Input и Textarea 🟢 | Laurovsky | 31.10 | срок 🟢 — сегодня |
 | P2-07 Checkbox и RadioGroup 🟡 | Laurovsky | 31.10 | в срок; ⚠️ вторая задача у одного исполнителя |
-| P2-11 Stepper 🟢 | muntaniolirina | 01.11 | в срок |
+| P2-10 Modal 🟡 | Al-Du9270-art | 01.11 | в срок |
+| P2-14 FileDropzone 🟡 | muntaniolirina | 01.11 | в срок |
 
 Назначена заранее, начнётся позже: P4-10 👑 перенос в `public/db` (kirill-ai-dev) — после P4-01, P4-06, P4-07 и моков P1-06…P1-08.
 
@@ -55,3 +56,6 @@
 |---|---|---|---|---|
 | [P2-04](phases/phase-02-ui-kit.md) Avatar 🟢 | muntaniolirina | Аватар трёх размеров по макету (48, 100, 244 px), заглушка без фото, `resolveImageUrl`, 7 тестов, 4 story. Тимлид добавил описания пропсов и тесты через `getByRole` | 2026-11-01 | [#116](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/116) |
 | [P2-02](phases/phase-02-ui-kit.md) Кнопки Button и IconButton 🟢 | Al-Du9270-art | Button (primary, secondary, ghost) и IconButton, цвета наведения, нажатия и disabled по переменным макета (поправлены токены), 5 тестов. На ревью: исправлены `onClick` и `type`; тимлид отформатировал stories и обновил README | 2026-11-01 | [#114](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/114) |
+| [P2-11](phases/phase-02-ui-kit.md) Stepper 🟢 | muntaniolirina | Индикатор «Шаг N из 3» с тремя полосками, пройденные шаги зелёные; тесты и stories | 2026-11-01 | [#118](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/118) |
+| [P2-08](phases/phase-02-ui-kit.md) Dropdown 🟡 | pwkdmc | Поповер под кнопкой: закрытие по Esc и клику мимо, хук `useClickOutside` с тестом, stories трёх меню. На ревью: сдвиг внутрь окна на 36px по макету без мигания, выравнивание `end` для правых кнопок шапки, живые stories с `onClose` | 2026-11-01 | [#119](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/119) |
+| [P2-01](phases/phase-02-ui-kit.md) Logo и Loader 🟢 | Stanislave0 | Логотип-ссылка на главную по макету шапки (1:2870), вариант без текста; спиннер с `role="status"`; CSS Modules, тесты. На ревью: JSDoc перенесён к функциям и пропсам, ссылки на макет в stories, из lock-файла убран clsx | 2026-11-01 | [#113](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/113) |

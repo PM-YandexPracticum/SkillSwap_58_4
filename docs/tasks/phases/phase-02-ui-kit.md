@@ -8,12 +8,13 @@
 только CSS-переменные; есть тест на основное поведение.
 **Общая зависимость:** P1-01 (токены) и P1-11 (Storybook).
 
-### P2-01 · Logo и Loader 🟢
+### P2-01 · Logo и Loader ✅ 🟢
 > **Что нужно сделать:** сделать логотип SkillSwap (иконка + текст) — ссылка на главную, есть вариант без текста.
 > Loader — спиннер «загружается»: его показываем, пока грузятся данные и пока догружается лента карточек.
 > Оба компонента простые — хорошая первая задача, чтобы разобраться со Storybook и токенами.
 
 - **Файлы:** `src/shared/ui/Logo/`, `src/shared/ui/Loader/`
+- **Issue:** [#17](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/17) · PR [#113](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/113)
 - **Зависит от:** P1-02
 
 ### P2-02 · Кнопки Button и IconButton ✅ 🟢
@@ -68,12 +69,13 @@
 - **Файлы:** `src/shared/ui/Checkbox/`, `src/shared/ui/RadioGroup/`
 - **Зависит от:** —
 
-### P2-08 · Dropdown 🟡
+### P2-08 · Dropdown ✅ 🟡
 > **Что нужно сделать:** сделать «поповер» под кнопкой — на нём меню «Все навыки», уведомления и меню пользователя.
 > Закрывается по Esc и по клику мимо — для этого здесь же хук `useClickOutside` с тестом.
 > Сам Dropdown не знает о содержимом — внутрь кладут что угодно.
 
 - **Файлы:** `src/shared/ui/Dropdown/`, `src/shared/lib/hooks/useClickOutside.ts` + тест
+- **Issue:** [#24](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/24) · PR [#119](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/119)
 - **Зависит от:** —
 
 ### P2-09 · Select 🟡
@@ -93,11 +95,12 @@
 - **Файлы:** `src/shared/ui/Modal/`
 - **Зависит от:** P2-02
 
-### P2-11 · Stepper 🟢
+### P2-11 · Stepper ✅ 🟢
 > **Что нужно сделать:** сделать индикатор «Шаг 1 из 3» с тремя полосками над формой регистрации. Пройденные шаги зелёные.
 > Компонент только показывает номер — переходами управляют страницы шагов.
 
 - **Файлы:** `src/shared/ui/Stepper/`
+- **Issue:** [#27](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/27) · PR [#118](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/118)
 - **Зависит от:** —
 
 ### P2-12 · DatePicker 🟡
