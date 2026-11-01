@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 
 import { useClickOutside } from '@/shared/lib/hooks/useClickOutside'
 import styles from './Dropdown.module.css'
@@ -7,11 +7,17 @@ import styles from './Dropdown.module.css'
 const EDGE_GAP = 36
 
 export interface DropdownProps {
+  /** Кнопка, под которой открывается поповер; открывает его сам родитель */
   trigger: React.ReactNode
+  /** Открыт ли поповер — состояние хранит родитель */
   isOpen: boolean
+  /** Вызывается по Esc и клику мимо */
   onClose: () => void
+  /** Содержимое поповера — любое */
   children: React.ReactNode
+  /** К какому краю кнопки прижать: `start` — к левому, `end` — к правому. По умолчанию `start` */
   align?: 'start' | 'end'
+  /** Дополнительный класс для поповера (например, свои отступы) */
   className?: string
 }
 
@@ -26,10 +32,10 @@ export interface DropdownProps {
  * - по клику мимо (хук `useClickOutside`).
  *
  * Позиционирование:
- * - по умолчанию под триггером, выровнен по его левому краю (для правых кнопок шапки);
- * - `align="end"` - по правому краю (для кнопки "Все навыки");
- * - если поповер упирается в край вьюпорта, он прижимается к краю
- *   с отступом `EDGE_GAP`, а не обрезается.
+ * - по умолчанию под триггером, выровнен по его левому краю (для кнопки «Все навыки»);
+ * - `align="end"` - по правому краю (для уведомлений и меню пользователя справа в шапке);
+ * - если поповер не помещается в окно, он сдвигается так, чтобы до края окна
+ *   оставалось `EDGE_GAP`, как в макете.
  */
 export function Dropdown({
   trigger,
@@ -41,7 +47,6 @@ export function Dropdown({
 }: DropdownProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const popoverRef = useRef<HTMLDivElement>(null)
-  const [edge, setEdge] = useState<'none' | 'left' | 'right'>('none')
 
   // клик мимо - только когда открыт
   useClickOutside(wrapperRef, onClose, isOpen)
@@ -51,39 +56,26 @@ export function Dropdown({
     if (!isOpen) return
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.stopPropagation()
-        onClose()
-      }
+      if (event.key === 'Escape') onClose()
     }
 
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [isOpen, onClose])
 
-  // прижатие к краю вьюпорта
+  // сдвиг внутрь окна: стиль меняем прямо в DOM до отрисовки, без лишнего рендера
   useLayoutEffect(() => {
-    if (!isOpen) {
-      setEdge('none')
-      return
-    }
     const el = popoverRef.current
-    if (!el) return
+    if (!isOpen || !el) return
 
-    // сбрасываем, чтобы замерить положение
-    setEdge('none')
+    // убираем прошлый сдвиг, иначе замер покажет уже сдвинутое положение
+    el.style.translate = ''
 
-    const rect = el.getBoundingClientRect()
-    const viewport = document.documentElement.clientWidth
+    const { left, right } = el.getBoundingClientRect()
+    const shift = getEdgeShift(left, right, document.documentElement.clientWidth)
 
-    if (rect.right > viewport - EDGE_GAP) {
-      setEdge('right')
-    } else if (rect.left < EDGE_GAP) {
-      setEdge('left')
-    }
+    el.style.translate = shift ? `${shift}px 0` : ''
   }, [isOpen, align, children])
-
-  const edgeClass = edge === 'right' ? styles.clampRight : edge === 'left' ? styles.clampLeft : ''
 
   return (
     <div ref={wrapperRef} className={styles.wrapper}>
@@ -92,27 +84,21 @@ export function Dropdown({
       {isOpen && (
         <div
           ref={popoverRef}
-          role="dialog"
-          aria-modal="false"
-          className={[
-            styles.popover,
-            align === 'end' ? styles.alignEnd : '',
-            edgeClass,
-            className ?? '',
-          ]
+          className={[styles.popover, align === 'end' ? styles.alignEnd : '', className ?? '']
             .filter(Boolean)
             .join(' ')}
-          style={
-            edge === 'right'
-              ? { right: EDGE_GAP }
-              : edge === 'left'
-                ? { left: EDGE_GAP }
-                : undefined
-          }
         >
           {children}
         </div>
       )}
     </div>
   )
+}
+
+/** На сколько пикселей сдвинуть поповер, чтобы до краёв окна оставалось не меньше `EDGE_GAP` */
+function getEdgeShift(left: number, right: number, viewportWidth: number): number {
+  const maxRight = viewportWidth - EDGE_GAP
+  if (right > maxRight) return maxRight - right
+  if (left < EDGE_GAP) return EDGE_GAP - left
+  return 0
 }

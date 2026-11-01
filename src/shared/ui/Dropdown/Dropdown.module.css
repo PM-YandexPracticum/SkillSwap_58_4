@@ -19,15 +19,3 @@
   right: 0;
   left: auto;
 }
-
-/* Прижат к правому краю вьюпорта */
-.clampRight {
-  right: 0;
-  left: auto;
-}
-
-/* Прижат к левому краю вьюпорта */
-.clampLeft {
-  right: auto;
-  left: 0;
-}

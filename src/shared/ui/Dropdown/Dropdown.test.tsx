@@ -89,4 +89,47 @@ describe('Dropdown', () => {
 
     expect(screen.getByText('Меню')).toBeInTheDocument()
   })
+
+  describe('сдвиг внутрь окна', () => {
+    // Окно 1000px, поповер 260px. Без сдвига его правый край на 1160px — вылезает за окно.
+    const NATURAL_RIGHT = 1160
+
+    beforeEach(() => {
+      vi.spyOn(document.documentElement, 'clientWidth', 'get').mockReturnValue(1000)
+      vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
+        this: HTMLElement,
+      ) {
+        const right = NATURAL_RIGHT + (parseFloat(this.style.translate) || 0)
+        return { left: right - 260, right } as DOMRect
+      })
+    })
+
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    function renderMenu(text: string) {
+      return (
+        <Dropdown trigger={trigger} isOpen={true} onClose={vi.fn()}>
+          <p>{text}</p>
+        </Dropdown>
+      )
+    }
+
+    it('оставляет до правого края окна 36px', () => {
+      render(renderMenu('Меню'))
+
+      // 1000 - 36 = 964, нужно сдвинуть на 1160 - 964 = 196px влево
+      expect(screen.getByText('Меню').parentElement).toHaveStyle({ translate: '-196px 0' })
+    })
+
+    it('не прыгает, когда родитель перерисовывается', () => {
+      const { rerender } = render(renderMenu('Меню'))
+
+      rerender(renderMenu('Меню 2'))
+      rerender(renderMenu('Меню 3'))
+
+      expect(screen.getByText('Меню 3').parentElement).toHaveStyle({ translate: '-196px 0' })
+    })
+  })
 })

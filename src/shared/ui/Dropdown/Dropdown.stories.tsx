@@ -23,7 +23,6 @@ export const SkillsMenu: Story = {
   args: {
     isOpen: true,
     trigger: <button type="button">Все навыки</button>,
-    align: 'end',
     children: (
       <ul style={{ padding: 60, listStyle: 'none' }}>
         <li>Навык 1</li>
@@ -39,6 +38,7 @@ export const Notifications: Story = {
   args: {
     isOpen: true,
     trigger: <button type="button">🔔</button>,
+    align: 'end',
     children: <div style={{ padding: 60, width: 436 }}>Новых уведомлений нет</div>,
   },
 }
@@ -48,6 +48,7 @@ export const UserMenu: Story = {
   args: {
     isOpen: true,
     trigger: <button type="button">Иван</button>,
+    align: 'end',
     children: (
       <ul style={{ padding: 40, listStyle: 'none' }}>
         <li>Личный кабинет</li>
