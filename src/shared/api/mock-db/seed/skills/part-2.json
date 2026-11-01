@@ -1,1 +1,142 @@
-[]
+[
+  {
+    "id": "s18",
+    "title": "Английский",
+    "description": "Думаю и говорю что думаю на английском, молчу на остальных языках.",
+    "categoryId": "languages",
+    "subcategoryId": "english",
+    "images": ["/images/skills/s18-1.jpg", "/images/skills/s18-2.jpg"],
+    "authorId": "u18",
+    "createdAt": "2026-06-27T10:00:00.000Z"
+  },
+  {
+    "id": "s19",
+    "title": "Французский язык",
+    "description": "Преподаю французский с нуля до уверенного разговорного. Обожаю Париж, литературу и круассаны.",
+    "categoryId": "languages",
+    "subcategoryId": "french",
+    "images": ["/images/skills/s19-1.jpg"],
+    "authorId": "u19",
+    "createdAt": "2026-10-15T10:00:00.000Z"
+  },
+  {
+    "id": "s20",
+    "title": "Немецкий для начинающих",
+    "description": "Помогу разобраться с падежами и произношением. Ordnung muss sein! Учим живой язык, а не только учебник.",
+    "categoryId": "languages",
+    "subcategoryId": "german",
+    "images": ["/images/skills/s20-1.jpg"],
+    "authorId": "u20",
+    "createdAt": "2026-09-20T10:00:00.000Z"
+  },
+  {
+    "id": "s21",
+    "title": "Испанский: от Hola до свободы",
+    "description": "Учим живой испанский, базовый сленг и культуру Латинской Америки. ¡Vamos!",
+    "categoryId": "languages",
+    "subcategoryId": "spanish",
+    "images": ["/images/skills/s21-1.jpg"],
+    "authorId": "u21",
+    "createdAt": "2026-11-01T10:00:00.000Z"
+  },
+  {
+    "id": "s22",
+    "title": "Китайский язык (HSK 1-3)",
+    "description": "Ставим тона, учим иероглифы и базовую грамматику. Поймёте, почему это не так сложно, как кажется.",
+    "categoryId": "languages",
+    "subcategoryId": "chinese",
+    "images": ["/images/skills/s22-1.jpg", "/images/skills/s22-2.jpg", "/images/skills/s22-3.jpg"],
+    "authorId": "u22",
+    "createdAt": "2026-08-14T10:00:00.000Z"
+  },
+  {
+    "id": "s23",
+    "title": "Японский язык и культура",
+    "description": "Хирагана, катакана и основы грамматики. Готовимся к просмотру аниме и дорам в оригинале.",
+    "categoryId": "languages",
+    "subcategoryId": "japanese",
+    "images": ["/images/skills/s23-1.jpg"],
+    "authorId": "u23",
+    "createdAt": "2026-10-30T10:00:00.000Z"
+  },
+  {
+    "id": "s24",
+    "title": "Подготовка к IELTS и TOEFL",
+    "description": "Разбираем формат экзамена, пишем эссе, тренируем speaking. Гарантирую рост балла и уверенность на тесте.",
+    "categoryId": "languages",
+    "subcategoryId": "exam-prep",
+    "images": ["/images/skills/s24-1.jpg", "/images/skills/s24-2.jpg"],
+    "authorId": "u24",
+    "createdAt": "2026-07-05T10:00:00.000Z"
+  },
+  {
+    "id": "s25",
+    "title": "Личностное развитие и саморефлексия",
+    "description": "Помогу разобраться в себе, поставить цели и найти внутренние ресурсы. Работа с убеждениями и мотивацией.",
+    "categoryId": "education",
+    "subcategoryId": "personal-growth",
+    "images": ["/images/skills/s25-1.jpg", "/images/skills/s25-2.jpg"],
+    "authorId": "u25",
+    "createdAt": "2026-10-12T10:00:00.000Z"
+  },
+  {
+    "id": "s26",
+    "title": "Как учиться эффективно",
+    "description": "Техники запоминания, интервальные повторения, мнемотехника. Научу учиться быстрее и с удовольствием.",
+    "categoryId": "education",
+    "subcategoryId": "learning",
+    "images": ["/images/skills/s26-1.jpg"],
+    "authorId": "u26",
+    "createdAt": "2026-09-28T10:00:00.000Z"
+  },
+  {
+    "id": "s27",
+    "title": "Когнитивные техники и мышление",
+    "description": "Развитие критического мышления, работа с когнитивными искажениями, техники принятия решений.",
+    "categoryId": "education",
+    "subcategoryId": "cognitive",
+    "images": ["/images/skills/s27-1.jpg", "/images/skills/s27-2.jpg", "/images/skills/s27-3.jpg"],
+    "authorId": "u27",
+    "createdAt": "2026-10-05T10:00:00.000Z"
+  },
+  {
+    "id": "s28",
+    "title": "Скорочтение: читай в 3 раза быстрее",
+    "description": "Уберу регрессию, расширю поле зрения, научу понимать текст с первого прочтения. Практика на реальных книгах.",
+    "categoryId": "education",
+    "subcategoryId": "speed-reading",
+    "images": ["/images/skills/s28-1.jpg"],
+    "authorId": "u28",
+    "createdAt": "2026-08-19T10:00:00.000Z"
+  },
+  {
+    "id": "s29",
+    "title": "Навыки преподавания и менторства",
+    "description": "Как объяснять сложное простыми словами, удерживать внимание, давать обратную связь. Для будущих учителей и наставников.",
+    "categoryId": "education",
+    "subcategoryId": "teaching",
+    "images": ["/images/skills/s29-1.jpg", "/images/skills/s29-2.jpg"],
+    "authorId": "u29",
+    "createdAt": "2026-10-24T10:00:00.000Z"
+  },
+  {
+    "id": "s30",
+    "title": "Коучинг: задавай правильные вопросы",
+    "description": "Основы коучингового подхода, активное слушание, мощные вопросы. Помогу стать лучшим наставником для других.",
+    "categoryId": "education",
+    "subcategoryId": "coaching",
+    "images": ["/images/skills/s30-1.jpg"],
+    "authorId": "u30",
+    "createdAt": "2026-07-14T10:00:00.000Z"
+  },
+  {
+    "id": "s31",
+    "title": "Скетчноутинг: конспекты в картинках",
+    "description": "Покажу, как превращать лекции и книги в наглядные заметки из простых рисунков, стрелок и рамок. Рисовать уметь не нужно.",
+    "categoryId": "education",
+    "subcategoryId": "learning",
+    "images": ["/images/skills/s31-1.jpg"],
+    "authorId": "u31",
+    "createdAt": "2026-10-27T10:00:00.000Z"
+  }
+]
