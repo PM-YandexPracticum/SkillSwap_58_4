@@ -4,7 +4,7 @@
   --line-height: 4px;
   --line-radius: 8px;
 
-  /* Токенов line-height и letter-spacing в global.css нет , поэтому созданы локально — см. вопрос в PR */
+  /* Токенов line-height и letter-spacing в global.css нет, поэтому значения заданы здесь */
   --stepper-title-line-height: 28px; /* Figma: 1:2548 */
   --stepper-title-letter-spacing: -0.011em; /* Figma: 1:2548 / -1.1% при 24px */
 

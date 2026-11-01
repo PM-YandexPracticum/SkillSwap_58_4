@@ -77,7 +77,7 @@
     "subcategoryId": "personal-brand",
     "authorId": "u11",
     "images": ["/images/skills/s11-1.jpg", "/images/skills/s11-2.jpg", "/images/skills/s11-3.jpg"],
-    "createdAt": "2026-11-11T16:20:00.000Z"
+    "createdAt": "2026-09-09T16:20:00.000Z"
   },
   {
     "id": "s12",
@@ -87,7 +87,7 @@
     "subcategoryId": "marketing",
     "authorId": "u12",
     "images": ["/images/skills/s12-1.jpg", "/images/skills/s12-2.jpg"],
-    "createdAt": "2026-12-25T23:59:59.000Z"
+    "createdAt": "2026-10-08T23:59:59.000Z"
   },
   {
     "id": "s13",
