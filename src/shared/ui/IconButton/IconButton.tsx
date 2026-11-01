@@ -12,7 +12,7 @@ export interface IconButtonProps {
 /**
  * Квадратная кнопка-иконка
  * @see Figma: 1:2765  — шапка:  лайк, тема, колокольчик
- * @see Figma: 1-15143 - шапка: закрыть
+ * @see Figma: 1:15143 - шапка: закрыть
  */
 export function IconButton({ ariaLabel, onClick, icon }: IconButtonProps) {
   return (

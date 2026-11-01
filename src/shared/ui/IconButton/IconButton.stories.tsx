@@ -4,18 +4,11 @@ import LikeIcon from '../../assets/icons/like.svg?react'
 import LikeFilledIcon from '../../assets/icons/like-filled.svg?react'
 import NotificationIcon from '../../assets/icons/notification.svg?react'
 import CrossIcon from '../../assets/icons/cross.svg?react'
-/**
- * Stories компонента IconButton — ЗАГЛУШКА. Пакеты Storybook ставит задача P1-11;
- * после неё добавить типы: `const meta: Meta<typeof IconButton>` и `export const Default: StoryObj<typeof meta>`.
- *
- * Нужны stories для состояний из макета: сердце (пустое / закрашенное), колокольчик, «поделиться», «Закрыть».
- * Правила — docs/rules/storybook.md.
- */
 const meta = {
   title: 'shared/ui/IconButton',
   component: IconButton,
   tags: ['autodocs'],
-}satisfies Meta<typeof IconButton>
+} satisfies Meta<typeof IconButton>
 
 export default meta
 
@@ -42,7 +35,7 @@ export const Notification: Story = {
 }
 
 /** Закрытие
- * @see Figma: 1-15143 — шапка: закрыть
+ * @see Figma: 1:15143 — шапка: закрыть
  */
 export const Close: Story = {
   args: {
@@ -50,4 +43,3 @@ export const Close: Story = {
     icon: <CrossIcon />,
   },
 }
-
