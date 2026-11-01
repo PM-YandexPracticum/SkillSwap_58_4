@@ -2,8 +2,11 @@ import { resolveImageUrl } from '@/shared/lib/image/resolveImageUrl'
 import styles from './Avatar.module.css'
 
 export interface AvatarProps {
+  /** Путь к фото из моков (`avatarUrl`) или data URL; `null` — показать заглушку */
   src: string | null
+  /** Текст для скринридера — обычно имя пользователя */
   alt: string
+  /** Размер: `sm` — шапка (48px), `md` — карточка (100px), `lg` — профиль (244px) */
   size?: 'sm' | 'md' | 'lg'
 }
 

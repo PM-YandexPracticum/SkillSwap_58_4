@@ -26,10 +26,6 @@ export function resolveImageUrl(
     return `${import.meta.env.BASE_URL}${path.slice(1)}`
   }
 
-  // blob: и data: — это уже готовые адреса (превью до загрузки), BASE_URL к ним добавлять нельзя
-  if (path.startsWith('blob:') || path.startsWith('data:')) {
-    return path
-  }
-
+  // blob:, data: (превью до загрузки) и внешние адреса — уже готовые, BASE_URL к ним добавлять нельзя
   return path
 }
