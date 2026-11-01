@@ -2,12 +2,12 @@
   {
     "id": "s18",
     "title": "Английский",
-    "description": "Думаю и говорю что думаю на английском ,молчу на остальных языках.",
+    "description": "Думаю и говорю что думаю на английском, молчу на остальных языках.",
     "categoryId": "languages",
     "subcategoryId": "english",
     "images": ["/images/skills/s18-1.jpg", "/images/skills/s18-2.jpg"],
-    "authorId": "u14",
-    "createdAt": "2026-06-30T10:00:00.000Z"
+    "authorId": "u18",
+    "createdAt": "2026-06-27T10:00:00.000Z"
   },
   {
     "id": "s19",
@@ -25,7 +25,7 @@
     "description": "Помогу разобраться с падежами и произношением. Ordnung muss sein! Учим живой язык, а не только учебник.",
     "categoryId": "languages",
     "subcategoryId": "german",
-    "images": ["/images/skills/s20-1.jpg", "/images/skills/s20-2.jpg"],
+    "images": ["/images/skills/s20-1.jpg"],
     "authorId": "u20",
     "createdAt": "2026-09-20T10:00:00.000Z"
   },
@@ -97,7 +97,7 @@
     "subcategoryId": "cognitive",
     "images": ["/images/skills/s27-1.jpg", "/images/skills/s27-2.jpg", "/images/skills/s27-3.jpg"],
     "authorId": "u27",
-    "createdAt": "2026-11-05T10:00:00.000Z"
+    "createdAt": "2026-10-05T10:00:00.000Z"
   },
   {
     "id": "s28",
@@ -117,7 +117,7 @@
     "subcategoryId": "teaching",
     "images": ["/images/skills/s29-1.jpg", "/images/skills/s29-2.jpg"],
     "authorId": "u29",
-    "createdAt": "2026-10-30T10:00:00.000Z"
+    "createdAt": "2026-10-24T10:00:00.000Z"
   },
   {
     "id": "s30",
@@ -128,5 +128,15 @@
     "images": ["/images/skills/s30-1.jpg"],
     "authorId": "u30",
     "createdAt": "2026-07-14T10:00:00.000Z"
+  },
+  {
+    "id": "s31",
+    "title": "Скетчноутинг: конспекты в картинках",
+    "description": "Покажу, как превращать лекции и книги в наглядные заметки из простых рисунков, стрелок и рамок. Рисовать уметь не нужно.",
+    "categoryId": "education",
+    "subcategoryId": "learning",
+    "images": ["/images/skills/s31-1.jpg"],
+    "authorId": "u31",
+    "createdAt": "2026-10-27T10:00:00.000Z"
   }
 ]

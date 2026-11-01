@@ -13,12 +13,12 @@
     "learnSubcategoryIds": ["french", "spanish"],
     "likedUserIds": ["u19", "u22"],
     "likesCount": 83,
-    "createdAt": "2026-11-26T10:00:00.000Z"
+    "createdAt": "2026-06-27T10:00:00.000Z"
   },
   {
     "id": "u19",
     "name": "София",
-    "email": "sofia@example.com",
+    "email": "sofia19@example.com",
     "password": "SkillSwap2025",
     "avatarUrl": "/images/avatars/u19.jpg",
     "birthDate": "1998-03-12T10:00:00.000Z",
@@ -28,7 +28,7 @@
     "teachSkillId": "s19",
     "learnSubcategoryIds": ["spanish", "exam-prep"],
     "likedUserIds": ["u18", "u22"],
-    "likesCount": 45,
+    "likesCount": 52,
     "createdAt": "2026-10-15T10:00:00.000Z"
   },
   {
@@ -44,7 +44,7 @@
     "teachSkillId": "s20",
     "learnSubcategoryIds": ["english", "chinese"],
     "likedUserIds": ["u18", "u21", "u24"],
-    "likesCount": 112,
+    "likesCount": 118,
     "createdAt": "2026-09-20T10:00:00.000Z"
   },
   {
@@ -76,13 +76,13 @@
     "teachSkillId": "s22",
     "learnSubcategoryIds": ["japanese", "exam-prep"],
     "likedUserIds": ["u19", "u23"],
-    "likesCount": 89,
+    "likesCount": 93,
     "createdAt": "2026-08-14T10:00:00.000Z"
   },
   {
     "id": "u23",
     "name": "Алина",
-    "email": "alina@example.com",
+    "email": "alina23@example.com",
     "password": "SkillSwap2025",
     "avatarUrl": "/images/avatars/u23.jpg",
     "birthDate": "1999-09-22T10:00:00.000Z",
@@ -98,7 +98,7 @@
   {
     "id": "u24",
     "name": "Роман",
-    "email": "roman@example.com",
+    "email": "roman24@example.com",
     "password": "SkillSwap2025",
     "avatarUrl": "/images/avatars/u24.jpg",
     "birthDate": "1993-04-10T10:00:00.000Z",
@@ -108,7 +108,7 @@
     "teachSkillId": "s24",
     "learnSubcategoryIds": ["french", "german"],
     "likedUserIds": ["u18", "u21"],
-    "likesCount": 67,
+    "likesCount": 71,
     "createdAt": "2026-07-05T10:00:00.000Z"
   },
   {
@@ -130,7 +130,7 @@
   {
     "id": "u26",
     "name": "Артём",
-    "email": "artem@example.com",
+    "email": "artem26@example.com",
     "password": "SkillSwap2025",
     "avatarUrl": "/images/avatars/u26.jpg",
     "birthDate": "1996-11-22T10:00:00.000Z",
@@ -146,7 +146,7 @@
   {
     "id": "u27",
     "name": "Екатерина",
-    "email": "ekaterina@example.com",
+    "email": "ekaterina27@example.com",
     "password": "SkillSwap2025",
     "avatarUrl": "/images/avatars/u27.jpg",
     "birthDate": "1988-03-07T10:00:00.000Z",
@@ -157,12 +157,12 @@
     "learnSubcategoryIds": ["personal-growth", "learning"],
     "likedUserIds": ["u29"],
     "likesCount": 201,
-    "createdAt": "2026-11-05T10:00:00.000Z"
+    "createdAt": "2026-10-05T10:00:00.000Z"
   },
   {
     "id": "u28",
     "name": "Максим",
-    "email": "maxim@example.com",
+    "email": "maxim28@example.com",
     "password": "SkillSwap2025",
     "avatarUrl": "/images/avatars/u28.jpg",
     "birthDate": "1994-08-14T10:00:00.000Z",
@@ -172,7 +172,7 @@
     "teachSkillId": "s28",
     "learnSubcategoryIds": ["learning", "teaching"],
     "likedUserIds": ["u25", "u27"],
-    "likesCount": 56,
+    "likesCount": 61,
     "createdAt": "2026-08-19T10:00:00.000Z"
   },
   {
@@ -188,8 +188,8 @@
     "teachSkillId": "s29",
     "learnSubcategoryIds": ["coaching", "personal-growth"],
     "likedUserIds": ["u26", "u28", "u30"],
-    "likesCount": 167,
-    "createdAt": "2026-10-30T10:00:00.000Z"
+    "likesCount": 172,
+    "createdAt": "2026-10-24T10:00:00.000Z"
   },
   {
     "id": "u30",
@@ -206,5 +206,21 @@
     "likedUserIds": ["u25", "u29"],
     "likesCount": 92,
     "createdAt": "2026-07-14T10:00:00.000Z"
+  },
+  {
+    "id": "u31",
+    "name": "Елизавета",
+    "email": "elizaveta@example.com",
+    "password": "SkillSwap2025",
+    "avatarUrl": "/images/avatars/u31.jpg",
+    "birthDate": "1996-02-09T10:00:00.000Z",
+    "gender": "female",
+    "cityId": "sochi",
+    "about": "Учусь и учу учиться: веду конспекты в картинках уже пять лет — так запоминается в разы лучше.",
+    "teachSkillId": "s31",
+    "learnSubcategoryIds": ["english", "drawing"],
+    "likedUserIds": ["u25", "u26"],
+    "likesCount": 104,
+    "createdAt": "2026-10-27T10:00:00.000Z"
   }
 ]
