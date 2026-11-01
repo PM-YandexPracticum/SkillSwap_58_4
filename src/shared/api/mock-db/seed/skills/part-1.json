@@ -26,7 +26,7 @@
     "categoryId": "business",
     "subcategoryId": "marketing",
     "authorId": "u06",
-    "images": ["/images/skills/s06-1.jpg"],
+    "images": ["/images/skills/s06-1.jpg", "/images/skills/s06-2.jpg"],
     "createdAt": "2026-04-10T09:15:00.000Z"
   },
   {
@@ -46,7 +46,7 @@
     "categoryId": "business",
     "subcategoryId": "entrepreneurship",
     "authorId": "u08",
-    "images": ["/images/skills/s08-1.jpg", "/images/skills/s08-2.jpg"],
+    "images": ["/images/skills/s08-1.jpg", "/images/skills/s08-2.jpg", "/images/skills/s08-3.jpg"],
     "createdAt": "2026-07-04T08:30:15.000Z"
   },
   {
@@ -56,7 +56,7 @@
     "categoryId": "creativity",
     "subcategoryId": "music",
     "authorId": "u09",
-    "images": ["/images/skills/s09-1.jpg"],
+    "images": ["/images/skills/s09-1.jpg", "/images/skills/s09-2.jpg", "/images/skills/s09-3.jpg"],
     "createdAt": "2026-08-19T21:10:05.000Z"
   },
   {
@@ -86,7 +86,7 @@
     "categoryId": "business",
     "subcategoryId": "marketing",
     "authorId": "u12",
-    "images": ["/images/skills/s12-1.jpg"],
+    "images": ["/images/skills/s12-1.jpg", "/images/skills/s12-2.jpg"],
     "createdAt": "2026-12-25T23:59:59.000Z"
   },
   {
@@ -96,7 +96,7 @@
     "categoryId": "creativity",
     "subcategoryId": "diy",
     "authorId": "u13",
-    "images": ["/images/skills/s13-1.jpg", "/images/skills/s13-2.jpg"],
+    "images": ["/images/skills/s13-1.jpg", "/images/skills/s13-2.jpg", "/images/skills/s13-3.jpg"],
     "createdAt": "2026-01-08T12:00:01.000Z"
   },
   {
@@ -106,7 +106,7 @@
     "categoryId": "business",
     "subcategoryId": "personal-brand",
     "authorId": "u14",
-    "images": ["/images/skills/s14-1.jpg", "/images/skills/s14-2.jpg"],
+    "images": ["/images/skills/s14-1.jpg", "/images/skills/s14-2.jpg", "/images/skills/s14-3.jpg"],
     "createdAt": "2026-02-14T15:30:45.000Z"
   },
   {
@@ -126,7 +126,7 @@
     "categoryId": "business",
     "subcategoryId": "team-management",
     "authorId": "u16",
-    "images": ["/images/skills/s16-1.jpg"],
+    "images": ["/images/skills/s16-1.jpg", "/images/skills/s16-2.jpg", "/images/skills/s16-3.jpg"],
     "createdAt": "2026-04-12T19:15:35.000Z"
   },
   {
@@ -136,7 +136,7 @@
     "categoryId": "creativity",
     "subcategoryId": "video-editing",
     "authorId": "u17",
-    "images": ["/images/skills/s17-1.jpg", "/images/skills/s17-2.jpg"],
+    "images": ["/images/skills/s17-1.jpg", "/images/skills/s17-2.jpg", "/images/skills/s17-3.jpg"],
     "createdAt": "2026-05-20T13:45:00.000Z"
   }
 ]
