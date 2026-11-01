@@ -54,7 +54,7 @@ src/shared/api/mock-db/
 
 ## Моки данных
 
-Данные — внутри приложения, в `src/shared/api/mock-db/seed/` по 2–3 образца на сущность. Изменения сохраняются в localStorage.
+Данные — внутри приложения, в `src/shared/api/mock-db/seed/`: 45 пользователей с навыками и фото, 6 категорий с 42 подкатегориями, 17 городов, образцы обменов и уведомлений. Изменения сохраняются в localStorage.
 Читать и писать данные — только через `entities/*/api`: потом этот слой можно заменить на настоящую БД. Демо-вход — в [docs/architecture/fsd.md](docs/architecture/fsd.md).
 
 Структура объектов описана в `model/types.ts` соответствующей сущности: `src/entities/user`, `skill`, `category`, `city`, `exchange`, `notification`.
