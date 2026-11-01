@@ -6,6 +6,7 @@
   height: 24px;
 }
 
-.liked {
-  color: var(--color-accent);
+.iconButton:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
 }
