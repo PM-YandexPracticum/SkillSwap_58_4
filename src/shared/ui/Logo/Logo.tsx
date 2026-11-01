@@ -1,5 +1,5 @@
 import logoIcon from '../../assets/icons/logo.svg'
-import './Logo.css'
+import styles from './Logo.module.css'
 
 export interface LogoProps {
   withText?: boolean
@@ -7,13 +7,9 @@ export interface LogoProps {
 
 export function Logo({ withText = true }: LogoProps) {
   return (
-    <a
-      className="logo"
-      href="/"
-      aria-label={withText ? undefined : 'SkillSwap — главная'}
-    >
-      <img className="logo__icon" src={logoIcon} alt="" width={40} height={40} />
-      {withText && <span className="logo__text">SkillSwap</span>}
+    <a className={styles.logo} href="/" aria-label={withText ? undefined : 'SkillSwap — главная'}>
+      <img className={styles.icon} src={logoIcon} alt="" width={40} height={40} />
+      {withText && <span className={styles.text}>SkillSwap</span>}
     </a>
   )
 }
