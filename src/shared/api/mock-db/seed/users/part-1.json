@@ -26,7 +26,7 @@
     "cityId": "spb",
     "about": "Люблю рисовать и учиться новому. Всегда открыта к интересным предложениям!",
     "teachSkillId": "s05",
-    "learnSubcategoryIds": ["management", "learning", "yoga"],
+    "learnSubcategoryIds": ["project-management", "learning", "yoga"],
     "likedUserIds": ["u07", "u08", "u09"],
     "likesCount": 89,
     "createdAt": "2026-02-28T14:05:12.000Z"
@@ -58,7 +58,7 @@
     "cityId": "ekb",
     "about": "Профессиональный фотограф. Научу видеть красоту в обычных вещах.",
     "teachSkillId": "s07",
-    "learnSubcategoryIds": ["finance", "copywriting", "mental-health"],
+    "learnSubcategoryIds": ["home-finance", "creative-writing", "mental-health"],
     "likedUserIds": ["u04", "u10"],
     "likesCount": 230,
     "createdAt": "2026-05-22T18:45:30.000Z"
@@ -74,7 +74,7 @@
     "cityId": "kzn",
     "about": "",
     "teachSkillId": "s08",
-    "learnSubcategoryIds": ["interior", "video", "work-life-balance"],
+    "learnSubcategoryIds": ["diy", "video-editing", "work-life-balance"],
     "likedUserIds": ["u05", "u11"],
     "likesCount": 67,
     "createdAt": "2026-07-04T08:30:15.000Z"
@@ -122,7 +122,7 @@
     "cityId": "vld",
     "about": "Помогу прокачать твой личный бренд и найти себя в медиа.",
     "teachSkillId": "s11",
-    "learnSubcategoryIds": ["sculpture", "public-speaking", "plants"],
+    "learnSubcategoryIds": ["diy", "acting", "plants"],
     "likedUserIds": ["u15", "u16"],
     "likesCount": 310,
     "createdAt": "2026-11-11T16:20:00.000Z"
@@ -170,7 +170,7 @@
     "cityId": "irk",
     "about": "",
     "teachSkillId": "s14",
-    "learnSubcategoryIds": ["drawing", "copywriting", "home-finance"],
+    "learnSubcategoryIds": ["drawing", "creative-writing", "home-finance"],
     "likedUserIds": ["u09"],
     "likesCount": 144,
     "createdAt": "2026-02-14T15:30:45.000Z"
@@ -202,7 +202,7 @@
     "cityId": "perm",
     "about": "",
     "teachSkillId": "s16",
-    "learnSubcategoryIds": ["video", "management", "teaching"],
+    "learnSubcategoryIds": ["video-editing", "project-management", "teaching"],
     "likedUserIds": ["u06", "u10"],
     "likesCount": 203,
     "createdAt": "2026-04-12T19:15:35.000Z"
@@ -218,7 +218,7 @@
     "cityId": "yar",
     "about": "Монтирую видео, собираю подкасты. Давай сделаем что-нибудь крутое вместе!",
     "teachSkillId": "s17",
-    "learnSubcategoryIds": ["finance", "photo", "mindfulness"],
+    "learnSubcategoryIds": ["home-finance", "photo", "mindfulness"],
     "likedUserIds": ["u07", "u08", "u09", "u10", "u11", "u12"],
     "likesCount": 421,
     "createdAt": "2026-05-20T13:45:00.000Z"
