@@ -5,7 +5,7 @@
     "description": "Думаю и говорю что думаю на английском ,молчу на остальных языках.",
     "categoryId": "languages",
     "subcategoryId": "english",
-    "images": ["/images/skills/s14-1.jpg", "/images/skills/s14-2.jpg"],
+    "images": ["/images/skills/s18-1.jpg", "/images/skills/s18-2.jpg"],
     "authorId": "u14",
     "createdAt": "2026-06-30T10:00:00.000Z"
   },
@@ -68,5 +68,65 @@
     "images": ["/images/skills/s24-1.jpg", "/images/skills/s24-2.jpg"],
     "authorId": "u24",
     "createdAt": "2026-07-05T10:00:00.000Z"
+  },
+  {
+    "id": "s25",
+    "title": "Личностное развитие и саморефлексия",
+    "description": "Помогу разобраться в себе, поставить цели и найти внутренние ресурсы. Работа с убеждениями и мотивацией.",
+    "categoryId": "education",
+    "subcategoryId": "personal-growth",
+    "images": ["/images/skills/s25-1.jpg", "/images/skills/s25-2.jpg"],
+    "authorId": "u25",
+    "createdAt": "2026-10-12T10:00:00.000Z"
+  },
+  {
+    "id": "s26",
+    "title": "Как учиться эффективно",
+    "description": "Техники запоминания, интервальные повторения, мнемотехника. Научу учиться быстрее и с удовольствием.",
+    "categoryId": "education",
+    "subcategoryId": "learning",
+    "images": ["/images/skills/s26-1.jpg"],
+    "authorId": "u26",
+    "createdAt": "2026-09-28T10:00:00.000Z"
+  },
+  {
+    "id": "s27",
+    "title": "Когнитивные техники и мышление",
+    "description": "Развитие критического мышления, работа с когнитивными искажениями, техники принятия решений.",
+    "categoryId": "education",
+    "subcategoryId": "cognitive",
+    "images": ["/images/skills/s27-1.jpg", "/images/skills/s27-2.jpg", "/images/skills/s27-3.jpg"],
+    "authorId": "u27",
+    "createdAt": "2026-11-05T10:00:00.000Z"
+  },
+  {
+    "id": "s28",
+    "title": "Скорочтение: читай в 3 раза быстрее",
+    "description": "Уберу регрессию, расширю поле зрения, научу понимать текст с первого прочтения. Практика на реальных книгах.",
+    "categoryId": "education",
+    "subcategoryId": "speed-reading",
+    "images": ["/images/skills/s28-1.jpg"],
+    "authorId": "u28",
+    "createdAt": "2026-08-19T10:00:00.000Z"
+  },
+  {
+    "id": "s29",
+    "title": "Навыки преподавания и менторства",
+    "description": "Как объяснять сложное простыми словами, удерживать внимание, давать обратную связь. Для будущих учителей и наставников.",
+    "categoryId": "education",
+    "subcategoryId": "teaching",
+    "images": ["/images/skills/s29-1.jpg", "/images/skills/s29-2.jpg"],
+    "authorId": "u29",
+    "createdAt": "2026-10-30T10:00:00.000Z"
+  },
+  {
+    "id": "s30",
+    "title": "Коучинг: задавай правильные вопросы",
+    "description": "Основы коучингового подхода, активное слушание, мощные вопросы. Помогу стать лучшим наставником для других.",
+    "categoryId": "education",
+    "subcategoryId": "coaching",
+    "images": ["/images/skills/s30-1.jpg"],
+    "authorId": "u30",
+    "createdAt": "2026-07-14T10:00:00.000Z"
   }
 ]
