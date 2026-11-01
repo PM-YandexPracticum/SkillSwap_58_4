@@ -1,10 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { MemoryRouter } from 'react-router-dom'
 import { Logo } from './Logo'
 
 const meta = {
   title: 'shared/ui/Logo',
   component: Logo,
   tags: ['autodocs'],
+  decorators: [(Story) => <MemoryRouter><Story /></MemoryRouter>],
 } satisfies Meta<typeof Logo>
 
 export default meta
