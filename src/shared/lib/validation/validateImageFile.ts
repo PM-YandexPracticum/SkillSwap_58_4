@@ -1,8 +1,23 @@
+import { VALIDATION } from '../../config/validation'
+
 /**
  * Проверяет картинку перед загрузкой: тип (jpg, png, webp) и размер (до 1 МБ) из `VALIDATION.IMAGE`.
- * @returns текст ошибки для пользователя или null, если файл подходит
+ * Тексты ошибок - из `docs/rules/validation.md`, чтобы совпадали с yup-схемами форм.
+ *
+ * @param file - файл, выбранный пользователем или перетащенный в dropzone
+ * @returns текст ошибки для пользователя или `null`, если файл подходит
  */
-export function validateImageFile(_file: File): string | null {
-  // TODO: реализовать + unit-тесты (не тот тип, слишком большой, подходящий)
-  throw new Error('Not implemented: validateImageFile')
+export function validateImageFile(file: File): string | null {
+  // `as const` сузил TYPES до литералов — приводим к массиву строк, чтобы includes принял file.type
+  const allowedTypes: readonly string[] = VALIDATION.IMAGE.TYPES
+
+  if (!allowedTypes.includes(file.type)) {
+    return 'Только JPG, PNG или WEBP'
+  }
+
+  if (file.size > VALIDATION.IMAGE.MAX_SIZE_BYTES) {
+    return 'Файл больше 1 МБ'
+  }
+
+  return null
 }
