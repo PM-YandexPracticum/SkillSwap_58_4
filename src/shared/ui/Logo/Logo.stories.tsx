@@ -1,23 +1,35 @@
+import type { Meta, StoryObj } from '@storybook/react-vite'
+import { MemoryRouter } from 'react-router-dom'
+
 import { Logo } from './Logo'
 
 /**
- * Stories компонента Logo — ЗАГЛУШКА. Пакеты Storybook ставит задача P1-11;
- * после неё добавить типы: `const meta: Meta<typeof Logo>` и `export const Default: StoryObj<typeof meta>`.
- *
- * Нужны stories для состояний из макета: с текстом, только иконка.
- * Правила — docs/rules/storybook.md.
+ * Логотип из шапки сайта (1:2870).
+ * Внутри `Link`, поэтому stories обёрнуты в `MemoryRouter`.
  */
 const meta = {
   title: 'shared/ui/Logo',
   component: Logo,
   tags: ['autodocs'],
-}
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
+} satisfies Meta<typeof Logo>
 
 export default meta
 
-/** Базовое состояние */
-export const Default = {
+type Story = StoryObj<typeof meta>
+
+/** Иконка и текст — как в шапке (1:2870) */
+export const Default: Story = {
   args: { withText: true },
 }
 
-// TODO: по одной story на каждое состояние из списка выше
+/** Только иконка — у ссылки остаётся подпись для скринридера */
+export const IconOnly: Story = {
+  args: { withText: false },
+}
