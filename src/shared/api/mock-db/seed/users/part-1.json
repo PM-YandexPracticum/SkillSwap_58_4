@@ -125,7 +125,7 @@
     "learnSubcategoryIds": ["diy", "acting", "plants"],
     "likedUserIds": ["u15", "u16"],
     "likesCount": 310,
-    "createdAt": "2026-11-11T16:20:00.000Z"
+    "createdAt": "2026-09-09T16:20:00.000Z"
   },
   {
     "id": "u12",
@@ -141,7 +141,7 @@
     "learnSubcategoryIds": ["photo", "music", "cognitive"],
     "likedUserIds": ["u02", "u03", "u17"],
     "likesCount": 76,
-    "createdAt": "2026-12-25T23:59:59.000Z"
+    "createdAt": "2026-10-08T23:59:59.000Z"
   },
   {
     "id": "u13",
