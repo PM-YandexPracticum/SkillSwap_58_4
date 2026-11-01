@@ -1,1 +1,147 @@
-[]
+[
+  {
+    "id": "s32",
+    "title": "Быстрая уборка и организация пространства",
+    "description": "Покажу систему «15 минут в день», которая держит дом в порядке без генеральных уборок. Разберём зоны, хранение и ритуалы.",
+    "categoryId": "home",
+    "subcategoryId": "cleaning",
+    "images": ["/images/skills/s32-1.jpg", "/images/skills/s32-2.jpg", "/images/skills/s32-3.jpg"],
+    "authorId": "u32",
+    "createdAt": "2026-06-02T09:15:00.000Z"
+  },
+  {
+    "id": "s33",
+    "title": "Функциональный тренинг дома",
+    "description": "Тренировки без зала: сила, выносливость и подвижность с собственным весом и минимальным инвентарём.",
+    "categoryId": "health",
+    "subcategoryId": "fitness",
+    "images": ["/images/skills/s33-1.jpg"],
+    "authorId": "u33",
+    "createdAt": "2026-06-11T14:40:00.000Z"
+  },
+  {
+    "id": "s34",
+    "title": "Простое и полезное питание",
+    "description": "Соберём рацион без запретов: быстрые рецепты, сбалансированные тарелки и заготовки на неделю.",
+    "categoryId": "health",
+    "subcategoryId": "nutrition",
+    "images": ["/images/skills/s34-1.jpg", "/images/skills/s34-2.jpg", "/images/skills/s34-3.jpg"],
+    "authorId": "u34",
+    "createdAt": "2026-06-18T08:05:00.000Z"
+  },
+  {
+    "id": "s35",
+    "title": "Домашние растения для начинающих",
+    "description": "Как выбрать растения под свой свет и график, поливать без залива и пересаживать без стресса.",
+    "categoryId": "home",
+    "subcategoryId": "plants",
+    "images": ["/images/skills/s35-1.jpg", "/images/skills/s35-2.jpg"],
+    "authorId": "u35",
+    "createdAt": "2026-06-25T17:30:00.000Z"
+  },
+  {
+    "id": "s36",
+    "title": "Йога и медитация для баланса",
+    "description": "Мягкие практики для тела и внимания: дыхание, базовые асаны и короткие медитации на каждый день.",
+    "categoryId": "health",
+    "subcategoryId": "yoga",
+    "images": ["/images/skills/s36-1.jpg", "/images/skills/s36-2.jpg", "/images/skills/s36-3.jpg"],
+    "authorId": "u36",
+    "createdAt": "2026-07-01T11:20:00.000Z"
+  },
+  {
+    "id": "s37",
+    "title": "Хранение вещей: система, а не хаос",
+    "description": "Разберём шкафы и кладовку по принципу «видно, доступно, удобно». Научу подбирать контейнеры и поддерживать порядок.",
+    "categoryId": "home",
+    "subcategoryId": "storage",
+    "images": ["/images/skills/s37-1.jpg", "/images/skills/s37-2.jpg"],
+    "authorId": "u37",
+    "createdAt": "2026-07-09T07:45:00.000Z"
+  },
+  {
+    "id": "s38",
+    "title": "Ментальное здоровье: базовые опоры",
+    "description": "Как замечать выгорание, выстраивать границы и использовать простые практики самопомощи.",
+    "categoryId": "health",
+    "subcategoryId": "mental-health",
+    "images": ["/images/skills/s38-1.jpg", "/images/skills/s38-2.jpg", "/images/skills/s38-3.jpg"],
+    "authorId": "u38",
+    "createdAt": "2026-07-16T16:10:00.000Z"
+  },
+  {
+    "id": "s39",
+    "title": "Домашние финансы без стресса",
+    "description": "Бюджет, подушка безопасности и накопления: пошаговая система, которая работает при любом доходе.",
+    "categoryId": "home",
+    "subcategoryId": "home-finance",
+    "images": ["/images/skills/s39-1.jpg", "/images/skills/s39-2.jpg"],
+    "authorId": "u39",
+    "createdAt": "2026-07-24T13:55:00.000Z"
+  },
+  {
+    "id": "s40",
+    "title": "Осознанность в повседневности",
+    "description": "Практики внимания в быту: дыхание, сканирование тела, mindful-паузы среди задач.",
+    "categoryId": "health",
+    "subcategoryId": "mindfulness",
+    "images": [
+      "/images/skills/s40-1.jpg",
+      "/images/skills/s40-2.jpg",
+      "/images/skills/s40-3.jpg",
+      "/images/skills/s40-4.jpg"
+    ],
+    "authorId": "u40",
+    "createdAt": "2026-08-03T10:25:00.000Z"
+  },
+  {
+    "id": "s41",
+    "title": "Баланс жизни и работы",
+    "description": "Как отделять рабочее от личного, планировать отдых и не чувствовать вины за паузы.",
+    "categoryId": "health",
+    "subcategoryId": "work-life-balance",
+    "images": ["/images/skills/s41-1.jpg", "/images/skills/s41-2.jpg"],
+    "authorId": "u41",
+    "createdAt": "2026-08-12T18:00:00.000Z"
+  },
+  {
+    "id": "s42",
+    "title": "Приготовление еды на неделю",
+    "description": "Меню, заготовки и хранение: как готовить раз в неделю и есть разнообразно без фастфуда.",
+    "categoryId": "home",
+    "subcategoryId": "cooking",
+    "images": ["/images/skills/s42-1.jpg", "/images/skills/s42-2.jpg", "/images/skills/s42-3.jpg"],
+    "authorId": "u42",
+    "createdAt": "2026-08-19T09:40:00.000Z"
+  },
+  {
+    "id": "s43",
+    "title": "Мелкий ремонт своими руками",
+    "description": "От полки до смесителя: базовый инструмент, безопасность и уверенность в домашних задачах.",
+    "categoryId": "home",
+    "subcategoryId": "repair",
+    "images": ["/images/skills/s43-1.jpg"],
+    "authorId": "u43",
+    "createdAt": "2026-08-27T15:15:00.000Z"
+  },
+  {
+    "id": "s44",
+    "title": "Сон и восстановление",
+    "description": "Гигиена сна, вечерние ритуалы и режим, который реально снижает усталость.",
+    "categoryId": "health",
+    "subcategoryId": "sleep",
+    "images": ["/images/skills/s44-1.jpg", "/images/skills/s44-2.jpg", "/images/skills/s44-3.jpg"],
+    "authorId": "u44",
+    "createdAt": "2026-09-05T12:35:00.000Z"
+  },
+  {
+    "id": "s45",
+    "title": "Уборка как привычка, а не подвиг",
+    "description": "Мини-ритуалы и чек-листы, которые помогают поддерживать чистоту без выгорания.",
+    "categoryId": "home",
+    "subcategoryId": "cleaning",
+    "images": ["/images/skills/s45-1.jpg", "/images/skills/s45-2.jpg"],
+    "authorId": "u45",
+    "createdAt": "2026-09-13T08:50:00.000Z"
+  }
+]
