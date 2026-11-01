@@ -23,7 +23,7 @@
 | P2-01 Logo и Loader 🟢 | Stanislave0 | 31.10 | на правках после ревью ([#113](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/113)) |
 | P2-05 Поля Input и Textarea 🟢 | Laurovsky | 31.10 | срок 🟢 — сегодня |
 | P2-07 Checkbox и RadioGroup 🟡 | Laurovsky | 31.10 | в срок; ⚠️ вторая задача у одного исполнителя |
-| P2-11 Stepper 🟢 | alicevdr | 01.11 | в срок |
+| P2-11 Stepper 🟢 | muntaniolirina | 01.11 | в срок |
 
 Назначена заранее, начнётся позже: P4-10 👑 перенос в `public/db` (kirill-ai-dev) — после P4-01, P4-06, P4-07 и моков P1-06…P1-08.
 
