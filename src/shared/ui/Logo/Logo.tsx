@@ -1,4 +1,4 @@
-import logoIcon from '../../assets/icons/brands/logo.svg'
+import logoIcon from '@/shared/assets/icons/brands/logo.svg'
 import { Link } from 'react-router-dom'
 import styles from './Logo.module.css'
 
