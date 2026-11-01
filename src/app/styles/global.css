@@ -2,11 +2,13 @@
 :root {
   /* Colors */
   --color-text: #253017;
+  --color-text-inverse: #FFF; /* контрастный цвет текста */
   --color-bg: #F9FAF7; /* основной фон страницы */
   --color-bg-secondary: #FFF; /* фон карточек, выпадающих полей */
   --color-neutral: #69735D;
   --color-border: var(--color-neutral); /* границы форм */
-  --color-hover: var(--color-neutral); /* hover-эффекты */
+  --color-hover: var(--color-accent-soft); /* hover-эффекты */
+  --color-disabled: #E4E8DF; /* Disabled state */
   --color-accent: #ABD27A; /* кнопки, чекбокс, шаги */
   --color-accent-strong: #508826; /* фильтры, календарь */
   --color-accent-soft: #DEEBC5; /* акцентные плашки и выделения */

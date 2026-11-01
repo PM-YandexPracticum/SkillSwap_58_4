@@ -30,6 +30,11 @@ app → pages → widgets → features → entities → shared
   import { UserCard } from '@/entities/user/ui/UserCard'   // ✗
   ```
 - `shared/ui` — без общего barrel-файла, импорт по компоненту: `@/shared/ui/Button`.
+- Внутри своего слайса — относительные импорты (`./model`, `../ui/UserCard`).
+
+Эти правила проверяет `npm run lint` (правило `no-restricted-imports` в `eslint.config.js`, задача P1-12):
+нарушение — ошибка с подсказкой, как сделать правильно. Единственное исключение — тесты (`*.test.ts(x)`)
+могут импортировать `@/app/test`, где лежит `renderWithProviders`.
 
 ## 2. Структура слайса
 
@@ -134,7 +139,7 @@ entities/user/
 | Страница навыка — обмен предложен (1:1919): кнопка «🕓 Обмен предложен», точка на колокольчике | `pages/skill` | `features/exchange-propose`, `widgets/header` |
 | Каталог — обмен предложен (1:2106) | `pages/catalog` | `entities/exchange/ExchangeStatusBadge` |
 | Каталог — нажал на иконку (1:2328, 1:2281), «прочитать все» (1:2239) | — | `widgets/notifications-panel`, `features/notifications-read` |
-| Каталог — тосты «Олег принял ваш обмен» (1:2148, 1:1975, 1:1976) | — | **не делаем** — уведомления номинальные (решение наставника) |
+| Каталог — тосты (1:2148, 1:1975, 1:1976): берём вид, текст «Вы предложили обмен …» (ТЗ наставника); «принял обмен» не делаем | — | `shared/ui/Toast`, `app/providers/ToastProvider` (P2-18) |
 | Избранное (1:15855) | `pages/favorites` `/favorites` (только вошедшим) | `filters-panel`, `offer-card` |
 | Профиль — личные данные (1:2370) | `pages/profile` → `personal` | `profile-sidebar`, `features/profile-edit`, `features/avatar-upload` |
 | Вход (1:2400, 1:15065), ошибка (1:2473, 1:2627) | `pages/login` `/login` | `features/auth-by-email`, `features/auth-oauth` |
@@ -142,7 +147,7 @@ entities/user/
 | Регистрация 2 шаг: 1:1497, календарь 1:1541, пол 1:1585, город 1:1629, категории 1:1673, подкатегории 1:1717 | `/register/step-2` | `features/register/StepProfile`, `features/avatar-upload`, `DatePicker`, `Select` (searchable), `CategorySubcategorySelect` (`multiple`, на `MultiSelect`) |
 | Регистрация 3 шаг (1:1761) | `/register/step-3` | `features/register/StepSkill`, `features/skill-create/SkillForm`, `FileDropzone` |
 | Регистрация 3 шаг — превью «Ваше предложение» (1:1799) | `/register/step-3` | `features/skill-create/SkillPreviewModal` |
-| «Ваше предложение создано»: через «Зарегистрироваться» (1:2950), через «Предложить обмен» (1:3052) | возврат на `returnTo` | `features/skill-create/OfferCreatedModal` |
+| «Ваше предложение создано» (1:2950); путь через «Предложить обмен» (1:3052) не делаем — гость идёт на вход | каталог после регистрации | `features/skill-create/OfferCreatedModal` |
 | О проекте (1:3249) — страница команды | `pages/about` `/about` | `pages/about/config/team.ts` |
 | 404 (1:2048), 500 (1:2077) | `pages/not-found`, `pages/server-error` | — |
 
@@ -151,7 +156,7 @@ entities/user/
 «Если пользователь регистрировался через кнопку «Зарегистрироваться» / «Предложить обмен»» — от этого зависит, куда он вернётся.
 
 **Где макет и наставник расходятся — делаем как сказал наставник:**
-- уведомления: в макете «Николай **принял** ваш обмен», «Очистить», тосты — у нас номинальные «Вы предложили обмен …» и «Прочитать все»;
+- уведомления: в макете «Николай **принял** ваш обмен» — у нас номинальные «Вы предложили обмен …»; «Прочитать все», «Очистить» и тосты — делаем (ТЗ наставника 31.10);
 - секции у вошедшего: в 1:2148 / 1:2106 «Точное совпадение / Новые идеи», в 1:2904 / 1:2996 «Популярное / Новое» — у нас «Популярное / Новое / Рекомендуем».
 
 ## 6. Объём работ: решения команды и наставника
