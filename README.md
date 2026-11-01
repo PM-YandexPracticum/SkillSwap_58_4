@@ -79,6 +79,10 @@ src/shared/api/mock-db/
 | `npm run commit` | Коммит по шагам в формате Conventional Commits |
 | `npm run verify` | Линтер и тесты — то же, что хук перед push |
 
+**Storybook не запускается на Windows** с ошибкой `ERR_DLOPEN_FAILED`: не хватает системной библиотеки Microsoft.
+Установи [Microsoft Visual C++ Redistributable 2015–2022 (x64)](https://aka.ms/vs/17/release/vc_redist.x64.exe) и перезапусти терминал.
+`npm ci` и `npm rebuild` здесь не помогают.
+
 ---
 
 ## Роутинг
