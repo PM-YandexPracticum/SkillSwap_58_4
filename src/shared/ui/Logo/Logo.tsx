@@ -1,19 +1,20 @@
-import logoIcon from '@/shared/assets/icons/brands/logo.svg'
 import { Link } from 'react-router-dom'
+
+import logoIcon from '@/shared/assets/icons/brands/logo.svg'
 import styles from './Logo.module.css'
 
-/**
- * Логотип SkillSwap (иконка + текст), ведёт на главную.
- * @see https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2870&t=9dj85xUsjNrqHimT-1
- */
-
-/**
- * Показывать ли текст рядом с иконкой
- */
 export interface LogoProps {
+  /** Показывать ли текст «SkillSwap» рядом с иконкой. По умолчанию `true` */
   withText?: boolean
 }
 
+/**
+ * Логотип SkillSwap (иконка + текст), ведёт на главную.
+ *
+ * Без текста (`withText={false}`) у ссылки остаётся подпись для скринридера «SkillSwap — главная».
+ *
+ * @see Figma: «Шапка» (1:2870)
+ */
 export function Logo({ withText = true }: LogoProps) {
   return (
     <Link className={styles.logo} to="/" aria-label={withText ? undefined : 'SkillSwap — главная'}>

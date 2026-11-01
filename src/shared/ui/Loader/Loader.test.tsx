@@ -1,8 +1,17 @@
 import { render, screen } from '@testing-library/react'
+
 import { Loader } from './Loader'
 
-it('renders a status element', () => {
-  render(<Loader />)
+describe('Loader', () => {
+  it('сообщает скринридеру о загрузке', () => {
+    render(<Loader />)
 
-  expect(screen.getByRole('status')).toBeInTheDocument()
+    expect(screen.getByRole('status', { name: 'Загрузка' })).toBeInTheDocument()
+  })
+
+  it('добавляет внешний className', () => {
+    render(<Loader className="centered" />)
+
+    expect(screen.getByRole('status')).toHaveClass('centered')
+  })
 })
