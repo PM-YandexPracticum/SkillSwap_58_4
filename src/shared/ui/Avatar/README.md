@@ -5,10 +5,20 @@
 
 ## Зачем эта папка
 
-UI-компонент **Avatar**. Круглый аватар пользователя с fallback-инициалами.
+UI-компонент **Avatar**. Круглый аватар пользователя с заглушкой вместо отсутствующего фото.
 
 ## Что внутри
 
-- `Avatar.stories.tsx` — Stories компонента Avatar — ЗАГЛУШКА. Пакеты Storybook ставит задача P1-11; после неё добавить типы: `const meta: Meta<typeof Avatar>` и `export const Default: StoryObj<typeof meta>`
-- `Avatar.tsx` — Круглый аватар пользователя с fallback-инициалами
+- `Avatar.module.css` — Стили. Размеры — локальные переменные `--avatar-size`: `sm` 48px, `md` 100px, `lg` 244px
+- `Avatar.stories.tsx` — Stories компонента: `Default` (`md`), `Small` (`sm`), `Large` (`lg`), `NoPhoto` (заглушка без фото)
+- `Avatar.test.tsx` — Тесты: с фото и с заглушкой
+- `Avatar.tsx` — Круглый аватар пользователя. Без фото показывается заглушка `IMAGE_PLACEHOLDERS.AVATAR`; путь к локальному изображению дополняется `BASE_URL` через `resolveImageUrl`
 - `index.ts` — публичный API — импортировать снаружи только отсюда
+
+## Размеры
+
+| Размер | Где | Figma |
+|---|---|---|
+| `sm` | Шапка | 1:2996 |
+| `md` | Карточка каталога (по умолчанию) | 1:2861 |
+| `lg` | Профиль | 1:2370 |

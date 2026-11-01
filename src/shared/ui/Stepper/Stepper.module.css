@@ -1,0 +1,45 @@
+.stepper {
+  /* Геометрия полосок — локально, в одном месте; Figma: 1:2548 */
+  --line-width: 60px;
+  --line-height: 4px;
+  --line-radius: 8px;
+
+  /* Токенов line-height и letter-spacing в global.css нет , поэтому созданы локально — см. вопрос в PR */
+  --stepper-title-line-height: 28px; /* Figma: 1:2548 */
+  --stepper-title-letter-spacing: -0.011em; /* Figma: 1:2548 / -1.1% при 24px */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-12); /* 12px */
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-title); /* "Jost", "Helvetica", "Arial", sans-serif */
+  font-size: var(--font-size-xl); /* 1.5rem / 24px */
+  font-weight: var(--font-weight-medium); /* 500 */
+  line-height: var(--stepper-title-line-height); /* 28px */
+  letter-spacing: var(--stepper-title-letter-spacing); /* -0.011em */
+  color: var(--color-text);
+}
+
+.lines {
+  display: flex;
+  gap: var(--space-16); /* 16px */
+}
+
+.done,
+.todo {
+  width: var(--line-width); /* 60px */
+  height: var(--line-height); /* 4px */
+  border-radius: var(--line-radius); /* 8px */
+}
+
+.done {
+  background-color: var(--color-accent); /* #ABD27A */
+}
+
+.todo {
+  background-color: var(--color-disabled); /* #E4E8DF */
+}

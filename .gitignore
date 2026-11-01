@@ -10,6 +10,11 @@ dist-ssr
 # Coverage
 coverage
 
+# Playwright
+test-results
+playwright-report
+playwright/.cache
+
 # Env
 .env
 .env.local
@@ -25,6 +30,7 @@ pnpm-debug.log*
 # Editor
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
 *.suo
 *.ntvs*
