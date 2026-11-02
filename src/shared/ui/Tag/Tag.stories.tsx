@@ -38,11 +38,20 @@ export const PlusTwo: Story = {
 };
 
 const colors: TagColor[] = ['business', 'creativity', 'languages', 'education', 'health', 'home', 'more'];
+const labels: Record<TagColor, string> = {
+  business: 'Бизнес и карьера',
+  creativity: 'Творчество и искусство',
+  languages: 'Иностранные языки',
+  education: 'Образование и развитие',
+  health: 'Здоровье и лайфстайл',
+  home: 'Дом и уют',
+  more: '+2',
+}
 
 export const AllCategories: Story = {
   render: () => (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-      {colors.map((c) => <Tag key={c} label={c} color={c} />)}
+      {colors.map((c) => <Tag key={c} label={labels[c]} color={c} />)}
     </div>
   ),
 };
