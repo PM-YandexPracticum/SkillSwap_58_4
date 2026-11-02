@@ -1,11 +1,11 @@
-import { createMockCollection, SEED } from '@/shared/api'
+import { createMockCollection, loadSeed } from '@/shared/api'
 import type { Skill } from '../model/types'
 
 /**
  * Хранилище навыков.
  * Единственное место, которое знает, откуда берутся данные. Переход на настоящую БД — меняется только этот файл.
  */
-const skills = createMockCollection<Skill>('skills', SEED.skills as readonly Skill[])
+const skills = createMockCollection<Skill>('skills', loadSeed<Skill>('skills'))
 
 /** Все навыки */
 export function getSkills(): Promise<Skill[]> {

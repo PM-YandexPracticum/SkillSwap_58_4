@@ -51,7 +51,7 @@ const list = [createUser({ id: 'u1' }), createUser({ id: 'u2', likesCount: 99 })
 - Импорт — из `@/entities/<сущность>/testing`. В `index.ts` под теми же именами лежат функции api, которые пишут в «базу».
 - Линтер разрешает `…/testing` только в тестах (`*.test.ts(x)`) и stories (`*.stories.tsx`); в коде приложения фабрик быть не должно.
 - У всех пользователей фабрики одинаковый `id` (`u-test`). В списке задавай `id` сам.
-- Фабрики используют и stories (см. [storybook.md](storybook.md)). Не копируй куски JSON из `seed/`.
+- Фабрики используют и stories (см. [storybook.md](storybook.md)). Не копируй куски JSON из `public/db/`.
 
 ### `renderWithProviders`
 
@@ -80,6 +80,7 @@ await user.click(screen.getByRole('button', { name: 'Добавить в изб�
 - **Тесты независимы.** Каждый можно запустить отдельно и в любом порядке, общего изменяемого состояния нет.
   После каждого теста `src/setupTests.ts` сам очищает localStorage и вызывает `resetMockDb()` — изменения «базы», сессия и тема в следующий тест не попадают.
 - **Ищем элементы, как пользователь:** `getByRole('button', { name: '…' })`, `getByLabelText`, `getByText`. `data-testid` — в крайнем случае.
+- «База» в тестах читает файлы `public/db` напрямую (это делает `src/setupTests.ts`), сервер не нужен. Проверить ошибку загрузки — `vi.spyOn(globalThis, 'fetch').mockRejectedValue(…)`.
 - Данные «базы» приходят с задержкой (`MOCK_DB.DELAY_MS`). То, что появится после загрузки, ищи через `await screen.findBy…`.
 - Одна проверяемая мысль на `it`. Повторяющиеся случаи — таблицей через `it.each` (см. образец).
 - Тест сначала должен упасть: сломай код на секунду и убедись, что тест это заметил.

@@ -45,7 +45,9 @@ src/
 
 src/shared/api/mock-db/
 ├── createMockCollection.ts   # «база» в браузере: образцы + изменения в localStorage
-└── seed/                     # начальные данные: 45 пользователей с навыками, справочники
+└── loadSeed.ts               # загрузка образцов из public/db через fetch
+
+public/db/                    # образцы данных: users, skills, categories, cities, exchanges, notifications (.json)
 ```
 
 Импорт только вниз: `app → pages → widgets → features → entities → shared`, и только через `index.ts` слайса.
@@ -54,7 +56,7 @@ src/shared/api/mock-db/
 
 ## Моки данных
 
-Данные — внутри приложения, в `src/shared/api/mock-db/seed/`: 45 пользователей с навыками и фото, 6 категорий с 42 подкатегориями, 17 городов, образцы обменов и уведомлений. Изменения сохраняются в localStorage.
+Образцы данных — JSON-файлы в `public/db/` (по ТЗ наставника): 45 пользователей с навыками и фото, 6 категорий с 42 подкатегориями, 17 городов, образцы обменов и уведомлений. «База» скачивает файл при первом обращении к коллекции, изменения сохраняются в localStorage.
 Читать и писать данные — только через `entities/*/api`: потом этот слой можно заменить на настоящую БД. Демо-вход — в [docs/architecture/fsd.md](docs/architecture/fsd.md).
 
 Структура объектов описана в `model/types.ts` соответствующей сущности: `src/entities/user`, `skill`, `category`, `city`, `exchange`, `notification`.
