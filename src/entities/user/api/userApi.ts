@@ -18,8 +18,9 @@ export function getUserById(id: string): Promise<User | undefined> {
 }
 
 /**
- * Регистрация нового пользователя.
- * @throws {Error} если email уже занят (проверка без учёта регистра — TODO)
+ * Регистрация нового пользователя — сохраняет его в «базу» как есть.
+ * Email здесь не проверяется: «Email уже используется» показывает форма шага 1 (P6-02) до вызова.
+ * @throws {Error} если пользователь с таким id уже есть или в браузере не хватает места
  */
 export function createUser(user: User): Promise<User> {
   return users.create(user)
