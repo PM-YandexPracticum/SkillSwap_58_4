@@ -4,13 +4,28 @@ import useEmblaCarousel from 'embla-carousel-react'
 import styles from './Carousel.module.css'
 
 export interface CarouselProps {
+  /** Слайды карусели. Может быть передан один элемент или массив элементов */
   children: ReactNode
+  /** Количество видимых слайдов одновременно (по умолчанию 1) */
   slidesToShow?: number
+  /** Отступ между слайдами в пикселях (по умолчанию 24) */
   gap?: number
+  /** Дополнительный CSS-класс для корневого контейнера */
   className?: string
 }
 
-export function Carousel({ children, slidesToShow = 1, gap = 16, className }: CarouselProps) {
+/**
+ * Карусель на основе библиотеки `embla-carousel-react`.
+ *
+ * Оборачивает логику листания библиотеки, предоставляя готовый компонент
+ * со стилизованными стрелками навигации (круглые кнопки с иконкой `chevron-right`).
+ * Левая стрелка получается поворотом той же иконки на 180°.
+ *
+ * @see Figma: в превью навыка 1:1851
+ * @see Figma: на странице навыка 1:2800
+ * @see Figma: в «Похожие предложения» 1:2812
+ */
+export function Carousel({ children, slidesToShow = 1, gap = 24, className }: CarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
     containScroll: 'trimSnaps',
