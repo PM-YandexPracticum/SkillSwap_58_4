@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Tag, TagColor } from './Tag';
 
 const meta: Meta<typeof Tag> = {
@@ -26,15 +26,15 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { label: 'Игра на барабанах', color: 'creativity' }, 
+  args: { label: 'Игра на барабанах', color: 'creativity' },
 };
 
 export const Removable: Story = {
-  args: { label: 'Москва', color: 'home', onRemove: () => {} }, 
+  args: { label: 'Москва', color: 'home', onRemove: () => {} },
 };
 
 export const PlusTwo: Story = {
-  args: { label: '+2', color: 'more' }, 
+  args: { label: '+2', color: 'more' },
 };
 
 const colors: TagColor[] = ['business', 'creativity', 'languages', 'education', 'health', 'home', 'more'];
