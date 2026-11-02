@@ -1,23 +1,31 @@
 import { Button } from './Button'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
-/**
- * Stories компонента Button — ЗАГЛУШКА. Пакеты Storybook ставит задача P1-11;
- * после неё добавить типы: `const meta: Meta<typeof Button>` и `export const Default: StoryObj<typeof meta>`.
- *
- * Нужны stories для состояний из макета: primary, secondary («Войти»), ghost («Смотреть все»), disabled.
- * Правила — docs/rules/storybook.md.
- */
 const meta = {
   title: 'shared/ui/Button',
   component: Button,
   tags: ['autodocs'],
-}
+} satisfies Meta<typeof Button>
 
 export default meta
 
-/** Базовое состояние */
-export const Default = {
+type Story = StoryObj<typeof meta>
+
+/** Базовое состояние
+ * @see Figma 1:2871 кнопки "Подробнее", "Войти", "Смотреть все"
+ */
+export const Primary: Story = {
   args: { variant: 'primary', children: 'Подробнее' },
 }
 
-// TODO: по одной story на каждое состояние из списка выше
+export const Secondary: Story = {
+  args: { variant: 'secondary', children: 'Войти' },
+}
+
+export const Ghost: Story = {
+  args: { variant: 'ghost', children: 'Смотреть все' },
+}
+
+export const Disabled: Story = {
+  args: { variant: 'primary', children: 'Подробнее', disabled: true },
+}

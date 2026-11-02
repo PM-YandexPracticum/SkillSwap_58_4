@@ -2,7 +2,7 @@
   {
     "id": "business",
     "title": "Бизнес и карьера",
-    "icon": "briefcase",
+    "icon": "business",
     "color": "#EEE7F7",
     "subcategories": [
       {
@@ -50,7 +50,7 @@
   {
     "id": "creativity",
     "title": "Творчество и искусство",
-    "icon": "palette",
+    "icon": "creative",
     "color": "#F7E7F2",
     "subcategories": [
       {
@@ -98,7 +98,7 @@
   {
     "id": "languages",
     "title": "Иностранные языки",
-    "icon": "globe",
+    "icon": "languages",
     "color": "#EBE5C5",
     "subcategories": [
       {
@@ -135,6 +135,125 @@
         "id": "exam-prep",
         "categoryId": "languages",
         "title": "Подготовка к экзаменам (IELTS, TOEFL)"
+      }
+    ]
+  },
+  {
+    "id": "education",
+    "title": "Образование и развитие",
+    "icon": "education",
+    "color": "#E7F2F6",
+    "subcategories": [
+      {
+        "id": "personal-growth",
+        "categoryId": "education",
+        "title": "Личностное развитие"
+      },
+      {
+        "id": "learning",
+        "categoryId": "education",
+        "title": "Навыки обучения"
+      },
+      {
+        "id": "cognitive",
+        "categoryId": "education",
+        "title": "Когнитивные техники"
+      },
+      {
+        "id": "speed-reading",
+        "categoryId": "education",
+        "title": "Скорочтение"
+      },
+      {
+        "id": "teaching",
+        "categoryId": "education",
+        "title": "Навыки преподавания"
+      },
+      {
+        "id": "coaching",
+        "categoryId": "education",
+        "title": "Коучинг"
+      }
+    ]
+  },
+  {
+    "id": "health",
+    "title": "Здоровье и лайфстайл",
+    "icon": "health",
+    "color": "#E9F7E7",
+    "subcategories": [
+      {
+        "id": "yoga",
+        "categoryId": "health",
+        "title": "Йога и медитация"
+      },
+      {
+        "id": "nutrition",
+        "categoryId": "health",
+        "title": "Питание и ЗОЖ"
+      },
+      {
+        "id": "mental-health",
+        "categoryId": "health",
+        "title": "Ментальное здоровье"
+      },
+      {
+        "id": "mindfulness",
+        "categoryId": "health",
+        "title": "Осознанность"
+      },
+      {
+        "id": "fitness",
+        "categoryId": "health",
+        "title": "Физические тренировки"
+      },
+      {
+        "id": "sleep",
+        "categoryId": "health",
+        "title": "Сон и восстановление"
+      },
+      {
+        "id": "work-life-balance",
+        "categoryId": "health",
+        "title": "Баланс жизни и работы"
+      }
+    ]
+  },
+  {
+    "id": "home",
+    "title": "Дом и уют",
+    "icon": "home",
+    "color": "#F7EBE5",
+    "subcategories": [
+      {
+        "id": "cleaning",
+        "categoryId": "home",
+        "title": "Уборка и организация"
+      },
+      {
+        "id": "home-finance",
+        "categoryId": "home",
+        "title": "Домашние финансы"
+      },
+      {
+        "id": "cooking",
+        "categoryId": "home",
+        "title": "Приготовление еды"
+      },
+      {
+        "id": "plants",
+        "categoryId": "home",
+        "title": "Домашние растения"
+      },
+      {
+        "id": "repair",
+        "categoryId": "home",
+        "title": "Ремонт"
+      },
+      {
+        "id": "storage",
+        "categoryId": "home",
+        "title": "Хранение вещей"
       }
     ]
   }

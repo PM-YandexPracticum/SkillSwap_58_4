@@ -1,1 +1,142 @@
-[]
+[
+  {
+    "id": "s04",
+    "title": "Управление проектами",
+    "description": "Расскажу, как не сойти с ума и довести проект до релиза в срок.",
+    "categoryId": "business",
+    "subcategoryId": "project-management",
+    "authorId": "u04",
+    "images": ["/images/skills/s04-1.jpg", "/images/skills/s04-2.jpg"],
+    "createdAt": "2026-01-15T10:23:45.000Z"
+  },
+  {
+    "id": "s05",
+    "title": "Иллюстрация",
+    "description": "Научу основам композиции и работы с цветом в цифровой иллюстрации.",
+    "categoryId": "creativity",
+    "subcategoryId": "drawing",
+    "authorId": "u05",
+    "images": ["/images/skills/s05-1.jpg", "/images/skills/s05-2.jpg"],
+    "createdAt": "2026-02-28T14:05:12.000Z"
+  },
+  {
+    "id": "s06",
+    "title": "SMM-продвижение",
+    "description": "Покажу, как вести соцсети так, чтобы подписчики становились клиентами.",
+    "categoryId": "business",
+    "subcategoryId": "marketing",
+    "authorId": "u06",
+    "images": ["/images/skills/s06-1.jpg", "/images/skills/s06-2.jpg"],
+    "createdAt": "2026-04-10T09:15:00.000Z"
+  },
+  {
+    "id": "s07",
+    "title": "Фотография",
+    "description": "Практический курс по портретной и уличной съемке. Разберем твой фотоаппарат.",
+    "categoryId": "creativity",
+    "subcategoryId": "photo",
+    "authorId": "u07",
+    "images": ["/images/skills/s07-1.jpg", "/images/skills/s07-2.jpg", "/images/skills/s07-3.jpg"],
+    "createdAt": "2026-05-22T18:45:30.000Z"
+  },
+  {
+    "id": "s08",
+    "title": "Финансовое планирование",
+    "description": "Научу вести бюджет и откладывать деньги даже с небольшой зарплатой.",
+    "categoryId": "business",
+    "subcategoryId": "entrepreneurship",
+    "authorId": "u08",
+    "images": ["/images/skills/s08-1.jpg", "/images/skills/s08-2.jpg", "/images/skills/s08-3.jpg"],
+    "createdAt": "2026-07-04T08:30:15.000Z"
+  },
+  {
+    "id": "s09",
+    "title": "Игра на синтезаторе",
+    "description": "Разберем ноты и аккорды. Сыграем твою любимую песню.",
+    "categoryId": "creativity",
+    "subcategoryId": "music",
+    "authorId": "u09",
+    "images": ["/images/skills/s09-1.jpg", "/images/skills/s09-2.jpg", "/images/skills/s09-3.jpg"],
+    "createdAt": "2026-08-19T21:10:05.000Z"
+  },
+  {
+    "id": "s10",
+    "title": "Нетворкинг",
+    "description": "Как знакомиться с людьми на мероприятиях и превращать это в полезные связи.",
+    "categoryId": "business",
+    "subcategoryId": "sales",
+    "authorId": "u10",
+    "images": ["/images/skills/s10-1.jpg", "/images/skills/s10-2.jpg"],
+    "createdAt": "2026-10-01T11:55:20.000Z"
+  },
+  {
+    "id": "s11",
+    "title": "Личный бренд",
+    "description": "Помогу упаковать твои знания и экспертность в соцсетях.",
+    "categoryId": "business",
+    "subcategoryId": "personal-brand",
+    "authorId": "u11",
+    "images": ["/images/skills/s11-1.jpg", "/images/skills/s11-2.jpg", "/images/skills/s11-3.jpg"],
+    "createdAt": "2026-11-11T16:20:00.000Z"
+  },
+  {
+    "id": "s12",
+    "title": "Копирайтинг",
+    "description": "Научу писать тексты, которые продают и легко читаются.",
+    "categoryId": "business",
+    "subcategoryId": "marketing",
+    "authorId": "u12",
+    "images": ["/images/skills/s12-1.jpg", "/images/skills/s12-2.jpg"],
+    "createdAt": "2026-12-25T23:59:59.000Z"
+  },
+  {
+    "id": "s13",
+    "title": "Дизайн интерьера",
+    "description": "Расскажу, как сделать уютным даже самое маленькое помещение.",
+    "categoryId": "creativity",
+    "subcategoryId": "diy",
+    "authorId": "u13",
+    "images": ["/images/skills/s13-1.jpg", "/images/skills/s13-2.jpg", "/images/skills/s13-3.jpg"],
+    "createdAt": "2026-01-08T12:00:01.000Z"
+  },
+  {
+    "id": "s14",
+    "title": "Публичные выступления",
+    "description": "Помогу побороть страх сцены и красиво доносить свои мысли до аудитории.",
+    "categoryId": "business",
+    "subcategoryId": "personal-brand",
+    "authorId": "u14",
+    "images": ["/images/skills/s14-1.jpg", "/images/skills/s14-2.jpg", "/images/skills/s14-3.jpg"],
+    "createdAt": "2026-02-14T15:30:45.000Z"
+  },
+  {
+    "id": "s15",
+    "title": "Лепка из глины",
+    "description": "Расслабляющее хобби. Слепим с тобой милую кружку или тарелку.",
+    "categoryId": "creativity",
+    "subcategoryId": "diy",
+    "authorId": "u15",
+    "images": ["/images/skills/s15-1.jpg", "/images/skills/s15-2.jpg", "/images/skills/s15-3.jpg"],
+    "createdAt": "2026-03-05T07:40:10.000Z"
+  },
+  {
+    "id": "s16",
+    "title": "HR-менеджмент",
+    "description": "Расскажу, как проходить собеседования и правильно составлять резюме.",
+    "categoryId": "business",
+    "subcategoryId": "team-management",
+    "authorId": "u16",
+    "images": ["/images/skills/s16-1.jpg", "/images/skills/s16-2.jpg", "/images/skills/s16-3.jpg"],
+    "createdAt": "2026-04-12T19:15:35.000Z"
+  },
+  {
+    "id": "s17",
+    "title": "Видеомонтаж",
+    "description": "Научу базовому монтажу в Premiere Pro или CapCut. Сделаем твой первый влог.",
+    "categoryId": "creativity",
+    "subcategoryId": "video-editing",
+    "authorId": "u17",
+    "images": ["/images/skills/s17-1.jpg", "/images/skills/s17-2.jpg", "/images/skills/s17-3.jpg"],
+    "createdAt": "2026-05-20T13:45:00.000Z"
+  }
+]
