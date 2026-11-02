@@ -30,12 +30,12 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-const GalleryLayout = ({ images }: { images: string[] }) => {
+const GalleryLayout = ({ images, showArrows = true }: { images: string[]; showArrows?: boolean }) => {
   const [mainRef, mainApi] = useEmblaCarousel({ loop: true })
   const [thumbRef, thumbApi] = useEmblaCarousel({
     containScroll: 'trimSnaps',
     slidesToScroll: 1,
-    axis: 'y',
+    axis: 'y'
   })
   const [selectedIndex, setSelectedIndex] = useState(0)
 
@@ -61,51 +61,36 @@ const GalleryLayout = ({ images }: { images: string[] }) => {
   const thumbsCount = Math.min(images.length - 1, 3)
 
   return (
-    <div
-      style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', gap: '16px', height: '600px' }}
-    >
+    <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', gap: '16px', height: '600px' }}>
+
       {/* Большая карусель */}
-      <div
-        style={{
-          flex: '1 1 70%',
-          position: 'relative',
-          borderRadius: 'var(--radius-s)',
-          overflow: 'hidden',
-        }}
-      >
+      <div style={{
+        flex: '1 1 70%',
+        position: 'relative',
+        borderRadius: 'var(--radius-s)',
+        overflow: 'hidden'
+      }}>
         <div style={{ overflow: 'hidden', height: '100%' }} ref={mainRef}>
           <div style={{ display: 'flex', height: '100%' }}>
             {images.map((src, i) => (
               <div key={i} style={{ flex: '0 0 100%', height: '100%' }}>
-                <img
-                  src={src}
-                  alt={`Фото ${i + 1}`}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
+                <img src={src} alt={`Фото ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Стрелки показываем только если фото больше одного */}
-        {hasThumbs && (
+        {/* Стрелки показываем только если фото больше одного и showArrows === true */}
+        {hasThumbs && showArrows && (
           <>
-            <button
-              type="button"
-              className={`${styles.arrow} ${styles.arrowPrev}`}
-              onClick={() => mainApi?.scrollPrev()}
-            >
+            <button type="button" className={`${styles.arrow} ${styles.arrowPrev}`} onClick={() => mainApi?.scrollPrev()}>
               <img
                 src={new URL('@/shared/assets/icons/chevron-right.svg', import.meta.url).href}
                 alt=""
                 className={styles.arrowIconLeft}
               />
             </button>
-            <button
-              type="button"
-              className={`${styles.arrow} ${styles.arrowNext}`}
-              onClick={() => mainApi?.scrollNext()}
-            >
+            <button type="button" className={`${styles.arrow} ${styles.arrowNext}`} onClick={() => mainApi?.scrollNext()}>
               <img
                 src={new URL('@/shared/assets/icons/chevron-right.svg', import.meta.url).href}
                 alt=""
@@ -131,7 +116,7 @@ const GalleryLayout = ({ images }: { images: string[] }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '10px',
-                height: '100%',
+                height: '100%'
               }}
             >
               {Array.from({ length: thumbsCount }).map((_, i) => {
@@ -156,14 +141,12 @@ const GalleryLayout = ({ images }: { images: string[] }) => {
                 )
               })}
 
-              {/* Заглушки для пустых мест, если фото меньше 4 */}
               {Array.from({ length: 3 - thumbsCount }).map((_, i) => (
                 <div key={`empty-${i}`} style={{ flex: 1 }} />
               ))}
             </div>
           </div>
         ) : (
-          // Пустое место, если фото одно
           <div style={{ height: '100%', width: '100%' }} />
         )}
       </div>
@@ -196,6 +179,10 @@ const galleryImages1 = ['/images/skills/s01-1.jpg']
 
 export const Gallery1Photo: Story = {
   render: () => <GalleryLayout images={galleryImages1} />,
+}
+
+export const Preview: Story = {
+  render: () => <GalleryLayout images={galleryImages4} showArrows={false} />,
 }
 
 export const SimilarOffers: Story = {
