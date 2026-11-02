@@ -1,32 +1,40 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { Carousel } from './Carousel'
-import useEmblaCarousel from 'embla-carousel-react'
+import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react'
 
-// Мокаем хук useEmblaCarousel
 vi.mock('embla-carousel-react', () => ({
   default: vi.fn(),
 }))
+
+// Тип API, который возвращает хук
+type EmblaApi = UseEmblaCarouselType[1]
 
 describe('Carousel', () => {
   const scrollPrev = vi.fn()
   const scrollNext = vi.fn()
   const on = vi.fn()
+  const off = vi.fn()
 
-  // Создаем фейковый API, который возвращает наш мок
+  // Мок API с использованием unknown (без any)
   const mockEmblaApi = {
     scrollPrev,
     scrollNext,
-    canScrollPrev: () => true, // Разрешаем листание назад
-    canScrollNext: () => true, // Разрешаем листание вперед
+    canScrollPrev: () => true,
+    canScrollNext: () => true,
     on,
+    off,
     reInit: vi.fn(),
-  }
+  } as unknown as EmblaApi
 
   beforeEach(() => {
     vi.clearAllMocks()
-    // Настраиваем мок, чтобы он возвращал ref (пустой) и наш фейковый API
-    vi.mocked(useEmblaCarousel).mockReturnValue([vi.fn(), mockEmblaApi as any])
+
+    // Возвращаем кортеж без any
+    vi.mocked(useEmblaCarousel).mockReturnValue([
+      vi.fn(),
+      mockEmblaApi,
+    ])
   })
 
   const slides = [
