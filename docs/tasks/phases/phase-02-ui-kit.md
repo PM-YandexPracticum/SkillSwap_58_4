@@ -139,7 +139,7 @@
 > появляется спиннер и добавляются ещё 6. Догрузка только по мере прокрутки пользователя.
 > Хук общий для «Рекомендуем», результатов фильтров и избранного; числа — в `shared/config/catalog.ts`.
 
-- **Уже готово:** числа ленты (`CATALOG.SCROLL_BATCH`, `CATALOG.SCROLL_DELAY_MS`) в `shared/config/catalog.ts`.
+- **Уже готово:** числа ленты (`CATALOG.SCROLL_BATCH`, `CATALOG.SCROLL_DELAY_MS`) в `shared/config/catalog.ts`; как писать тест хука — [testing.md](../../rules/testing.md), образец `getAge.test.ts`.
 - **Файлы:** `src/shared/lib/hooks/useInfiniteScroll.ts` + тест
 - **Зависит от:** P1-04
 
@@ -148,7 +148,7 @@
 > город, текст с ограничением длины. Правила и тексты ошибок описаны в `validation.md` — их нужно превратить в код.
 > Так ошибки везде будут звучать одинаково.
 
-- **Уже готово:** все лимиты (длины, возраст, размер файла) в `shared/config/validation.ts` — брать оттуда.
+- **Уже готово:** все лимиты (длины, возраст, размер файла) в `shared/config/validation.ts` — брать оттуда; правила тестов — [testing.md](../../rules/testing.md), повторяющиеся случаи — таблицей через `it.each`, как в `getAge.test.ts`.
 - **Файлы:** `src/shared/lib/validation/fields.ts` + тест на каждое правило
 - **Зависит от:** P1-04
 
