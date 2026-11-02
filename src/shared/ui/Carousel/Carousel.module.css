@@ -1,0 +1,73 @@
+.carousel {
+  position: relative;
+  width: 100%;
+}
+
+.viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  will-change: transform;
+}
+
+.slide {
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+/* Стрелки */
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-disabled);
+  border: none;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    opacity 0.2s;
+}
+
+.arrow:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--color-disabled), black 10%);
+}
+
+.arrow:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.arrowPrev {
+  left: var(--space-16);
+}
+
+.arrowNext {
+  right: var(--space-16);
+}
+
+/* Иконка chevron-right */
+.arrowIcon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  color: var(--color-neutral);
+}
+
+/* Та же иконка, но повёрнутая на 180° - для левой стрелки */
+.arrowIconLeft {
+  width: 16px;
+  height: 16px;
+  display: block;
+  transform: rotate(180deg);
+  color: var(--color-neutral);
+}
