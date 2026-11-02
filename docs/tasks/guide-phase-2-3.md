@@ -19,6 +19,7 @@
 
 - `resolveImageUrl(path, 'AVATAR' | 'SKILL')` из `@/shared/lib/image` — превращает путь из моков в адрес для `<img>`, без фото подставляет заглушку. Все картинки выводим только через неё.
 - `useAppSelector`, `useAppDispatch` из `@/shared/lib/store` — хуки Redux с типами.
+- «База данных» в браузере (P4-01, в работе у тимлида) — данные берём только через `entities/*/api` (`getUsers()`, `getSkills()`…): ответ приходит через ~300 мс, изменения сохраняются в localStorage. Напрямую в localStorage и в JSON из `seed/` не ходим.
 - `useDebounce`, `useLocalStorage`, `useClickOutside` из `@/shared/lib/hooks`; `formatDate`, `truncate`, `generateId` из `@/shared/lib/helpers`.
 
 **Стили и ресурсы**
@@ -50,9 +51,10 @@
 
 Не берём — уже заняты:
 
-- P2-03 Tag и плашка (на ревью), P2-10 Modal, P2-14 FileDropzone;
+- P2-03 Tag и плашка (на ревью), P2-10 Modal, P2-14 FileDropzone, P2-18 Toast;
 - P2-05 Input и Textarea, P2-07 Checkbox и RadioGroup;
-- P2-06 PasswordInput — строится на Input, поэтому ждёт P2-05.
+- P2-06 PasswordInput — строится на Input, поэтому ждёт P2-05;
+- 👑 P4-01 «база данных» в браузере — готова, скоро в `develop`.
 
 Актуальный список с исполнителями — в [отчёте](report.md#сейчас-в-работе).
 
@@ -63,7 +65,6 @@
 - **P3-03 Подвал** 🟢 — `Logo` уже готов;
 - **P3-15 Уведомления** 🟢 — `Dropdown` и кнопки готовы; открытие и закрытие — как в story `Notifications` у Dropdown;
 - **P2-13 Carousel** 🟡 — на `embla-carousel-react`, стрелки — `IconButton` с иконкой `chevron-right` (влево — поворот на 180°);
-- **P2-18 Toast** 🟡 — крестик — `IconButton` с `cross`;
 - **P2-15 Лента с догрузкой** 🟡 — числа ленты уже в `shared/config/catalog.ts`;
 - **P2-16 Правила валидации** 🟡 — лимиты уже в `shared/config/validation.ts`, каждое правило с тестом.
 
