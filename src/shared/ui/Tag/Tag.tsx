@@ -31,7 +31,7 @@ export function Tag({ label, color, onRemove }: TagProps) {
   return (
     <div
       className={styles.tag}
-      style={{ backgroundColor: color ? CATEGORY_COLOR_VAR[color] : undefined }}
+      style={{ backgroundColor: color ? CATEGORY_COLOR_VAR[color] : 'var(--color-bg-secondary)' }}
     >
       <span>{label}</span>
 
