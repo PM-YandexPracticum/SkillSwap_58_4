@@ -30,7 +30,7 @@ export const Default: Story = {
 };
 
 export const Removable: Story = {
-  args: { label: 'Москва', color: 'home', onRemove: () => {} },
+  args: { label: 'Москва', onRemove: () => {} },
 };
 
 export const PlusTwo: Story = {
