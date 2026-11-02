@@ -1,6 +1,5 @@
 import { screen } from '@testing-library/react'
 import { Link, useParams } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
 import { selectIsAuth } from '@/entities/session'
 import { getSkillRoute, ROUTES } from '@/shared/config'
 import { useAppSelector } from '@/shared/lib/store'
@@ -22,7 +21,7 @@ describe('renderWithProviders', () => {
   it('рендерит компонент со store и роутером', () => {
     renderWithProviders(<Probe />)
 
-    expect(screen.getByRole('link', { name: 'Войти' }).getAttribute('href')).toBe(ROUTES.PROFILE)
+    expect(screen.getByRole('link', { name: 'Войти' })).toHaveAttribute('href', ROUTES.PROFILE)
   })
 
   it('принимает начальное состояние store', () => {
@@ -30,14 +29,14 @@ describe('renderWithProviders', () => {
       preloadedState: { session: { session: { userId: 'u01', token: 'test' } } },
     })
 
-    expect(screen.queryByRole('link', { name: 'Профиль' })).not.toBeNull()
+    expect(screen.getByRole('link', { name: 'Профиль' })).toBeInTheDocument()
     expect(store.getState().session.session?.userId).toBe('u01')
   })
 
   it('передаёт параметры маршрута, если указан path', () => {
     renderWithProviders(<Probe />, { path: ROUTES.SKILL, route: getSkillRoute('s02') })
 
-    expect(screen.queryByText('Навык s02')).not.toBeNull()
+    expect(screen.getByText('Навык s02')).toBeInTheDocument()
   })
 
   it('создаёт новый store на каждый рендер', () => {

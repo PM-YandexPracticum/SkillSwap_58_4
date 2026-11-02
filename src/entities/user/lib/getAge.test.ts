@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest'
 import { getAge } from './getAge'
 
 const isoDate = (year: number, month: number, day: number) =>
