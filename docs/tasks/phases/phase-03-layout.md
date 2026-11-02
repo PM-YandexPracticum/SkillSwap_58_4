@@ -16,6 +16,7 @@
 > Сердечко и «Подробнее» карточка получает пропсами — их добавит P3-08.
 > Здесь же — склонение «год / года / лет» (`pluralize`) и цветной чип `SkillTag`; возраст считает `getAge` из P1-04.
 
+- **Уже готово:** `Avatar` (P2-04), `getAge` для «34 года» (P1-04); тестовые данные — `createUser()` из `@/entities/user/testing` и `createSkill()` из `@/entities/skill/testing`, в тестах и stories.
 - **Файлы:** `src/entities/user/ui/UserCard.tsx`, `src/entities/skill/ui/SkillTag.tsx`, `src/shared/lib/pluralize.ts` + тесты
 - **Где в макете:** 1:2861, карточка Ивана
 - **Зависит от:** P2-03, P2-04, P1-04

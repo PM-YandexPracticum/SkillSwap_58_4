@@ -1,12 +1,14 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
+import { ROUTER_FUTURE } from '@/shared/config'
+
 import { Logo } from './Logo'
 
 describe('Logo', () => {
   it('ведёт на главную', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={ROUTER_FUTURE}>
         <Logo />
       </MemoryRouter>,
     )
@@ -16,7 +18,7 @@ describe('Logo', () => {
 
   it('без текста у ссылки есть подпись для скринридера', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={ROUTER_FUTURE}>
         <Logo withText={false} />
       </MemoryRouter>,
     )

@@ -69,6 +69,7 @@ const { store, user } = renderWithProviders(<FavoriteButton userId="u02" />, {
 await user.click(screen.getByRole('button', { name: 'Добавить в избранное' }))
 ```
 
+- Роутер внутри уже настроен с флагами `ROUTER_FUTURE` из `@/shared/config`. Если оборачиваешь компонент в `MemoryRouter` сам (тест или story в `shared`), передай `future={ROUTER_FUTURE}` — иначе в консоли предупреждения React Router.
 - На каждый вызов создаётся **новый store** (`createAppStore()` из `app/store`), поэтому тесты не влияют друг на друга.
 - `user` — уже настроенный `userEvent`, кликать и печатать через него, а не через `fireEvent`.
 - Импорт `@/app/test` в тестах нижних слоёв — исключение из правила FSD «только вниз». Линтер разрешает его только в `*.test.ts` и `*.test.tsx`.
