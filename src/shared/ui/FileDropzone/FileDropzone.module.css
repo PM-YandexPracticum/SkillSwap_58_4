@@ -1,0 +1,171 @@
+.dropzone {
+  /* Локальные токены — нет в global.css. Figma: 1:1761. Креатив = решение разработчика. */
+  --preview-size: 80px; /* Креатив — в макете состояния с фото нет */
+  --icon-size: 24px; /* Figma: 1:1761 / gallery-add 24×24 */
+  --cross-size: 20px; /* Креатив — кнопка крестика */
+  --cross-icon-size: 16px; /* Креатив — cross.svg внутри кнопки */
+  --overlay: rgb(255 255 255 / 95%); /* Креатив — белая подложка крестика */
+  --overlay-hover: rgb(80 136 38 / 70%); /* Креатив — зелёная подложка при наведении, #508826 70% */
+  --zone-line-height: 1.5; /* Figma: 1:1761 — 24px при 16px */
+  --zone-letter-spacing: 0.02em; /* Figma: 1:1761 — 2% при 16px */
+
+  /* Hover/focus в макете не нарисованы — ниже креативные значения */
+  --zone-border-hover: var(--color-accent-strong); /* #508826 */
+  --zone-border-drag: var(--color-accent-strong); /* #508826 */
+  --zone-focus-color: var(--color-accent-strong); /* #508826 */
+  --zone-focus-offset: 2px; /* Креатив — зазор между рамкой и обводкой */
+  --zone-hover-glow: 0 0 0 3px rgb(80 136 38 / 12%); /* Креатив — свечение, не влияет на layout */
+  --link-focus-glow: 0 0 0 4px rgb(80 136 38 / 15%); /* Креатив — свечение, не влияет на layout */
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.zone {
+  /* Typography Body 16/24, 2%, Roboto — Figma: 1:1761 */
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  line-height: var(--zone-line-height);
+  letter-spacing: var(--zone-letter-spacing);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-16) var(--space-20); /* 16px 20px — Figma: 1:1761 */
+  border: 1px dashed var(--color-neutral); /* #69735D */
+  border-radius: var(--radius-s); /* 12px */
+  opacity: 0.8; /* Figma: 1:1761 — Opacity 80% */
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    opacity 0.15s ease,
+    box-shadow 0.15s ease; /* Креатив — плавная смена состояния */
+}
+
+.zone:hover {
+  border-color: var(--zone-border-hover);
+  opacity: 1; /* Креатив — при наведении зона «оживает» */
+  box-shadow: var(--zone-hover-glow);
+}
+
+.zone.dragging {
+  border-color: var(--zone-border-drag); /* #508826 */
+  border-style: solid; /* Креатив — при перетаскивании пунктир сменяется сплошной */
+  opacity: 1;
+  box-shadow: var(--zone-hover-glow); /* Креатив — свечение как у hover */
+}
+
+.zone.disabled {
+  cursor: not-allowed;
+  opacity: 0.5; /* Креатив — недоступная зона бледнее */
+}
+
+.zone.disabled:hover {
+  border-color: var(--color-neutral); /* Креатив — не подсвечиваем недоступную */
+  box-shadow: none;
+}
+
+.hint {
+  color: var(--color-neutral); /* #69735D */
+  text-align: center;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit; /* наследует от .zone */
+  color: var(--color-accent-strong); /* #508826 */
+  cursor: pointer;
+}
+
+.linkIcon {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  flex-shrink: 0;
+}
+
+.link:disabled {
+  color: var(--color-neutral); /* #69735D */
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--zone-focus-color);
+  outline-offset: var(--zone-focus-offset);
+  border-radius: var(--space-4); /* Креатив — скругление обводки */
+  box-shadow: var(--link-focus-glow);
+}
+
+.previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.preview {
+  position: relative; /* Креатив — база для absolute у крестика */
+  width: var(--preview-size);
+  height: var(--preview-size);
+  border-radius: var(--radius-s); /* 12px */
+  overflow: hidden; /* Креатив — обрезка фото по скруглению */
+}
+
+.previewImage {
+  display: block; /* Креатив — убирает зазор под inline-картинкой */
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Креатив — заполнить без искажения пропорций */
+}
+
+.previewRemove {
+  position: absolute; /* Креатив — крестик поверх фото в углу */
+  top: var(--space-4);
+  right: var(--space-4);
+  display: grid;
+  place-items: center;
+  width: var(--cross-size);
+  height: var(--cross-size);
+  padding: 0;
+  border: none;
+  border-radius: 50%; /* Креатив — круглая подложка крестика */
+  background: var(--overlay);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 25%); /* Креатив — тень отделяет от светлого фото */
+  color: var(--color-neutral); /* #69735D */
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease; /* Креатив — плавная смена цвета */
+}
+
+.previewRemove:hover {
+  background: var(--overlay-hover);
+  color: var(--color-text-inverse); /* #FFF — белый крестик на зелёном */
+}
+
+.previewRemove:focus-visible {
+  outline: 2px solid var(--zone-focus-color);
+  outline-offset: var(--zone-focus-offset);
+  box-shadow: var(--link-focus-glow);
+}
+
+.previewRemove:disabled {
+  opacity: 0.5; /* Креатив — недоступный крестик бледнее */
+}
+
+.previewRemoveIcon {
+  width: var(--cross-icon-size);
+  height: var(--cross-icon-size);
+  flex-shrink: 0;
+}
+
+.error {
+  margin: 0;
+  font-size: var(--font-size-xs); /* 0.75rem — 12px */
+  color: var(--color-error); /* #BF3920 */
+  text-align: center;
+}

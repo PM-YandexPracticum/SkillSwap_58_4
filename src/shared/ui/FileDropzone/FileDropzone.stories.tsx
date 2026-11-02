@@ -1,27 +1,136 @@
+import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, fn, userEvent, within } from 'storybook/test'
+
 import { FileDropzone } from './FileDropzone'
 
 /**
- * Stories компонента FileDropzone — ЗАГЛУШКА. Пакеты Storybook ставит задача P1-11;
- * после неё добавить типы: `const meta: Meta<typeof FileDropzone>` и `export const Default: StoryObj<typeof meta>`.
+ * Зона загрузки изображений — пунктирная рамка с подписью и кнопкой выбора.
  *
- * Нужны stories для состояний из макета: пустая зона, перетаскивание (подсветка), с превью, ошибка («Файл больше 1 МБ»).
- * Правила — docs/rules/storybook.md.
+ * Поведение:
+ * - клик по всей пунктирной зоне открывает диалог выбора файла;
+ * - кнопка «Выбрать изображения» дублирует клик и доступна с клавиатуры;
+ * - превью и ошибка отображаются под зоной.
+ *
+ * Проверка файлов выполняется у родителя через `validateImageFile`,
+ * компонент отвечает только за выбор и передачу `File[]`.
+ *
+ * Оформление— по макету: пунктирная рамка 1 px, радиус 12 px, opacity 80 %.
+ * Фрейм 1:1761 «Регистрация 3 шаг».
+ *
+ * Состояния hover и focus в макете не нарисованы — креатив:
+ * при наведении рамка становится акцентной и зона перестаёт быть полупрозрачной,
+ * с клавиатуры видно кольцо фокуса.
  */
-const meta = {
+const meta: Meta<typeof FileDropzone> = {
   title: 'shared/ui/FileDropzone',
   component: FileDropzone,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Зона загрузки изображений: drag & drop или выбор через скрытый input. Проверку файлов выполняет родитель.',
+      },
+    },
+  },
 }
 
 export default meta
 
-/** Базовое состояние */
-export const Default = {
-  args: {
-    hint: 'Перетащите или выберите изображения навыка',
-    buttonLabel: 'Выбрать изображения',
-    multiple: true,
+type Story = StoryObj<typeof meta>
+
+const defaultArgs = {
+  hint: 'Перетащите или выберите изображения навыка',
+  buttonLabel: 'Выбрать изображения',
+  multiple: true,
+  onFiles: fn(),
+}
+
+/** Пустая зона по макету. Фрейм 1:1761. */
+export const Default: Story = {
+  args: defaultArgs,
+}
+
+/** Наведение мыши на зону — рамка акцентная, зона непрозрачная (креатив, в макете не нарисовано). */
+export const Hover: Story = {
+  args: defaultArgs,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.hover(canvas.getByTestId('filedropzone-zone'))
   },
 }
 
-// TODO: по одной story на каждое состояние из списка выше
+/**
+ * Кольцо фокуса на кнопке выбора — Tab с клавиатуры (креатив, в макете не нарисовано).
+ * `:focus-visible` срабатывает только от клавиатурного ввода, поэтому `userEvent.tab()`,
+ * а не `.focus()`.
+ */
+export const Focus: Story = {
+  args: defaultArgs,
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement)
+    await userEvent.tab()
+    await step('Фокус на кнопке выбора', () => {
+      expect(canvas.getByTestId('filedropzone-button')).toHaveFocus()
+    })
+  },
+}
+
+/**
+ * Перетаскивание файла над зоной — рамка сплошная акцентная (креатив, в макете не нарисовано).
+ * Событие `dragenter` посылается вручную: живой drag из проводника
+ * в iframe Storybook не доходит.
+ */
+export const Dragging: Story = {
+  args: defaultArgs,
+  play: async ({ canvasElement }) => {
+    const zone = canvasElement.querySelector('[data-testid="filedropzone-zone"]')
+    if (!zone) return
+    zone.dispatchEvent(new DragEvent('dragenter', { bubbles: true }))
+  },
+}
+
+/** Одно превью 80×80 с крестиком удаления — крестик и подложка креативные. */
+export const WithPreview: Story = {
+  args: {
+    ...defaultArgs,
+    previews: [{ url: '/images/skills/s01-1.jpg', onRemove: fn() }],
+  },
+}
+
+/** Несколько превью — переносятся на новую строку через flex-wrap. */
+export const WithMultiplePreviews: Story = {
+  args: {
+    ...defaultArgs,
+    previews: [
+      { url: '/images/skills/s01-1.jpg', onRemove: fn() },
+      { url: '/images/skills/s01-2.jpg', onRemove: fn() },
+      { url: '/images/skills/s01-3.jpg', onRemove: fn() },
+    ],
+  },
+}
+
+/** Ошибка валидации — текст под зоной с `role="alert"`. */
+export const WithError: Story = {
+  args: {
+    ...defaultArgs,
+    error: 'Файл больше 1 МБ',
+  },
+}
+
+/** Недоступное состояние — кнопки неактивны, выбор и drag & drop не работают. */
+export const Disabled: Story = {
+  args: {
+    ...defaultArgs,
+    disabled: true,
+  },
+}
+
+/** Одиночный выбор — так компонент используется для загрузки аватара. */
+export const SingleFile: Story = {
+  args: {
+    hint: 'Перетащите или выберите изображение',
+    buttonLabel: 'Выбрать изображение',
+    onFiles: fn(),
+  },
+}
