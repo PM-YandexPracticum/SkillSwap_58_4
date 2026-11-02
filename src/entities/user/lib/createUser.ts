@@ -1,4 +1,4 @@
-﻿import type { User } from '../model/types'
+import type { User } from '../model/types'
 
 /**
  * Фабрика тестового пользователя — для тестов и stories.

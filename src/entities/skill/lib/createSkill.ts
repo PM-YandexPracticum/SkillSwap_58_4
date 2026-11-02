@@ -1,6 +1,15 @@
 import type { Skill } from '../model/types'
 
-
+/**
+ * Фабрика тестового навыка — для тестов и stories.
+ * Возвращает полный валидный навык; передай только поля, важные для проверки:
+ * `createSkill({ title: 'Игра на барабанах' })`, `createSkill({ authorId: user.id })`.
+ *
+ * Не путать с `createSkill` из `entities/skill/api` — тот сохраняет навык в «базу».
+ * Снаружи слайса импортировать из `@/entities/skill/testing`.
+ *
+ * По умолчанию автор — `createUser()` (`u-test`), подкатегория из образцов.
+ */
 export function createSkill(overrides: Partial<Skill> = {}): Skill {
   return {
     id: 's-test',
