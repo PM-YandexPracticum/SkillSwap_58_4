@@ -12,14 +12,14 @@
 - `Avatar` — `import { Avatar } from '@/shared/ui/Avatar'`. Пропсы: `src` (путь из моков или `null`), `alt`, `size` (`sm` 48px — шапка, `md` 100px — карточка, `lg` 244px — профиль).
 - `Logo` — `import { Logo } from '@/shared/ui/Logo'`. Ссылка на главную, проп `withText` (по умолчанию `true`). Внутри `Link`, поэтому в тестах и stories оборачивай в `MemoryRouter`.
 - `Loader` — `import { Loader } from '@/shared/ui/Loader'`. Спиннер «загружается», проп `className` — чтобы поставить его, куда нужно.
-- `Dropdown` — `import { Dropdown } from '@/shared/ui/Dropdown'`. Поповер под кнопкой: `trigger`, `isOpen`, `onClose`, `align` (`end` — для кнопок справа в шапке), внутрь — любое содержимое. Состояние `isOpen` хранит родитель; закрывается по Esc и клику мимо, сам не вылезает за край окна.
+- `Dropdown` — `import { Dropdown } from '@/shared/ui/Dropdown'`. Поповер под кнопкой: `trigger`, `isOpen`, `onClose`, `align` (`end` — для кнопок справа в шапке), внутрь — любое содержимое. Состояние `isOpen` хранит родитель; закрывается по Esc и клику мимо, сам не вылезает за край окна. Для меню (шапка, уведомления); для Select и MultiSelect не подходит — у них в макете своя раскрывающаяся рамка (см. P2-09).
 - `Stepper` — `import { Stepper } from '@/shared/ui/Stepper'`. «Шаг N из 3» над формой регистрации: `current`, `total`.
 
 **Утилиты**
 
 - `resolveImageUrl(path, 'AVATAR' | 'SKILL')` из `@/shared/lib/image` — превращает путь из моков в адрес для `<img>`, без фото подставляет заглушку. Все картинки выводим только через неё.
 - `useAppSelector`, `useAppDispatch` из `@/shared/lib/store` — хуки Redux с типами.
-- «База данных» в браузере (P4-01) — данные берём только через `entities/*/api` (`getUsers()`, `getSkills()`…): ответ приходит через ~300 мс, изменения сохраняются в localStorage. Напрямую в localStorage и в файлы `public/db` не ходим.
+- «База данных» в браузере (P4-01, P4-10) — данные берём только через `entities/*/api` (`getUsers()`, `getSkills()`…): ответ приходит через ~300 мс, изменения сохраняются в localStorage. Напрямую в localStorage и в файлы `public/db` не ходим.
 - `useDebounce`, `useLocalStorage`, `useClickOutside` из `@/shared/lib/hooks`; `formatDate`, `truncate`, `generateId` из `@/shared/lib/helpers`.
 
 **Стили и ресурсы**
@@ -51,10 +51,9 @@
 
 Не берём — уже заняты:
 
-- P2-03 Tag и плашка (на ревью), P2-10 Modal, P2-14 FileDropzone, P2-18 Toast;
+- P2-03 Tag и плашка (на ревью), P2-09 Select, P2-10 Modal, P2-14 FileDropzone, P2-18 Toast;
 - P2-05 Input и Textarea, P2-07 Checkbox и RadioGroup;
-- P2-06 PasswordInput — строится на Input, поэтому ждёт P2-05;
-- 👑 P4-10 перенос данных в `public/db` — у тимлида.
+- P2-06 PasswordInput — строится на Input, поэтому ждёт P2-05.
 
 Актуальный список с исполнителями — в [отчёте](report.md#сейчас-в-работе).
 
@@ -68,12 +67,14 @@
 - **P2-15 Лента с догрузкой** 🟡 — числа ленты уже в `shared/config/catalog.ts`;
 - **P2-16 Правила валидации** 🟡 — лимиты уже в `shared/config/validation.ts`, каждое правило с тестом.
 
+Из фазы 4, если хочется данных и Redux: **P4-02 Справочники** и **P4-03 Пользователи и навыки** — «база» уже готова (P4-01, P4-10), **P4-05 Сессия** — без зависимостей.
+
 ## Что дальше
 
 **Фаза 2 ждёт:**
 
 - P2-12 DatePicker — после Input (P2-05);
-- P2-09 Select — после Input (Dropdown готов); P2-17 MultiSelect — после Checkbox (Dropdown готов).
+- P2-17 MultiSelect — после Checkbox (P2-07) и Select (P2-09): устроен так же, как открытый Select.
 
 **Фаза 3** открывается по мере готовности компонентов. Следующими станут доступны:
 
