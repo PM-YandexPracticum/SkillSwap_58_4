@@ -19,7 +19,7 @@
 
 - `resolveImageUrl(path, 'AVATAR' | 'SKILL')` из `@/shared/lib/image` — превращает путь из моков в адрес для `<img>`, без фото подставляет заглушку. Все картинки выводим только через неё.
 - `useAppSelector`, `useAppDispatch` из `@/shared/lib/store` — хуки Redux с типами.
-- «База данных» в браузере (P4-01, в работе у тимлида) — данные берём только через `entities/*/api` (`getUsers()`, `getSkills()`…): ответ приходит через ~300 мс, изменения сохраняются в localStorage. Напрямую в localStorage и в JSON из `seed/` не ходим.
+- «База данных» в браузере (P4-01) — данные берём только через `entities/*/api` (`getUsers()`, `getSkills()`…): ответ приходит через ~300 мс, изменения сохраняются в localStorage. Напрямую в localStorage и в файлы `public/db` не ходим.
 - `useDebounce`, `useLocalStorage`, `useClickOutside` из `@/shared/lib/hooks`; `formatDate`, `truncate`, `generateId` из `@/shared/lib/helpers`.
 
 **Стили и ресурсы**
@@ -30,10 +30,10 @@
 - Иконки (40 шт.) — `src/shared/assets/icons`, импорт компонентом: `import LikeIcon from '@/shared/assets/icons/like.svg?react'`. Какая иконка где в макете — таблица в README папки. Есть всё для чекбоксов и радиокнопок: `checkbox-empty`, `checkbox-done`, `checkbox-remove`, `radio-empty`, `radio-done`.
 - Иллюстрации входа, регистрации, 404 и 500 — `src/shared/assets/images`; фото пользователей и навыков — `public/images`.
 
-**Данные (`src/shared/api/mock-db/seed`)**
+**Данные (`public/db`)**
 
 - 6 категорий и 42 подкатегории, 17 городов — id в `categories.json` и `cities.json`.
-- 45 пользователей с навыками и фото (`sample`, `part-1`, `part-2`, `part-3`); навыки есть в 38 подкатегориях из 42 (нет в «Резюме и собеседование», «Актёрское мастерство», «Креативное письмо», «Арт-терапия»).
+- 45 пользователей с навыками и фото (`users.json`, `skills.json`); навыки есть в 38 подкатегориях из 42 (нет в «Резюме и собеседование», «Актёрское мастерство», «Креативное письмо», «Арт-терапия»).
 
 **Библиотеки и инструменты**
 
@@ -54,7 +54,7 @@
 - P2-03 Tag и плашка (на ревью), P2-10 Modal, P2-14 FileDropzone, P2-18 Toast;
 - P2-05 Input и Textarea, P2-07 Checkbox и RadioGroup;
 - P2-06 PasswordInput — строится на Input, поэтому ждёт P2-05;
-- 👑 P4-01 «база данных» в браузере — готова, скоро в `develop`.
+- 👑 P4-10 перенос данных в `public/db` — у тимлида.
 
 Актуальный список с исполнителями — в [отчёте](report.md#сейчас-в-работе).
 

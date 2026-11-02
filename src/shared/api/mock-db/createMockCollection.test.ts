@@ -159,6 +159,51 @@ describe('createMockCollection', () => {
     })
   })
 
+  describe('образцы из файла (загрузчик)', () => {
+    /** Как loadSeed: образцы приходят асинхронно */
+    const loader = () => vi.fn(async () => SEED)
+
+    it('берёт образцы у загрузчика и не зовёт его, если изменения уже сохранены', async () => {
+      const load = loader()
+      const items = createMockCollection<Item>('items', load, { delayMs: 0 })
+
+      expect(await items.getAll()).toEqual(SEED)
+      await items.create({ id: 'c', title: 'Третий', tags: [] })
+      load.mockClear()
+
+      expect(await createMockCollection<Item>('items', load, { delayMs: 0 }).getAll()).toHaveLength(
+        3,
+      )
+      expect(load).not.toHaveBeenCalled()
+    })
+
+    it('ошибка загрузки образцов приходит из метода коллекции', async () => {
+      const items = createMockCollection<Item>(
+        'items',
+        async () => {
+          throw new Error('Не удалось загрузить данные «items»')
+        },
+        { delayMs: 0 },
+      )
+
+      await expect(items.getAll()).rejects.toThrow('Не удалось загрузить данные «items»')
+    })
+
+    it('одновременные изменения не затирают друг друга', async () => {
+      const items = createMockCollection<Item>('items', loader(), { delayMs: 0 })
+
+      await Promise.all([
+        items.create({ id: 'c', title: 'Третий', tags: [] }),
+        items.create({ id: 'd', title: 'Четвёртый', tags: [] }),
+        items.update('a', { title: 'Изменён' }),
+      ])
+
+      const all = await items.getAll()
+      expect(all.map((item) => item.id)).toEqual(['a', 'b', 'c', 'd'])
+      expect(all[0].title).toBe('Изменён')
+    })
+  })
+
   it('по умолчанию отвечает с задержкой MOCK_DB.DELAY_MS, как сервер', async () => {
     vi.useFakeTimers()
     const items = createMockCollection<Item>('items', SEED)

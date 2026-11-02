@@ -22,10 +22,18 @@ export interface MockCollection<T extends WithId> {
   remove(id: string): Promise<void>
 }
 
+/**
+ * Откуда коллекция берёт образцы: готовый список (в тестах) или загрузчик (`loadSeed('users')` — файл из `public/db`)
+ */
+export type SeedSource<T> = readonly T[] | (() => Promise<readonly T[]>)
+
 export interface MockCollectionOptions {
   /** Задержка каждого ответа, мс. По умолчанию `MOCK_DB.DELAY_MS`; в тестах коллекций — 0 */
   delayMs?: number
 }
+
+/** Очередь действий каждой коллекции: следующее начинается, когда закончилось предыдущее */
+const queues = new Map<string, Promise<unknown>>()
 
 /** Изменения коллекций, если localStorage недоступен (запрет сохранения данных в браузере). Живут до перезагрузки */
 const memoryStore = new Map<string, string>()
@@ -74,10 +82,15 @@ function removeSaved(key: string): void {
   }
 }
 
+async function readSeed<T extends WithId>(seed: SeedSource<T>): Promise<T[]> {
+  const list = typeof seed === 'function' ? await seed() : seed
+  return clone([...list])
+}
+
 /** Записи коллекции: сохранённые изменения, а если их нет или они повреждены — копия образцов */
-function readList<T extends WithId>(key: string, seed: readonly T[]): T[] {
+async function readList<T extends WithId>(key: string, seed: SeedSource<T>): Promise<T[]> {
   const saved = readSaved(key)
-  if (saved === null) return clone([...seed])
+  if (saved === null) return readSeed(seed)
   try {
     const parsed: unknown = JSON.parse(saved)
     if (isRecordList(parsed)) return parsed as T[]
@@ -85,7 +98,17 @@ function readList<T extends WithId>(key: string, seed: readonly T[]): T[] {
     // не JSON — ниже сбрасываем к образцам
   }
   removeSaved(key)
-  return clone([...seed])
+  return readSeed(seed)
+}
+
+/** Ставит действие в очередь коллекции — два изменения подряд не затрут друг друга */
+function enqueue<R>(key: string, action: () => Promise<R>): Promise<R> {
+  const result = (queues.get(key) ?? Promise.resolve()).then(action)
+  queues.set(
+    key,
+    result.catch(() => undefined),
+  )
+  return result
 }
 
 /** @throws {Error} если в localStorage не хватает места (фото хранятся прямо в записях) */
@@ -106,35 +129,36 @@ function writeList<T extends WithId>(key: string, list: readonly T[]): void {
 
 /**
  * Создаёт коллекцию поверх localStorage.
- * - Пока изменений нет, данные — копия `seed` (JSON в `mock-db/seed/`). Первое изменение сохраняет всю коллекцию
+ * - Пока изменений нет, данные — копия образцов `seed` (файл `public/db/<name>.json`). Первое изменение сохраняет всю коллекцию
  *   в localStorage под ключом `MOCK_DB.STORAGE_PREFIX + name`; дальше она читается оттуда — и после перезагрузки.
  * - Каждый метод ждёт `MOCK_DB.DELAY_MS` — имитация запроса к серверу (виден Loader).
  * - Никаких мутаций: каждый ответ — новые объекты; изменить «базу» можно только методами коллекции.
+ * - Действия одной коллекции выполняются по очереди — одновременные изменения не затирают друг друга.
  * - Повреждённые данные в localStorage — сброс к `seed`; localStorage недоступен — изменения живут в памяти до перезагрузки.
  *
  * Переход на настоящую БД: эта функция (или файлы `entities/*\/api/*Api.ts`) меняется на запросы к серверу,
  * остальной код не трогается.
  * @param name имя коллекции: `users`, `skills`, `categories`, `cities`, `exchanges`, `notifications`
- * @param seed начальные данные
+ * @param seed образцы: загрузчик `loadSeed(name)` (в приложении) или готовый список (в тестах)
  */
 export function createMockCollection<T extends WithId>(
   name: string,
-  seed: readonly T[],
+  seed: SeedSource<T>,
   { delayMs = MOCK_DB.DELAY_MS }: MockCollectionOptions = {},
 ): MockCollection<T> {
   const key = storageKey(name)
   const read = () => readList(key, seed)
-  const respond = async <R>(action: () => R): Promise<R> => {
+  const respond = async <R>(action: () => Promise<R>): Promise<R> => {
     await wait(delayMs)
-    return action()
+    return enqueue(key, action)
   }
 
   return {
     getAll: () => respond(read),
-    getById: (id) => respond(() => read().find((item) => item.id === id)),
+    getById: (id) => respond(async () => (await read()).find((item) => item.id === id)),
     create: (item) =>
-      respond(() => {
-        const list = read()
+      respond(async () => {
+        const list = await read()
         if (list.some((existing) => existing.id === item.id)) {
           throw new Error(`Запись с id «${item.id}» уже есть в коллекции «${name}»`)
         }
@@ -143,8 +167,8 @@ export function createMockCollection<T extends WithId>(
         return clone(created)
       }),
     update: (id, changes) =>
-      respond(() => {
-        const list = read()
+      respond(async () => {
+        const list = await read()
         const current = list.find((item) => item.id === id)
         if (!current) throw new Error(`Запись с id «${id}» не найдена в коллекции «${name}»`)
         const updated: T = { ...current, ...clone(changes), id }
@@ -155,8 +179,8 @@ export function createMockCollection<T extends WithId>(
         return clone(updated)
       }),
     remove: (id) =>
-      respond(() => {
-        const list = read()
+      respond(async () => {
+        const list = await read()
         if (list.some((item) => item.id === id)) {
           writeList(
             key,
@@ -168,7 +192,7 @@ export function createMockCollection<T extends WithId>(
 }
 
 /**
- * Стирает все изменения «базы» — данные снова как в `seed`. Сессию и тему не трогает.
+ * Стирает все изменения «базы» — данные снова как в образцах. Сессию и тему не трогает.
  * Нужна для тестов, автотестов и кнопки «Сбросить данные» в режиме разработки.
  */
 export function resetMockDb(): void {
