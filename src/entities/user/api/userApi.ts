@@ -1,11 +1,11 @@
-import { createMockCollection, SEED } from '@/shared/api'
+import { createMockCollection, loadSeed } from '@/shared/api'
 import type { User } from '../model/types'
 
 /**
  * Хранилище пользователей.
  * Единственное место, которое знает, откуда берутся данные. Переход на настоящую БД — меняется только этот файл.
  */
-const users = createMockCollection<User>('users', SEED.users as readonly User[])
+const users = createMockCollection<User>('users', loadSeed<User>('users'))
 
 /** Все пользователи */
 export function getUsers(): Promise<User[]> {

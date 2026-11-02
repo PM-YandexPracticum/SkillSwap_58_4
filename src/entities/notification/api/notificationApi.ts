@@ -1,4 +1,4 @@
-import { createMockCollection, SEED } from '@/shared/api'
+import { createMockCollection, loadSeed } from '@/shared/api'
 import type { Notification } from '../model/types'
 
 /**
@@ -7,7 +7,7 @@ import type { Notification } from '../model/types'
  */
 const notifications = createMockCollection<Notification>(
   'notifications',
-  SEED.notifications as readonly Notification[],
+  loadSeed<Notification>('notifications'),
 )
 
 /** Все уведомления (фильтр по текущему пользователю — в селекторах) */
