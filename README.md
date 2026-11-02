@@ -45,7 +45,7 @@ src/
 
 src/shared/api/mock-db/
 ├── createMockCollection.ts   # «база» в браузере: образцы + изменения в localStorage
-└── seed/                     # образцы по 2–3 на сущность — остальное команда заполняет по образцу
+└── seed/                     # начальные данные: 45 пользователей с навыками, справочники
 ```
 
 Импорт только вниз: `app → pages → widgets → features → entities → shared`, и только через `index.ts` слайса.
