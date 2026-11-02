@@ -4,6 +4,7 @@ import type { ReactElement, ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { createAppStore, type AppStore } from '@/app/store'
+import { ROUTER_FUTURE } from '@/shared/config'
 
 export interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper'> {
   /** Начальное состояние store: `{ session: { session: { userId: 'u01', token: 't' } } }` */
@@ -47,7 +48,9 @@ export function renderWithProviders(
   function Wrapper({ children }: { children: ReactNode }) {
     return (
       <Provider store={store}>
-        <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+        <MemoryRouter initialEntries={[route]} future={ROUTER_FUTURE}>
+          {children}
+        </MemoryRouter>
       </Provider>
     )
   }
