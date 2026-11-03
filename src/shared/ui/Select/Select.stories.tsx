@@ -17,7 +17,29 @@ export default meta
 
 /** Базовое состояние */
 export const Default = {
-  args: { label: 'Город', options: [{ value: 'Москва', label: 'Москва' }] },
+  args: {
+    label: 'Пол',
+    options: [
+      { value: null, label: 'Не указан' },
+      { value: 'male', label: 'Мужской' },
+      { value: 'female', label: 'Женский' },
+    ],
+    value: null,
+    onChange: () => {},
+  },
 }
 
-// TODO: по одной story на каждое состояние из списка выше
+export const Error = {
+  args: {
+    ...Default.args,
+    value: 'male',
+    error: 'Выберите значение',
+  },
+}
+
+export const Disabled = {
+  args: {
+    ...Default.args,
+    disabled: true,
+  },
+}
