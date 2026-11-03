@@ -1,18 +1,23 @@
+/* Фон: в макете rgba(142, 142, 142, 0.6) и размытие 2 px; токена для него нет */
 .overlay {
   position: fixed;
+  z-index: 10;
   inset: 0;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: var(--space-220);
-  background: #8e8e8e99;
-  backdrop-filter: blur(4px);
-  z-index: 10;
+  overflow-y: auto;
+  padding: var(--space-40) var(--space-20);
+  background: rgb(142 142 142 / 60%);
+  backdrop-filter: blur(2px);
 }
 
+/* margin: auto — по центру экрана, а высокое окно не обрезается сверху и прокручивается вместе с фоном */
 .window {
-  padding: 0 var(--space-60);
-  background-color: var(--color-bg-secondary);
-  border-radius: var(--radius-s);
   max-width: 100%;
+  margin: auto;
+  border-radius: var(--radius-s);
+  background-color: var(--color-bg-secondary);
+}
+
+.window:focus-visible {
+  outline: none;
 }
