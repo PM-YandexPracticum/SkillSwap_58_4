@@ -52,7 +52,7 @@
 > с меню «Личный кабинет» / «Выйти». Пока вид переключаем пропом `isAuth`; выбирать его по сессии научит P5-09.
 > Иконка темы пока без действия — тёмная тема в фазе 9. Все иконки уже есть в `src/shared/assets/icons/`.
 
-- **Уже готово:** `Logo` (P2-01), `Button` и `IconButton` (P2-02), `Avatar` размера `sm` (P2-04), `Dropdown` (P2-08) — для меню пользователя `align="end"`; в его stories есть пример меню «Личный кабинет / Выйти».
+- **Уже готово:** `Logo` (P2-01), `Button` и `IconButton` (P2-02), `Avatar` размера `sm` (P2-04), `Dropdown` (P2-08) — для меню пользователя `align="end"`; в его stories есть пример меню «Личный кабинет / Выйти»; поле поиска — `Input` (P2-05), лупа слева, «×» очистки — в `rightAction`.
 - **Правило FSD:** виджет не импортирует другие виджеты. Меню «Все навыки» и окно уведомлений шапка получает слотами `categoriesMenu` и `notifications` (они уже в заготовке `Header`), их передаёт `MainLayout` (P3-05). Пока соседних виджетов нет — в stories в слоты кладём заглушки.
 - **Файлы:** `src/widgets/header/`, `src/features/skill-search/ui/SearchInput.tsx`
 - **Где в макете:** 1:2861 (гость), 1:2996 (вошедший), точка на колокольчике — 1:1919
@@ -83,7 +83,7 @@
 > Раскрытие списков работает уже здесь; выбор фильтров подключит P5-02.
 > Пока это только внешний вид: выбранные галочки ещё ни на что не влияют.
 
-- **Уже готово:** категории и города — `selectCategories` и `selectCities` из `@/entities/category` и `@/entities/city` (P4-02); «первые 5 городов» — `CATALOG.CITIES_VISIBLE`; заготовка состояния фильтров `catalogFilterSlice` с типами — выбор подключит P5-02.
+- **Уже готово:** `Checkbox` с частичным выбором категории и `RadioGroup` с заголовком группы (P2-07), образец живой story — `CategorySelection` у Checkbox; строка чекбокса в списке по макету 32 px (по 4 px сверху и снизу) — задаёт список; категории и города — `selectCategories` и `selectCities` из `@/entities/category` и `@/entities/city` (P4-02); «первые 5 городов» — `CATALOG.CITIES_VISIBLE`; заготовка состояния фильтров `catalogFilterSlice` с типами — выбор подключит P5-02.
 - **Файлы:** `src/widgets/filters-panel/`, `src/features/catalog-filter/ui/` (`ModeFilter`, `SkillsFilter`, `GenderFilter`, `CityFilter`, `ResetFiltersButton`)
 - **Где в макете:** 1:2860
 - **Зависит от:** P2-07
@@ -126,7 +126,7 @@
 > Вход — отдельная страница `/login`. Регистрация — три маршрута с общей рамкой: Stepper «Шаг N из 3» и иллюстрация шага;
 > здесь — рамка и шаг 1 `/register/step-1`.
 
-- **Уже готово:** `Stepper` (P2-11) — `<Stepper current={1} total={3} />`; `Button` (P2-02); иллюстрации входа и шагов — `src/shared/assets/images/`.
+- **Уже готово:** `Stepper` (P2-11) — `<Stepper current={1} total={3} />`; `Button` (P2-02); поле Email — `Input` (P2-05), работает с `register` из react-hook-form; иллюстрации входа и шагов — `src/shared/assets/images/`.
 - **Файлы:** `src/pages/login/`, `src/features/auth-by-email/ui/LoginForm.tsx`, `src/features/auth-oauth/`, `src/pages/register/ui/RegisterLayout.tsx`, `RegisterStep1Page.tsx`, `src/features/register/ui/StepCredentials.tsx`
 - **Где в макете:** 1:2400, ошибка 1:2473, «Регистрация 1 шаг» 1:2548
 - **Зависит от:** P2-02, P2-05, P2-06, P2-11, P3-05
@@ -137,7 +137,7 @@
 > Здесь же сверстать `AvatarUpload` и `CategorySubcategorySelect` в режиме `multiple` — связь списков (логику) сделает P6-03.
 > Это вёрстка — проверки полей и сохранение подключит P6-04.
 
-- **Уже готово:** `Avatar` (P2-04) для аватара с «+»; города и категории — `selectCities` и `selectCategories` (P4-02).
+- **Уже готово:** `Avatar` (P2-04) для аватара с «+»; поле «Имя» — `Input` (P2-05); города и категории — `selectCities` и `selectCategories` (P4-02).
 - **Файлы:** `src/pages/register/ui/RegisterStep2Page.tsx`, `src/features/register/ui/StepProfile.tsx`, `src/features/avatar-upload/`, `src/entities/category/ui/CategorySubcategorySelect.tsx`
 - **Где в макете:** «Регистрация 2 шаг»: 1:1497, календарь 1:1541, пол 1:1585, город 1:1629, категории 1:1673, подкатегории 1:1717
 - **Зависит от:** P3-11, P2-09, P2-12, P2-17, P2-03, P2-04
@@ -149,7 +149,7 @@
 > Это вёрстка — сохранение подключат P6-05 и P6-06.
 
 - **Файлы:** `src/pages/register/ui/RegisterStep3Page.tsx`, `src/features/register/ui/StepSkill.tsx`, `src/features/skill-create/ui/`
-- **Уже готово:** `FileDropzone` (P2-14) — зона загрузки фото с превью и крестиком; сама файлы не проверяет: отдаёт `File[]` в `onFiles`, ошибку и превью получает пропсами. Окно — `Modal` (P2-10) как обёртка, превью навыка верстаем здесь и передаём в него через `children`.
+- **Уже готово:** поля — `Input` и `Textarea` (P2-05); `FileDropzone` (P2-14) — зона загрузки фото с превью и крестиком; сама файлы не проверяет: отдаёт `File[]` в `onFiles`, ошибку и превью получает пропсами. Окно — `Modal` (P2-10) как обёртка, превью навыка верстаем здесь и передаём в него через `children`.
 - **Где в макете:** «Регистрация 3 шаг» 1:1761, превью 1:1799, «Ваше предложение создано» 1:2950
 - **Зависит от:** P3-12, P2-10, P2-13, P2-14
 
@@ -160,7 +160,7 @@
 > «Личные данные»: Почта, «Изменить пароль», Имя, Дата рождения, Пол, Город, «О себе», «Сохранить» и большой аватар.
 > Остальные четыре раздела — заглушки «Раздел в разработке».
 
-- **Уже готово:** большой аватар — `Avatar` размера `lg` (P2-04); список городов — `selectCities` (P4-02).
+- **Уже готово:** большой аватар — `Avatar` размера `lg` (P2-04); поля с карандашом — `Input` и `Textarea` с `rightIcon` (P2-05), как story `WithIcon`; список городов — `selectCities` (P4-02).
 - **Файлы:** `src/widgets/profile-sidebar/`, `src/pages/profile/`, `src/features/profile-edit/ui/ProfileForm.tsx`
 - **Где в макете:** 1:2370
 - **Зависит от:** P3-05, P3-12, P2-12
