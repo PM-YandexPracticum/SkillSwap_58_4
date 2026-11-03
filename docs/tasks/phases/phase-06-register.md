@@ -60,7 +60,7 @@
 > По ТЗ наставника после регистрации пользователь всегда попадает в каталог, и его карточка уже есть в ленте.
 > Если что-то упало — понятное сообщение, введённое не теряется.
 
-- **Уже готово:** `fileToDataUrl` из `@/shared/lib/image` (P2-14) — уменьшает фото до 800 px перед сохранением.
+- **Уже готово:** `fileToDataUrl` из `@/shared/lib/image` (P2-14) — уменьшает фото до 800 px перед сохранением; сессию создаёт `dispatch(startSession(user.id))` из `@/entities/session` (P4-05).
 - **Файлы:** `src/features/register/model/`, `src/features/skill-create/model/`, `src/features/skill-create/ui/OfferCreatedModal.tsx`, `src/pages/catalog/` (открыть окно по флагу)
 - **Где в макете:** 1:2950, 1:2904
 - **Зависит от:** P6-02, P6-04, P6-05, P4-06
