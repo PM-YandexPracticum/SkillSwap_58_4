@@ -4,7 +4,7 @@ export interface LogoutButtonProps {
 }
 
 /**
- * Пункт «Выйти» в меню пользователя: clearSession() + dispatch(clearSession) + редирект на каталог.
+ * Пункт «Выйти» в меню пользователя: `dispatch(endSession())` из `@/entities/session` (стирает сессию в store и localStorage) + переход на главную.
  */
 export function LogoutButton(_props: LogoutButtonProps) {
   // TODO: реализовать по макету
