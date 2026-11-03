@@ -69,6 +69,14 @@ describe('Checkbox', () => {
     expect(screen.getByRole('checkbox')).toBeChecked()
   })
 
+  it('частичный выбор — через родное свойство поля, без aria-checked поверх него', () => {
+    render(<Checkbox label="Категория" checked={false} indeterminate onChange={() => {}} />)
+
+    const checkbox = screen.getByRole<HTMLInputElement>('checkbox')
+    expect(checkbox.indeterminate).toBe(true)
+    expect(checkbox).not.toHaveAttribute('aria-checked')
+  })
+
   it('отключённый чекбокс не меняется и пропускается по Tab', async () => {
     const onChange = vi.fn()
     const user = userEvent.setup()

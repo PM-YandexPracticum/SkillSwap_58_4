@@ -57,7 +57,6 @@ export function Checkbox({
           type="checkbox"
           className={styles.input}
           checked={checked}
-          aria-checked={indeterminate ? 'mixed' : checked}
           aria-invalid={error ? true : invalid}
           aria-describedby={
             [describedBy, error ? errorId : undefined].filter(Boolean).join(' ') || undefined
