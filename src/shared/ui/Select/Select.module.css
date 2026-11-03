@@ -1,0 +1,135 @@
+.root {
+  width: 100%;
+}
+
+.label {
+  display: inline-block;
+  margin-bottom: var(--space-8);
+  color: var(--color-text);
+}
+
+.control {
+  position: relative;
+  width: 100%;
+}
+
+.trigger {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-10, 10px);
+  padding: var(--space-12) var(--space-20);
+  border: 1px solid #e4e8df;
+  border-radius: var(--radius-s);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--color-border);
+  outline-offset: 2px;
+}
+
+.triggerOpen {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.triggerError {
+  border-color: var(--color-error);
+}
+
+.triggerDisabled {
+  background-color: var(--color-bg);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}
+
+.value,
+.placeholder {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.placeholder {
+  color: var(--color-neutral);
+}
+
+.chevron {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  transform: translateY(-2px) rotate(45deg);
+  border-right: 2px solid currentcolor;
+  border-bottom: 2px solid currentcolor;
+}
+
+.chevronOpen {
+  transform: translateY(2px) rotate(225deg);
+}
+
+.panel {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+  padding: 48px 0 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-s);
+  background-color: var(--color-bg-secondary);
+}
+
+.panelError {
+  border-color: var(--color-error);
+}
+
+.options {
+  display: flex;
+  max-height: 240px;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-8) 0;
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-color: #e4e8df transparent;
+  scrollbar-width: thin;
+}
+
+.options::-webkit-scrollbar {
+  width: 4px;
+}
+
+.options::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: #e4e8df;
+}
+
+.option {
+  min-height: 32px;
+  padding: var(--space-4) var(--space-20);
+  border-radius: 4px;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.optionActive {
+  background-color: var(--color-bg);
+}
+
+.error {
+  display: block;
+  margin-top: var(--space-4);
+  color: var(--color-error);
+  font-size: 14px;
+}

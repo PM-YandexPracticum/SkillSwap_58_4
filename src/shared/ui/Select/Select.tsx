@@ -1,7 +1,12 @@
+import { useCallback, useId, useRef, useState } from 'react'
+
+import { useClickOutside } from '@/shared/lib/hooks/useClickOutside'
+import styles from './Select.module.css'
+
 export interface SelectProps {
   label?: string
   placeholder?: string
-  options: ReadonlyArray<{ value: string; label: string }>
+  options: ReadonlyArray<{ value: string | null; label: string }>
   /** Выбранное значение или null («Не указан») */
   value: string | null
   onChange: (value: string | null) => void
@@ -18,7 +23,160 @@ export interface SelectProps {
  * Выпадающий список с одним выбором: «Пол» (Не указан / Мужской / Женский), «Город», «Категория», «Подкатегория».
  * @see Figma: «Регистрация 2 шаг» — открытый «Пол» (1:1585), «Город» с поиском (1:1629)
  */
-export function Select(_props: SelectProps) {
-  // TODO: реализовать по макету
-  return null
+export function Select({
+  label,
+  placeholder,
+  options,
+  value,
+  onChange,
+  error,
+  disabled = false,
+}: SelectProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1)
+  const rootRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const id = useId()
+  const listboxId = `${id}-listbox`
+  const labelId = `${id}-label`
+  const errorId = `${id}-error`
+  const selectedOption = options.find((option) => option.value === value)
+  const selectedLabel = selectedOption?.label ?? placeholder ?? 'Не указан'
+
+  const close = useCallback(() => {
+    setIsOpen(false)
+    setActiveIndex(-1)
+  }, [])
+
+  useClickOutside(rootRef, close, isOpen)
+
+  const open = (direction: 'first' | 'last' = 'first') => {
+    if (options.length === 0) return
+    const selectedIndex = options.findIndex((option) => option.value === value)
+    setActiveIndex(
+      selectedIndex >= 0 ? selectedIndex : direction === 'first' ? 0 : options.length - 1,
+    )
+    setIsOpen(true)
+  }
+
+  const selectOption = (index: number) => {
+    const option = options[index]
+    if (!option) return
+
+    onChange(option.value)
+    close()
+    triggerRef.current?.focus()
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Escape' && isOpen) {
+      event.preventDefault()
+      close()
+      triggerRef.current?.focus()
+      return
+    }
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      if (!isOpen) {
+        open(event.key === 'ArrowDown' ? 'first' : 'last')
+        return
+      }
+
+      setActiveIndex((currentIndex) => {
+        const nextIndex = currentIndex + (event.key === 'ArrowDown' ? 1 : -1)
+        return Math.max(0, Math.min(options.length - 1, nextIndex))
+      })
+      return
+    }
+
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      if (!isOpen) {
+        open()
+      } else {
+        selectOption(activeIndex)
+      }
+    }
+  }
+
+  return (
+    <div ref={rootRef} className={styles.root}>
+      {label && (
+        <label id={labelId} htmlFor={`${id}-trigger`} className={styles.label}>
+          {label}
+        </label>
+      )}
+
+      <div className={styles.control}>
+        <button
+          ref={triggerRef}
+          id={`${id}-trigger`}
+          type="button"
+          className={[
+            styles.trigger,
+            isOpen ? styles.triggerOpen : '',
+            error ? styles.triggerError : '',
+            disabled ? styles.triggerDisabled : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          role="combobox"
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+          aria-controls={isOpen ? listboxId : undefined}
+          aria-activedescendant={
+            isOpen && activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined
+          }
+          aria-labelledby={label ? labelId : undefined}
+          aria-label={!label ? (placeholder ?? 'Выберите значение') : undefined}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? errorId : undefined}
+          disabled={disabled}
+          onClick={() => (isOpen ? close() : open())}
+          onKeyDown={handleKeyDown}
+        >
+          <span className={selectedOption ? styles.value : styles.placeholder}>
+            {selectedLabel}
+          </span>
+          <span className={[styles.chevron, isOpen ? styles.chevronOpen : ''].join(' ')} />
+        </button>
+
+        {isOpen && (
+          <div className={[styles.panel, error ? styles.panelError : ''].join(' ')}>
+            <ul
+              id={listboxId}
+              className={styles.options}
+              role="listbox"
+              aria-labelledby={label ? labelId : undefined}
+              aria-label={!label ? (placeholder ?? 'Выберите значение') : undefined}
+            >
+              {options.map((option, index) => (
+                <li
+                  key={`${option.value ?? 'null'}-${index}`}
+                  id={`${listboxId}-option-${index}`}
+                  className={[styles.option, activeIndex === index ? styles.optionActive : '']
+                    .filter(Boolean)
+                    .join(' ')}
+                  role="option"
+                  aria-selected={option.value === value}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  onClick={() => selectOption(index)}
+                >
+                  {option.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {error && (
+        <span id={errorId} className={styles.error} role="alert">
+          {error}
+        </span>
+      )}
+    </div>
+  )
 }
