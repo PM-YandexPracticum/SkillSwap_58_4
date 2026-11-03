@@ -5,5 +5,4 @@ export const selectUsers = (state: RootState) => state.users.items
 export const selectUsersStatus = (state: RootState) => state.users.status
 
 // TODO: selectUserById(id), selectUserByEmail(email)
-// TODO: selectLikesCount(userId) — сколько пользователей держат его в likedUserIds («Популярное»)
-// TODO: selectPopularUsers, selectNewUsers — через createSelector
+// TODO: selectPopularUsers — по полю likesCount (его меняет лайк, P5-07), selectNewUsers — по createdAt; через createSelector

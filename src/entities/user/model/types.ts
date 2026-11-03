@@ -3,7 +3,7 @@ import type { ID, ISODateString } from '@/shared/types'
 export type Gender = 'male' | 'female'
 
 /**
- * Пользователь платформы. Образцы — `shared/api/mock-db/seed/users/`; чтение и запись — только через `entities/user/api`.
+ * Пользователь платформы. Образцы — `public/db/users.json`; чтение и запись — только через `entities/user/api`.
  * @see Figma: карточка в каталоге и «Профиль_личные данные» (1:2370)
  */
 export interface User {
