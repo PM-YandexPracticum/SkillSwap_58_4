@@ -88,7 +88,7 @@
 
 - **Уже готово:**
   - вёрстка обоих видов шапки (P3-04), вид пока переключается пропом `isAuth`;
-  - сессия (P4-05): `selectIsAuth` и `selectSession` из `@/entities/session`, сохранение в localStorage (`saveSession` / `clearSession` в `sessionStorage.ts`) и действие слайса для выхода;
+  - сессия (P4-05): `selectIsAuth`, `selectSession` и `endSession()` из `@/entities/session` — выход одним действием стирает сессию и в store, и в localStorage;
   - вход (P4-09) и селектор `selectCurrentUser` из `@/entities/user` — вошедший пользователь (`PublicUser`) или `null` у гостя;
   - `Dropdown` (P2-08) с `align="end"` — в его stories есть пример меню «Личный кабинет / Выйти»; `Avatar` размера `sm` (P2-04);
   - маршруты — `ROUTES.HOME`, `ROUTES.LOGIN`, `ROUTES.REGISTER_STEP_1`, `ROUTES.FAVORITES`, `ROUTES.PROFILE` из `@/shared/config`.
@@ -106,7 +106,7 @@
   - «Личный кабинет» → `ROUTES.PROFILE`; «Выйти» — `LogoutButton` из `features/logout`;
   - закрывается по Esc, клику мимо и после выбора пункта; с клавиатуры: Tab до имени, Enter открывает, Esc закрывает и возвращает фокус на кнопку.
 - **Выход (`features/logout`):**
-  - по «Выйти» — по очереди: действие выхода из слайса сессии (P4-05), очистка сессии в localStorage, переход на `ROUTES.HOME` с `replace: true`;
+  - по «Выйти» — `dispatch(endSession())` (сессия стирается и в store, и в localStorage), затем переход на `ROUTES.HOME` с `replace: true`;
   - на главную уходим и со страниц только для вошедших (`/profile`, `/favorites`), иначе `RequireAuth` (P4-08) отправит на вход;
   - после выхода шапка сразу показывает вид гостя, без перезагрузки; после перезагрузки пользователь остаётся гостем;
   - «база» (пользователи, лайки, обмены) не очищается — стирается только сессия.
