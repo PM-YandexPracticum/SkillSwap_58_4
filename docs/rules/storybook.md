@@ -53,6 +53,23 @@ export const Secondary: Story = { args: { variant: 'secondary', children: 'Во�
 export const Disabled: Story = { args: { variant: 'primary', children: 'Далее', disabled: true } }
 ```
 
+## Story с настоящими данными из базы
+
+Обычные stories собираем на фабриках (`createUser()`, `createSkill()`) — они одинаковые при каждом запуске.
+Если нужно показать компонент на настоящих данных из `public/db`, добавь отдельную story с загрузчиком `loaders`:
+Storybook сам скачает файлы базы, а компонент получит готовые пропсы. Образец — story «From Database» в
+[`UserCard.stories.tsx`](../../src/entities/user/ui/UserCard.stories.tsx): там же видно, как из данных собираются пропсы карточки.
+
+```tsx
+export const FromDatabase: Story = {
+  loaders: [async () => ({ card: await loadCardFromDatabase('u01') })],
+  render: (args, { loaded }) => <UserCard {...args} {...loaded.card} />,
+}
+```
+
+Файлы базы в story читаем загрузчиком `loadSeed` из `@/shared/api`: story сущности не может импортировать соседние
+сущности, а `shared` доступен всем. В коде приложения так не делаем — там данные идут через `entities/*/api` и store.
+
 ## Команды (после P1-11)
 
 | Команда | Что делает |

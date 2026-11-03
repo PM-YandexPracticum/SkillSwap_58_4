@@ -1,3 +1,5 @@
+import { useState, type MouseEvent } from 'react'
+
 import styles from './Tag.module.css'
 
 export type TagColor =
@@ -19,6 +21,12 @@ const CATEGORY_COLOR_VAR: Record<TagColor, string> = {
   more: 'var(--color-tag-more)',
 }
 
+/** Есть ли такой цвет у чипа — id категории из данных (`business`, `languages`…) или `more` */
+export function isTagColor(value: string): value is TagColor {
+  // Собственное свойство, а не `in`: иначе «toString» и «constructor» тоже сочлись бы цветами
+  return Object.prototype.hasOwnProperty.call(CATEGORY_COLOR_VAR, value)
+}
+
 export interface TagProps {
   label: string
   /** Семантический цвет, приходит снаружи */
@@ -27,13 +35,29 @@ export interface TagProps {
   onRemove?: () => void
 }
 
+/**
+ * Цветной чип: навык на карточке («Игра на барабанах», «+2») или «плашка» с крестиком (`onRemove`).
+ * В узком месте длинное название обрезается многоточием; при наведении мышью тогда видна подсказка
+ * с полным названием. Скринридер читает название целиком и без подсказки.
+ * @see Figma: чипы на карточке (1:2861), плашки фильтров (1:2860)
+ */
 export function Tag({ label, color, onRemove }: TagProps) {
+  // Подсказку решаем показывать при наведении: только тогда известно, обрезан ли текст на самом деле
+  const [hint, setHint] = useState<string | undefined>(undefined)
+
+  const showHintIfTruncated = (event: MouseEvent<HTMLSpanElement>) => {
+    const { scrollWidth, clientWidth } = event.currentTarget
+    setHint(scrollWidth > clientWidth ? label : undefined)
+  }
+
   return (
     <div
       className={styles.tag}
       style={{ backgroundColor: color ? CATEGORY_COLOR_VAR[color] : 'var(--color-bg-secondary)' }}
     >
-      <span>{label}</span>
+      <span className={styles.label} title={hint} onMouseEnter={showHintIfTruncated}>
+        {label}
+      </span>
 
       {onRemove && (
         <button
