@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { useState, useEffect, useCallback } from 'react'
-import useEmblaCarousel from 'embla-carousel-react'
+import { useState, useCallback } from 'react'
+import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react'
 import { Carousel } from './Carousel'
-import styles from './Carousel.module.css'
+
+type EmblaApi = UseEmblaCarouselType[1]
 
 const meta: Meta<typeof Carousel> = {
   title: 'shared/ui/Carousel',
@@ -20,6 +21,9 @@ const meta: Meta<typeof Carousel> = {
 - Стрелки стилизованы под макет: круглые кнопки с иконкой \`chevron-right\`, левая повёрнута на 180°.
 - При наведении фон стрелок становится чуть темнее (через \`color-mix\`).
 - Стрелки скрываются (становятся прозрачными и \`pointer-events: none\`), когда листать некуда.
+- Через \`onApiReady\` и \`onSelect\` можно синхронизировать внешние компоненты (например, миниатюры).
+- \`fullHeight\` растягивает карусель и слайды на всю высоту родителя (для галерей).
+- \`loop\` включает бесконечную прокрутку (для галерей, где обе стрелки должны быть активны).
         `,
       },
     },
@@ -31,27 +35,18 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 const GalleryLayout = ({ images, showArrows = true }: { images: string[]; showArrows?: boolean }) => {
-  const [mainRef, mainApi] = useEmblaCarousel({ loop: true })
+  const [mainApi, setMainApi] = useState<EmblaApi>()
+  const [selectedIndex, setSelectedIndex] = useState(0)
   const [thumbRef, thumbApi] = useEmblaCarousel({
     containScroll: 'trimSnaps',
     slidesToScroll: 1,
     axis: 'y'
   })
-  const [selectedIndex, setSelectedIndex] = useState(0)
 
-  const onSelect = useCallback(() => {
-    if (!mainApi) return
-    const index = mainApi.selectedScrollSnap()
+  const handleSelect = useCallback((index: number) => {
     setSelectedIndex(index)
     thumbApi?.scrollTo(index)
-  }, [mainApi, thumbApi])
-
-  useEffect(() => {
-    if (!mainApi) return
-    onSelect()
-    mainApi.on('select', onSelect)
-    mainApi.on('reInit', onSelect)
-  }, [mainApi, onSelect])
+  }, [thumbApi])
 
   const scrollTo = (index: number) => {
     mainApi?.scrollTo(index)
@@ -66,39 +61,29 @@ const GalleryLayout = ({ images, showArrows = true }: { images: string[]; showAr
       {/* Большая карусель */}
       <div style={{
         flex: '1 1 70%',
+        height: '100%',
         position: 'relative',
         borderRadius: 'var(--radius-s)',
         overflow: 'hidden'
       }}>
-        <div style={{ overflow: 'hidden', height: '100%' }} ref={mainRef}>
-          <div style={{ display: 'flex', height: '100%' }}>
-            {images.map((src, i) => (
-              <div key={i} style={{ flex: '0 0 100%', height: '100%' }}>
-                <img src={src} alt={`Фото ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Стрелки показываем только если фото больше одного и showArrows === true */}
-        {hasThumbs && showArrows && (
-          <>
-            <button type="button" className={`${styles.arrow} ${styles.arrowPrev}`} onClick={() => mainApi?.scrollPrev()}>
-              <img
-                src={new URL('@/shared/assets/icons/chevron-right.svg', import.meta.url).href}
-                alt=""
-                className={styles.arrowIconLeft}
-              />
-            </button>
-            <button type="button" className={`${styles.arrow} ${styles.arrowNext}`} onClick={() => mainApi?.scrollNext()}>
-              <img
-                src={new URL('@/shared/assets/icons/chevron-right.svg', import.meta.url).href}
-                alt=""
-                className={styles.arrowIcon}
-              />
-            </button>
-          </>
-        )}
+        <Carousel
+          slidesToShow={1}
+          gap={0}
+          fullHeight
+          loop
+          showArrows={hasThumbs && showArrows}
+          onApiReady={setMainApi}
+          onSelect={handleSelect}
+        >
+          {images.map((src, i) => (
+            <img
+              key={i}
+              src={src}
+              alt={`Фото ${i + 1}`}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          ))}
+        </Carousel>
       </div>
 
       {/* Правая колонка */}
@@ -135,7 +120,7 @@ const GalleryLayout = ({ images, showArrows = true }: { images: string[]; showAr
                     <img
                       src={images[actualIndex]}
                       alt={`Мини ${i + 1}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                     />
                   </div>
                 )

@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
-import useEmblaCarousel from 'embla-carousel-react'
+import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react'
 
 import styles from './Carousel.module.css'
+
+type EmblaApi = UseEmblaCarouselType[1]
 
 export interface CarouselProps {
   /** Слайды карусели. Может быть передан один элемент или массив элементов */
@@ -12,6 +14,16 @@ export interface CarouselProps {
   gap?: number
   /** Дополнительный CSS-класс для корневого контейнера */
   className?: string
+  /** Показывать ли стрелки навигации (по умолчанию true) */
+  showArrows?: boolean
+  /** Растягивать карусель и слайды на всю высоту родителя (по умолчанию false) */
+  fullHeight?: boolean
+  /** Зациклить прокрутку (по умолчанию false) */
+  loop?: boolean
+  /** Колбэк, вызываемый при инициализации/переинициализации API embla */
+  onApiReady?: (api: EmblaApi) => void
+  /** Колбэк, вызываемый при смене активного слайда. Получает индекс */
+  onSelect?: (index: number) => void
 }
 
 /**
@@ -25,11 +37,22 @@ export interface CarouselProps {
  * @see Figma: на странице навыка 1:2800
  * @see Figma: в «Похожие предложения» 1:2812
  */
-export function Carousel({ children, slidesToShow = 1, gap = 24, className }: CarouselProps) {
+export function Carousel({
+  children,
+  slidesToShow = 1,
+  gap = 24,
+  className,
+  showArrows = true,
+  fullHeight = false,
+  loop = false,
+  onApiReady,
+  onSelect: onSelectProp,
+}: CarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
     containScroll: 'trimSnaps',
     slidesToScroll: 1,
+    loop,
   })
 
   const [prevBtnEnabled, setPrevBtnEnabled] = useState(false)
@@ -42,17 +65,29 @@ export function Carousel({ children, slidesToShow = 1, gap = 24, className }: Ca
     if (!emblaApi) return
     setPrevBtnEnabled(emblaApi.canScrollPrev())
     setNextBtnEnabled(emblaApi.canScrollNext())
-  }, [emblaApi])
+    onSelectProp?.(emblaApi.selectedScrollSnap())
+  }, [emblaApi, onSelectProp])
 
   useEffect(() => {
     if (!emblaApi) return
+    onApiReady?.(emblaApi)
     onSelect()
     emblaApi.on('select', onSelect)
     emblaApi.on('reInit', onSelect)
-  }, [emblaApi, onSelect])
+    return () => {
+      emblaApi.off('select', onSelect)
+      emblaApi.off('reInit', onSelect)
+    }
+  }, [emblaApi, onSelect, onApiReady])
 
   return (
-    <div className={`${styles.carousel} ${className ?? ''}`}>
+    <div
+      className={[
+        styles.carousel,
+        fullHeight ? styles.carouselFullHeight : '',
+        className ?? '',
+      ].filter(Boolean).join(' ')}
+    >
       <div className={styles.viewport} ref={emblaRef}>
         <div className={styles.container} style={{ gap: `${gap}px` }}>
           {Array.isArray(children) ? (
@@ -75,32 +110,36 @@ export function Carousel({ children, slidesToShow = 1, gap = 24, className }: Ca
         </div>
       </div>
 
-      <button
-        type="button"
-        data-testid="carousel-prev"
-        className={`${styles.arrow} ${styles.arrowPrev}`}
-        onClick={scrollPrev}
-        disabled={!prevBtnEnabled}
-      >
-        <img
-          src={new URL('@/shared/assets/icons/chevron-right.svg', import.meta.url).href}
-          alt=""
-          className={styles.arrowIconLeft}
-        />
-      </button>
-      <button
-        type="button"
-        data-testid="carousel-next"
-        className={`${styles.arrow} ${styles.arrowNext}`}
-        onClick={scrollNext}
-        disabled={!nextBtnEnabled}
-      >
-        <img
-          src={new URL('@/shared/assets/icons/chevron-right.svg', import.meta.url).href}
-          alt=""
-          className={styles.arrowIcon}
-        />
-      </button>
+      {showArrows && (
+        <>
+          <button
+            type="button"
+            data-testid="carousel-prev"
+            className={`${styles.arrow} ${styles.arrowPrev}`}
+            onClick={scrollPrev}
+            disabled={!prevBtnEnabled}
+          >
+            <img
+              src={new URL('@/shared/assets/icons/chevron-right.svg', import.meta.url).href}
+              alt=""
+              className={styles.arrowIconLeft}
+            />
+          </button>
+          <button
+            type="button"
+            data-testid="carousel-next"
+            className={`${styles.arrow} ${styles.arrowNext}`}
+            onClick={scrollNext}
+            disabled={!nextBtnEnabled}
+          >
+            <img
+              src={new URL('@/shared/assets/icons/chevron-right.svg', import.meta.url).href}
+              alt=""
+              className={styles.arrowIcon}
+            />
+          </button>
+        </>
+      )}
     </div>
   )
 }

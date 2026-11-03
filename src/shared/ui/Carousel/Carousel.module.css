@@ -3,9 +3,19 @@
   width: 100%;
 }
 
+/* Модификатор: карусель растягивается на всю высоту родителя */
+.carouselFullHeight {
+  height: 100%;
+}
+
 .viewport {
   overflow: hidden;
   width: 100%;
+}
+
+/* В режиме full-height viewport тоже тянется */
+.carouselFullHeight .viewport {
+  height: 100%;
 }
 
 .container {
@@ -13,9 +23,19 @@
   will-change: transform;
 }
 
+/* В режиме full-height контейнер тянется по высоте */
+.carouselFullHeight .container {
+  height: 100%;
+}
+
 .slide {
   flex-shrink: 0;
   min-width: 0;
+}
+
+/* В режиме full-height слайд занимает всю высоту */
+.carouselFullHeight .slide {
+  height: 100%;
 }
 
 /* Стрелки */
@@ -29,7 +49,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: var(--radius-l);
   background-color: var(--color-disabled);
   border: none;
   cursor: pointer;

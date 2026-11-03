@@ -25,6 +25,7 @@ describe('Carousel', () => {
     on,
     off,
     reInit: vi.fn(),
+    selectedScrollSnap: () => 0,
   } as unknown as EmblaApi
 
   beforeEach(() => {
@@ -69,5 +70,45 @@ describe('Carousel', () => {
 
     expect(scrollPrev).toHaveBeenCalledTimes(1)
     expect(scrollNext).toHaveBeenCalledTimes(1)
+  })
+
+  it('disabled кнопки, когда листать некуда', () => {
+    // Эмулируем вызов onSelect при подписке на событие 'select',
+    // чтобы состояние кнопок реально обновилось через onSelect
+    const on = vi.fn((event: string, cb: () => void) => {
+      if (event === 'select') cb()
+    })
+    const api = {
+      ...mockEmblaApi,
+      canScrollPrev: () => false,
+      canScrollNext: () => false,
+      on,
+    } as unknown as EmblaApi
+
+    vi.mocked(useEmblaCarousel).mockReturnValue([vi.fn(), api])
+    render(<Carousel>{slides}</Carousel>)
+
+    expect(screen.getByTestId('carousel-prev')).toBeDisabled()
+    expect(screen.getByTestId('carousel-next')).toBeDisabled()
+  })
+
+  it('отписывается от событий при размонтировании', () => {
+    const off = vi.fn()
+    vi.mocked(useEmblaCarousel).mockReturnValue([
+      vi.fn(),
+      { ...mockEmblaApi, off } as unknown as EmblaApi,
+    ])
+    const { unmount } = render(<Carousel>{slides}</Carousel>)
+    unmount()
+    expect(off).toHaveBeenCalledWith('select', expect.any(Function))
+    expect(off).toHaveBeenCalledWith('reInit', expect.any(Function))
+  })
+
+  it('рассчитывает ширину слайда с учётом slidesToShow и gap', () => {
+    render(<Carousel slidesToShow={2} gap={16}>{slides}</Carousel>)
+    const slide = screen.getByText('Слайд 1').parentElement
+    expect(slide).toHaveStyle({
+      flex: '0 0 calc((100% - 16px) / 2)',
+    })
   })
 })
