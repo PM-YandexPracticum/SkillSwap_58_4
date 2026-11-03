@@ -136,7 +136,7 @@
 - **Где в макете:** «Страница навыка» 1:2764, превью навыка 1:1799
 - **Зависит от:** P1-10, P2-02
 
-### P2-14 · FileDropzone 🟡
+### P2-14 · FileDropzone ✅ 🟡
 > **Что нужно сделать:** сделать пунктирную зону «Перетащите или выберите изображения навыка»: файл можно перетащить
 > или выбрать кнопкой, выбранные фото видны превью с крестиком. В этой же задаче — утилиты проверки типа и размера файла
 > (`validateImageFile`: jpg/png/webp, до 1 МБ) и превращения файла в data URL (`fileToDataUrl`) — наставник просит ограничивать файлы.
@@ -153,6 +153,7 @@
   Файл выбирает скрытый `<input type="file" accept="image/jpeg,image/png,image/webp" multiple>`; клик по кнопке не должен открыть окно дважды.
   Пока над зоной тащат файл — можно выделить рамку `var(--color-accent-strong)` (в макете не нарисовано).
   Превью выбранных фото в макете не нарисованы — раскладку предлагает исполнитель на токенах (скругление `--radius-s`, крестик — `IconButton` с `cross`) и показывает скриншотом в PR.
+- **Issue:** [#30](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/30) · PR [#132](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/132)
 - **Подсказки к утилитам:** перед `drawImage` залить холст белым — иначе прозрачные части PNG в JPEG станут чёрными; в тестах (jsdom) `getContext` возвращает `null` — подменить canvas или вынести расчёт размеров в отдельную функцию с тестом.
 - **Зависит от:** P1-02
 
@@ -161,7 +162,8 @@
 > появляется спиннер и добавляются ещё 6. Догрузка только по мере прокрутки пользователя.
 > Хук общий для «Рекомендуем», результатов фильтров и избранного; числа — в `shared/config/catalog.ts`.
 
-- **Уже готово:** числа ленты (`CATALOG.SCROLL_BATCH`, `CATALOG.SCROLL_DELAY_MS`) в `shared/config/catalog.ts`; как писать тест хука — [testing.md](../../rules/testing.md), образец `getAge.test.ts`.
+- **Уже готово:** числа ленты (`CATALOG.SCROLL_BATCH`, `CATALOG.SCROLL_DELAY_MS`) в `shared/config/catalog.ts`; заготовка `useInfiniteScroll(items, batch, delayMs)` с типом результата (`visibleItems`, `sentinelRef`, `isLoading`, `hasMore`) уже экспортируется из `@/shared/lib/hooks` — остаётся тело и тест; спиннер для ленты — `Loader` (P2-01). Правила тестов — [testing.md](../../rules/testing.md), образец `getAge.test.ts`.
+- **Подсказки к тесту:** хук рендерим через `renderHook` из `@testing-library/react`; в jsdom нет `IntersectionObserver` — подменить через `vi.stubGlobal` и вызвать его колбэк вручную; задержку — `vi.useFakeTimers()` и `vi.advanceTimersByTime(CATALOG.SCROLL_DELAY_MS)`.
 - **Файлы:** `src/shared/lib/hooks/useInfiniteScroll.ts` + тест
 - **Зависит от:** P1-04
 
