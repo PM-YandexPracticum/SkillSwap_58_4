@@ -83,6 +83,44 @@ describe('Input', () => {
     expect(screen.getByRole('textbox')).toHaveValue('Мария')
   })
 
+  it('кнопка справа (rightAction) кликается и доступна с клавиатуры после поля', async () => {
+    const onClear = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <Input
+        label="Город"
+        defaultValue="Са"
+        rightAction={
+          <button type="button" aria-label="Очистить" onClick={onClear}>
+            ×
+          </button>
+        }
+      />,
+    )
+
+    await user.tab()
+    expect(screen.getByRole('textbox', { name: 'Город' })).toHaveFocus()
+    await user.tab()
+    expect(screen.getByRole('button', { name: 'Очистить' })).toHaveFocus()
+
+    await user.keyboard('{Enter}')
+    await user.click(screen.getByRole('button', { name: 'Очистить' }))
+    expect(onClear).toHaveBeenCalledTimes(2)
+  })
+
+  it('с rightAction декоративная иконка не показывается — справа одно место', () => {
+    render(
+      <Input
+        label="Пароль"
+        rightIcon={<span data-testid="decor" />}
+        rightAction={<button type="button">Показать пароль</button>}
+      />,
+    )
+
+    expect(screen.getByRole('button', { name: 'Показать пароль' })).toBeInTheDocument()
+    expect(screen.queryByTestId('decor')).not.toBeInTheDocument()
+  })
+
   it('работает с register и фокусировкой ошибки в react-hook-form', async () => {
     function Form() {
       const {
