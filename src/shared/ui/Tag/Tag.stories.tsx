@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Tag, TagColor } from './Tag';
+import type { Meta, StoryObj } from '@storybook/react-vite'
+import { Tag, TagColor } from './Tag'
 
 const meta: Meta<typeof Tag> = {
   title: 'shared/ui/Tag',
@@ -20,24 +20,32 @@ const meta: Meta<typeof Tag> = {
       },
     },
   },
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: { label: 'Игра на барабанах', color: 'creativity' },
-};
+}
 
 export const Removable: Story = {
   args: { label: 'Москва', onRemove: () => {} },
-};
+}
 
 export const PlusTwo: Story = {
   args: { label: '+2', color: 'more' },
-};
+}
 
-const colors: TagColor[] = ['business', 'creativity', 'languages', 'education', 'health', 'home', 'more'];
+const colors: TagColor[] = [
+  'business',
+  'creativity',
+  'languages',
+  'education',
+  'health',
+  'home',
+  'more',
+]
 const labels: Record<TagColor, string> = {
   business: 'Бизнес и карьера',
   creativity: 'Творчество и искусство',
@@ -51,7 +59,9 @@ const labels: Record<TagColor, string> = {
 export const AllCategories: Story = {
   render: () => (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-      {colors.map((c) => <Tag key={c} label={labels[c]} color={c} />)}
+      {colors.map((c) => (
+        <Tag key={c} label={labels[c]} color={c} />
+      ))}
     </div>
   ),
-};
+}
