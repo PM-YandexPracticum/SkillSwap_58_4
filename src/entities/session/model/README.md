@@ -9,6 +9,7 @@
 
 ## Что внутри
 
-- `selectors.ts` — Текущая сессия или null
-- `sessionSlice.ts` — Состояние авторизации. TODO: setSession(session), clearSession(); начальное значение читать из sessionStorage.ts
+- `selectors.ts` — `selectSession` (сессия или `null`) и `selectIsAuth` (вошёл ли пользователь)
+- `sessionSlice.ts` — Состояние авторизации: начальное значение из localStorage; `startSession(userId)` — вход, `endSession()` — выход: каждое сразу меняет и store, и localStorage
+- `sessionSlice.test.ts` — тесты: гость при открытии, вошедший остаётся после перезагрузки, вход и выход
 - `types.ts` — Текущая сессия. Бекенда нет: «токен» — мок, хранится в localStorage. Профильные данные берутся из entities/user по `userId`

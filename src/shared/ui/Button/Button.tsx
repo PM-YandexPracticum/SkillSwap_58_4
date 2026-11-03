@@ -1,15 +1,37 @@
+import styles from './Button.module.css'
+
 export interface ButtonProps {
+  /** Вариант оформления кнопки */
   variant?: 'primary' | 'secondary' | 'ghost'
+  /** Тип кнопки */
   type?: 'button' | 'submit'
+  /** Отключает кнопку */
   disabled?: boolean
+  /** Обработчик нажатия */
   onClick?: () => void
+  /** Содержимое кнопки */
   children: React.ReactNode
 }
 
 /**
- * Кнопка. Варианты из макета: primary (зелёная «Подробнее», «Далее»), secondary (белая с обводкой «Войти»), ghost (текстовая «Смотреть все»).
+ * Кнопка с текстом и несколькими вариантами оформления.
+ * @see Figma: 1:2861 — шапка: «Войти», «Зарегистрироваться»
  */
-export function Button(_props: ButtonProps) {
-  // TODO: реализовать по макету
-  return null
+export function Button({
+  variant = 'primary',
+  type = 'button',
+  disabled,
+  onClick,
+  children,
+}: ButtonProps) {
+  return (
+    <button
+      className={`${styles.button} ${styles[variant]}`}
+      disabled={disabled}
+      type={type}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  )
 }

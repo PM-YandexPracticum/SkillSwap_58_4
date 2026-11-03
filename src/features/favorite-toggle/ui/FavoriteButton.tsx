@@ -6,7 +6,7 @@ export interface FavoriteButtonProps {
 /**
  * Сердечко со счётчиком лайков (`likesCount`) на карточке и странице навыка.
  * Закрашено, если пользователь есть в `likedUserIds` текущего пользователя. Себя лайкнуть нельзя.
- * Гость → регистрация (`/register/step-1`) с запоминанием страницы, после «Готово» — возврат обратно.
+ * Гость → вход (`/login`) с запоминанием страницы, после входа — возврат обратно (ТЗ наставника, 2.4).
  */
 export function FavoriteButton(_props: FavoriteButtonProps) {
   // TODO: useAppSelector(selectFavoriteIds) + toggleFavorite

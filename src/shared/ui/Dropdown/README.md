@@ -9,6 +9,25 @@ UI-компонент **Dropdown**. Поповер, привязанный к т
 
 ## Что внутри
 
-- `Dropdown.stories.tsx` — Stories компонента Dropdown — ЗАГЛУШКА. Пакеты Storybook ставит задача P1-11; после неё добавить типы: `const meta: Meta<typeof Dropdown>` и `export const Default: StoryObj<typeof meta>`
-- `Dropdown.tsx` — Поповер, привязанный к триггеру: «Все навыки», уведомления, меню пользователя
+- `Dropdown.tsx` — поповер под кнопкой: закрывается по Esc и клику мимо, не вылезает за край окна (отступ 36px, как в макете)
+- `Dropdown.module.css` — стили поповера: белый фон, рамка, скругление 12px
+- `Dropdown.test.tsx` — тесты: открытие, Esc, клик мимо, сдвиг внутрь окна
+- `Dropdown.stories.tsx` — stories: «Все навыки», уведомления, меню пользователя, закрытое состояние
 - `index.ts` — публичный API — импортировать снаружи только отсюда
+
+## Как использовать
+
+```tsx
+import { Dropdown } from '@/shared/ui/Dropdown'
+
+const [isOpen, setIsOpen] = useState(false)
+
+<Dropdown
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  align="end" // кнопки справа в шапке; для «Все навыки» не нужен
+  trigger={<IconButton onClick={() => setIsOpen((open) => !open)} ... />}
+>
+  {/* любое содержимое */}
+</Dropdown>
+```

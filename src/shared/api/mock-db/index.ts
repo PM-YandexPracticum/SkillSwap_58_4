@@ -2,6 +2,8 @@ export {
   createMockCollection,
   resetMockDb,
   type MockCollection,
+  type MockCollectionOptions,
+  type SeedSource,
   type WithId,
 } from './createMockCollection'
-export { SEED } from './seed'
+export { loadSeed } from './loadSeed'

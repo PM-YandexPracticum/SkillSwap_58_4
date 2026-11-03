@@ -8,10 +8,12 @@ export interface AvatarUploadProps {
 }
 
 /**
- * Большой круглый аватар с кнопкой-иконкой смены фото.
- * Файл проверяется `validateImageFile` (jpg/png/webp, до 1 МБ), превью — через `URL.createObjectURL`,
- * картинка — через `resolveImageUrl`.
- * @see Figma: «Профиль_личные данные» (1:2370)
+ * Аватар с выбором фото. В макете два вида:
+ * - шаг 2 регистрации — фото ещё нет: иконка `user-circle` 72 px и маленький «+» (`add`, 16 px) в правом нижнем углу;
+ * - «Личные данные» — фото-круг 244 px и круглая кнопка 56 px в углу: фон `--color-accent-soft`, иконка `gallery-edit`.
+ * Это не `FileDropzone`: общие с ним только `validateImageFile` (jpg/png/webp, до 1 МБ) и `fileToDataUrl`.
+ * Превью — через `URL.createObjectURL`, картинка — через `resolveImageUrl`.
+ * @see Figma: «Регистрация 2 шаг» (1:1497, блок `Icon+Add`), «Профиль_личные данные» (1:2370, блок `User photo`)
  */
 export function AvatarUpload(_props: AvatarUploadProps) {
   // TODO: реализовать по макету

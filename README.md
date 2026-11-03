@@ -45,7 +45,9 @@ src/
 
 src/shared/api/mock-db/
 ├── createMockCollection.ts   # «база» в браузере: образцы + изменения в localStorage
-└── seed/                     # образцы по 2–3 на сущность — остальное команда заполняет по образцу
+└── loadSeed.ts               # загрузка образцов из public/db через fetch
+
+public/db/                    # образцы данных: users, skills, categories, cities, exchanges, notifications (.json)
 ```
 
 Импорт только вниз: `app → pages → widgets → features → entities → shared`, и только через `index.ts` слайса.
@@ -54,7 +56,7 @@ src/shared/api/mock-db/
 
 ## Моки данных
 
-Данные — внутри приложения, в `src/shared/api/mock-db/seed/` по 2–3 образца на сущность. Изменения сохраняются в localStorage.
+Образцы данных — JSON-файлы в `public/db/` (по ТЗ наставника): 45 пользователей с навыками и фото, 6 категорий с 42 подкатегориями, 17 городов, образцы обменов и уведомлений. «База» скачивает файл при первом обращении к коллекции, изменения сохраняются в localStorage.
 Читать и писать данные — только через `entities/*/api`: потом этот слой можно заменить на настоящую БД. Демо-вход — в [docs/architecture/fsd.md](docs/architecture/fsd.md).
 
 Структура объектов описана в `model/types.ts` соответствующей сущности: `src/entities/user`, `skill`, `category`, `city`, `exchange`, `notification`.
@@ -72,7 +74,16 @@ src/shared/api/mock-db/
 | `npm run format` | Форматирование через Prettier |
 | `npm run test` | Запуск тестов |
 | `npm run test:watch` | Тесты в watch-режиме |
-| `npm run test:coverage` | Покрытие (цель ≥ 70%) |
+| `npm run test:coverage` | Отчёт о покрытии тестами. Порог 70 % — цель к финишу (P8-07): пока тестов мало, команда сообщает, что порог не достигнут, — это нормально |
+| `npm run e2e` | Автотесты сценариев в браузере (Playwright, папка `e2e/`). Перед первым запуском: `npx playwright install chromium` |
+| `npm run storybook` | Storybook — каталог UI-компонентов |
+| `npm run build-storybook` | Сборка Storybook |
+| `npm run commit` | Коммит по шагам в формате Conventional Commits |
+| `npm run verify` | Линтер и тесты — то же, что хук перед push |
+
+**Storybook не запускается на Windows** с ошибкой `ERR_DLOPEN_FAILED`: не хватает системной библиотеки Microsoft.
+Установи [Microsoft Visual C++ Redistributable 2015–2022 (x64)](https://aka.ms/vs/17/release/vc_redist.x64.exe) и перезапусти терминал.
+`npm ci` и `npm rebuild` здесь не помогают.
 
 ---
 
@@ -102,7 +113,7 @@ Lazy-загрузка уже настроена в `src/app/providers/RouterProv
 - работаем от `develop`, `main` не трогаем; одна задача = одна ветка = один PR в `develop`;
 - ветка начинается с ID задачи: `feature/p2-02-buttons`;
 - одновременно — только одна задача; в коммит — только свои файлы, никогда `git add .`;
-- `package.json` и зависимости меняет только тимлид;
+- `package.json` и зависимости меняют только тимлид и помощник (задачи 👑);
 - коммиты по [Conventional Commits](https://www.conventionalcommits.org/ru/): `feat: …`, `fix: …`;
 - PR проверяет и вливает тимлид или помощник.
 
@@ -115,10 +126,10 @@ CI/CD в проекте нет — всё проверяется локальн�
 
 | Команда | Что проверяет |
 |---|---|
-| `npm run lint` | ESLint + Stylelint |
+| `npm run lint` | ESLint + Stylelint, в том числе правила импортов FSD — только вниз по слоям и через `index.ts` |
 | `npx tsc --noEmit` | типы TypeScript |
 | `npm run test` | unit- и компонентные тесты |
 | `npm run build` | сборка проходит |
 
-Если команда включит Husky (необязательная часть задачи P1-14), проверки будут запускаться сами: форматирование и линтер — перед коммитом, всё вместе — перед push.
+Часть проверок запускается сама (Husky, P1-14): тесты — перед коммитом, линтер и тесты (`npm run verify`) — перед push.
 Красные проверки — PR не мержится.

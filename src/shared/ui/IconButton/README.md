@@ -9,6 +9,8 @@ UI-компонент **IconButton**. Квадратная кнопка-икон
 
 ## Что внутри
 
-- `IconButton.stories.tsx` — Stories компонента IconButton — ЗАГЛУШКА. Пакеты Storybook ставит задача P1-11; после неё добавить типы: `const meta: Meta<typeof IconButton>` и `export const Default: StoryObj<typeof meta>`
-- `IconButton.tsx` — Квадратная кнопка-иконка: лайк, тема, колокольчик, поделиться, «Закрыть»
+- `IconButton.module.css` — стили: размер 24×24, фокус
+- `IconButton.stories.tsx` — stories: Like, Liked, Notification, Close
+- `IconButton.test.tsx` — тесты: клик, поиск по aria-label
+- `IconButton.tsx` — квадратная кнопка-иконка: лайк, тема, колокольчик, поделиться, «Закрыть». Подпись для скринридера обязательна
 - `index.ts` — публичный API — импортировать снаружи только отсюда

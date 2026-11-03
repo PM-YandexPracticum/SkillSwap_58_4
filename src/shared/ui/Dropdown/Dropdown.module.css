@@ -1,0 +1,21 @@
+.wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.popover {
+  position: absolute;
+  top: calc(100% + var(--space-20));
+  left: 0;
+  z-index: 1000;
+  min-width: 260px;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-s);
+}
+
+/* Выравнивание по правому краю триггера */
+.alignEnd {
+  right: 0;
+  left: auto;
+}
