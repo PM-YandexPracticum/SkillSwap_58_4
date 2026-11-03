@@ -17,6 +17,7 @@
 - `Tag` — `import { Tag } from '@/shared/ui/Tag'`. Чип навыка: `label`, `color` — id категории (`business`, `creativity`, `languages`, `education`, `health`, `home`) или `more` для «+N»; с `onRemove` появляется крестик — это плашка фильтра. Длинное название обрезается многоточием, полное — в подсказке. `isTagColor(id)` проверяет, есть ли цвет у категории.
 - `Input` и `Textarea` — `import { Input } from '@/shared/ui/Input'`, `import { Textarea } from '@/shared/ui/Textarea'`. Подпись `label`, ошибка `error`, декоративная иконка `rightIcon` (карандаш); кликабельная кнопка справа — `rightAction` («глаз», «×» очистки). Работают с `register` из react-hook-form. Высота Input — 48 px, как в макете.
 - `Checkbox` и `RadioGroup` — `import { Checkbox } from '@/shared/ui/Checkbox'`, `import { RadioGroup } from '@/shared/ui/RadioGroup'`. Управляемые: `checked` / `value` и `onChange`; у Checkbox есть `indeterminate` — частичный выбор категории; у RadioGroup — заголовок группы `label` и стрелки с клавиатуры.
+- `Modal` — `import { Modal } from '@/shared/ui/Modal'`. Обёртка: `isOpen`, `onClose`, `children` и обязательный `ariaLabel`. Esc и клик по фону закрывают, фокус остаётся внутри; внутренние отступы задаёт содержимое.
 - `FileDropzone` — `import { FileDropzone } from '@/shared/ui/FileDropzone'`. Зона «Перетащите или выберите изображения»: отдаёт `File[]` в `onFiles`, превью (`previews`) и ошибку (`error`) получает пропсами — проверку файлов делает форма.
 
 **Блоки (`src/entities`)**
@@ -66,7 +67,7 @@
 Не берём — уже заняты:
 
 - P2-06 PasswordInput, P2-09 Select, P2-18 Toast;
-- P2-10 Modal и P2-13 Carousel — на ревью;
+- P2-13 Carousel — на ревью;
 - P3-03 Подвал, P3-15 Уведомления;
 - P4-03 Пользователи и навыки.
 
@@ -94,7 +95,7 @@
 **Фаза 3** открывается по мере готовности компонентов. Следующими станут доступны:
 
 - P3-05 лейауты — после шапки (P3-04) и подвала (P3-03); за ними «Все навыки» (P3-06), «О проекте», 404 и 500 (P3-16), вход и регистрация (P3-11);
-- P3-09 страница навыка — после P3-02, P3-08, Modal и Carousel; P3-13 шаг 3 регистрации — после шага 2 (P3-12), Modal и Carousel.
+- P3-09 страница навыка — после P3-02, P3-08 и Carousel; P3-13 шаг 3 регистрации — после шага 2 (P3-12) и Carousel. Modal уже готов.
 
 Шапка (P3-04) теперь самая нужная задача: от неё через лейауты зависят почти все страницы.
 
