@@ -16,11 +16,16 @@ const FSD_LAYERS = ['app', 'pages', 'widgets', 'features', 'entities', 'shared']
 const SLICED_LAYERS = ['pages', 'widgets', 'features', 'entities']
 const LAYER_ORDER = 'app → pages → widgets → features → entities → shared'
 const TEST_FILES = ['src/**/*.test.{ts,tsx}']
+const STORY_FILES = ['src/**/*.stories.{ts,tsx}']
 
-function fsdImportPatterns(layer, { isTest }) {
+/**
+ * @param allowAppTest тестам можно импортировать `@/app/test` (renderWithProviders)
+ * @param allowTesting тестам и stories можно импортировать фабрики `@/<слой>/<слайс>/testing` (createUser, createSkill)
+ */
+function fsdImportPatterns(layer, { allowAppTest = false, allowTesting = false } = {}) {
   const index = FSD_LAYERS.indexOf(layer)
   const upperLayers = FSD_LAYERS.slice(0, index).map((upper) => ({
-    ...(upper === 'app' && isTest
+    ...(upper === 'app' && allowAppTest
       ? { regex: '^@/app(?!/test(/|$))(/|$)' }
       : { group: [`@/${upper}`, `@/${upper}/**`] }),
     message: `Слой «${layer}» не может импортировать из «${upper}» — это слой выше. Импорт только вниз: ${LAYER_ORDER}.`,
@@ -28,13 +33,17 @@ function fsdImportPatterns(layer, { isTest }) {
   const sameLayer = SLICED_LAYERS.includes(layer)
     ? [
         {
-          group: [`@/${layer}/**`],
+          ...(allowTesting
+            ? { regex: `^@/${layer}/(?![^/]+/testing$).+` }
+            : { group: [`@/${layer}/**`] }),
           message: `Слайсы слоя «${layer}» не импортируют друг друга. Внутри своего слайса — относительный импорт (./model), общее — вынести слоем ниже.`,
         },
       ]
     : []
   const deepImports = SLICED_LAYERS.slice(SLICED_LAYERS.indexOf(layer) + 1).map((lower) => ({
-    group: [`@/${lower}/*/**`],
+    ...(allowTesting
+      ? { regex: `^@/${lower}/[^/]+/(?!testing$).+` }
+      : { group: [`@/${lower}/*/**`] }),
     message: `Импорт из слайса — только через его index.ts: '@/${lower}/<слайс>', а не '@/${lower}/<слайс>/ui/…'. Нужного нет в index.ts — добавь туда экспорт.`,
   }))
   const sharedUi =
@@ -53,16 +62,29 @@ function fsdImportPatterns(layer, { isTest }) {
 const fsdConfigs = FSD_LAYERS.flatMap((layer) => [
   {
     files: [`src/${layer}/**/*.{ts,tsx}`],
-    ignores: TEST_FILES,
+    ignores: [...TEST_FILES, ...STORY_FILES],
     rules: {
-      'no-restricted-imports': ['error', { patterns: fsdImportPatterns(layer, { isTest: false }) }],
+      'no-restricted-imports': ['error', { patterns: fsdImportPatterns(layer) }],
     },
   },
   {
-    // Исключение: тестам можно импортировать @/app/test (renderWithProviders, P1-04)
+    // Исключения для тестов: @/app/test (renderWithProviders) и фабрики @/<слой>/<слайс>/testing (P1-04)
     files: TEST_FILES.map((pattern) => pattern.replace('src/**', `src/${layer}/**`)),
     rules: {
-      'no-restricted-imports': ['error', { patterns: fsdImportPatterns(layer, { isTest: true }) }],
+      'no-restricted-imports': [
+        'error',
+        { patterns: fsdImportPatterns(layer, { allowAppTest: true, allowTesting: true }) },
+      ],
+    },
+  },
+  {
+    // Исключение для stories: фабрики @/<слой>/<слайс>/testing
+    files: STORY_FILES.map((pattern) => pattern.replace('src/**', `src/${layer}/**`)),
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        { patterns: fsdImportPatterns(layer, { allowTesting: true }) },
+      ],
     },
   },
 ])

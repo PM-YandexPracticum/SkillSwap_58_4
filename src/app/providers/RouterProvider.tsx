@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
-import { PROFILE_ROUTES, ROUTES } from '@/shared/config'
+import { PROFILE_ROUTES, ROUTER_FUTURE, ROUTES } from '@/shared/config'
 import { Loader } from '@/shared/ui/Loader'
 import { AuthLayout } from '@/app/layouts/AuthLayout'
 import { MainLayout } from '@/app/layouts/MainLayout'
@@ -41,7 +41,7 @@ const ServerErrorPage = lazy(() =>
 
 export function AppRouter() {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={ROUTER_FUTURE}>
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route element={<MainLayout />}>

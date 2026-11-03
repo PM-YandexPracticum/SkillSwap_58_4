@@ -1,5 +1,8 @@
+import type { PublicUser } from '@/entities/user'
+
 export interface OfferCardProps {
-  user: import('@/entities/user').User
+  /** Автор предложения — без пароля. Город, навык и подкатегории для UserCard виджет берёт из store по его id */
+  user: PublicUser
 }
 
 /**

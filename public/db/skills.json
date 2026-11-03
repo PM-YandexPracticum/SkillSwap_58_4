@@ -1,0 +1,462 @@
+[
+  {
+    "id": "s01",
+    "title": "Игра на барабанах",
+    "description": "Играю на барабанах больше 10 лет — от репетиций в гараже до сцены с живыми группами. Научу основам техники, любимым ритмам и импровизации даже без партитуры.",
+    "categoryId": "creativity",
+    "subcategoryId": "music",
+    "images": [
+      "/images/skills/s01-1.jpg",
+      "/images/skills/s01-2.jpg",
+      "/images/skills/s01-3.jpg",
+      "/images/skills/s01-4.jpg"
+    ],
+    "authorId": "u01",
+    "createdAt": "2026-06-30T10:00:00.000Z"
+  },
+  {
+    "id": "s02",
+    "title": "Разговорный английский",
+    "description": "Без зубрёжки: через живое общение, фильмы и ситуации из поездок.",
+    "categoryId": "languages",
+    "subcategoryId": "english",
+    "images": ["/images/skills/s02-1.jpg"],
+    "authorId": "u02",
+    "createdAt": "2026-09-14T10:00:00.000Z"
+  },
+  {
+    "id": "s03",
+    "title": "Тайм-менеджмент для фрилансеров",
+    "description": "Как планировать неделю, не срывать сроки и оставлять время на отдых.",
+    "categoryId": "business",
+    "subcategoryId": "time-management",
+    "images": ["/images/skills/s03-1.jpg", "/images/skills/s03-2.jpg"],
+    "authorId": "u03",
+    "createdAt": "2026-10-20T10:00:00.000Z"
+  },
+  {
+    "id": "s04",
+    "title": "Управление проектами",
+    "description": "Расскажу, как не сойти с ума и довести проект до релиза в срок.",
+    "categoryId": "business",
+    "subcategoryId": "project-management",
+    "authorId": "u04",
+    "images": ["/images/skills/s04-1.jpg", "/images/skills/s04-2.jpg"],
+    "createdAt": "2026-01-15T10:23:45.000Z"
+  },
+  {
+    "id": "s05",
+    "title": "Иллюстрация",
+    "description": "Научу основам композиции и работы с цветом в цифровой иллюстрации.",
+    "categoryId": "creativity",
+    "subcategoryId": "drawing",
+    "authorId": "u05",
+    "images": ["/images/skills/s05-1.jpg", "/images/skills/s05-2.jpg"],
+    "createdAt": "2026-02-28T14:05:12.000Z"
+  },
+  {
+    "id": "s06",
+    "title": "SMM-продвижение",
+    "description": "Покажу, как вести соцсети так, чтобы подписчики становились клиентами.",
+    "categoryId": "business",
+    "subcategoryId": "marketing",
+    "authorId": "u06",
+    "images": ["/images/skills/s06-1.jpg", "/images/skills/s06-2.jpg"],
+    "createdAt": "2026-04-10T09:15:00.000Z"
+  },
+  {
+    "id": "s07",
+    "title": "Фотография",
+    "description": "Практический курс по портретной и уличной съемке. Разберем твой фотоаппарат.",
+    "categoryId": "creativity",
+    "subcategoryId": "photo",
+    "authorId": "u07",
+    "images": ["/images/skills/s07-1.jpg", "/images/skills/s07-2.jpg", "/images/skills/s07-3.jpg"],
+    "createdAt": "2026-05-22T18:45:30.000Z"
+  },
+  {
+    "id": "s08",
+    "title": "Финансовое планирование",
+    "description": "Научу вести бюджет и откладывать деньги даже с небольшой зарплатой.",
+    "categoryId": "business",
+    "subcategoryId": "entrepreneurship",
+    "authorId": "u08",
+    "images": ["/images/skills/s08-1.jpg", "/images/skills/s08-2.jpg", "/images/skills/s08-3.jpg"],
+    "createdAt": "2026-07-04T08:30:15.000Z"
+  },
+  {
+    "id": "s09",
+    "title": "Игра на синтезаторе",
+    "description": "Разберем ноты и аккорды. Сыграем твою любимую песню.",
+    "categoryId": "creativity",
+    "subcategoryId": "music",
+    "authorId": "u09",
+    "images": ["/images/skills/s09-1.jpg", "/images/skills/s09-2.jpg", "/images/skills/s09-3.jpg"],
+    "createdAt": "2026-08-19T21:10:05.000Z"
+  },
+  {
+    "id": "s10",
+    "title": "Нетворкинг",
+    "description": "Как знакомиться с людьми на мероприятиях и превращать это в полезные связи.",
+    "categoryId": "business",
+    "subcategoryId": "sales",
+    "authorId": "u10",
+    "images": ["/images/skills/s10-1.jpg", "/images/skills/s10-2.jpg"],
+    "createdAt": "2026-10-01T11:55:20.000Z"
+  },
+  {
+    "id": "s11",
+    "title": "Личный бренд",
+    "description": "Помогу упаковать твои знания и экспертность в соцсетях.",
+    "categoryId": "business",
+    "subcategoryId": "personal-brand",
+    "authorId": "u11",
+    "images": ["/images/skills/s11-1.jpg", "/images/skills/s11-2.jpg", "/images/skills/s11-3.jpg"],
+    "createdAt": "2026-09-09T16:20:00.000Z"
+  },
+  {
+    "id": "s12",
+    "title": "Копирайтинг",
+    "description": "Научу писать тексты, которые продают и легко читаются.",
+    "categoryId": "business",
+    "subcategoryId": "marketing",
+    "authorId": "u12",
+    "images": ["/images/skills/s12-1.jpg", "/images/skills/s12-2.jpg"],
+    "createdAt": "2026-10-08T23:59:59.000Z"
+  },
+  {
+    "id": "s13",
+    "title": "Дизайн интерьера",
+    "description": "Расскажу, как сделать уютным даже самое маленькое помещение.",
+    "categoryId": "creativity",
+    "subcategoryId": "diy",
+    "authorId": "u13",
+    "images": ["/images/skills/s13-1.jpg", "/images/skills/s13-2.jpg", "/images/skills/s13-3.jpg"],
+    "createdAt": "2026-01-08T12:00:01.000Z"
+  },
+  {
+    "id": "s14",
+    "title": "Публичные выступления",
+    "description": "Помогу побороть страх сцены и красиво доносить свои мысли до аудитории.",
+    "categoryId": "business",
+    "subcategoryId": "personal-brand",
+    "authorId": "u14",
+    "images": ["/images/skills/s14-1.jpg", "/images/skills/s14-2.jpg", "/images/skills/s14-3.jpg"],
+    "createdAt": "2026-02-14T15:30:45.000Z"
+  },
+  {
+    "id": "s15",
+    "title": "Лепка из глины",
+    "description": "Расслабляющее хобби. Слепим с тобой милую кружку или тарелку.",
+    "categoryId": "creativity",
+    "subcategoryId": "diy",
+    "authorId": "u15",
+    "images": ["/images/skills/s15-1.jpg", "/images/skills/s15-2.jpg", "/images/skills/s15-3.jpg"],
+    "createdAt": "2026-03-05T07:40:10.000Z"
+  },
+  {
+    "id": "s16",
+    "title": "HR-менеджмент",
+    "description": "Расскажу, как проходить собеседования и правильно составлять резюме.",
+    "categoryId": "business",
+    "subcategoryId": "team-management",
+    "authorId": "u16",
+    "images": ["/images/skills/s16-1.jpg", "/images/skills/s16-2.jpg", "/images/skills/s16-3.jpg"],
+    "createdAt": "2026-04-12T19:15:35.000Z"
+  },
+  {
+    "id": "s17",
+    "title": "Видеомонтаж",
+    "description": "Научу базовому монтажу в Premiere Pro или CapCut. Сделаем твой первый влог.",
+    "categoryId": "creativity",
+    "subcategoryId": "video-editing",
+    "authorId": "u17",
+    "images": ["/images/skills/s17-1.jpg", "/images/skills/s17-2.jpg", "/images/skills/s17-3.jpg"],
+    "createdAt": "2026-05-20T13:45:00.000Z"
+  },
+  {
+    "id": "s18",
+    "title": "Английский",
+    "description": "Думаю и говорю что думаю на английском, молчу на остальных языках.",
+    "categoryId": "languages",
+    "subcategoryId": "english",
+    "images": ["/images/skills/s18-1.jpg", "/images/skills/s18-2.jpg"],
+    "authorId": "u18",
+    "createdAt": "2026-06-27T10:00:00.000Z"
+  },
+  {
+    "id": "s19",
+    "title": "Французский язык",
+    "description": "Преподаю французский с нуля до уверенного разговорного. Обожаю Париж, литературу и круассаны.",
+    "categoryId": "languages",
+    "subcategoryId": "french",
+    "images": ["/images/skills/s19-1.jpg"],
+    "authorId": "u19",
+    "createdAt": "2026-10-15T10:00:00.000Z"
+  },
+  {
+    "id": "s20",
+    "title": "Немецкий для начинающих",
+    "description": "Помогу разобраться с падежами и произношением. Ordnung muss sein! Учим живой язык, а не только учебник.",
+    "categoryId": "languages",
+    "subcategoryId": "german",
+    "images": ["/images/skills/s20-1.jpg"],
+    "authorId": "u20",
+    "createdAt": "2026-09-20T10:00:00.000Z"
+  },
+  {
+    "id": "s21",
+    "title": "Испанский: от Hola до свободы",
+    "description": "Учим живой испанский, базовый сленг и культуру Латинской Америки. ¡Vamos!",
+    "categoryId": "languages",
+    "subcategoryId": "spanish",
+    "images": ["/images/skills/s21-1.jpg"],
+    "authorId": "u21",
+    "createdAt": "2026-11-01T10:00:00.000Z"
+  },
+  {
+    "id": "s22",
+    "title": "Китайский язык (HSK 1-3)",
+    "description": "Ставим тона, учим иероглифы и базовую грамматику. Поймёте, почему это не так сложно, как кажется.",
+    "categoryId": "languages",
+    "subcategoryId": "chinese",
+    "images": ["/images/skills/s22-1.jpg", "/images/skills/s22-2.jpg", "/images/skills/s22-3.jpg"],
+    "authorId": "u22",
+    "createdAt": "2026-08-14T10:00:00.000Z"
+  },
+  {
+    "id": "s23",
+    "title": "Японский язык и культура",
+    "description": "Хирагана, катакана и основы грамматики. Готовимся к просмотру аниме и дорам в оригинале.",
+    "categoryId": "languages",
+    "subcategoryId": "japanese",
+    "images": ["/images/skills/s23-1.jpg"],
+    "authorId": "u23",
+    "createdAt": "2026-10-30T10:00:00.000Z"
+  },
+  {
+    "id": "s24",
+    "title": "Подготовка к IELTS и TOEFL",
+    "description": "Разбираем формат экзамена, пишем эссе, тренируем speaking. Гарантирую рост балла и уверенность на тесте.",
+    "categoryId": "languages",
+    "subcategoryId": "exam-prep",
+    "images": ["/images/skills/s24-1.jpg", "/images/skills/s24-2.jpg"],
+    "authorId": "u24",
+    "createdAt": "2026-07-05T10:00:00.000Z"
+  },
+  {
+    "id": "s25",
+    "title": "Личностное развитие и саморефлексия",
+    "description": "Помогу разобраться в себе, поставить цели и найти внутренние ресурсы. Работа с убеждениями и мотивацией.",
+    "categoryId": "education",
+    "subcategoryId": "personal-growth",
+    "images": ["/images/skills/s25-1.jpg", "/images/skills/s25-2.jpg"],
+    "authorId": "u25",
+    "createdAt": "2026-10-12T10:00:00.000Z"
+  },
+  {
+    "id": "s26",
+    "title": "Как учиться эффективно",
+    "description": "Техники запоминания, интервальные повторения, мнемотехника. Научу учиться быстрее и с удовольствием.",
+    "categoryId": "education",
+    "subcategoryId": "learning",
+    "images": ["/images/skills/s26-1.jpg"],
+    "authorId": "u26",
+    "createdAt": "2026-09-28T10:00:00.000Z"
+  },
+  {
+    "id": "s27",
+    "title": "Когнитивные техники и мышление",
+    "description": "Развитие критического мышления, работа с когнитивными искажениями, техники принятия решений.",
+    "categoryId": "education",
+    "subcategoryId": "cognitive",
+    "images": ["/images/skills/s27-1.jpg", "/images/skills/s27-2.jpg", "/images/skills/s27-3.jpg"],
+    "authorId": "u27",
+    "createdAt": "2026-10-05T10:00:00.000Z"
+  },
+  {
+    "id": "s28",
+    "title": "Скорочтение: читай в 3 раза быстрее",
+    "description": "Уберу регрессию, расширю поле зрения, научу понимать текст с первого прочтения. Практика на реальных книгах.",
+    "categoryId": "education",
+    "subcategoryId": "speed-reading",
+    "images": ["/images/skills/s28-1.jpg"],
+    "authorId": "u28",
+    "createdAt": "2026-08-19T10:00:00.000Z"
+  },
+  {
+    "id": "s29",
+    "title": "Навыки преподавания и менторства",
+    "description": "Как объяснять сложное простыми словами, удерживать внимание, давать обратную связь. Для будущих учителей и наставников.",
+    "categoryId": "education",
+    "subcategoryId": "teaching",
+    "images": ["/images/skills/s29-1.jpg", "/images/skills/s29-2.jpg"],
+    "authorId": "u29",
+    "createdAt": "2026-10-24T10:00:00.000Z"
+  },
+  {
+    "id": "s30",
+    "title": "Коучинг: задавай правильные вопросы",
+    "description": "Основы коучингового подхода, активное слушание, мощные вопросы. Помогу стать лучшим наставником для других.",
+    "categoryId": "education",
+    "subcategoryId": "coaching",
+    "images": ["/images/skills/s30-1.jpg"],
+    "authorId": "u30",
+    "createdAt": "2026-07-14T10:00:00.000Z"
+  },
+  {
+    "id": "s31",
+    "title": "Скетчноутинг: конспекты в картинках",
+    "description": "Покажу, как превращать лекции и книги в наглядные заметки из простых рисунков, стрелок и рамок. Рисовать уметь не нужно.",
+    "categoryId": "education",
+    "subcategoryId": "learning",
+    "images": ["/images/skills/s31-1.jpg"],
+    "authorId": "u31",
+    "createdAt": "2026-10-27T10:00:00.000Z"
+  },
+  {
+    "id": "s32",
+    "title": "Быстрая уборка и организация пространства",
+    "description": "Покажу систему «15 минут в день», которая держит дом в порядке без генеральных уборок. Разберём зоны, хранение и ритуалы.",
+    "categoryId": "home",
+    "subcategoryId": "cleaning",
+    "images": ["/images/skills/s32-1.jpg", "/images/skills/s32-2.jpg", "/images/skills/s32-3.jpg"],
+    "authorId": "u32",
+    "createdAt": "2026-06-02T09:15:00.000Z"
+  },
+  {
+    "id": "s33",
+    "title": "Функциональный тренинг дома",
+    "description": "Тренировки без зала: сила, выносливость и подвижность с собственным весом и минимальным инвентарём.",
+    "categoryId": "health",
+    "subcategoryId": "fitness",
+    "images": ["/images/skills/s33-1.jpg"],
+    "authorId": "u33",
+    "createdAt": "2026-06-11T14:40:00.000Z"
+  },
+  {
+    "id": "s34",
+    "title": "Простое и полезное питание",
+    "description": "Соберём рацион без запретов: быстрые рецепты, сбалансированные тарелки и заготовки на неделю.",
+    "categoryId": "health",
+    "subcategoryId": "nutrition",
+    "images": ["/images/skills/s34-1.jpg", "/images/skills/s34-2.jpg", "/images/skills/s34-3.jpg"],
+    "authorId": "u34",
+    "createdAt": "2026-06-18T08:05:00.000Z"
+  },
+  {
+    "id": "s35",
+    "title": "Домашние растения для начинающих",
+    "description": "Как выбрать растения под свой свет и график, поливать без залива и пересаживать без стресса.",
+    "categoryId": "home",
+    "subcategoryId": "plants",
+    "images": ["/images/skills/s35-1.jpg", "/images/skills/s35-2.jpg"],
+    "authorId": "u35",
+    "createdAt": "2026-06-25T17:30:00.000Z"
+  },
+  {
+    "id": "s36",
+    "title": "Йога и медитация для баланса",
+    "description": "Мягкие практики для тела и внимания: дыхание, базовые асаны и короткие медитации на каждый день.",
+    "categoryId": "health",
+    "subcategoryId": "yoga",
+    "images": ["/images/skills/s36-1.jpg", "/images/skills/s36-2.jpg", "/images/skills/s36-3.jpg"],
+    "authorId": "u36",
+    "createdAt": "2026-07-01T11:20:00.000Z"
+  },
+  {
+    "id": "s37",
+    "title": "Хранение вещей: система, а не хаос",
+    "description": "Разберём шкафы и кладовку по принципу «видно, доступно, удобно». Научу подбирать контейнеры и поддерживать порядок.",
+    "categoryId": "home",
+    "subcategoryId": "storage",
+    "images": ["/images/skills/s37-1.jpg", "/images/skills/s37-2.jpg"],
+    "authorId": "u37",
+    "createdAt": "2026-07-09T07:45:00.000Z"
+  },
+  {
+    "id": "s38",
+    "title": "Ментальное здоровье: базовые опоры",
+    "description": "Как замечать выгорание, выстраивать границы и использовать простые практики самопомощи.",
+    "categoryId": "health",
+    "subcategoryId": "mental-health",
+    "images": ["/images/skills/s38-1.jpg", "/images/skills/s38-2.jpg", "/images/skills/s38-3.jpg"],
+    "authorId": "u38",
+    "createdAt": "2026-07-16T16:10:00.000Z"
+  },
+  {
+    "id": "s39",
+    "title": "Домашние финансы без стресса",
+    "description": "Бюджет, подушка безопасности и накопления: пошаговая система, которая работает при любом доходе.",
+    "categoryId": "home",
+    "subcategoryId": "home-finance",
+    "images": ["/images/skills/s39-1.jpg", "/images/skills/s39-2.jpg"],
+    "authorId": "u39",
+    "createdAt": "2026-07-24T13:55:00.000Z"
+  },
+  {
+    "id": "s40",
+    "title": "Осознанность в повседневности",
+    "description": "Практики внимания в быту: дыхание, сканирование тела, mindful-паузы среди задач.",
+    "categoryId": "health",
+    "subcategoryId": "mindfulness",
+    "images": [
+      "/images/skills/s40-1.jpg",
+      "/images/skills/s40-2.jpg",
+      "/images/skills/s40-3.jpg",
+      "/images/skills/s40-4.jpg"
+    ],
+    "authorId": "u40",
+    "createdAt": "2026-08-03T10:25:00.000Z"
+  },
+  {
+    "id": "s41",
+    "title": "Баланс жизни и работы",
+    "description": "Как отделять рабочее от личного, планировать отдых и не чувствовать вины за паузы.",
+    "categoryId": "health",
+    "subcategoryId": "work-life-balance",
+    "images": ["/images/skills/s41-1.jpg", "/images/skills/s41-2.jpg"],
+    "authorId": "u41",
+    "createdAt": "2026-08-12T18:00:00.000Z"
+  },
+  {
+    "id": "s42",
+    "title": "Приготовление еды на неделю",
+    "description": "Меню, заготовки и хранение: как готовить раз в неделю и есть разнообразно без фастфуда.",
+    "categoryId": "home",
+    "subcategoryId": "cooking",
+    "images": ["/images/skills/s42-1.jpg", "/images/skills/s42-2.jpg", "/images/skills/s42-3.jpg"],
+    "authorId": "u42",
+    "createdAt": "2026-08-19T09:40:00.000Z"
+  },
+  {
+    "id": "s43",
+    "title": "Мелкий ремонт своими руками",
+    "description": "От полки до смесителя: базовый инструмент, безопасность и уверенность в домашних задачах.",
+    "categoryId": "home",
+    "subcategoryId": "repair",
+    "images": ["/images/skills/s43-1.jpg"],
+    "authorId": "u43",
+    "createdAt": "2026-08-27T15:15:00.000Z"
+  },
+  {
+    "id": "s44",
+    "title": "Сон и восстановление",
+    "description": "Гигиена сна, вечерние ритуалы и режим, который реально снижает усталость.",
+    "categoryId": "health",
+    "subcategoryId": "sleep",
+    "images": ["/images/skills/s44-1.jpg", "/images/skills/s44-2.jpg", "/images/skills/s44-3.jpg"],
+    "authorId": "u44",
+    "createdAt": "2026-09-05T12:35:00.000Z"
+  },
+  {
+    "id": "s45",
+    "title": "Уборка как привычка, а не подвиг",
+    "description": "Мини-ритуалы и чек-листы, которые помогают поддерживать чистоту без выгорания.",
+    "categoryId": "home",
+    "subcategoryId": "cleaning",
+    "images": ["/images/skills/s45-1.jpg", "/images/skills/s45-2.jpg"],
+    "authorId": "u45",
+    "createdAt": "2026-09-13T08:50:00.000Z"
+  }
+]

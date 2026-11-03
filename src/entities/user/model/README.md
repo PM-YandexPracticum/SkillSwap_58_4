@@ -10,5 +10,5 @@
 ## Что внутри
 
 - `selectors.ts` — Все пользователи
-- `types.ts` — Пользователь платформы. Образцы — `shared/api/mock-db/seed/users/`; чтение и запись — только через `entities/user/api`
+- `types.ts` — Пользователь платформы. Образцы — `public/db/users.json`; чтение и запись — только через `entities/user/api`
 - `usersSlice.ts` — Все пользователи из «базы» (`entities/user/api`), включая зарегистрированных. TODO: fetchUsers (createAsyncThunk); TODO: userAdded(user) — после регистрации; userUpdated({ id, changes }) — профиль и лайки

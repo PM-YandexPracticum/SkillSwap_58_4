@@ -9,4 +9,5 @@
 
 ## Что внутри
 
-- `sessionStorage.ts` — Читает сохранённую сессию из localStorage
+- `sessionStorage.ts` — Чтение, запись и очистка сессии в localStorage. Чужие данные и недоступный localStorage не ломают сайт: гость. Снаружи не используется — вход и выход идут через `startSession` / `endSession`
+- `sessionStorage.test.ts` — тесты: сохранение и чтение, повреждённые данные, недоступный localStorage

@@ -10,6 +10,8 @@
 ## Что внутри
 
 - [`api/`](api/README.md) — загрузка данных
+- [`lib/`](lib/README.md) — чистые функции
 - [`model/`](model/README.md) — типы, слайс, селекторы
 - [`ui/`](ui/README.md) — React-компоненты
 - `index.ts` — публичный API — импортировать снаружи только отсюда
+- `testing.ts` — публичный API для тестов и stories: фабрика `createSkill()`

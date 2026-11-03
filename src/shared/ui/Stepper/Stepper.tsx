@@ -22,7 +22,7 @@ export function Stepper({ current, total }: StepperProps) {
   const steps = Array.from({ length: total }, (_, index) => index + 1)
 
   return (
-    <div className={styles.stepper} aria-label={`Шаг ${current} из ${total}`}>
+    <div className={styles.stepper}>
       <p className={styles.title}>
         Шаг {current} из {total}
       </p>

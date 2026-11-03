@@ -1,11 +1,11 @@
-import { createMockCollection, SEED } from '@/shared/api'
+import { createMockCollection, loadSeed } from '@/shared/api'
 import type { Exchange } from '../model/types'
 
 /**
  * Хранилище предложенных обменов.
  * Единственное место, которое знает, откуда берутся данные. Переход на настоящую БД — меняется только этот файл.
  */
-const exchanges = createMockCollection<Exchange>('exchanges', SEED.exchanges as readonly Exchange[])
+const exchanges = createMockCollection<Exchange>('exchanges', loadSeed<Exchange>('exchanges'))
 
 /** Все предложенные обмены */
 export function getExchanges(): Promise<Exchange[]> {

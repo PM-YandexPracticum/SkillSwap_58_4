@@ -1,26 +1,28 @@
+@import url('./fonts.css');
+
 /* ─── CSS Custom Properties ─────────────────────────────── */
 :root {
   /* Colors */
   --color-text: #253017;
-  --color-text-inverse: #FFF; /* контрастный цвет текста */
-  --color-bg: #F9FAF7; /* основной фон страницы */
-  --color-bg-secondary: #FFF; /* фон карточек, выпадающих полей */
-  --color-neutral: #69735D;
+  --color-text-inverse: #fff; /* контрастный цвет текста */
+  --color-bg: #f9faf7; /* основной фон страницы */
+  --color-bg-secondary: #fff; /* фон карточек, выпадающих полей */
+  --color-neutral: #69735d;
   --color-border: var(--color-neutral); /* границы форм */
   --color-hover: var(--color-accent-soft); /* hover-эффекты */
-  --color-disabled: #E4E8DF; /* Disabled state */
-  --color-accent: #ABD27A; /* кнопки, чекбокс, шаги */
+  --color-disabled: #e4e8df; /* Disabled state */
+  --color-accent: #abd27a; /* кнопки, чекбокс, шаги */
   --color-accent-strong: #508826; /* фильтры, календарь */
-  --color-accent-soft: #DEEBC5; /* акцентные плашки и выделения */
-  --color-error: #BF3920;
-  --color-notification: #E0796E;
-  --color-tag-business: #EEE7F7;
-  --color-tag-art: #F7E7F2;
-  --color-tag-language: #EBE5C5;
-  --color-tag-education: #E7F2F6;
-  --color-tag-home: #F7EBE5;
-  --color-tag-health: #E9F7E7;
-  --color-tag-more: #E8ECF7;
+  --color-accent-soft: #deebc5; /* акцентные плашки и выделения */
+  --color-error: #bf3920;
+  --color-notification: #e0796e;
+  --color-tag-business: #eee7f7;
+  --color-tag-art: #f7e7f2;
+  --color-tag-language: #ebe5c5;
+  --color-tag-education: #e7f2f6;
+  --color-tag-home: #f7ebe5;
+  --color-tag-health: #e9f7e7;
+  --color-tag-more: #e8ecf7;
 
   /* Spacing */
   --space-4: 4px;
@@ -41,9 +43,9 @@
   --space-220: 220px;
 
   /* Typography */
-  --font-main: "Roboto", "Helvetica", "Arial", sans-serif;
-  --font-title: "Jost", "Helvetica", "Arial", sans-serif;
-  --font-name: "Open Sans", "Helvetica", "Arial", sans-serif;
+  --font-main: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  --font-title: 'Jost', 'Helvetica', 'Arial', sans-serif;
+  --font-name: 'Open Sans', 'Helvetica', 'Arial', sans-serif;
   --font-size-xs: 0.75rem; /* 12 */
   --font-size-base: 1rem; /* 16 */
   --font-size-lg: 1.25rem; /* 20 */
