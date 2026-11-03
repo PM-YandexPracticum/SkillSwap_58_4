@@ -1,5 +1,6 @@
+import { VALIDATION } from '@/shared/config'
+
 import { validateImageFile } from './validateImageFile'
-import { VALIDATION } from '../../config/validation'
 
 /**
  * Функция - хэлпер.

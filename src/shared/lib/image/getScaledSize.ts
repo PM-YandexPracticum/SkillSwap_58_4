@@ -1,3 +1,5 @@
+import { VALIDATION } from '@/shared/config'
+
 /**
  * Считает размеры, до которых надо уменьшить картинку, чтобы её длинная
  * сторона не превышала limit. Если фото уже меньше — возвращает его размеры
@@ -5,13 +7,13 @@
  *
  * @param width  - ширина оригинала, px
  * @param height - высота оригинала, px
- * @param limit  - максимальная длина длинной стороны, 800 px по умолчанию
+ * @param limit  - максимальная длина длинной стороны, по умолчанию `VALIDATION.IMAGE.MAX_SIDE_PX` (800 px)
  * @returns новые ширина и высота для canvas
  */
 export function getScaledSize(
   width: number,
   height: number,
-  limit = 800,
+  limit: number = VALIDATION.IMAGE.MAX_SIDE_PX,
 ): { width: number; height: number } {
   const longestSide = Math.max(width, height)
 

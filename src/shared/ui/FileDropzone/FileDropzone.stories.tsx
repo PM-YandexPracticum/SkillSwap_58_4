@@ -51,13 +51,12 @@ export const Default: Story = {
   args: defaultArgs,
 }
 
-/** Наведение мыши на зону — рамка акцентная, зона непрозрачная (креатив, в макете не нарисовано). */
+/**
+ * Наведение мыши на зону — рамка акцентная, зона непрозрачная (креатив, в макете не нарисовано).
+ * Наведите курсор на зону: программный `userEvent.hover` не включает CSS `:hover`, поэтому состояние не включается само.
+ */
 export const Hover: Story = {
   args: defaultArgs,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    await userEvent.hover(canvas.getByTestId('filedropzone-zone'))
-  },
 }
 
 /**
@@ -71,7 +70,7 @@ export const Focus: Story = {
     const canvas = within(canvasElement)
     await userEvent.tab()
     await step('Фокус на кнопке выбора', () => {
-      expect(canvas.getByTestId('filedropzone-button')).toHaveFocus()
+      expect(canvas.getByRole('button', { name: 'Выбрать изображения' })).toHaveFocus()
     })
   },
 }

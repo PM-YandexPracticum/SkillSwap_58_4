@@ -6,7 +6,7 @@ import { FileDropzone } from './FileDropzone'
 const hint = 'Перетащите или выберите изображения навыка'
 const buttonLabel = 'Выбрать изображения'
 
-/** Функция - хэлпер для получения input */
+/** Скрытый input и сама зона без роли — их ищем по `data-testid`, остальное — по роли и тексту */
 function getInput() {
   return screen.getByTestId('filedropzone-input') as HTMLInputElement
 }
@@ -17,7 +17,7 @@ describe('FileDropzone', () => {
     const input = getInput()
 
     expect(screen.getByText(hint)).toBeInTheDocument()
-    expect(screen.getByTestId('filedropzone-button')).toHaveTextContent(buttonLabel)
+    expect(screen.getByRole('button', { name: buttonLabel })).toBeInTheDocument()
     expect(input.multiple).toBe(true)
   })
 
@@ -41,7 +41,7 @@ describe('FileDropzone', () => {
     render(<FileDropzone hint={hint} buttonLabel={buttonLabel} onFiles={() => {}} />)
 
     const clickSpy = vi.spyOn(getInput(), 'click')
-    await userEvent.click(screen.getByTestId('filedropzone-button'))
+    await userEvent.click(screen.getByRole('button', { name: buttonLabel }))
 
     expect(clickSpy).toHaveBeenCalledTimes(1)
   })
@@ -106,13 +106,9 @@ describe('FileDropzone', () => {
       />,
     )
 
-    const previews = screen.getAllByTestId('filedropzone-preview')
-    expect(previews).toHaveLength(1)
+    expect(screen.getByRole('img', { name: 'Фото 1' })).toHaveAttribute('src', '/img/1.jpg')
 
-    const img = previews[0].querySelector('img') as HTMLImageElement
-    expect(img.src).toContain('/img/1.jpg')
-
-    await userEvent.click(screen.getByTestId('filedropzone-preview-remove'))
+    await userEvent.click(screen.getByRole('button', { name: 'Удалить фото 1' }))
     expect(onRemove).toHaveBeenCalledTimes(1)
   })
 
@@ -126,6 +122,6 @@ describe('FileDropzone', () => {
       />,
     )
 
-    expect(screen.getByTestId('filedropzone-error')).toHaveTextContent('Файл больше 1 МБ')
+    expect(screen.getByRole('alert')).toHaveTextContent('Файл больше 1 МБ')
   })
 })

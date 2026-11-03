@@ -1,4 +1,4 @@
-import { VALIDATION } from '../../config/validation'
+import { VALIDATION } from '@/shared/config'
 
 /**
  * Проверяет картинку перед загрузкой: тип (jpg, png, webp) и размер (до 1 МБ) из `VALIDATION.IMAGE`.

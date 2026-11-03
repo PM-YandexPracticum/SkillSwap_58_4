@@ -1,14 +1,12 @@
 import { useRef, useState } from 'react'
 import type { MouseEvent, ChangeEvent, DragEvent } from 'react'
-import { VALIDATION } from '../../config/validation'
-import styles from './FileDropzone.module.css'
 
-/**
- * Иконки gallery-add.svg, cross.svg
- * Импорт по правилам см. [../../assets/icons/README.md]
- */
-import GalleryAddIcon from '@/shared/assets/icons/gallery-add.svg?react'
+// Иконки — по правилам из src/shared/assets/icons/README.md
 import CrossIcon from '@/shared/assets/icons/cross.svg?react'
+import GalleryAddIcon from '@/shared/assets/icons/gallery-add.svg?react'
+import { VALIDATION } from '@/shared/config'
+
+import styles from './FileDropzone.module.css'
 
 export interface FileDropzoneProps {
   /** Подпись внутри зоны, по макету — «Перетащите или выберите изображения навыка» */
@@ -138,7 +136,6 @@ export function FileDropzone({
         <button
           type="button"
           className={styles.link}
-          data-testid="filedropzone-button"
           onClick={handleButtonClick}
           disabled={disabled}
         >
@@ -160,12 +157,11 @@ export function FileDropzone({
       {previews && (
         <div className={styles.previews}>
           {previews.map((preview, index) => (
-            <div key={preview.url} className={styles.preview} data-testid="filedropzone-preview">
-              <img src={preview.url} alt="Превью изображения" className={styles.previewImage} />
+            <div key={preview.url} className={styles.preview}>
+              <img src={preview.url} alt={`Фото ${index + 1}`} className={styles.previewImage} />
               <button
                 type="button"
                 className={styles.previewRemove}
-                data-testid="filedropzone-preview-remove"
                 disabled={disabled}
                 onClick={preview.onRemove}
                 aria-label={`Удалить фото ${index + 1}`}
@@ -177,7 +173,7 @@ export function FileDropzone({
         </div>
       )}
       {error && (
-        <p className={styles.error} role="alert" data-testid="filedropzone-error">
+        <p className={styles.error} role="alert">
           {error}
         </p>
       )}

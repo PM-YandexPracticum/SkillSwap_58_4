@@ -18,8 +18,10 @@
   --zone-border-drag: var(--color-accent-strong); /* #508826 */
   --zone-focus-color: var(--color-accent-strong); /* #508826 */
   --zone-focus-offset: 2px; /* Креатив — зазор между рамкой и обводкой */
-  --zone-hover-glow: 0 0 0 3px rgb(80 136 38 / 12%); /* Креатив — свечение, не влияет на layout */
-  --link-focus-glow: 0 0 0 4px rgb(80 136 38 / 15%); /* Креатив — свечение, не влияет на layout */
+
+  /* Креатив — свечение не влияет на layout; цвет — тот же токен акцента с прозрачностью */
+  --zone-hover-glow: 0 0 0 3px color-mix(in srgb, var(--color-accent-strong) 12%, transparent);
+  --link-focus-glow: 0 0 0 4px color-mix(in srgb, var(--color-accent-strong) 15%, transparent);
 
   display: flex;
   flex-direction: column;

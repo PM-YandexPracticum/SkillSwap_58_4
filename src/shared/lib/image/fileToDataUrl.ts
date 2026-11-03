@@ -1,10 +1,9 @@
+import { VALIDATION } from '@/shared/config'
+
 import { getScaledSize } from './getScaledSize'
 
 /** Цвет подложки холста: JPEG не поддерживает прозрачность */
 const CANVAS_BACKGROUND = '#fff'
-
-/** Качество JPEG при сохранении: меньше веса при приемлемом виде */
-const JPEG_QUALITY = 0.8
 
 /**
  * Загружает картинку в память (не в DOM) и отдаёт её целиком: из элемента
@@ -27,7 +26,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 }
 
 /**
- * Уменьшает картинку до 800 px по длинной стороне и сохраняет её как JPEG.
+ * Уменьшает картинку до `VALIDATION.IMAGE.MAX_SIDE_PX` (800 px) по длинной стороне и сохраняет её как JPEG.
  * Маленькие картинки возвращаются без изменений — холст не создаётся.
  *
  * @param src - data URL картинки
@@ -59,7 +58,7 @@ async function resizeDataUrl(src: string): Promise<string> {
   ctx.fillRect(0, 0, size.width, size.height)
   ctx.drawImage(img, 0, 0, size.width, size.height)
 
-  return canvas.toDataURL('image/jpeg', JPEG_QUALITY)
+  return canvas.toDataURL('image/jpeg', VALIDATION.IMAGE.JPEG_QUALITY)
 }
 
 /**

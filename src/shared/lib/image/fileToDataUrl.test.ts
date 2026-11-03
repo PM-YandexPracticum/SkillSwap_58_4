@@ -1,3 +1,5 @@
+import { VALIDATION } from '@/shared/config'
+
 import { fileToDataUrl } from './fileToDataUrl'
 
 /** Хелпер: минимальный File — функции хватает типа. */
@@ -59,6 +61,23 @@ describe('fileToDataUrl', () => {
 
     expect(url).toBe('data:image/jpeg;base64,resized')
     expect(context.drawImage).toHaveBeenCalledTimes(1)
+    expect(HTMLCanvasElement.prototype.toDataURL).toHaveBeenCalledWith(
+      'image/jpeg',
+      VALIDATION.IMAGE.JPEG_QUALITY,
+    )
+  })
+
+  it('заливает холст белым до рисования: прозрачный PNG в JPEG не станет чёрным', async () => {
+    mockImage(3000, 2000)
+    const context = mockCanvas()
+
+    await fileToDataUrl(makeTinyPng())
+
+    expect(context.fillStyle).toBe('#fff')
+    expect(context.fillRect).toHaveBeenCalledWith(0, 0, 800, 533)
+    expect(context.fillRect.mock.invocationCallOrder[0]).toBeLessThan(
+      context.drawImage.mock.invocationCallOrder[0],
+    )
   })
 
   it('возвращает оригинал, если canvas недоступен', async () => {
