@@ -14,7 +14,7 @@
 
 ## Блоки
 
-### P3-01 · Карточка пользователя UserCard 🔴
+### P3-01 · Карточка пользователя UserCard ✅ 🔴
 > **Что нужно сделать:** сверстать главную карточку каталога: аватар, имя, «город, 34 года», «Может научить» (один чип —
 > своё название навыка) и «Хочет научиться» (до 2 чипов подкатегорий, остальные — «+N», по ТЗ наставника).
 > Сердечко и «Подробнее» карточка получает пропсами — их добавит P3-08.
@@ -23,6 +23,7 @@
 - **Уже готово:** `Avatar` (P2-04), `getAge` для «34 года» (P1-04); тестовые данные — `createUser()` из `@/entities/user/testing` и `createSkill()` из `@/entities/skill/testing`, в тестах и stories.
 - **Файлы:** `src/entities/user/ui/UserCard.tsx`, `src/entities/skill/ui/SkillTag.tsx`, `src/shared/lib/pluralize.ts` + тесты
 - **Где в макете:** 1:2861, карточка Ивана
+- **Issue:** [#34](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/34) · PR [#133](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/133)
 - **Зависит от:** P2-03, P2-04, P1-04
 
 ### P3-02 · Карточка автора и блок навыка 🟡
@@ -31,6 +32,7 @@
 > Кнопки (лайк, «Предложить обмен») блоки получают пропсами — их добавит P3-09.
 
 - **Уже готово:** блок «аватар + имя + город, возраст» — `UserSummary` в `entities/user/ui` (P3-01), его же использует UserCard; чипы навыка — `SkillTag`.
+- **Как в P3-01:** блоки «глупые» — соседние сущности (город, категории) не импортируют, всё получают пропсами. Пропсы в заготовках уже такие: `UserProfileCard` — `PublicUser` (без пароля), `cityName` и чипы как у `UserCard` (`teachSkill`, `learnSubcategories`); `SkillInfo` — название и описание навыка, строки `categoryTitle` / `subcategoryTitle` и слот `actions`. Собирать эти пропсы будет страница навыка (P3-09, P7-01) селекторами P4-02. Образец stories и тестов — `UserCard.stories.tsx` и `UserCard.test.tsx`.
 - **Файлы:** `src/entities/user/ui/UserProfileCard.tsx`, `src/entities/skill/ui/SkillInfo.tsx`
 - **Где в макете:** 1:2764
 - **Зависит от:** P3-01
@@ -51,6 +53,7 @@
 > Иконка темы пока без действия — тёмная тема в фазе 9. Все иконки уже есть в `src/shared/assets/icons/`.
 
 - **Уже готово:** `Logo` (P2-01), `Button` и `IconButton` (P2-02), `Avatar` размера `sm` (P2-04), `Dropdown` (P2-08) — для меню пользователя `align="end"`; в его stories есть пример меню «Личный кабинет / Выйти».
+- **Правило FSD:** виджет не импортирует другие виджеты. Меню «Все навыки» и окно уведомлений шапка получает слотами `categoriesMenu` и `notifications` (они уже в заготовке `Header`), их передаёт `MainLayout` (P3-05). Пока соседних виджетов нет — в stories в слоты кладём заглушки.
 - **Файлы:** `src/widgets/header/`, `src/features/skill-search/ui/SearchInput.tsx`
 - **Где в макете:** 1:2861 (гость), 1:2996 (вошедший), точка на колокольчике — 1:1919
 - **Зависит от:** P2-01, P2-02, P2-04, P2-05, P2-08
@@ -69,7 +72,7 @@
 > В шапке он открывается выпадающим меню по «Все навыки ▾», а по ссылке из подвала — отдельной страницей `/skills`.
 > Список один и тот же, поэтому это один компонент `CategoriesList`.
 
-- **Уже готово:** `Dropdown` (P2-08) — меню «Все навыки» в шапке открывается в нём; иконки категорий — `src/shared/assets/icons/categories/`.
+- **Уже готово:** `Dropdown` (P2-08) — меню «Все навыки» в шапке открывается в нём; иконки категорий — `src/shared/assets/icons/categories/`; категории с подкатегориями — `selectCategories` из `@/entities/category` (P4-02). Пока загрузку при старте не сделала P4-04, в тестах и stories store заполняем через `renderWithProviders(…, { preloadedState })` данными из `public/db/categories.json`.
 - **Файлы:** `src/widgets/categories-menu/`, `src/entities/category/ui/CategoryIcon.tsx`, `src/pages/all-skills/`
 - **Где в макете:** 1:3165
 - **Зависит от:** P2-08, P3-05
@@ -80,6 +83,7 @@
 > Раскрытие списков работает уже здесь; выбор фильтров подключит P5-02.
 > Пока это только внешний вид: выбранные галочки ещё ни на что не влияют.
 
+- **Уже готово:** категории и города — `selectCategories` и `selectCities` из `@/entities/category` и `@/entities/city` (P4-02); «первые 5 городов» — `CATALOG.CITIES_VISIBLE`; заготовка состояния фильтров `catalogFilterSlice` с типами — выбор подключит P5-02.
 - **Файлы:** `src/widgets/filters-panel/`, `src/features/catalog-filter/ui/` (`ModeFilter`, `SkillsFilter`, `GenderFilter`, `CityFilter`, `ResetFiltersButton`)
 - **Где в макете:** 1:2860
 - **Зависит от:** P2-07
@@ -89,7 +93,8 @@
 > и сетка строго по 3 в ряд. У «Популярного» и «Нового» «Смотреть все» раскрывает секцию с 3 до 9 карточек и обратно —
 > эту анимацию раскрытия делаем уже здесь.
 
-- **Уже готово:** `UserCard` (P3-01). Виджет передаёт ему `cityName` (город из справочника), `teachSkill` (название и категория навыка автора) и `learnSubcategories` (подкатегории с категорией для цвета) — сама карточка соседние сущности не знает; лайк — в слот `topAction`, «Подробнее» — в `bottomAction`.
+- **Уже готово:** `UserCard` (P3-01); город, навык и подкатегории по id — селекторы `selectCityById`, `selectSubcategoryById`, `selectCategoryBySubcategoryId` из `@/entities/city` и `@/entities/category` (P4-02). Виджет передаёт ему `cityName` (город из справочника), `teachSkill` (название и категория навыка автора) и `learnSubcategories` (подкатегории с категорией для цвета) — сама карточка соседние сущности не знает; лайк — в слот `topAction`, «Подробнее» — в `bottomAction`.
+- **Уточнения:** `OfferCard` принимает `PublicUser` (без пароля); навык автора — по `teachSkillId` из `selectSkills` (после P4-03 — селектор навыка по id). `FavoriteButton` здесь — только вид: сердечко `like` и число `likesCount`, по клику пока ничего; логику подключит P5-07. Числа секции — `CATALOG.SECTION_COLLAPSED` (3) и `CATALOG.SECTION_EXPANDED` (9). Пока нет загрузки при старте (P4-04), в тестах и stories store заполняем через `preloadedState` и фабрики `createUser()` / `createSkill()`.
 - **Файлы:** `src/widgets/offer-card/`, `src/widgets/offers-section/`, `src/features/favorite-toggle/ui/FavoriteButton.tsx`
 - **Где в макете:** 1:2861
 - **Зависит от:** P3-01, P2-02
@@ -108,6 +113,7 @@
 > Отдельно сверстать вид «Подходящие предложения: N» с плашками фильтров (`ActiveFilters`) и переключателем сортировки.
 > Всегда 3 колонки.
 
+- **Уже готово:** плашка фильтра — `Tag` с `onRemove` (P2-03).
 - **Файлы:** `src/pages/catalog/`, `src/features/catalog-filter/ui/ActiveFilters.tsx`, `SortToggle.tsx`
 - **Где в макете:** 1:2861, 1:2860, 1:2819
 - **Зависит от:** P3-07, P3-08, P3-05
@@ -131,6 +137,7 @@
 > Здесь же сверстать `AvatarUpload` и `CategorySubcategorySelect` в режиме `multiple` — связь списков (логику) сделает P6-03.
 > Это вёрстка — проверки полей и сохранение подключит P6-04.
 
+- **Уже готово:** `Avatar` (P2-04) для аватара с «+»; города и категории — `selectCities` и `selectCategories` (P4-02).
 - **Файлы:** `src/pages/register/ui/RegisterStep2Page.tsx`, `src/features/register/ui/StepProfile.tsx`, `src/features/avatar-upload/`, `src/entities/category/ui/CategorySubcategorySelect.tsx`
 - **Где в макете:** «Регистрация 2 шаг»: 1:1497, календарь 1:1541, пол 1:1585, город 1:1629, категории 1:1673, подкатегории 1:1717
 - **Зависит от:** P3-11, P2-09, P2-12, P2-17, P2-03, P2-04
@@ -142,6 +149,7 @@
 > Это вёрстка — сохранение подключат P6-05 и P6-06.
 
 - **Файлы:** `src/pages/register/ui/RegisterStep3Page.tsx`, `src/features/register/ui/StepSkill.tsx`, `src/features/skill-create/ui/`
+- **Уже готово:** `FileDropzone` (P2-14) — зона загрузки фото с превью и крестиком; сама файлы не проверяет: отдаёт `File[]` в `onFiles`, ошибку и превью получает пропсами. Окно — `Modal` (P2-10) как обёртка, превью навыка верстаем здесь и передаём в него через `children`.
 - **Где в макете:** «Регистрация 3 шаг» 1:1761, превью 1:1799, «Ваше предложение создано» 1:2950
 - **Зависит от:** P3-12, P2-10, P2-13, P2-14
 
@@ -152,6 +160,7 @@
 > «Личные данные»: Почта, «Изменить пароль», Имя, Дата рождения, Пол, Город, «О себе», «Сохранить» и большой аватар.
 > Остальные четыре раздела — заглушки «Раздел в разработке».
 
+- **Уже готово:** большой аватар — `Avatar` размера `lg` (P2-04); список городов — `selectCities` (P4-02).
 - **Файлы:** `src/widgets/profile-sidebar/`, `src/pages/profile/`, `src/features/profile-edit/ui/ProfileForm.tsx`
 - **Где в макете:** 1:2370
 - **Зависит от:** P3-05, P3-12, P2-12
@@ -161,7 +170,7 @@
 > Строка: иконка, «Вы предложили обмен Ивану», дата и «Перейти»; у просмотренных кнопки нет.
 > Пусто — «Уведомлений пока нет».
 
-- **Уже готово:** `Dropdown` (P2-08) — окно колокольчика открывается в нём с `align="end"`; `Button` (P2-02) для «Перейти» и «Очистить».
+- **Уже готово:** `Dropdown` (P2-08) — окно колокольчика открывается в нём с `align="end"`; `Button` (P2-02) для «Перейти» и «Очистить»; заготовка `NotificationItem` с пропсами `notification`, `userName`, `onGo` и тип `Notification` (`isRead`, `createdAt`); дата — `formatDate` из `@/shared/lib/helpers`.
 - **Файлы:** `src/widgets/notifications-panel/`, `src/entities/notification/ui/NotificationItem.tsx`, `src/features/notifications-read/`
 - **Где в макете:** 1:2328, 1:2239, «Очистить» — 1:2148
 - **Зависит от:** P2-08, P2-02
