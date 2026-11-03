@@ -8,7 +8,7 @@ import {
   cityField,
 } from './fields'
 import { VALIDATION } from '@/shared/config/validation'
-import { vi } from 'vitest'
+import { afterEach, beforeEach, vi } from 'vitest'
 
 const NOW = new Date('2026-11-03T12:00:00.000Z')
 
@@ -22,7 +22,10 @@ afterEach(() => {
 })
 
 /** Валидирует значение через схему одного поля и возвращает сообщение ошибки (или null) */
-async function validateField<T>(schema: yup.Schema<T>, value: unknown): Promise<string | null> {
+async function validateField<T>(
+  schema: yup.Schema<T>,
+  value: unknown,
+): Promise<string | null> {
   try {
     await schema.validate(value)
     return null
@@ -33,7 +36,10 @@ async function validateField<T>(schema: yup.Schema<T>, value: unknown): Promise<
 }
 
 /** Проходит ли значение валидацию */
-async function isValid<T>(schema: yup.Schema<T>, value: unknown): Promise<boolean> {
+async function isValid<T>(
+  schema: yup.Schema<T>,
+  value: unknown,
+): Promise<boolean> {
   return (await validateField(schema, value)) === null
 }
 
@@ -176,16 +182,24 @@ describe('birthDateField', () => {
   const isoDate = (year: number, month: number, day: number) =>
     new Date(year, month - 1, day, 12).toISOString()
 
-  /** Возраст ровно N лет на сегодня, с учётом того, был ли уже ДР в этом году */
+  /** Возраст ровно N лет на фиксированную дату */
   const birthOfAge = (age: number): string => {
     const year = NOW.getFullYear() - age
-
     return new Date(Date.UTC(year, 5, 15, 12)).toISOString()
   }
 
   it('требует дату', async () => {
     expect(await validateField(schema, '')).toBe('Укажите дату рождения')
     expect(await validateField(schema, undefined)).toBe('Укажите дату рождения')
+  })
+
+  it('отклоняет дату из пробелов', async () => {
+    expect(await validateField(schema, '   ')).toBe('Укажите дату рождения')
+  })
+
+  it('обрезает пробелы по краям даты', async () => {
+    const value = '2000-06-15T12:00:00.000Z'
+    expect(await schema.validate(`  ${value}  `)).toBe(value)
   })
 
   it('отклоняет невалидную дату', async () => {
@@ -212,23 +226,18 @@ describe('birthDateField', () => {
   })
 
   it('не добавляет год, пока день рождения в этом году не наступил', async () => {
-    // Родился 1 января 14 лет назад - ДР в этом году точно был -> ровно 14
     const value = new Date(
-      Date.UTC(NOW.getFullYear() - AGE.MIN, 0, 1, 12),
+      Date.UTC(NOW.getFullYear() - AGE.MIN, 11, 4, 12),
     ).toISOString()
-    expect(await isValid(schema, value)).toBe(true)
+
+    expect(await validateField(schema, value)).toBe('Возраст от 14 до 100 лет')
   })
 
-  it('29 февраля: возраст прибавляется 1 марта в невисокосный год', async () => {
-    // Косвенно проверяем через границу: 14 лет 29 февраля
-    // (детальный расчёт покрыт в getAge.test.ts - здесь важно, что поле принимает такую дату)
-    const year = NOW.getFullYear() - AGE.MIN
+  it('29 февраля: принимает корректную високосную дату', async () => {
+    const year = 2012
     const value = isoDate(year, 2, 29)
-    // Если year не високосный - yup.Date не примет, поэтому проверяем только валидность формата
-    const date = new Date(value)
-    if (!Number.isNaN(date.getTime()) && date.getMonth() === 1 && date.getDate() === 29) {
-      expect(await isValid(schema, value)).toBe(true)
-    }
+
+    expect(await isValid(schema, value)).toBe(true)
   })
 })
 
@@ -259,7 +268,9 @@ describe('textField', () => {
   })
 
   it('отклоняет текст длиннее максимума', async () => {
-    expect(await validateField(schema, 'а'.repeat(MAX + 1))).toBe(`Не больше ${MAX} символов`)
+    expect(await validateField(schema, 'а'.repeat(MAX + 1))).toBe(
+      `Не больше ${MAX} символов`,
+    )
   })
 
   it('пробелы по краям не увеличивают длину', async () => {
@@ -280,6 +291,14 @@ describe('cityField', () => {
   it('требует город', async () => {
     expect(await validateField(schema, '')).toBe('Выберите город из списка')
     expect(await validateField(schema, undefined)).toBe('Выберите город из списка')
+  })
+
+  it('отклоняет строку из пробелов', async () => {
+    expect(await validateField(schema, '   ')).toBe('Выберите город из списка')
+  })
+
+  it('обрезает пробелы по краям id города', async () => {
+    expect(await schema.validate('  moscow  ')).toBe('moscow')
   })
 
   it('отклоняет id, которого нет в справочнике', async () => {
