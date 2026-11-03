@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { Tag } from './Tag'
+import { Tag, isTagColor } from './Tag'
 import { vi, describe, it, expect } from 'vitest'
 
 describe('Tag', () => {
@@ -25,5 +25,53 @@ describe('Tag', () => {
     const tag = screen.getByText('+2').parentElement!
 
     expect(tag.style.backgroundColor).not.toBe('')
+  })
+})
+
+describe('isTagColor', () => {
+  it.each(['business', 'creativity', 'languages', 'education', 'health', 'home', 'more'])(
+    '%s — цвет чипа',
+    (id) => {
+      expect(isTagColor(id)).toBe(true)
+    },
+  )
+
+  it.each(['unknown', '', 'toString', 'constructor', '__proto__'])(
+    '«%s» — не цвет чипа, даже если это встроенное свойство объекта',
+    (id) => {
+      expect(isTagColor(id)).toBe(false)
+    },
+  )
+})
+
+describe('Tag: подсказка с полным названием', () => {
+  /** jsdom не считает размеры — задаём ширину текста и места вручную */
+  function mockWidths(scrollWidth: number, clientWidth: number) {
+    vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockReturnValue(scrollWidth)
+    vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(clientWidth)
+  }
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('название обрезано — при наведении показывает его целиком', () => {
+    mockWidths(200, 100)
+    render(<Tag label="Быстрая уборка и организация пространства" color="home" />)
+    const label = screen.getByText('Быстрая уборка и организация пространства')
+
+    fireEvent.mouseEnter(label)
+
+    expect(label).toHaveAttribute('title', 'Быстрая уборка и организация пространства')
+  })
+
+  it('название помещается — подсказки нет', () => {
+    mockWidths(100, 100)
+    render(<Tag label="Йога" color="health" />)
+    const label = screen.getByText('Йога')
+
+    fireEvent.mouseEnter(label)
+
+    expect(label).not.toHaveAttribute('title')
   })
 })

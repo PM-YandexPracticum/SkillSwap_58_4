@@ -1,12 +1,16 @@
+import { Tag, isTagColor } from '@/shared/ui/Tag'
+
 export interface SkillTagProps {
+  /** Название навыка или подкатегории */
   title: string
-  categoryColor?: string
+  /** Id категории (`creativity`, `languages`…) — от него цвет чипа; незнакомая — чип без цвета */
+  categoryId: string
 }
 
 /**
- * Чип навыка/подкатегории с цветом категории. Обёртка над shared/ui/Tag.
+ * Чип навыка или подкатегории в цвете своей категории. Обёртка над `shared/ui/Tag`.
+ * @see Figma: чипы на карточке каталога (1:2861)
  */
-export function SkillTag(_props: SkillTagProps) {
-  // TODO: реализовать по макету
-  return null
+export function SkillTag({ title, categoryId }: SkillTagProps) {
+  return <Tag label={title} color={isTagColor(categoryId) ? categoryId : undefined} />
 }
