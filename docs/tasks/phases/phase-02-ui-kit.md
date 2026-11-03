@@ -162,7 +162,8 @@
 > появляется спиннер и добавляются ещё 6. Догрузка только по мере прокрутки пользователя.
 > Хук общий для «Рекомендуем», результатов фильтров и избранного; числа — в `shared/config/catalog.ts`.
 
-- **Уже готово:** числа ленты (`CATALOG.SCROLL_BATCH`, `CATALOG.SCROLL_DELAY_MS`) в `shared/config/catalog.ts`; как писать тест хука — [testing.md](../../rules/testing.md), образец `getAge.test.ts`.
+- **Уже готово:** числа ленты (`CATALOG.SCROLL_BATCH`, `CATALOG.SCROLL_DELAY_MS`) в `shared/config/catalog.ts`; заготовка `useInfiniteScroll(items, batch, delayMs)` с типом результата (`visibleItems`, `sentinelRef`, `isLoading`, `hasMore`) уже экспортируется из `@/shared/lib/hooks` — остаётся тело и тест; спиннер для ленты — `Loader` (P2-01). Правила тестов — [testing.md](../../rules/testing.md), образец `getAge.test.ts`.
+- **Подсказки к тесту:** хук рендерим через `renderHook` из `@testing-library/react`; в jsdom нет `IntersectionObserver` — подменить через `vi.stubGlobal` и вызвать его колбэк вручную; задержку — `vi.useFakeTimers()` и `vi.advanceTimersByTime(CATALOG.SCROLL_DELAY_MS)`.
 - **Файлы:** `src/shared/lib/hooks/useInfiniteScroll.ts` + тест
 - **Зависит от:** P1-04
 

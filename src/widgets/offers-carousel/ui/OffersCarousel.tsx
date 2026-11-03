@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react'
-import type { User } from '@/entities/user'
+import type { PublicUser } from '@/entities/user'
 
 export interface OffersCarouselProps {
   /** Похожие предложения: пользователи с навыками той же подкатегории */
-  users: readonly User[]
+  users: readonly PublicUser[]
   /**
    * Как отрисовать карточку. Страница передаёт сюда `OfferCard`:
    * виджет не может импортировать другой виджет (правило FSD).
    */
-  renderItem: (user: User) => ReactNode
+  renderItem: (user: PublicUser) => ReactNode
 }
 
 /**

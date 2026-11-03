@@ -29,6 +29,7 @@
 > Работает в двух режимах: на шаге 2 списки с чекбоксами (несколько), на шаге 3 — по одному значению.
 > Логика — в чистых функциях `getAvailableSubcategories` и `syncCategorySelection` с тестами.
 
+- **Уже готово:** заготовки `getAvailableSubcategories` и `syncCategorySelection` в `linkCategories.ts`; категории с подкатегориями — `selectCategories` (P4-02).
 - **Файлы:** `src/entities/category/lib/linkCategories.ts` + тесты, `src/entities/category/ui/CategorySubcategorySelect.tsx`
 - **Зависит от:** P4-02, P3-12
 
@@ -59,6 +60,7 @@
 > По ТЗ наставника после регистрации пользователь всегда попадает в каталог, и его карточка уже есть в ленте.
 > Если что-то упало — понятное сообщение, введённое не теряется.
 
+- **Уже готово:** `fileToDataUrl` из `@/shared/lib/image` (P2-14) — уменьшает фото до 800 px перед сохранением.
 - **Файлы:** `src/features/register/model/`, `src/features/skill-create/model/`, `src/features/skill-create/ui/OfferCreatedModal.tsx`, `src/pages/catalog/` (открыть окно по флагу)
 - **Где в макете:** 1:2950, 1:2904
 - **Зависит от:** P6-02, P6-04, P6-05, P4-06

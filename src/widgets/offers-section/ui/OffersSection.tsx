@@ -1,6 +1,6 @@
 export interface OffersSectionProps {
   title: string
-  users: ReadonlyArray<import('@/entities/user').User>
+  users: ReadonlyArray<import('@/entities/user').PublicUser>
   /** `expandable` — 3 ⇄ 9 по «Смотреть все»; `infinite` — догрузка по 6 при прокрутке */
   mode: 'expandable' | 'infinite'
 }
