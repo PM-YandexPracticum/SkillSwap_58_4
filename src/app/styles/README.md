@@ -9,4 +9,6 @@
 
 ## Что внутри
 
+- [`fonts/`](fonts/README.md) — шрифты проекта (Jost, Open Sans, Roboto) — локальные файлы WOFF2, не Google Fonts
+- `fonts.css` — `@font-face` для шрифтов из `fonts/`; подключён в начале `global.css`
 - `global.css` — глобальные стили и CSS-переменные
