@@ -1,0 +1,18 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: var(--space-220);
+  background: #8e8e8e99;
+  backdrop-filter: blur(4px);
+  z-index: 10;
+}
+
+.window {
+  padding: 0 var(--space-60);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-s);
+  max-width: 100%;
+}
