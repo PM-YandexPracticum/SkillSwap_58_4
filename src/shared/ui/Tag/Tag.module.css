@@ -1,5 +1,7 @@
 .tag {
   display: inline-flex;
+  max-width: 100%;
+  min-width: 0;
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-8) var(--space-12);
@@ -9,6 +11,12 @@
   color: var(--color-text);
   white-space: nowrap;
   box-sizing: border-box;
+}
+
+/* В узком месте (карточка) длинное название обрезается многоточием; скринридер читает его целиком */
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .removeButton {

@@ -1,0 +1,57 @@
+/*
+ * Карточка по макету 1:2877: 324 px в сетке из трёх колонок, отступ 20 px, скругление 12 px.
+ * Токенов line-height и letter-spacing в global.css нет, поэтому значения из макета заданы здесь.
+ */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+  box-sizing: border-box;
+  padding: var(--space-20);
+  border-radius: var(--radius-s);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text);
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.label {
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  line-height: 24px;
+  letter-spacing: 0.02em;
+}
+
+/* Чипы в одну строку, как в макете: длинные названия сжимаются с многоточием, «+N» не сжимается */
+.tags {
+  display: flex;
+  gap: var(--space-4);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tags > li {
+  display: flex;
+  min-width: 0;
+}
+
+.tags > .more {
+  flex-shrink: 0;
+}
+
+.bottomAction > * {
+  width: 100%;
+}
