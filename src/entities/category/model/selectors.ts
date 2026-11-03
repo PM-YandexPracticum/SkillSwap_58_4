@@ -22,12 +22,8 @@ export const selectCategoryBySubcategoryId = (state: RootState, subcategoryId: I
   )
 
 /**
- * Цвет категории для чипа навыка.
- * Удобно передавать либо id категории, либо id подкатегории - селектор сам разберётся.
+ * Цвет категории для чипа навыка (или undefined).
+ * Для подкатегории сначала найдите её категорию: `selectCategoryBySubcategoryId`.
  */
-export const selectCategoryColor = (state: RootState, id: ID): string | undefined => {
-  const category =
-    state.categories.items.find((c) => c.id === id) ??
-    selectCategoryBySubcategoryId(state, id)
-  return category?.color
-}
+export const selectCategoryColor = (state: RootState, categoryId: ID): string | undefined =>
+  state.categories.items.find((category) => category.id === categoryId)?.color

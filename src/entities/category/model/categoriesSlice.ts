@@ -18,9 +18,8 @@ const initialState: CategoriesState = {
  * Справочник категорий. Загружается один раз при старте приложения.
  * Данные приходят из "базы" через entities/category/api.
  */
-export const fetchCategories = createAsyncThunk<Category[]>(
-  'categories/fetch',
-  async () => getCategories(),
+export const fetchCategories = createAsyncThunk<Category[]>('categories/fetch', async () =>
+  getCategories(),
 )
 
 export const categoriesSlice = createSlice({

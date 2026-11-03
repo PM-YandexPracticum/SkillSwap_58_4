@@ -82,9 +82,8 @@ describe('category selectors', () => {
       expect(selectCategoryColor(makeState(), 'creativity')).toBe('#F7E7F2')
     })
 
-    it('возвращает цвет категории по id подкатегории', () => {
-      expect(selectCategoryColor(makeState(), 'marketing')).toBe('#EEE7F7')
-      expect(selectCategoryColor(makeState(), 'drawing')).toBe('#F7E7F2')
+    it('id подкатегории — не категория: цвета нет', () => {
+      expect(selectCategoryColor(makeState(), 'marketing')).toBeUndefined()
     })
 
     it('возвращает undefined для неизвестного id', () => {
