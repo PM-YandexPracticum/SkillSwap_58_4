@@ -22,10 +22,7 @@ afterEach(() => {
 })
 
 /** Валидирует значение через схему одного поля и возвращает сообщение ошибки (или null) */
-async function validateField<T>(
-  schema: yup.Schema<T>,
-  value: unknown,
-): Promise<string | null> {
+async function validateField<T>(schema: yup.Schema<T>, value: unknown): Promise<string | null> {
   try {
     await schema.validate(value)
     return null
@@ -36,10 +33,7 @@ async function validateField<T>(
 }
 
 /** Проходит ли значение валидацию */
-async function isValid<T>(
-  schema: yup.Schema<T>,
-  value: unknown,
-): Promise<boolean> {
+async function isValid<T>(schema: yup.Schema<T>, value: unknown): Promise<boolean> {
   return (await validateField(schema, value)) === null
 }
 
@@ -226,9 +220,7 @@ describe('birthDateField', () => {
   })
 
   it('не добавляет год, пока день рождения в этом году не наступил', async () => {
-    const value = new Date(
-      Date.UTC(NOW.getFullYear() - AGE.MIN, 11, 4, 12),
-    ).toISOString()
+    const value = new Date(Date.UTC(NOW.getFullYear() - AGE.MIN, 11, 4, 12)).toISOString()
 
     expect(await validateField(schema, value)).toBe('Возраст от 14 до 100 лет')
   })
@@ -268,9 +260,7 @@ describe('textField', () => {
   })
 
   it('отклоняет текст длиннее максимума', async () => {
-    expect(await validateField(schema, 'а'.repeat(MAX + 1))).toBe(
-      `Не больше ${MAX} символов`,
-    )
+    expect(await validateField(schema, 'а'.repeat(MAX + 1))).toBe(`Не больше ${MAX} символов`)
   })
 
   it('пробелы по краям не увеличивают длину', async () => {
