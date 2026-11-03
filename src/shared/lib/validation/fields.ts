@@ -80,6 +80,7 @@ export function nameField(): yup.StringSchema<string> {
 export function birthDateField(): yup.StringSchema<string> {
   return yup
     .string()
+    .trim()
     .required('Укажите дату рождения')
     .test(
       'birth-date-valid',
@@ -119,6 +120,7 @@ export function textField(min: number, max: number): yup.StringSchema<string | u
 export function cityField(cityIds: readonly string[]): yup.StringSchema<string> {
   return yup
     .string()
+    .trim()
     .required('Выберите город из списка')
     .oneOf([...cityIds], 'Выберите город из списка')
 }
