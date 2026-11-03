@@ -37,6 +37,7 @@
 > и аватар (файл jpg/png/webp до 1 МБ; `fileToDataUrl` из P2-14 уменьшает его до 800 px и превращает в data URL). «Хочу научиться» — отмеченные в списках с чекбоксами подкатегории,
 > нужна хотя бы одна. «О себе» здесь нет — только в профиле.
 
+- **Уже готово:** `validateImageFile` из `@/shared/lib/validation` и `fileToDataUrl` из `@/shared/lib/image` (P2-14); лимиты — `VALIDATION.IMAGE` в `@/shared/config`.
 - **Файлы:** `src/features/register/ui/StepProfile.tsx`, `src/features/avatar-upload/`, `src/features/register/model/schema.ts`
 - **Где в макете:** «Регистрация 2 шаг» (1:1497 … 1:1717)
 - **Зависит от:** P6-01, P6-03, P2-16, P6-02 (обе меняют `schema.ts`)
@@ -47,7 +48,7 @@
 > «Продолжить» открывает превью «Ваше предложение»: «Редактировать» возвращает к форме, «Готово» завершает регистрацию.
 > Название — свободный текст: подходит ли оно к подкатегории, не проверяем, доверяем пользователю.
 
-- **Уже готово:** черновик `skill-create/model/schema.ts` — довести до `validation.md` (описание 20–500, фото 1–4).
+- **Уже готово:** черновик `skill-create/model/schema.ts` — довести до `validation.md` (описание 20–500, фото 1–4); выбранные в `FileDropzone` файлы проверяет `validateImageFile` (P2-14), текст ошибки уходит в проп `error`.
 - **Файлы:** `src/features/register/ui/StepSkill.tsx`, `src/features/skill-create/` (`SkillForm`, `SkillPreviewModal`, `model/schema.ts`)
 - **Где в макете:** 1:1761, превью 1:1799
 - **Зависит от:** P6-01, P6-03, P2-16, P3-13
