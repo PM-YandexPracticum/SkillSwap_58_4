@@ -159,7 +159,7 @@ export function FileDropzone({
       </div>
       {previews && (
         <div className={styles.previews}>
-          {previews.map((preview) => (
+          {previews.map((preview, index) => (
             <div key={preview.url} className={styles.preview} data-testid="filedropzone-preview">
               <img src={preview.url} alt="Превью изображения" className={styles.previewImage} />
               <button
@@ -168,7 +168,7 @@ export function FileDropzone({
                 data-testid="filedropzone-preview-remove"
                 disabled={disabled}
                 onClick={preview.onRemove}
-                aria-label="Удалить изображение"
+                aria-label={`Удалить фото ${index + 1}`}
               >
                 <CrossIcon className={styles.previewRemoveIcon} />
               </button>

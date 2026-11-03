@@ -4,8 +4,12 @@
   --icon-size: 24px; /* Figma: 1:1761 / gallery-add 24×24 */
   --cross-size: 20px; /* Креатив — кнопка крестика */
   --cross-icon-size: 16px; /* Креатив — cross.svg внутри кнопки */
-  --overlay: rgb(255 255 255 / 95%); /* Креатив — белая подложка крестика */
-  --overlay-hover: rgb(80 136 38 / 70%); /* Креатив — зелёная подложка при наведении, #508826 70% */
+
+  /* Креатив — подложка крестика: цвет из токена, непрозрачность 95% (--color-bg-secondary #FFF) */
+  --overlay: color-mix(in srgb, var(--color-bg-secondary) 95%, transparent);
+
+  /* Креатив — подложка при hover/focus: 80% — нижняя граница (--color-accent-strong #508826) */
+  --overlay-hover: color-mix(in srgb, var(--color-accent-strong) 80%, transparent);
   --zone-line-height: 1.5; /* Figma: 1:1761 — 24px при 16px */
   --zone-letter-spacing: 0.02em; /* Figma: 1:1761 — 2% при 16px */
 
@@ -142,15 +146,17 @@
     box-shadow 0.15s ease; /* Креатив — плавная смена цвета */
 }
 
-.previewRemove:hover {
+/* Креатив — при hover и клавиатурном фокусе кнопка выглядит одинаково */
+.previewRemove:hover,
+.previewRemove:focus-visible {
   background: var(--overlay-hover);
-  color: var(--color-text-inverse); /* #FFF — белый крестик на зелёном */
+  color: var(--color-text-inverse);
 }
 
+/* Креатив — обводка нужна и при фокусе, чтобы кнопку было видно на любом фото */
 .previewRemove:focus-visible {
-  outline: 2px solid var(--zone-focus-color);
-  outline-offset: var(--zone-focus-offset);
-  box-shadow: var(--link-focus-glow);
+  outline: 2px solid var(--zone-focus-color); /* --color-accent-strong #508826 */
+  outline-offset: var(--zone-focus-offset); /* 2px */
 }
 
 .previewRemove:disabled {
