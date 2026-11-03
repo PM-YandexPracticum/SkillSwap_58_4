@@ -8,6 +8,18 @@ import {
   cityField,
 } from './fields'
 import { VALIDATION } from '@/shared/config/validation'
+import { vi } from 'vitest'
+
+const NOW = new Date('2026-11-03T12:00:00.000Z')
+
+beforeEach(() => {
+  vi.useFakeTimers()
+  vi.setSystemTime(NOW)
+})
+
+afterEach(() => {
+  vi.useRealTimers()
+})
 
 /** Валидирует значение через схему одного поля и возвращает сообщение ошибки (или null) */
 async function validateField<T>(schema: yup.Schema<T>, value: unknown): Promise<string | null> {
@@ -166,10 +178,9 @@ describe('birthDateField', () => {
 
   /** Возраст ровно N лет на сегодня, с учётом того, был ли уже ДР в этом году */
   const birthOfAge = (age: number): string => {
-    const now = new Date()
-    const year = now.getFullYear() - age
-    // Вчера/завтра ДР - берём "середину" года, чтобы не зависеть от дня запуска теста
-    return new Date(year, 5, 15, 12).toISOString()
+    const year = NOW.getFullYear() - age
+
+    return new Date(Date.UTC(year, 5, 15, 12)).toISOString()
   }
 
   it('требует дату', async () => {
@@ -182,7 +193,7 @@ describe('birthDateField', () => {
   })
 
   it('отклоняет дату из будущего', async () => {
-    const future = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
+    const future = new Date(NOW.getTime() + 1000 * 60 * 60 * 24 * 365)
     expect(await validateField(schema, future.toISOString())).toBe('Возраст от 14 до 100 лет')
   })
 
@@ -202,16 +213,16 @@ describe('birthDateField', () => {
 
   it('не добавляет год, пока день рождения в этом году не наступил', async () => {
     // Родился 1 января 14 лет назад - ДР в этом году точно был -> ровно 14
-    const now = new Date()
-    const value = new Date(now.getFullYear() - AGE.MIN, 0, 1, 12).toISOString()
+    const value = new Date(
+      Date.UTC(NOW.getFullYear() - AGE.MIN, 0, 1, 12),
+    ).toISOString()
     expect(await isValid(schema, value)).toBe(true)
   })
 
   it('29 февраля: возраст прибавляется 1 марта в невисокосный год', async () => {
     // Косвенно проверяем через границу: 14 лет 29 февраля
     // (детальный расчёт покрыт в getAge.test.ts - здесь важно, что поле принимает такую дату)
-    const now = new Date()
-    const year = now.getFullYear() - AGE.MIN
+    const year = NOW.getFullYear() - AGE.MIN
     const value = isoDate(year, 2, 29)
     // Если year не високосный - yup.Date не примет, поэтому проверяем только валидность формата
     const date = new Date(value)
