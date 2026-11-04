@@ -1,12 +1,10 @@
 # src/features/favorite-toggle/ui
 
-> **SkillSwap** — платформа обмена навыками (только фронтенд: React + TypeScript + Redux Toolkit).
-> Архитектура — Feature-Sliced Design, подробности в [docs/architecture/fsd.md](../../../../docs/architecture/fsd.md).
-
-## Зачем эта папка
-
-Сегмент **ui** слайса `favorite-toggle` — React-компоненты. Получают данные пропсами или из store через селекторы.
+Визуальная кнопка избранного для карточки предложения. В P3-08 действие намеренно не меняет данные; сохранение и авторизация появятся в P5-07.
 
 ## Что внутри
 
-- `FavoriteButton.tsx` — Сердечко со счётчиком лайков (`likesCount`) на карточке и странице навыка. Гость → вход с возвратом
+- `FavoriteButton.tsx` — сердечко с доступным названием и счётчиком `likesCount`.
+- `FavoriteButton.module.css` — оформление сердечка со счётчиком рядом.
+- `FavoriteButton.test.tsx` — проверяет счётчик и отсутствие изменения по клику на текущем этапе.
+- `FavoriteButton.stories.tsx` — обычное, нулевое и большое значение счётчика.

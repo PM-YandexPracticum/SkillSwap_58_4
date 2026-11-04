@@ -1,1 +1,1 @@
-export { OfferCard } from './ui/OfferCard'
+export { OfferCard, type OfferCardProps } from './ui/OfferCard'
