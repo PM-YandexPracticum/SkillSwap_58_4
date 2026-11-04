@@ -1,0 +1,71 @@
+.item {
+  /* Локальные токены — значения из Figma: 1:2148. Пометка «креатив» = решение разработчика, не из макета */
+  --notice-font-size: var(--font-size-base); /* 16 — Figma: 1:2148 */
+  --notice-line-height: 1.5; /* Figma: 1:2148 — Body 16/24 */
+  --notice-caption-size: var(--font-size-xs); /* 12 — Figma: 1:2148 */
+  --notice-caption-line-height: 1.333; /* Figma: 1:2148 — Caption 12/16 */
+  --notice-letter-spacing: 0.02em; /* Figma: 1:2148 — 2% */
+  --notice-font-weight: var(--font-weight-regular); /* 400 */
+  --notice-icon-size: 40px; /* Figma: 1:2148 / 40×40 */
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* кнопка по ширине текста, прижата влево — Figma: 1:2148 */
+  gap: var(--space-16); /* 16 / Figma: 1:2148 */
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between; /* дата — справа (Figma: 1:2148) */
+  align-self: stretch;
+  gap: var(--space-20); /* 20 — блок «иконка+текст» → дата (Figma: 1:2148) */
+}
+
+.main {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8); /* 8 — иконка → текст (Figma: 1:2148) */
+  min-width: 0;
+}
+
+.icon {
+  width: var(--notice-icon-size);
+  height: var(--notice-icon-size);
+  flex-shrink: 0;
+  color: var(--color-text); /* #253017 */
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* креатив — длинный текст сжимается, дата не выпирает */
+}
+
+/* Typography Body 16/24, 2% — Figma: 1:2148 */
+.title,
+.date {
+  font-size: var(--notice-font-size);
+  line-height: var(--notice-line-height);
+  letter-spacing: var(--notice-letter-spacing);
+  font-weight: var(--notice-font-weight);
+}
+
+.title {
+  color: var(--color-text); /* #253017 */
+}
+
+/* Typography Caption 12/16, 2% — Figma: 1:2148 */
+.caption {
+  font-size: var(--notice-caption-size);
+  line-height: var(--notice-caption-line-height);
+  letter-spacing: var(--notice-letter-spacing);
+  font-weight: var(--notice-font-weight);
+  color: var(--color-text); /* #253017 */
+}
+
+.date {
+  color: var(--color-neutral); /* #69735D */
+  flex-shrink: 0;
+  white-space: nowrap;
+}
