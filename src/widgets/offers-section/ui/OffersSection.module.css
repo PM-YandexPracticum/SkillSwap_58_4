@@ -1,0 +1,93 @@
+.section {
+  color: var(--color-text);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-24);
+  margin-bottom: var(--space-32);
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-medium);
+  line-height: 40px;
+  letter-spacing: -0.011em;
+}
+
+/* У Button нет aria-expanded/aria-controls и белого варианта без рамки. */
+.toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-24);
+  border-radius: var(--radius-s);
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  line-height: 24px;
+  letter-spacing: 0.02em;
+}
+
+.toggle:hover {
+  background: var(--color-hover);
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
+}
+
+.chevron,
+.chevronUp {
+  width: 24px;
+  height: 24px;
+}
+
+.chevronUp {
+  transform: rotate(-90deg);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-24);
+}
+
+.cards > div {
+  min-width: 0;
+}
+
+.fold {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows 250ms ease,
+    visibility 250ms;
+}
+
+.expanded {
+  grid-template-rows: 1fr;
+  visibility: visible;
+}
+
+.foldContent {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.extraCards {
+  padding-top: var(--space-24);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fold {
+    transition: none;
+  }
+}
