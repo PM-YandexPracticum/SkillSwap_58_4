@@ -1,12 +1,14 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
-import { ROUTES } from '@/shared/config'
+
+import { ROUTER_FUTURE, ROUTES } from '@/shared/config'
 
 import { Footer } from './Footer'
 
 const renderFooter = () =>
   render(
-    <MemoryRouter>
+    <MemoryRouter future={ROUTER_FUTURE}>
       <Footer />
     </MemoryRouter>,
   )
@@ -35,5 +37,27 @@ describe('Footer', () => {
     renderFooter()
 
     expect(screen.getByText('SkillSwap — 2025')).toBeInTheDocument()
+  })
+
+  it('не добавляет заглушки в порядок перехода по Tab', async () => {
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter future={ROUTER_FUTURE}>
+        <Footer />
+        <button>Далее</button>
+      </MemoryRouter>,
+    )
+
+    await user.tab()
+    expect(screen.getByRole('link', { name: 'SkillSwap' })).toHaveFocus()
+
+    await user.tab()
+    expect(screen.getByRole('link', { name: 'О проекте' })).toHaveFocus()
+
+    await user.tab()
+    expect(screen.getByRole('link', { name: 'Все навыки' })).toHaveFocus()
+
+    await user.tab()
+    expect(screen.getByRole('button', { name: 'Далее' })).toHaveFocus()
   })
 })
