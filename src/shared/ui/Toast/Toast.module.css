@@ -1,13 +1,23 @@
 .toast {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-8);
-  background-color: var(--color-accent-soft);
+  width: 340px;
+  max-width: 100%;
+  padding: var(--space-24);
   border-radius: var(--radius-s);
-  padding: var(--space-24) var(--space-60) var(--space-24) var(--space-24);
+  color: var(--color-text);
+  background-color: var(--color-accent-soft);
   font-family: var(--font-title);
   font-weight: var(--font-weight-medium);
-  position: relative;
+  font-size: var(--font-size-lg);
+  line-height: var(--space-24);
+}
+
+.message {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .closeBtn {
@@ -17,7 +27,7 @@
 }
 
 .toastIcon {
-  width: 24px;
-  height: 24px;
+  flex-shrink: 0;
+  width: var(--space-24);
+  height: var(--space-24);
 }
-
