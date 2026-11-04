@@ -1,0 +1,29 @@
+/* Button пока не поддерживает ссылки: сохраняем семантику Link и оформление из Figma. */
+.details {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-12) var(--space-24);
+  border-radius: var(--radius-s);
+  background: var(--color-accent);
+  color: var(--color-text);
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: 24px;
+  letter-spacing: 0.02em;
+}
+
+.details:hover {
+  background: var(--color-hover);
+}
+
+.details:active {
+  background: var(--color-accent-strong);
+  color: var(--color-text-inverse);
+}
+
+.details:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
+}
