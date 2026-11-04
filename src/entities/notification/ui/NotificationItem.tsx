@@ -1,5 +1,5 @@
 import IdeaIcon from '@/shared/assets/icons/idea.svg?react'
-import { formatDate } from '@/shared/lib/helpers'
+import { formatNotificationDate } from '../lib/formatNotificationDate'
 import { Button } from '@/shared/ui/Button'
 
 import styles from './NotificationItem.module.css'
@@ -39,7 +39,7 @@ export function NotificationItem({ notification, userName, onGo }: NotificationI
           </div>
         </div>
         <time className={styles.date} dateTime={createdAt}>
-          {formatDate(createdAt)}
+          {formatNotificationDate(createdAt)}
         </time>
       </div>
       {!isRead && (

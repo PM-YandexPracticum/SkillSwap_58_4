@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { createUser } from '@/entities/user/testing'
-import { formatDate } from '@/shared/lib/helpers'
 
 import { NotificationItem } from './NotificationItem'
 import type { Notification } from '../model/types'
@@ -59,11 +58,9 @@ describe('NotificationItem', () => {
   })
 
   it('показывает отформатированную дату', () => {
-    const notification = createNotification()
-    renderItem(notification)
+    renderItem()
 
-    const formatted = formatDate(notification.createdAt)
-    expect(screen.getByText(formatted, { exact: false })).toBeInTheDocument()
+    expect(screen.getByText('15 января')).toBeInTheDocument()
   })
 
   it('показывает кнопку "Перейти" у непрочитанного', () => {

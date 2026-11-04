@@ -10,15 +10,16 @@
 
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* кнопка по ширине текста, прижата влево — Figma: 1:2148 */
+  align-items: flex-start;
   gap: var(--space-16); /* 16 / Figma: 1:2148 */
+  width: 100%;
 }
 
 .row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between; /* дата — справа (Figma: 1:2148) */
-  align-self: stretch;
+  width: 100%;
   gap: var(--space-20); /* 20 — блок «иконка+текст» → дата (Figma: 1:2148) */
 }
 
@@ -26,6 +27,7 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-8); /* 8 — иконка → текст (Figma: 1:2148) */
+  flex: 1; /* блок «иконка + текст» забирает свободное место */
   min-width: 0;
 }
 
