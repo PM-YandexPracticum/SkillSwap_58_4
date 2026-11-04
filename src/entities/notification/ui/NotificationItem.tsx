@@ -4,12 +4,17 @@ import { Button } from '@/shared/ui/Button'
 
 import styles from './NotificationItem.module.css'
 
-/** Подпись под заголовком — текст из макета 1:2148 */
+import type { Notification } from '../model/types'
+
+/** Подпись под заголовком уведомления */
 const CAPTION = 'Перейдите в профиль, чтобы обсудить детали'
 
 export interface NotificationItemProps {
-  notification: import('../model/types').Notification
-  /** Имя того, кому предложили обмен */
+  notification: Notification
+  /**
+   * Имя пользователя уже в нужной форме для фразы: «Ивану», «Анне».
+   * Склонение — ответственность того, кто передаёт пропс; компонент имя не меняет.
+   */
   userName: string
   onGo?: () => void
 }
@@ -17,10 +22,11 @@ export interface NotificationItemProps {
 /**
  * Строка уведомления: иконка, «Вы предложили обмен {userName}», дата и кнопка «Перейти».
  * Кликабельна только кнопка; у прочитанного её нет.
- * @see Figma:  «Каталог -» (1:2148)
+ * @see Figma: 1:2190 (окно уведомлений), 1:2148 (экран с открытой панелью)
  */
 export function NotificationItem({ notification, userName, onGo }: NotificationItemProps) {
   const { isRead, createdAt } = notification
+  const title = `Вы предложили обмен ${userName}`
 
   return (
     <article className={styles.item}>
@@ -28,7 +34,7 @@ export function NotificationItem({ notification, userName, onGo }: NotificationI
         <div className={styles.main}>
           <IdeaIcon className={styles.icon} aria-hidden="true" focusable="false" />
           <div className={styles.text}>
-            <p className={styles.title}>Вы предложили обмен {userName}</p>
+            <p className={styles.title}>{title}</p>
             <p className={styles.caption}>{CAPTION}</p>
           </div>
         </div>
@@ -39,6 +45,7 @@ export function NotificationItem({ notification, userName, onGo }: NotificationI
       {!isRead && (
         <Button variant="primary" onClick={onGo}>
           Перейти
+          <span className={styles.visuallyHidden}>— {title}</span>
         </Button>
       )}
     </article>

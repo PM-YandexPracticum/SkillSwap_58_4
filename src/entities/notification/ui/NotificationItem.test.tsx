@@ -10,8 +10,11 @@ import type { Notification } from '../model/types'
 /** Отправитель — его id подставляется в `userId` уведомления. */
 const author = createUser({ id: 'author-1', name: 'Мария' })
 
-/** Получатель — его имя выводится в тексте, id — в `toUserId`. */
+/** Получатель — id — в `toUserId`, склонённая форма имени передаётся в `userName`. */
 const recipient = createUser({ id: 'recipient-1', name: 'Иван' })
+
+/** Готовая для фразы форма имени — компонент не склоняет. */
+const RECIPIENT_NAME = 'Ивану'
 
 /**
  * Фабрика уведомления — по образцу `entities/user/lib/createUser.ts`.
@@ -34,13 +37,13 @@ const createNotification = (overrides: Partial<Notification> = {}): Notification
  * Хэлпер. Рендер «по умолчанию»: имя и колбэк подставляются, состояние — через overrides.
  * Возвращает onGo, чтобы проверить вызов колбэка в тесте.
  */
-const renderItem = (overrides: Partial<Notification> = {}) => {
+const renderItem = (overrides: Partial<Notification> = {}, userName = RECIPIENT_NAME) => {
   const onGo = vi.fn()
 
   render(
     <NotificationItem
       notification={createNotification(overrides)}
-      userName={recipient.name}
+      userName={userName}
       onGo={onGo}
     />,
   )
@@ -52,7 +55,7 @@ describe('NotificationItem', () => {
   it('показывает имя пользователя в тексте уведомления', () => {
     renderItem()
 
-    expect(screen.getByText(`Вы предложили обмен ${recipient.name}`)).toBeInTheDocument()
+    expect(screen.getByText(`Вы предложили обмен ${RECIPIENT_NAME}`)).toBeInTheDocument()
   })
 
   it('показывает отформатированную дату', () => {
@@ -66,21 +69,31 @@ describe('NotificationItem', () => {
   it('показывает кнопку "Перейти" у непрочитанного', () => {
     renderItem({ isRead: false })
 
-    expect(screen.getByRole('button', { name: 'Перейти' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^Перейти/ })).toBeInTheDocument()
   })
 
   it('не показывает кнопку "Перейти" у просмотренного', () => {
     renderItem({ isRead: true })
 
-    expect(screen.queryByRole('button', { name: 'Перейти' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Перейти/ })).not.toBeInTheDocument()
   })
 
   it('вызывает onGo по клику на "Перейти"', async () => {
     const user = userEvent.setup()
     const { onGo } = renderItem()
 
-    await user.click(screen.getByRole('button', { name: 'Перейти' }))
+    await user.click(screen.getByRole('button', { name: /^Перейти/ }))
 
     expect(onGo).toHaveBeenCalledTimes(1)
+  })
+
+  it('доступное имя кнопки включает текст уведомления', () => {
+    renderItem({ isRead: false })
+
+    expect(
+      screen.getByRole('button', {
+        name: `Перейти — Вы предложили обмен ${RECIPIENT_NAME}`,
+      }),
+    ).toBeInTheDocument()
   })
 })
