@@ -3,7 +3,6 @@ import { Carousel } from '@/shared/ui/Carousel'
 import type { Skill } from '../model/types'
 
 import styles from './SkillInfo.module.css'
-import React from 'react'
 
 export type SkillInfoActions = Record<'like' | 'createOffer', ReactNode>
 
