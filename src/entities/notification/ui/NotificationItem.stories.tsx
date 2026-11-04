@@ -1,29 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { createUser } from '@/entities/user/testing'
-
-import type { Notification } from '../model/types'
+import { createNotification } from '../testing'
 import { NotificationItem } from './NotificationItem'
 
-const author = createUser({ id: 'author-1', name: 'Мария' })
-const recipient = createUser({ id: 'recipient-1', name: 'Иван' })
-
+/** Готовая для фразы форма имени — компонент не склоняет. */
 const RECIPIENT_NAME = 'Ивану'
 
-const createNotification = (overrides: Partial<Notification> = {}): Notification => ({
-  id: 'n1',
-  userId: author.id,
-  toUserId: recipient.id,
-  exchangeId: 'exchange-1',
-  isRead: false,
-  createdAt: '2026-05-23T10:00:00.000Z', // как в макете — «23 мая»
-  ...overrides,
-})
+/** Дата как в макете — «23 мая» (1:2148). */
+const MOCK_CREATED_AT = '2026-05-23T10:00:00.000Z'
 
 /**
  * Строка уведомления — фрейм 1:2190.
  * Непрочитанное — с кнопкой «Перейти», прочитанное — без кнопки.
- * Decorator задаёт ширину панели макета (436px).
+ * Decorator задаёт ширину панели макета (436px — Notification 1:2148).
  */
 const meta: Meta<typeof NotificationItem> = {
   title: 'entities/notification/NotificationItem',
@@ -37,7 +26,7 @@ const meta: Meta<typeof NotificationItem> = {
     ),
   ],
   args: {
-    notification: createNotification(),
+    notification: createNotification({ createdAt: MOCK_CREATED_AT }),
     userName: RECIPIENT_NAME,
     onGo: () => {},
   },
@@ -49,10 +38,10 @@ type Story = StoryObj<typeof meta>
 
 /** Непрочитанное уведомление: есть кнопка «Перейти» (1:2190) */
 export const Unread: Story = {
-  args: { notification: createNotification({ isRead: false }) },
+  args: { notification: createNotification({ isRead: false, createdAt: MOCK_CREATED_AT }) },
 }
 
 /** Просмотренное уведомление: кнопки нет (1:2190) */
 export const Read: Story = {
-  args: { notification: createNotification({ isRead: true }) },
+  args: { notification: createNotification({ isRead: true, createdAt: MOCK_CREATED_AT }) },
 }
