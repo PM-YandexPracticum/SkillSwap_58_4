@@ -1,0 +1,11 @@
+.demo {
+  display: grid;
+  gap: var(--space-16);
+  padding: var(--space-24);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-16);
+  flex-wrap: wrap;
+}
