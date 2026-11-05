@@ -1,0 +1,64 @@
+/* Размеры — по макету (1:2861): подвал 1440 × 232, колонки ссылок 324 px */
+.footer {
+  padding: var(--space-32) var(--space-36);
+  background-color: var(--color-bg-secondary);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: var(--container-width);
+  margin: 0 auto;
+}
+
+.nav {
+  align-self: stretch;
+  margin-top: var(--space-20);
+}
+
+/* Три колонки по две ссылки, прижаты к правому краю */
+.links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 324px));
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+  justify-content: end;
+  gap: var(--space-12) var(--space-24);
+  list-style: none;
+}
+
+.link,
+.stub {
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+}
+
+.link {
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: var(--color-accent-strong);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
+}
+
+.stub {
+  cursor: default;
+}
+
+.copyright {
+  margin-top: var(--space-32);
+  font-size: var(--font-size-xs);
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  color: var(--color-neutral);
+}

@@ -1,5 +1,5 @@
 import type { Skill } from '@/entities/skill'
-import type { User } from '@/entities/user'
+import type { PublicUser } from '@/entities/user'
 import type { CatalogFilterState } from '../model/types'
 
 /**
@@ -10,11 +10,11 @@ import type { CatalogFilterState } from '../model/types'
  * Обязательно покрыть unit-тестами — это ядро бизнес-логики каталога.
  */
 export function applyFilters(
-  _users: readonly User[],
+  _users: readonly PublicUser[],
   _skills: readonly Skill[],
   _filter: CatalogFilterState,
   _query: string,
-): User[] {
+): PublicUser[] {
   // TODO: реализовать
   throw new Error('Not implemented: applyFilters')
 }

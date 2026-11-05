@@ -28,3 +28,4 @@ UI-кит: базовые компоненты из макета без бизн
 - [`Stepper/`](Stepper/README.md) — компонент `Stepper`
 - [`Tag/`](Tag/README.md) — компонент `Tag`
 - [`Textarea/`](Textarea/README.md) — компонент `Textarea`
+- [`Toast/`](Toast/README.md) — сообщение с иконкой и кнопкой закрытия; время показа контролирует ToastProvider

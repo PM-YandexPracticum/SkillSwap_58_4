@@ -1,3 +1,3 @@
-export { FavoriteButton } from './ui/FavoriteButton'
+export { FavoriteButton, type FavoriteButtonProps } from './ui/FavoriteButton'
 export { toggleFavorite } from './model/toggleFavorite'
 export { selectFavoriteIds } from './model/selectors'

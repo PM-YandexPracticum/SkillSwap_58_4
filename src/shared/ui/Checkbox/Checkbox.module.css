@@ -1,0 +1,75 @@
+.field {
+  font-family: var(--font-main);
+}
+
+.label {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.5;
+  letter-spacing: 0.02em; /* Figma: 2 % */
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--space-24);
+  height: var(--space-24);
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.icon {
+  border-radius: var(--space-4);
+  display: flex;
+  flex-shrink: 0;
+  width: var(--space-24);
+  height: var(--space-24);
+  color: var(--color-text);
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.input:focus-visible + .icon {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
+}
+
+.label:hover .input:enabled + .icon {
+  background-color: var(--color-hover);
+}
+
+.input:disabled ~ span {
+  color: var(--color-neutral);
+  cursor: not-allowed;
+}
+
+.input:disabled + .icon {
+  background-color: var(--color-disabled);
+}
+
+.error {
+  margin: var(--space-4) 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+}
+
+.input:checked:enabled + .icon,
+.input:indeterminate:enabled + .icon {
+  color: var(--color-accent);
+}
+
+.input[aria-invalid='true'] + .icon {
+  outline: 1px solid var(--color-error);
+}
