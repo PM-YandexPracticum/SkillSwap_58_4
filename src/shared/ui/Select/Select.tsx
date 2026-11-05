@@ -1,6 +1,8 @@
 import { useCallback, useId, useRef, useState } from 'react'
 
 import { useClickOutside } from '@/shared/lib/hooks/useClickOutside'
+import chevronUp from '@/shared/assets/icons/chevron-up.svg'
+import chevronDown from '@/shared/assets/icons/chevron-down.svg'
 import styles from './Select.module.css'
 
 export interface SelectProps {
@@ -116,6 +118,7 @@ export function Select({
           className={[
             styles.trigger,
             isOpen ? styles.triggerOpen : '',
+            selectedOption && selectedOption.value !== null ? styles.triggerSelected : '',
             error ? styles.triggerError : '',
             disabled ? styles.triggerDisabled : '',
           ]
@@ -139,7 +142,11 @@ export function Select({
           <span className={selectedOption ? styles.value : styles.placeholder}>
             {selectedLabel}
           </span>
-          <span className={[styles.chevron, isOpen ? styles.chevronOpen : ''].join(' ')} />
+          <img
+            className={styles.chevron}
+            src={isOpen ? chevronUp : chevronDown}
+            alt=""
+          />
         </button>
 
         {isOpen && (
