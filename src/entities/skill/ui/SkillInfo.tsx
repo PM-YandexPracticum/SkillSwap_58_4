@@ -34,6 +34,31 @@ export function SkillInfo(_props: SkillInfoProps) {
     return result
   }
 
+  const getMiniPreview = (images: string[]): ReactNode => {
+    const result: ReactNode = images.map((image, index) => {
+      if (index === 2) {
+        return (
+          <div key={index} className={styles.miniPreviewWrapper}>
+            <img src={image} alt="" className={styles.previewImage}></img>
+            <div className={styles.miniPreviewOverlay}>
+            </div>
+            <p className={styles.miniPreviewLabel}>{`+${images.length - 3}`}</p>
+          </div>
+        )
+      } else if (index > 2) {
+        return null;
+      }
+
+      return (
+        <div key={index} className={styles.miniPreviewWrapper}>
+          <img src={image} alt="" className={styles.previewImage}></img>
+        </div>
+      )
+    })
+
+    return result;
+  }
+
   return (
     <article className={styles.card}>
       <div className={styles.action}>{_props.actions?.like}</div>
@@ -46,12 +71,15 @@ export function SkillInfo(_props: SkillInfoProps) {
             >{`${_props.categoryTitle} / ${_props.subcategoryTitle}`}</p>
           </div>
           <p className={styles.skillDescription}>{_props.skill.description}</p>
-            {_props.actions?.createOffer && <div className={styles.actionCreateOffer}>{_props.actions?.createOffer}</div>}
+          {_props.actions?.createOffer && (
+            <div className={styles.actionCreateOffer}>{_props.actions?.createOffer}</div>
+          )}
         </section>
         <div className={styles.gallery}>
-          <Carousel className={styles.galleryCarousel}>{getSkillImages(_props.skill.images)}</Carousel>
-          <div className={styles.miniPreview}>
-          </div>
+          <Carousel className={styles.galleryCarousel}>
+            {getSkillImages(_props.skill.images)}
+          </Carousel>
+          <div className={styles.miniPreview}>{getMiniPreview(_props.skill.images)}</div>
         </div>
       </div>
     </article>
