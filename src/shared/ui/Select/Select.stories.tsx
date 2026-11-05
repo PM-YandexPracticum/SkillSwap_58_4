@@ -79,3 +79,19 @@ export const Disabled: Story = {
     disabled: true,
   },
 }
+
+/** Поиск по списку городов */
+export const Searchable: Story = {
+  args: {
+    label: 'Город',
+    placeholder: 'Не указан',
+    options: [
+      { value: 'spb', label: 'Санкт-Петербург' },
+      { value: 'samara', label: 'Самара' },
+      { value: 'saratov', label: 'Саратов' },
+      { value: 'moscow', label: 'Москва' },
+    ],
+    value: null,
+    searchable: true,
+  },
+}
