@@ -48,6 +48,7 @@
 }
 
 .image {
+  width: 324px;
   border-radius: var(--radius-s);
 }
 
@@ -59,10 +60,6 @@
 .galleryCarousel {
   min-width: 324px;
   aspect-ratio: 1/1;
-}
-
-.miniPreview {
-  min-width: 92px;
 }
 
 .actionCreateOffer > * {
