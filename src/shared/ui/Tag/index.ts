@@ -1,1 +1,1 @@
-export { Tag, type TagProps } from './Tag'
+export { Tag, isTagColor, type TagColor, type TagProps } from './Tag'

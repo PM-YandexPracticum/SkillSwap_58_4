@@ -1,6 +1,12 @@
 export type { Category, Subcategory } from './model/types'
-export { categoriesReducer, type CategoriesState } from './model/categoriesSlice'
-export { selectCategories, selectCategoriesStatus } from './model/selectors'
+export { categoriesReducer, fetchCategories, type CategoriesState } from './model/categoriesSlice'
+export {
+  selectCategories,
+  selectCategoriesStatus,
+  selectSubcategoryById,
+  selectCategoryBySubcategoryId,
+  selectCategoryColor,
+} from './model/selectors'
 export { getCategories } from './api/categoryApi'
 export { CategoryIcon } from './ui/CategoryIcon'
 export { CategorySubcategorySelect } from './ui/CategorySubcategorySelect'

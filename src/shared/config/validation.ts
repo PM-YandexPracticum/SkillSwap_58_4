@@ -25,5 +25,9 @@ export const VALIDATION = {
     TYPES: ['image/jpeg', 'image/png', 'image/webp'],
     /** 1 МБ: фото хранятся в localStorage как data URL, а у него всего ~5 МБ на сайт */
     MAX_SIZE_BYTES: 1024 * 1024,
+    /** Перед сохранением фото уменьшается до этой длины длинной стороны, px — иначе несколько фото займут весь localStorage */
+    MAX_SIDE_PX: 800,
+    /** Качество JPEG при сохранении уменьшенного фото (0–1) */
+    JPEG_QUALITY: 0.8,
   },
 } as const

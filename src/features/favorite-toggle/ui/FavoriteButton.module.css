@@ -1,0 +1,19 @@
+.favorite {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--color-text);
+}
+
+.favorite svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* В макете есть только иконка. Число рядом с ней — требование P3-08. */
+.count {
+  font-size: var(--font-size-xs);
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

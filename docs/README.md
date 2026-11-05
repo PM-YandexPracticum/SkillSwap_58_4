@@ -14,6 +14,8 @@
 | [architecture/](architecture/README.md) | Как устроен проект (FSD), карта «макет → код» | Перед первой задачей, потом — как справочник |
 | [tasks/](tasks/README.md) | Дорожная карта по фазам, все задачи, вопросы к дизайну | Когда берёшь новую задачу |
 
+[Иллюстрации к документации и PR](assets/README.md).
+
 ## Ссылки
 
 - 📋 **Канбан-доска задач:** [GitHub Project #133](https://github.com/orgs/PM-YandexPracticum/projects/133/views/1) — кто что делает прямо сейчас

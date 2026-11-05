@@ -9,4 +9,4 @@
 
 ## Что внутри
 
-- `AvatarUpload.tsx` — Большой круглый аватар с кнопкой-иконкой смены фото. Файл проверяется `validateImageFile` (jpg/png/webp, до 1 МБ), превью — через `URL.createObjectURL`, картинка — через `resolveImageUrl`
+- `AvatarUpload.tsx` — аватар с выбором фото, два вида по макету: на шаге 2 регистрации — иконка `user-circle` 72 px с «+» (1:1497), в «Личных данных» — фото 244 px с кнопкой `gallery-edit` (1:2370). Файл проверяет `validateImageFile`, в data URL превращает `fileToDataUrl`
