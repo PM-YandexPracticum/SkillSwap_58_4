@@ -1,1 +1,1 @@
-export { OffersSection } from './ui/OffersSection'
+export { OffersSection, type OffersSectionProps } from './ui/OffersSection'

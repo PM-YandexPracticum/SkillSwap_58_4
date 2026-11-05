@@ -9,6 +9,6 @@ UI-компонент **PasswordInput**. Поле пароля с кнопкой
 
 ## Что внутри
 
-- `PasswordInput.stories.tsx` — Stories компонента PasswordInput — ЗАГЛУШКА. Пакеты Storybook ставит задача P1-11; после неё добавить типы: `const meta: Meta<typeof PasswordInput>` и `export const Default: StoryObj<typeof meta>`
+- `PasswordInput.stories.tsx` — Stories компонента PasswordInput — пока заглушка; Storybook установлен. При реализации добавить типы: `const meta: Meta<typeof PasswordInput>` и `export const Default: StoryObj<typeof meta>`
 - `PasswordInput.tsx` — Поле пароля с кнопкой «глаз» для показа/скрытия и подсказкой «Пароль должен содержать не менее 8 знаков»
 - `index.ts` — публичный API — импортировать снаружи только отсюда

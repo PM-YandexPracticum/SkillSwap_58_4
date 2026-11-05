@@ -63,6 +63,7 @@
 
 - **Уже готово:** `Input` (P2-05) — «глаз» передаётся в проп `rightAction` (кликабельная кнопка справа, доступна по Tab), пример — story `WithAction`; иконки `eye` и `eye-off`, кнопка — `IconButton` с `ariaLabel`.
 - **Файлы:** `src/shared/ui/PasswordInput/`
+- **Issue:** [#22](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/22)
 - **Где в макете:** «Вход» (1:2400), «Регистрация 1 шаг» (1:2548)
 - **Зависит от:** P2-05
 
@@ -99,6 +100,7 @@
 - **Как работает:** `<ul role="listbox">`, пункты `<li role="option" aria-selected>`; Enter или ↓ открывают, ↑↓ двигают подсветку,
   Enter выбирает, Esc закрывает, фокус возвращается на поле. `searchable` — текстовое поле на основе Input (P2-05) с «×».
 - **Файлы:** `src/shared/ui/Select/`
+- **Issue:** [#25](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/25)
 - **Где в макете:** «Регистрация 2 шаг» — открытый «Пол» (1:1585), «Город» с поиском (1:1629)
 - **Зависит от:** P2-05, P2-08
 
@@ -127,16 +129,18 @@
 
 - **Уже готово:** `react-datepicker` 9 в зависимостях; его стили подключаются импортом `react-datepicker/dist/react-datepicker.css`, поверх — свои по макету; поле — `Input` (P2-05): подпись, ошибка и иконка календаря в `rightIcon` (или `rightAction`, если иконка открывает календарь).
 - **Файлы:** `src/shared/ui/DatePicker/`
+- **Issue:** [#28](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/28)
 - **Где в макете:** «Регистрация 2 шаг» с открытым календарём (1:1541): списки месяца и года, «Отменить» / «Выбрать»
 - **Зависит от:** P1-10, P2-05
 
-### P2-13 · Carousel 🟡
+### P2-13 · Carousel ✅ 🟡
 > **Что нужно сделать:** сделать карусель — ленту со стрелками на основе `embla-carousel-react` (поставлена в P1-10); своей логики листания не пишем.
 > Нужна в трёх местах: фото в превью навыка, галерея и «Похожие предложения» (4 карточки) на странице навыка.
 > Задача — обернуть библиотеку в наш компонент и стилизовать стрелки как в макете.
 
 - **Уже готово:** `embla-carousel-react` 8 в зависимостях (хук `useEmblaCarousel`); стрелки рисуем сами иконками `chevron-right`.
 - **Файлы:** `src/shared/ui/Carousel/`
+- **Issue:** [#29](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/29) · PR [#127](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/127)
 - **Где в макете:** «Страница навыка» 1:2764, превью навыка 1:1799
 - **Зависит от:** P1-10, P2-02
 
@@ -169,6 +173,7 @@
 - **Уже готово:** числа ленты (`CATALOG.SCROLL_BATCH`, `CATALOG.SCROLL_DELAY_MS`) в `shared/config/catalog.ts`; заготовка `useInfiniteScroll(items, batch, delayMs)` с типом результата (`visibleItems`, `sentinelRef`, `isLoading`, `hasMore`) уже экспортируется из `@/shared/lib/hooks` — остаётся тело и тест; спиннер для ленты — `Loader` (P2-01). Правила тестов — [testing.md](../../rules/testing.md), образец `getAge.test.ts`.
 - **Подсказки к тесту:** хук рендерим через `renderHook` из `@testing-library/react`; в jsdom нет `IntersectionObserver` — подменить через `vi.stubGlobal` и вызвать его колбэк вручную; задержку — `vi.useFakeTimers()` и `vi.advanceTimersByTime(CATALOG.SCROLL_DELAY_MS)`.
 - **Файлы:** `src/shared/lib/hooks/useInfiniteScroll.ts` + тест
+- **Issue:** [#31](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/31)
 - **Зависит от:** P1-04
 
 ### P2-16 · Общие правила валидации ✅ 🟡
@@ -189,16 +194,19 @@
 - **Уже готово:** `Checkbox` (P2-07) с частичным выбором — для пунктов списка; иконки чекбоксов `checkbox-empty`, `checkbox-done` в `src/shared/assets/icons/`.
 - **Как выглядит:** так же, как открытый Select (P2-09) — одна раскрытая вниз рамка с полем и списком, только у пунктов чекбоксы. Берём устройство Select, `Dropdown` не используем.
 - **Файлы:** `src/shared/ui/MultiSelect/`
+- **Issue:** [#33](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/33)
 - **Где в макете:** «Регистрация 2 шаг» — 1:1673 (категории), 1:1717 (подкатегории)
 - **Зависит от:** P2-07, P2-09
 
-### P2-18 · Toast — всплывающее уведомление 🟡
+### P2-18 · Toast — всплывающее уведомление ✅ 🟡
 > **Что нужно сделать:** сделать всплывающее сообщение в углу экрана: текст, иконка, крестик; через несколько секунд исчезает само.
 > Чтобы показать toast из любого места, нужен `useToast()` — `showToast('Вы предложили обмен Ивану')`; сам список toast-ов
 > рисует `ToastProvider` в `app`. По ТЗ наставника toast появляется после «Предложить обмен» (P7-03).
 
-- **Файлы:** `src/shared/ui/Toast/` (новый), `src/shared/lib/toast/` (новый: контекст и `useToast`), `src/app/providers/ToastProvider.tsx` (новый)
+- **Файлы:** `src/shared/ui/Toast/`, `src/shared/lib/toast/` (контекст и `useToast`), `src/app/providers/ToastProvider.tsx`
+- **Issue:** [#106](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/106) · PR [#140](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/140)
 - **Где в макете:** тосты в 1:2148 (1:1975, 1:1976) — берём только внешний вид, текст у нас свой
+- **Граница задачи:** UI, контекст, хук и провайдер показа готовы. Вызов после предложения обмена — P7-03; вёрстка панели колокольчика готова в P3-15, действия и переход «Перейти» подключит P7-05; хранение уведомлений — P4-07.
 - **Зависит от:** P2-02
 - **Готово, когда:** в Storybook есть Toast во всех состояниях; `showToast` из любого компонента показывает сообщение, оно закрывается крестиком и само через ~4 с; не перекрывает шапку.
 
