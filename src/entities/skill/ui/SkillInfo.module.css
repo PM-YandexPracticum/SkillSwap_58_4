@@ -1,4 +1,7 @@
 .card {
+  --mini-preview-image-width: 92px;
+  --square-aspect-ratio: 1/1;
+
   display: flex;
   flex-direction: column;
   background-color: var(--color-bg-secondary);
@@ -59,7 +62,50 @@
 
 .galleryCarousel {
   min-width: 324px;
+  aspect-ratio: var(--square-aspect-ratio);
+}
+
+.miniPreview {
+  min-width: 92px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.miniPreviewWrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.miniPreviewOverlay {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: var(--color-bg-secondary);
+  opacity: 0.5;
+  border-radius: var(--radius-s);
+  color: var(--color-neutral);
+  width: 92px;
   aspect-ratio: 1/1;
+}
+
+.miniPreviewLabel {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  font-size: var(--font-size-base);
+  line-height: 24px;
+  letter-spacing: -0.011em;
+  width: 92px;
+  aspect-ratio: 1/1;
+}
+
+.previewImage {
+  border-radius: var(--radius-s);
 }
 
 .actionCreateOffer > * {
