@@ -14,6 +14,12 @@ const meta: Meta<typeof MarkAllReadButton> = {
   title: 'features/notifications-read/MarkAllReadButton',
   component: MarkAllReadButton,
   tags: ['autodocs'],
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2239',
+    },
+  },
   args: { onClick: () => {} },
 }
 

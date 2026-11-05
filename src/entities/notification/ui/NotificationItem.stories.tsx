@@ -18,6 +18,12 @@ const meta: Meta<typeof NotificationItem> = {
   title: 'entities/notification/NotificationItem',
   component: NotificationItem,
   tags: ['autodocs'],
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2190',
+    },
+  },
   decorators: [
     (Story) => (
       <div style={{ width: 436 }}>

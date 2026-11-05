@@ -33,6 +33,10 @@ const meta: Meta<typeof NotificationsPanel> = {
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2190',
+    },
   },
   decorators: [
     (Story) => (
