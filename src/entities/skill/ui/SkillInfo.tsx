@@ -1,5 +1,4 @@
 import { useState, type ReactNode } from 'react'
-import React from 'react'
 import { Carousel, type EmblaApi } from '@/shared/ui/Carousel'
 import type { Skill } from '../model/types'
 
