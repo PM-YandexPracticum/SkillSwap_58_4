@@ -3,7 +3,7 @@ import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-reac
 
 import styles from './Carousel.module.css'
 
-type EmblaApi = UseEmblaCarouselType[1]
+export type EmblaApi = UseEmblaCarouselType[1]
 
 export interface CarouselProps {
   /** Слайды карусели. Может быть передан один элемент или массив элементов */
