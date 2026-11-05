@@ -28,6 +28,7 @@
 > Теперь дождитесь подтверждения. Вам придёт уведомление». После «Готово» кнопка становится неактивной «🕓 Обмен предложен»,
 > на колокольчике — красная точка. Второй раз тому же человеку предложить нельзя.
 
+- **Готовая зависимость P4-07:** `fetchExchanges` / `addExchange` / `selectHasProposed` из `@/entities/exchange`, `fetchNotifications` / `addNotification` из `@/entities/notification`. Владелец уведомления — текущий пользователь, который предложил обмен; текст, toast и окно собирает эта задача. P7-03 остаётся в Backlog до готовности остальных зависимостей.
 - **После зависимостей:** кто предлагает обмен — `selectCurrentUser` из `@/entities/user` (P4-09), гость — `null`.
 - **Файлы:** `src/features/exchange-propose/` + тесты на логику
 - **Issue:** [#76](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/76)
@@ -40,6 +41,7 @@
 > На карточке вместо «Подробнее» — серый бейдж «Обмен предложен» с иконкой часов.
 > Гость и остальные видят обычную карточку.
 
+- **Готовые зависимости:** загрузка — `fetchExchanges()`, проверка — `selectHasProposed(state, user.id)` из `@/entities/exchange`; данные сохраняются после перезагрузки. P3-08 и P4-07 готовы, поэтому P7-04 можно перенести из Backlog в Todo.
 - **Файлы:** `src/widgets/offer-card/`, `src/entities/exchange/ui/ExchangeStatusBadge.tsx`
 - **Issue:** [#77](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/77)
 - **Где в макете:** 1:2106
@@ -51,7 +53,8 @@
 > где они больше не кликаются. «Очистить» удаляет все уведомления. Больше уведомления ничего не делают — обмены номинальные.
 
 - **Уже готово:** `NotificationsPanel`, `NotificationItem` и `MarkAllReadButton` из P3-15 принимают данные и обработчики через пропсы; открытие окна управляется снаружи через `Dropdown` с `align="end"`. Имя в нужном падеже передаёт вызывающий код.
-- **Остаётся дождаться:** хранения уведомлений (P4-07) и шапки вошедшего пользователя (P5-09); текущего пользователя определяет `selectCurrentUser` из P4-09. Подключение панели не начинает работать автоматически после её вёрстки.
+- **Готовая зависимость P4-07:** `fetchNotifications`, `selectNotifications`, `selectHasUnread`, `markAllRead()` и `clearAllNotifications()` из `@/entities/notification`; чтение и очистка сами берут владельца из сессии. В P4-07 панель к Redux не подключается.
+- **Остаётся дождаться:** шапки вошедшего пользователя (P5-09); текущего пользователя определяет `selectCurrentUser` из P4-09. Подключение панели не начинается автоматически после её вёрстки.
 - **Файлы:** `src/widgets/notifications-panel/`, `src/features/notifications-read/`, `src/widgets/header/`
 - **Issue:** [#78](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/78)
 - **Где в макете:** 1:2328, 1:2239, 1:2148
