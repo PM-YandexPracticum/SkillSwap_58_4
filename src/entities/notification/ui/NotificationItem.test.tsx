@@ -33,10 +33,20 @@ describe('NotificationItem', () => {
     expect(screen.getByText(`Вы предложили обмен ${RECIPIENT_NAME}`)).toBeInTheDocument()
   })
 
-  it('показывает отформатированную дату', () => {
-    renderItem()
+  it.each([
+    ['2026-01-20T09:00:00', 'сегодня'],
+    ['2026-01-19T23:30:00', 'вчера'],
+    ['2026-01-15T12:00:00', '15 января'],
+  ])('показывает дату %s как «%s»', (createdAt, expected) => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-20T12:00:00'))
 
-    expect(screen.getByText('15 января')).toBeInTheDocument()
+    try {
+      renderItem({ createdAt })
+      expect(screen.getByText(expected)).toBeInTheDocument()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('показывает кнопку "Перейти" у непрочитанного', () => {

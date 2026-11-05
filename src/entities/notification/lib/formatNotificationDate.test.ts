@@ -4,21 +4,21 @@ import { formatNotificationDate } from './formatNotificationDate'
 const NOW = new Date('2026-11-04T12:00:00')
 
 describe('formatNotificationDate', () => {
-  it('возвращает «Сегодня» для текущего дня', () => {
-    expect(formatNotificationDate('2026-11-04T09:00:00', NOW)).toBe('Сегодня')
+  it('возвращает «сегодня» для текущего дня', () => {
+    expect(formatNotificationDate('2026-11-04T09:00:00', NOW)).toBe('сегодня')
   })
 
-  it('возвращает «Сегодня» даже за пару часов до полуночи', () => {
-    expect(formatNotificationDate('2026-11-04T00:30:00', NOW)).toBe('Сегодня')
+  it('возвращает «сегодня» для начала текущего дня', () => {
+    expect(formatNotificationDate('2026-11-04T00:30:00', NOW)).toBe('сегодня')
   })
 
-  it('возвращает «Вчера» для предыдущего дня', () => {
-    expect(formatNotificationDate('2026-11-03T23:30:00', NOW)).toBe('Вчера')
+  it('возвращает «вчера» для предыдущего дня', () => {
+    expect(formatNotificationDate('2026-11-03T23:30:00', NOW)).toBe('вчера')
   })
 
-  it('возвращает «Вчера» на границе месяца', () => {
+  it('возвращает «вчера» на границе месяца', () => {
     const now = new Date('2026-11-01T12:00:00')
-    expect(formatNotificationDate('2026-10-31T12:00:00', now)).toBe('Вчера')
+    expect(formatNotificationDate('2026-10-31T12:00:00', now)).toBe('вчера')
   })
 
   it('возвращает день и месяц в родительном падеже для старых дат', () => {
