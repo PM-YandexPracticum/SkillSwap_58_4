@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import type { Skill } from '../model/types'
 import { createSkill } from '@/entities/skill/testing'
-import { SkillInfo, type SkillInfoProps } from './SkillInfo'
+import { SkillInfo, SkillInfoActions, type SkillInfoProps } from './SkillInfo'
 import { IconButton } from '@/shared/ui/IconButton'
 import LikeIcon from '@/shared/assets/icons/like.svg?react'
 import LikeFilledIcon from '@/shared/assets/icons/like-filled.svg?react'
@@ -58,20 +58,23 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-const actionSection: ReactNode = (
-  <>
-    <IconButton ariaLabel='Добавить в избранное' onClick={() => {}} icon=<LikeIcon />/>
-    {/* Заглушки */}
-    <IconButton ariaLabel='Поделиться' icon=<ShareIcon />/>
-    <IconButton ariaLabel='Больше опций' icon=<MoreIcon />/>
-  </>
-)
+const allActions: SkillInfoActions = {
+  like: <IconButton ariaLabel='Добавить в избранное' onClick={() => {}} icon=<LikeIcon />/>,
+  createOffer: <Button onClick={() => {}}>Предложить обмен</Button>,
+  unlike: <IconButton ariaLabel='Убрать из избранного' onClick={() => {}} icon=<LikeFilledIcon />/>,
+
+  /* Заглушки */
+  share: <IconButton ariaLabel='Поделиться' icon=<ShareIcon />/>,
+  more: <IconButton ariaLabel='Больше опций' icon=<MoreIcon />/>,
+}
 
 export const Default: Story = {
   args: {
     actions: {
-      like: actionSection,
-      createOffer: <Button onClick={() => {}}>Предложить обмен</Button>
+      like: allActions.like,
+      createOffer: <Button onClick={() => {}}>Предложить обмен</Button>,
+      share: allActions.share,
+      more: allActions.more,
     }
   }
 }

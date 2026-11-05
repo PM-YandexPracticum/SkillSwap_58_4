@@ -5,7 +5,17 @@ import type { Skill } from '../model/types'
 
 import styles from './SkillInfo.module.css'
 
-export type SkillInfoActions = Record<'like' | 'createOffer', ReactNode>
+/**
+ * Тип для передаваемых фич (слот actions)
+ * Передаётся в виде объекта с необязательными свойствами, значение каждого свойства - ReactNode
+ *
+ * Пример:
+ * {
+ *  like: <IconButton ariaLabel='Добавить в избранное' icon=<LikeIcon />/>
+ *  createOffer: <Button onClick={() => {}}>Предложить обмен</Button>
+ * }
+ */
+export type SkillInfoActions = Partial<Record<'like' | 'createOffer' | 'unlike' | 'share' | 'more', ReactNode>>
 
 export interface SkillInfoProps {
   /** Навык: своё название и описание, изображения */
@@ -67,7 +77,11 @@ export function SkillInfo(_props: SkillInfoProps) {
 
   return (
     <article className={styles.card}>
-      <div className={styles.action}>{_props.actions?.like}</div>
+      <div className={styles.action}>
+        {_props.actions?.like}
+        {_props.actions?.share}
+        {_props.actions?.more}
+      </div>
       <div className={styles.container}>
         <section className={styles.content}>
           <div className={styles.skill}>
