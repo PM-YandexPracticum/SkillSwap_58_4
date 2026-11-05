@@ -19,6 +19,7 @@ export interface SelectProps {
   searchable?: boolean
   error?: string
   disabled?: boolean
+  defaultOpen?: boolean
 }
 
 /**
@@ -33,8 +34,9 @@ export function Select({
   onChange,
   error,
   disabled = false,
+  defaultOpen = false,
 }: SelectProps) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(defaultOpen)
   const [activeIndex, setActiveIndex] = useState(-1)
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -71,6 +73,11 @@ export function Select({
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Tab' && isOpen) {
+      close()
+      return
+    }
+
     if (event.key === 'Escape' && isOpen) {
       event.preventDefault()
       close()
@@ -103,7 +110,15 @@ export function Select({
   }
 
   return (
-    <div ref={rootRef} className={styles.root}>
+    <div
+      ref={rootRef}
+      className={styles.root}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          close()
+        }
+      }}
+    >
       {label && (
         <label id={labelId} htmlFor={`${id}-trigger`} className={styles.label}>
           {label}

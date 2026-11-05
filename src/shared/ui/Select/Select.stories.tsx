@@ -49,6 +49,22 @@ export const Default: Story = {
   },
 }
 
+/** Выбрано значение */
+export const Selected: Story = {
+  args: {
+    ...Default.args,
+    value: 'male',
+  },
+}
+
+/** Открытый список */
+export const Open: Story = {
+  args: {
+    ...Default.args,
+    defaultOpen: true,
+  },
+}
+
 export const Error: Story = {
   args: {
     ...Default.args,
