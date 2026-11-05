@@ -4,6 +4,8 @@
 
 .root {
   width: 208px;
+  position: relative;
+  z-index: 2;
 }
 
 .label {

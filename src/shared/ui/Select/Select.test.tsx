@@ -9,6 +9,54 @@ const options = [
 ]
 
 describe('Select', () => {
+  it('фильтрует searchable-варианты по введённому тексту', () => {
+    const cities = [
+      { value: 'spb', label: 'Санкт-Петербург' },
+      { value: 'samara', label: 'Самара' },
+      { value: 'saratov', label: 'Саратов' },
+      { value: 'moscow', label: 'Москва' },
+    ]
+    render(
+      <Select
+        label="Город"
+        options={cities}
+        value={null}
+        onChange={vi.fn()}
+        searchable
+      />,
+    )
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Город' }), {
+      target: { value: 'Са' },
+    })
+
+    expect(screen.getAllByRole('option')).toHaveLength(3)
+    expect(screen.queryByRole('option', { name: 'Москва' })).not.toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Санкт-Петербург' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Самара' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: 'Саратов' })).toBeInTheDocument()
+  })
+
+  it('очищает searchable-поле и выбранное значение по кнопке справа', () => {
+    const onChange = vi.fn()
+    render(
+      <Select
+        label="Город"
+        options={[{ value: 'samara', label: 'Самара' }]}
+        value={null}
+        onChange={onChange}
+        searchable
+      />,
+    )
+    const input = screen.getByRole('combobox', { name: 'Город' })
+    fireEvent.change(input, { target: { value: 'Са' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Очистить' }))
+
+    expect(input).toHaveValue('')
+    expect(onChange).toHaveBeenCalledWith(null)
+    expect(screen.getByRole('option', { name: 'Самара' })).toBeInTheDocument()
+  })
+
   it('показывает выбранный вариант и открывает список по клику', () => {
     render(
       <Select label="Пол" options={options} value="male" onChange={vi.fn()} />,
