@@ -9,7 +9,19 @@
 
 ## Что внутри
 
-- [`api/`](api/README.md) — загрузка данных
+- [`api/`](api/README.md) — загрузка и сохранение предложений, защита от повторной пары
 - [`model/`](model/README.md) — типы, слайс, селекторы
 - [`ui/`](ui/README.md) — React-компоненты
 - `index.ts` — публичный API — импортировать снаружи только отсюда
+
+## Использование (P4-07)
+
+```ts
+import { addExchange, fetchExchanges, selectHasProposed } from '@/entities/exchange'
+
+await dispatch(fetchExchanges()).unwrap()
+await dispatch(addExchange(exchange)).unwrap()
+const hasProposed = selectHasProposed(state, recipientId)
+```
+
+`exchange` — полный `Exchange` с id и фиксированной датой создания: сценарий формирует их с помощью `generateId()` и текущего времени. Повторная пара отправитель/получатель запрещена, в том числе после перезагрузки. Вызов обмена вместе с созданием уведомления и toast — P7-03; бейдж на карточке — P7-04.
