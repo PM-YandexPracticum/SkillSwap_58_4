@@ -21,7 +21,7 @@
 | `npm run test:watch` | перезапуск при сохранении файла — удобно, пока пишешь тест |
 | `npx vitest run src/entities/user/lib/getAge.test.ts` | один файл |
 | `npx vitest run -t "29 февраля"` | тесты, в названии которых есть текст |
-| `npm run test:coverage` | отчёт о покрытии тестами (порог 70 % — цель к финишу) |
+| `npm run test:coverage` | отчёт о покрытии; Vitest проверяет порог statements 70 %; отдельно покрытие ядра — P8-07 |
 
 ## Что проверяем
 
@@ -35,16 +35,18 @@
 
 ## Тестовые помощники
 
-### Фабрики данных: `createUser()`, `createSkill()`
+### Фабрики данных: `createUser()`, `createSkill()`, `createNotification()`
 
-Возвращают полного валидного пользователя или навык. Передаёшь только то поле, которое важно для теста:
+Возвращают полного валидного пользователя, навык или уведомление. Передаёшь только то поле, которое важно для теста:
 
 ```ts
 import { createUser } from '@/entities/user/testing'
 import { createSkill } from '@/entities/skill/testing'
+import { createNotification } from '@/entities/notification/testing'
 
 const user = createUser({ gender: 'female' })
 const skill = createSkill({ title: 'Игра на барабанах', authorId: user.id })
+const notification = createNotification({ isRead: true })
 const list = [createUser({ id: 'u1' }), createUser({ id: 'u2', likesCount: 99 })]
 ```
 
