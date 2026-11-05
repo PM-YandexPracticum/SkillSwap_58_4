@@ -55,6 +55,10 @@ const list = [createUser({ id: 'u1' }), createUser({ id: 'u2', likesCount: 99 })
 - У всех пользователей фабрики одинаковый `id` (`u-test`). В списке задавай `id` сам.
 - Фабрики используют и stories (см. [storybook.md](storybook.md)). Не копируй куски JSON из `public/db/`.
 
+### `createTestStore`
+
+Для тестов логики с несколькими слайсами используй `createTestStore` из `@/app/test/createTestStore`: это `createAppStore` по разрешённому для тестов FSD-пути. Передавай сессию через `preloadedState`; для проверки перезагрузки создай новый store и загрузи данные API-thunk. Не импортируй `@/app/store` или соседние сущности напрямую из теста сущности.
+
 ### `renderWithProviders`
 
 Рендерит компонент вместе с Redux store и роутером. Без них компонент с `useAppSelector` или `<Link>` в тесте падает.
