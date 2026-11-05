@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react'
-import { Carousel } from '@/shared/ui/Carousel'
+import { useState, type ReactNode } from 'react'
+import React from 'react'
+import { Carousel, type EmblaApi } from '@/shared/ui/Carousel'
 import type { Skill } from '../model/types'
 
 import styles from './SkillInfo.module.css'
@@ -25,6 +26,11 @@ export interface SkillInfoProps {
  */
 export function SkillInfo(_props: SkillInfoProps) {
   // TODO: реализовать по макету (P3-02)
+  const [mainApi, setMainApi] = useState<EmblaApi>();
+
+  const scrollTo = (index: number) => {
+    mainApi?.scrollTo(index);
+  }
 
   const getSkillImages = (images: string[]): ReactNode => {
     const result: ReactNode = images.map((image, index) => {
@@ -38,21 +44,21 @@ export function SkillInfo(_props: SkillInfoProps) {
     const result: ReactNode = images.map((image, index) => {
       if (index === 2) {
         return (
-          <div key={index} className={styles.miniPreviewWrapper}>
+          <button key={index} className={styles.miniPreviewWrapper} onClick={() => scrollTo(index)}>
             <img src={image} alt="" className={styles.previewImage}></img>
             <div className={styles.miniPreviewOverlay}>
             </div>
             <p className={styles.miniPreviewLabel}>{`+${images.length - 3}`}</p>
-          </div>
+          </button>
         )
       } else if (index > 2) {
         return null;
       }
 
       return (
-        <div key={index} className={styles.miniPreviewWrapper}>
+        <button key={index} className={styles.miniPreviewWrapper} onClick={() => scrollTo(index)}>
           <img src={image} alt="" className={styles.previewImage}></img>
-        </div>
+        </button>
       )
     })
 
@@ -76,7 +82,7 @@ export function SkillInfo(_props: SkillInfoProps) {
           )}
         </section>
         <div className={styles.gallery}>
-          <Carousel className={styles.galleryCarousel}>
+          <Carousel onApiReady={setMainApi} className={styles.galleryCarousel}>
             {getSkillImages(_props.skill.images)}
           </Carousel>
           <div className={styles.miniPreview}>{getMiniPreview(_props.skill.images)}</div>
