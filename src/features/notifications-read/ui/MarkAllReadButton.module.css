@@ -1,0 +1,16 @@
+/* креатив — в shared/ui/Button нет варианта «зелёный текст + Medium».
+   ghost даёт базовый цвет (--color-text) и вес 400, как у серой «Смотреть все».
+   Переопределяем через обёртку — общий Button не меняем.
+   Остальное (Roboto, 16px, line-height 24px, letter-spacing 2%) наследуется
+   из Button.module.css и body — совпадает с макетом 1:2148.
+   Значения цвета и веса — из Properties макета 1:2148. */
+
+.wrapper button {
+  color: var(--color-accent-strong); /* #508826 */
+  font-weight: var(--font-weight-medium); /* 500 */
+}
+
+/* Совпадает с .ghost:hover из Button.module.css — чтобы зелёный не пропадал при наведении */
+.wrapper button:hover:not(:disabled) {
+  color: var(--color-accent-strong); /* #508826 */
+}
