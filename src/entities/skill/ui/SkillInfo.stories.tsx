@@ -8,6 +8,7 @@ import LikeIcon from '@/shared/assets/icons/like.svg?react'
 import LikeFilledIcon from '@/shared/assets/icons/like-filled.svg?react'
 import ShareIcon from '@/shared/assets/icons/share.svg?react'
 import MoreIcon from '@/shared/assets/icons/more-square.svg?react'
+import ClockIcon from '@/shared/assets/icons/clock.svg?react'
 import { Button } from '@/shared/ui/Button'
 import { ReactNode } from 'react'
 
@@ -61,7 +62,6 @@ type Story = StoryObj<typeof meta>
 const allActions: SkillInfoActions = {
   like: <IconButton ariaLabel='Добавить в избранное' onClick={() => {}} icon=<LikeIcon />/>,
   createOffer: <Button onClick={() => {}}>Предложить обмен</Button>,
-  unlike: <IconButton ariaLabel='Убрать из избранного' onClick={() => {}} icon=<LikeFilledIcon />/>,
 
   /* Заглушки */
   share: <IconButton ariaLabel='Поделиться' icon=<ShareIcon />/>,
@@ -71,10 +71,32 @@ const allActions: SkillInfoActions = {
 export const Default: Story = {
   args: {
     actions: {
-      like: allActions.like,
+      like: <IconButton ariaLabel='Добавить в избранное' onClick={() => {}} icon=<LikeIcon />/>,
       createOffer: <Button onClick={() => {}}>Предложить обмен</Button>,
-      share: allActions.share,
-      more: allActions.more,
+      share: <IconButton ariaLabel='Поделиться' icon=<ShareIcon />/>,
+      more: <IconButton ariaLabel='Больше опций' icon=<MoreIcon />/>,
+    }
+  }
+}
+
+export const Liked: Story = {
+  args: {
+    actions: {
+      like: <IconButton ariaLabel='Убрать из избранного' onClick={() => {}} icon=<LikeFilledIcon style={{color: 'var(--color-accent)'}}/>/>,
+      createOffer: <Button onClick={() => {}}>Предложить обмен</Button>,
+      share: <IconButton ariaLabel='Поделиться' icon=<ShareIcon />/>,
+      more: <IconButton ariaLabel='Больше опций' icon=<MoreIcon />/>,
+    }
+  }
+}
+
+export const CreatedOffer: Story = {
+  args: {
+    actions: {
+      like: <IconButton ariaLabel='Убрать из избранного' onClick={() => {}} icon=<LikeFilledIcon style={{color: 'var(--color-accent)'}}/>/>,
+      createOffer: <Button variant='secondary' onClick={() => {}}>< ClockIcon width={20} height={20}/>Обмен предложен</Button>,
+      share: <IconButton ariaLabel='Поделиться' icon=<ShareIcon />/>,
+      more: <IconButton ariaLabel='Больше опций' icon=<MoreIcon />/>,
     }
   }
 }

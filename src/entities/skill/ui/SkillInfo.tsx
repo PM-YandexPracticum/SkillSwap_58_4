@@ -13,9 +13,13 @@ import styles from './SkillInfo.module.css'
  * {
  *  like: <IconButton ariaLabel='Добавить в избранное' icon=<LikeIcon />/>
  *  createOffer: <Button onClick={() => {}}>Предложить обмен</Button>
+ *  share: <IconButton ariaLabel='Поделиться' icon=<ShareIcon />/>,
+ *  more: <IconButton ariaLabel='Больше опций' icon=<MoreIcon />/>,
  * }
+ *
+ *
  */
-export type SkillInfoActions = Partial<Record<'like' | 'createOffer' | 'unlike' | 'share' | 'more', ReactNode>>
+export type SkillInfoActions = Partial<Record<'like' | 'createOffer' | 'share' | 'more', ReactNode>>
 
 export interface SkillInfoProps {
   /** Навык: своё название и описание, изображения */
