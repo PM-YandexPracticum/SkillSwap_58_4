@@ -1,0 +1,73 @@
+.panel {
+  /* локальные токены */
+  --panel-width: 556px; /* Layout.Width: Fixed, 1:2190 */
+  --panel-line-height-title: 28px; /* 1:2148 */
+  --panel-letter-spacing-title: -0.011em; /* −1.1% — Typography.Letter spacing, 1:2148 */
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-40);
+  width: var(--panel-width);
+  padding: var(--space-60);
+  background-color: var(--color-bg-secondary); /* #fff */
+  border: 1px solid var(--color-border); /* #69735D */
+  border-radius: var(--radius-s);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-32);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-title); /* Jost */
+  font-size: var(--font-size-xl); /* 24px */
+  font-weight: var(--font-weight-medium); /* 500 */
+  line-height: var(--panel-line-height-title); /* 28px */
+  letter-spacing: var(--panel-letter-spacing-title); /* −1.1% */
+  color: var(--color-text); /* #253017 */
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24); /* 24px */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-40) 0; /* 40px — креатив, симметрия gap панели */
+  font-family: var(--font-main);
+  font-size: var(--font-size-base); /* 16px */
+  font-weight: var(--font-weight-regular); /* 400 */
+  color: var(--color-neutral); /* #69735D */
+  text-align: center;
+}
+
+/* Кнопка-действие секции: «Прочитать все» / «Очистить» — у правого края (1:2148) */
+.actionButton {
+  display: flex;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+/* Креатив — «Очистить» / «Прочитать все»: #508826, Medium, ghost (1:2148) */
+.actionButton button {
+  color: var(--color-accent-strong); /* #508826 */
+  font-weight: var(--font-weight-medium); /* 500 */
+  padding-right: 0;
+}
+
+.actionButton button:hover:not(:disabled) {
+  color: var(--color-accent-strong); /* #508826 */
+}
