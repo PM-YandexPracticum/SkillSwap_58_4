@@ -1,22 +1,43 @@
+import type { Meta, StoryObj } from '@storybook/react-vite'
+import { useEffect, useState } from 'react'
+import { fn } from 'storybook/test'
+
 import { Select } from './Select'
 
 /**
- * Stories компонента Select — ЗАГЛУШКА. Пакеты Storybook ставит задача P1-11;
- * после неё добавить типы: `const meta: Meta<typeof Select>` и `export const Default: StoryObj<typeof meta>`.
+ * Stories компонента Select. Интерактивное состояние синхронизируется с Controls.
  *
  * Нужны stories для состояний из макета: «Не указан», выбрано значение, открыт, ошибка, disabled.
  * Правила — docs/rules/storybook.md.
  */
-const meta = {
+const meta: Meta<typeof Select> = {
   title: 'shared/ui/Select',
   component: Select,
   tags: ['autodocs'],
+  args: {
+    onChange: fn(),
+  },
+  render: function Render(args) {
+    const [value, setValue] = useState(args.value)
+
+    // Синхронизируем состояние с изменениями value во вкладке Controls.
+    useEffect(() => setValue(args.value), [args.value])
+
+    const handleChange = (nextValue: string | null) => {
+      args.onChange(nextValue)
+      setValue(nextValue)
+    }
+
+    return <Select {...args} value={value} onChange={handleChange} />
+  },
 }
 
 export default meta
 
+type Story = StoryObj<typeof meta>
+
 /** Базовое состояние */
-export const Default = {
+export const Default: Story = {
   args: {
     label: 'Пол',
     options: [
@@ -25,11 +46,10 @@ export const Default = {
       { value: 'female', label: 'Женский' },
     ],
     value: null,
-    onChange: () => {},
   },
 }
 
-export const Error = {
+export const Error: Story = {
   args: {
     ...Default.args,
     value: 'male',
@@ -37,7 +57,7 @@ export const Error = {
   },
 }
 
-export const Disabled = {
+export const Disabled: Story = {
   args: {
     ...Default.args,
     disabled: true,
