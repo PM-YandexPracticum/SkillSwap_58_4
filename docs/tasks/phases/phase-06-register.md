@@ -12,6 +12,7 @@
 
 - **Уже готово:** форма состояния `registerSlice` (шаг, черновик) и `RegisterStepGuard` на маршрутах шагов 2–3 — остаются редьюсеры и логика охраны.
 - **Файлы:** `src/features/register/model/registerSlice.ts`, `src/app/router/RegisterStepGuard.tsx`, `src/pages/register/ui/RegisterLayout.tsx`
+- **Issue:** [#68](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/68)
 - **Зависит от:** P3-11
 
 ### P6-02 · Шаг 1: email и пароль 🟡
@@ -21,6 +22,7 @@
 > Кнопки Google и Apple остаются заглушками.
 
 - **Файлы:** `src/features/register/ui/StepCredentials.tsx`, `src/features/register/model/schema.ts`
+- **Issue:** [#69](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/69)
 - **Зависит от:** P6-01, P2-16, P4-03
 
 ### P6-03 · Связь «категория ↔ подкатегория» 🟡
@@ -31,6 +33,7 @@
 
 - **Уже готово:** заготовки `getAvailableSubcategories` и `syncCategorySelection` в `linkCategories.ts`; категории с подкатегориями — `selectCategories` (P4-02).
 - **Файлы:** `src/entities/category/lib/linkCategories.ts` + тесты, `src/entities/category/ui/CategorySubcategorySelect.tsx`
+- **Issue:** [#70](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/70)
 - **Зависит от:** P4-02, P3-12
 
 ### P6-04 · Шаг 2: о себе и «Хочу научиться» 🔴
@@ -40,6 +43,7 @@
 
 - **Уже готово:** `validateImageFile` из `@/shared/lib/validation` и `fileToDataUrl` из `@/shared/lib/image` (P2-14); лимиты — `VALIDATION.IMAGE` в `@/shared/config`.
 - **Файлы:** `src/features/register/ui/StepProfile.tsx`, `src/features/avatar-upload/`, `src/features/register/model/schema.ts`
+- **Issue:** [#71](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/71)
 - **Где в макете:** «Регистрация 2 шаг» (1:1497 … 1:1717)
 - **Зависит от:** P6-01, P6-03, P2-16, P6-02 (обе меняют `schema.ts`)
 
@@ -51,6 +55,7 @@
 
 - **Уже готово:** черновик `skill-create/model/schema.ts` — довести до `validation.md` (описание 20–500, фото 1–4); выбранные в `FileDropzone` файлы проверяет `validateImageFile` (P2-14), текст ошибки уходит в проп `error`.
 - **Файлы:** `src/features/register/ui/StepSkill.tsx`, `src/features/skill-create/` (`SkillForm`, `SkillPreviewModal`, `model/schema.ts`)
+- **Issue:** [#72](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/72)
 - **Где в макете:** 1:1761, превью 1:1799
 - **Зависит от:** P6-01, P6-03, P2-16, P3-13
 
@@ -62,6 +67,7 @@
 
 - **Уже готово:** `fileToDataUrl` из `@/shared/lib/image` (P2-14) — уменьшает фото до 800 px перед сохранением; сессию создаёт `dispatch(startSession(user.id))` из `@/entities/session` (P4-05).
 - **Файлы:** `src/features/register/model/`, `src/features/skill-create/model/`, `src/features/skill-create/ui/OfferCreatedModal.tsx`, `src/pages/catalog/` (открыть окно по флагу)
+- **Issue:** [#73](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/73)
 - **Где в макете:** 1:2950, 1:2904
 - **Зависит от:** P6-02, P6-04, P6-05, P4-06
 - **Готово, когда:** после «Готово» открывается каталог с окном «Ваше предложение создано»; карточка нового пользователя есть в ленте; после перезагрузки он может войти.

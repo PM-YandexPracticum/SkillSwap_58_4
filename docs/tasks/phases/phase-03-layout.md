@@ -2,8 +2,8 @@
 
 **Цель:** из компонентов UI-кита собрать блоки, а из блоков — все страницы макета. Пока **без логики**:
 кнопки ещё ничего не сохраняют.
-**Откуда данные:** блоки и виджеты получают данные только пропсами; в stories и тестах — фабрики `createUser()` / `createSkill()`
-из `@/entities/*/testing`. Страница, пока нет Redux, берёт данные через `entities/*/api` (`getUsers()`, `getSkills()`, `getCategories()`).
+**Откуда данные:** UI сущностей получает данные пропсами. Виджеты собирают их из уже готовых селекторов (например, OfferCard в P3-08) или принимают пропсами (NotificationsPanel в P3-15); бизнес-действия пока не сохраняются. В stories и тестах — фабрики `createUser()`, `createSkill()` и `createNotification()`
+из `@/entities/*/testing`. Если нужного слайса ещё нет, страница берёт данные через `entities/*/api` (`getUsers()`, `getSkills()`, `getCategories()`).
 Напрямую в JSON (`public/db`) и в localStorage не ходим, фабрики в коде страниц не используем — линтер это запрещает.
 В фазах 4–5 этот вызов `api` на странице заменят селекторы из store.
 **После фазы:** все экраны открываются по своим адресам и похожи на макет.
@@ -17,7 +17,7 @@
 ### P3-01 · Карточка пользователя UserCard ✅ 🔴
 > **Что нужно сделать:** сверстать главную карточку каталога: аватар, имя, «город, 34 года», «Может научить» (один чип —
 > своё название навыка) и «Хочет научиться» (до 2 чипов подкатегорий, остальные — «+N», по ТЗ наставника).
-> Сердечко и «Подробнее» карточка получает пропсами — их добавит P3-08.
+> Сердечко и «Подробнее» карточка получает пропсами — они добавлены в OfferCard (P3-08).
 > Здесь же — склонение «год / года / лет» (`pluralize`) и цветной чип `SkillTag`; возраст считает `getAge` из P1-04.
 
 - **Уже готово:** `Avatar` (P2-04), `getAge` для «34 года» (P1-04); тестовые данные — `createUser()` из `@/entities/user/testing` и `createSkill()` из `@/entities/skill/testing`, в тестах и stories.
@@ -34,16 +34,19 @@
 - **Уже готово:** блок «аватар + имя + город, возраст» — `UserSummary` в `entities/user/ui` (P3-01), его же использует UserCard; чипы навыка — `SkillTag`.
 - **Как в P3-01:** блоки «глупые» — соседние сущности (город, категории) не импортируют, всё получают пропсами. Пропсы в заготовках уже такие: `UserProfileCard` — `PublicUser` (без пароля), `cityName` и чипы как у `UserCard` (`teachSkill`, `learnSubcategories`); `SkillInfo` — название и описание навыка, строки `categoryTitle` / `subcategoryTitle` и слот `actions`. Собирать эти пропсы будет страница навыка (P3-09, P7-01) селекторами P4-02. Образец stories и тестов — `UserCard.stories.tsx` и `UserCard.test.tsx`.
 - **Файлы:** `src/entities/user/ui/UserProfileCard.tsx`, `src/entities/skill/ui/SkillInfo.tsx`
+- **Issue:** [#35](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/35)
 - **Где в макете:** 1:2764
 - **Зависит от:** P3-01
 
-### P3-03 · Подвал 🟢
+### P3-03 · Подвал ✅ 🟢
 > **Что нужно сделать:** сверстать подвал: логотип, ссылки и «SkillSwap — 2025» внизу каждой страницы.
 > «О проекте» ведёт на `/about`, «Все навыки» — на `/skills`.
 > «Контакты», «Блог», «Политика конфиденциальности», «Пользовательское соглашение» — заглушки, ни на что не реагируют.
 
 - **Уже готово:** `Logo` (P2-01) — `import { Logo } from '@/shared/ui/Logo'`, уже ссылка на главную.
 - **Файлы:** `src/widgets/footer/`
+- **Граница задачи:** компонент готов отдельно; подключение в `MainLayout` — P3-05.
+- **Issue:** [#36](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/36) · PR [#141](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/141)
 - **Зависит от:** P2-01
 
 ### P3-04 · Шапка (вёрстка) 🟡
@@ -53,8 +56,9 @@
 > Иконка темы пока без действия — тёмная тема в фазе 9. Все иконки уже есть в `src/shared/assets/icons/`.
 
 - **Уже готово:** `Logo` (P2-01), `Button` и `IconButton` (P2-02), `Avatar` размера `sm` (P2-04), `Dropdown` (P2-08) — для меню пользователя `align="end"`; в его stories есть пример меню «Личный кабинет / Выйти»; поле поиска — `Input` (P2-05), лупа слева, «×» очистки — в `rightAction`.
-- **Правило FSD:** виджет не импортирует другие виджеты. Меню «Все навыки» и окно уведомлений шапка получает слотами `categoriesMenu` и `notifications` (они уже в заготовке `Header`), их передаёт `MainLayout` (P3-05). Пока соседних виджетов нет — в stories в слоты кладём заглушки.
+- **Правило FSD:** виджет не импортирует другие виджеты. Меню «Все навыки» и окно уведомлений шапка получает слотами `categoriesMenu` и `notifications` (они уже в заготовке `Header`), их передаёт `MainLayout` (P3-05). Панель `NotificationsPanel` уже готова в P3-15; в stories шапки можно передавать содержимое слота, а подключение к данным выполняется в P7-05.
 - **Файлы:** `src/widgets/header/`, `src/features/skill-search/ui/SearchInput.tsx`
+- **Issue:** [#37](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/37)
 - **Где в макете:** 1:2861 (гость), 1:2996 (вошедший), точка на колокольчике — 1:1919
 - **Зависит от:** P2-01, P2-02, P2-04, P2-05, P2-08
 
@@ -65,6 +69,7 @@
 
 - **Уже готово:** маршруты всех страниц с lazy-загрузкой в `RouterProvider.tsx` — только верстаем рамки.
 - **Файлы:** `src/app/layouts/`
+- **Issue:** [#38](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/38)
 - **Зависит от:** P3-03, P3-04
 
 ### P3-06 · Все навыки: меню и страница 🟡
@@ -74,6 +79,7 @@
 
 - **Уже готово:** `Dropdown` (P2-08) — меню «Все навыки» в шапке открывается в нём; иконки категорий — `src/shared/assets/icons/categories/`; категории с подкатегориями — `selectCategories` из `@/entities/category` (P4-02). Пока загрузку при старте не сделала P4-04, в тестах и stories store заполняем через `renderWithProviders(…, { preloadedState })` данными из `public/db/categories.json`.
 - **Файлы:** `src/widgets/categories-menu/`, `src/entities/category/ui/CategoryIcon.tsx`, `src/pages/all-skills/`
+- **Issue:** [#39](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/39)
 - **Где в макете:** 1:3165
 - **Зависит от:** P2-08, P3-05
 
@@ -85,10 +91,11 @@
 
 - **Уже готово:** `Checkbox` с частичным выбором категории и `RadioGroup` с заголовком группы (P2-07), образец живой story — `CategorySelection` у Checkbox; строка чекбокса в списке по макету 32 px (по 4 px сверху и снизу) — задаёт список; категории и города — `selectCategories` и `selectCities` из `@/entities/category` и `@/entities/city` (P4-02); «первые 5 городов» — `CATALOG.CITIES_VISIBLE`; заготовка состояния фильтров `catalogFilterSlice` с типами — выбор подключит P5-02.
 - **Файлы:** `src/widgets/filters-panel/`, `src/features/catalog-filter/ui/` (`ModeFilter`, `SkillsFilter`, `GenderFilter`, `CityFilter`, `ResetFiltersButton`)
+- **Issue:** [#40](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/40)
 - **Где в макете:** 1:2860
 - **Зависит от:** P2-07
 
-### P3-08 · Карточка предложения и секция 🟡
+### P3-08 · Карточка предложения и секция ✅ 🟡
 > **Что нужно сделать:** собрать карточку предложения и секцию. Карточка = UserCard + сердечко со счётчиком + «Подробнее». Секция = заголовок, «Смотреть все →»
 > и сетка строго по 3 в ряд. У «Популярного» и «Нового» «Смотреть все» раскрывает секцию с 3 до 9 карточек и обратно —
 > эту анимацию раскрытия делаем уже здесь.
@@ -96,6 +103,7 @@
 - **Уже готово:** `UserCard` (P3-01); город, навык и подкатегории по id — селекторы `selectCityById`, `selectSubcategoryById`, `selectCategoryBySubcategoryId` из `@/entities/city` и `@/entities/category` (P4-02). Виджет передаёт ему `cityName` (город из справочника), `teachSkill` (название и категория навыка автора) и `learnSubcategories` (подкатегории с категорией для цвета) — сама карточка соседние сущности не знает; лайк — в слот `topAction`, «Подробнее» — в `bottomAction`.
 - **Уточнения:** `OfferCard` принимает `PublicUser` (без пароля); навык автора — по `teachSkillId` из `selectSkills` (после P4-03 — селектор навыка по id). `FavoriteButton` здесь — только вид: сердечко `like` и число `likesCount`, по клику пока ничего; логику подключит P5-07. Числа секции — `CATALOG.SECTION_COLLAPSED` (3) и `CATALOG.SECTION_EXPANDED` (9). Пока нет загрузки при старте (P4-04), в тестах и stories store заполняем через `preloadedState` и фабрики `createUser()` / `createSkill()`.
 - **Файлы:** `src/widgets/offer-card/`, `src/widgets/offers-section/`, `src/features/favorite-toggle/ui/FavoriteButton.tsx`
+- **Issue:** [#41](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/41) · PR [#142](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/142)
 - **Где в макете:** 1:2861
 - **Зависит от:** P3-01, P2-02
 
@@ -104,8 +112,9 @@
 > («поделиться» и «⋯» — заглушки). Ниже — «Похожие предложения» в карусели на 4 карточки.
 > Сверстать и два состояния кнопки: «Предложить обмен» и обведённая «🕓 Обмен предложен», и окно «Вы предложили обмен» (ExchangeProposedModal).
 
-- **Уже готово:** окно «Вы предложили обмен» — на `Modal` (P2-10): `isOpen`, `onClose`, `children`, обязательный `ariaLabel`; отступы 80/60 px задаёт содержимое окна.
+- **Уже готово:** `OfferCard` (P3-08) передаём в `OffersCarousel` через `renderItem`, чтобы виджет не импортировал другой виджет; Carousel (P2-13) готов. Остаётся дождаться P3-02. Окно «Вы предложили обмен» — на `Modal` (P2-10): `isOpen`, `onClose`, `children`, обязательный `ariaLabel`; отступы 80/60 px задаёт содержимое окна.
 - **Файлы:** `src/widgets/skill-details/`, `src/widgets/offers-carousel/`, `src/pages/skill/`, `src/features/exchange-propose/ui/`
+- **Issue:** [#42](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/42)
 - **Где в макете:** 1:2764, окно — 1:1977, «Обмен предложен» — 1:1919
 - **Зависит от:** P3-02, P3-08, P2-13, P2-10
 
@@ -114,8 +123,9 @@
 > Отдельно сверстать вид «Подходящие предложения: N» с плашками фильтров (`ActiveFilters`) и переключателем сортировки.
 > Всегда 3 колонки.
 
-- **Уже готово:** плашка фильтра — `Tag` с `onRemove` (P2-03).
+- **Уже готово:** `OfferCard` и `OffersSection` (P3-08): карточка со ссылкой на навык и визуальным сердечком; секция с сеткой и раскрытием 3 ⇄ 9. Страница передаёт карточку через `renderItem`. Плашка фильтра — `Tag` с `onRemove` (P2-03). До старта ждём P3-07 и P3-05; логику фильтров, лайков и догрузки здесь не добавляем.
 - **Файлы:** `src/pages/catalog/`, `src/features/catalog-filter/ui/ActiveFilters.tsx`, `SortToggle.tsx`
+- **Issue:** [#43](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/43)
 - **Где в макете:** 1:2861, 1:2860, 1:2819
 - **Зависит от:** P3-07, P3-08, P3-05
 
@@ -129,6 +139,7 @@
 
 - **Уже готово:** `Stepper` (P2-11) — `<Stepper current={1} total={3} />`; `Button` (P2-02); поле Email — `Input` (P2-05), работает с `register` из react-hook-form; иллюстрации входа и шагов — `src/shared/assets/images/`.
 - **Файлы:** `src/pages/login/`, `src/features/auth-by-email/ui/LoginForm.tsx`, `src/features/auth-oauth/`, `src/pages/register/ui/RegisterLayout.tsx`, `RegisterStep1Page.tsx`, `src/features/register/ui/StepCredentials.tsx`
+- **Issue:** [#44](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/44)
 - **Где в макете:** 1:2400, ошибка 1:2473, «Регистрация 1 шаг» 1:2548
 - **Зависит от:** P2-02, P2-05, P2-06, P2-11, P3-05
 
@@ -140,6 +151,7 @@
 
 - **Уже готово:** `Avatar` (P2-04) для аватара с «+»; поле «Имя» — `Input` (P2-05); города и категории — `selectCities` и `selectCategories` (P4-02).
 - **Файлы:** `src/pages/register/ui/RegisterStep2Page.tsx`, `src/features/register/ui/StepProfile.tsx`, `src/features/avatar-upload/`, `src/entities/category/ui/CategorySubcategorySelect.tsx`
+- **Issue:** [#45](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/45)
 - **Где в макете:** «Регистрация 2 шаг»: 1:1497, календарь 1:1541, пол 1:1585, город 1:1629, категории 1:1673, подкатегории 1:1717
 - **Зависит от:** P3-11, P2-09, P2-12, P2-17, P2-03, P2-04
 
@@ -150,6 +162,7 @@
 > Это вёрстка — сохранение подключат P6-05 и P6-06.
 
 - **Файлы:** `src/pages/register/ui/RegisterStep3Page.tsx`, `src/features/register/ui/StepSkill.tsx`, `src/features/skill-create/ui/`
+- **Issue:** [#46](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/46)
 - **Уже готово:** поля — `Input` и `Textarea` (P2-05); `FileDropzone` (P2-14) — зона загрузки фото с превью и крестиком; сама файлы не проверяет: отдаёт `File[]` в `onFiles`, ошибку и превью получает пропсами. Окно — `Modal` (P2-10) как обёртка: `isOpen`, `onClose`, `children` и обязательный `ariaLabel`; внутренние отступы задаёт содержимое (у превью 40 px, у «Ваше предложение создано» 80/60 px), высокое превью прокручивается само.
 - **Где в макете:** «Регистрация 3 шаг» 1:1761, превью 1:1799, «Ваше предложение создано» 1:2950
 - **Зависит от:** P3-12, P2-10, P2-13, P2-14
@@ -163,17 +176,20 @@
 
 - **Уже готово:** большой аватар — `Avatar` размера `lg` (P2-04); поля с карандашом — `Input` и `Textarea` с `rightIcon` (P2-05), как story `WithIcon`; список городов — `selectCities` (P4-02).
 - **Файлы:** `src/widgets/profile-sidebar/`, `src/pages/profile/`, `src/features/profile-edit/ui/ProfileForm.tsx`
+- **Issue:** [#47](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/47)
 - **Где в макете:** 1:2370
 - **Зависит от:** P3-05, P3-12, P2-12
 
-### P3-15 · Уведомления (вёрстка) 🟢
+### P3-15 · Уведомления (вёрстка) ✅ 🟢
 > **Что нужно сделать:** сверстать окно колокольчика: «Новые уведомления» + «Прочитать все», ниже «Просмотренные» и кнопка «Очистить».
 > Строка: иконка, «Вы предложили обмен Ивану», дата и «Перейти»; у просмотренных кнопки нет.
 > Пусто — «Уведомлений пока нет».
 
-- **Уже готово:** `Dropdown` (P2-08) — окно колокольчика открывается в нём с `align="end"`; `Button` (P2-02) для «Перейти» и «Очистить»; заготовка `NotificationItem` с пропсами `notification`, `userName`, `onGo` и тип `Notification` (`isRead`, `createdAt`); дата — `formatDate` из `@/shared/lib/helpers`.
+- **Уже готово:** `NotificationItem`, `NotificationsPanel` и `MarkAllReadButton`: новые, просмотренные и пустое состояния, доступные подписи кнопок и callback-пропсы. Дата вынесена в `formatNotificationDate` и сравнивает календарные дни; Stories содержат ссылки на фреймы Figma.
+- **Граница задачи:** панель — содержимое для внешнего `Dropdown`; «Прочитать все» и «Очистить» вызывают переданные функции без Redux и сохранения. Хранение уведомлений — P4-07, подключение к Header и рабочие действия — P7-05.
 - **Файлы:** `src/widgets/notifications-panel/`, `src/entities/notification/ui/NotificationItem.tsx`, `src/features/notifications-read/`
-- **Где в макете:** 1:2328, 1:2239, «Очистить» — 1:2148
+- **Issue:** [#48](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/48) · PR [#143](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/143)
+- **Где в макете:** 1:2190, 1:2148, 1:2239
 - **Зависит от:** P2-08, P2-02
 
 ### P3-16 · «О проекте», 404 и 500 🟢
@@ -182,5 +198,6 @@
 > Каждый участник потом сам добавит себя в `team.ts` (P8-02).
 
 - **Файлы:** `src/pages/about/`, `src/pages/not-found/`, `src/pages/server-error/`
+- **Issue:** [#49](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/49)
 - **Где в макете:** 1:3249, 1:2048, 1:2077
 - **Зависит от:** P3-05, P1-03

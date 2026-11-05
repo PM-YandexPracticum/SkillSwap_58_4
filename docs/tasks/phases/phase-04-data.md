@@ -35,6 +35,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** образец — P4-02 ([PR #131](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/131)): thunk и `extraReducers`, экспорт в `index.ts`, тесты статусов через редьюсер и загрузки из `public/db` (`categoriesSlice.test.ts`); заготовки `shuffle` и список нужных селекторов (TODO в `selectors.ts`); `userApi.ts`, `skillApi.ts`, типы `User` / `PublicUser` / `Skill` и пустые слайсы в store; «база» (P4-01): методы коллекций асинхронные, отвечают через ~300 мс, ошибки приходят как отклонённый промис; в тестах «база» сбрасывается сама после каждого теста; для тестов — `createUser()` и `createSkill()` из `@/entities/*/testing`.
 - **Файлы:** `src/entities/user/model/`, `src/entities/skill/model/`, `src/shared/lib/shuffle.ts` + тесты
+- **Issue:** [#52](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/52)
 - **Зависит от:** P4-01
 
 ### P4-04 · Загрузка при старте 🟢
@@ -45,6 +46,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** `Loader` (P2-01); «база» (P4-01) отвечает через ~300 мс — Loader будет виден по-настоящему; справочники грузят `fetchCategories` и `fetchCities` из `@/entities/category` и `@/entities/city` (P4-02), статусы — `selectCategoriesStatus` и `selectCitiesStatus`.
 - **Файлы:** `src/app/providers/DataProvider.tsx` (новый), `src/app/App.tsx`
+- **Issue:** [#53](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/53)
 - **Зависит от:** P4-02, P4-03, P2-01, P3-16
 
 ### P4-05 · Сессия ✅ 🟡
@@ -65,6 +67,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** «база» (P4-01): `create` и `update` сами сохраняют в localStorage и возвращают новую запись. Если в браузере кончилось место, «база» бросает ошибку «Не хватает места…» — её нужно донести до пользователя (статус `failed` и текст ошибки в слайсе), а не проглотить.
 - **Файлы:** `src/entities/user/model/usersSlice.ts`, `src/entities/skill/model/skillsSlice.ts`, `api/` обеих сущностей
+- **Issue:** [#55](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/55)
 - **Зависит от:** P4-03, P4-01
 
 ### P4-07 · Обмены и уведомления 🟡
@@ -72,8 +75,9 @@ P4-01 делаем первой — остальные задачи фазы ч�
 > Действия: добавить обмен (второй раз тому же человеку — нельзя), добавить уведомление, «прочитать все», «очистить» (удалить все уведомления текущего пользователя).
 > Обмены номинальные — принять или отклонить их нельзя; у уведомления есть владелец (`userId`) — кто его видит.
 
-- **Уже готово:** чьи обмены и уведомления — `userId` из `selectSession` (P4-05); образец слайса с загрузкой и тестами — P4-02; `exchangeApi.ts`, `notificationApi.ts`, типы и селекторы `selectNotifications` / `selectHasUnread`; «база» (P4-01) с методом `remove` — для «очистить».
+- **Уже готово:** чьи обмены и уведомления — `userId` из `selectSession` (P4-05); образец слайса с загрузкой и тестами — P4-02; `exchangeApi.ts`, `notificationApi.ts`, типы и селекторы `selectNotifications` / `selectHasUnread`; фабрика `createNotification()` из `@/entities/notification/testing` для тестов и stories (P3-15); «база» (P4-01) с методом `remove` — для «очистить».
 - **Файлы:** `model/` и `api/` в `src/entities/exchange/` и `src/entities/notification/` + тесты
+- **Issue:** [#56](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/56)
 - **Зависит от:** P4-05, P4-01
 
 ## Вход
@@ -87,6 +91,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** `RequireAuth` уже обёрнут вокруг `/profile` и `/favorites` в роутере — остаётся логика внутри; вошёл ли — `selectIsAuth` из `@/entities/session` (P4-05), сессия переживает перезагрузку. Куда возвращать после входа — сохранить адрес в `state` перехода на `ROUTES.LOGIN` (его прочитает P4-09).
 - **Файлы:** `src/app/router/RequireAuth.tsx`
+- **Issue:** [#57](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/57)
 - **Зависит от:** P4-05
 
 ### P4-09 · Вход 🟡
@@ -99,6 +104,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
   Через `createSelector`, чтобы без входа и выхода он возвращал тот же объект и компоненты не перерисовывались. Сессию читает через общий тип `RootState`, без импорта из `entities/session` — так же, как заготовка `selectFavoriteIds`.
   С этой задачи «кто вошёл» во всём проекте берём только из него — им пользуются шапка (P5-09), лайки (P5-07), избранное (P5-08), обмены (P7-03) и профиль (P7-06).
 - **Файлы:** `src/features/auth-by-email/` + тесты
+- **Issue:** [#58](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/58)
 - **Где в макете:** ошибка 1:2473
 - **Зависит от:** P4-03, P4-05, P3-11, P2-16, P4-08
 
