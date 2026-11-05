@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import type { Skill } from '../model/types'
 import { createSkill } from '@/entities/skill/testing'
-import { SkillInfo, SkillInfoActions, type SkillInfoProps } from './SkillInfo'
+import { SkillInfo, type SkillInfoProps } from './SkillInfo'
 import { IconButton } from '@/shared/ui/IconButton'
 import LikeIcon from '@/shared/assets/icons/like.svg?react'
 import LikeFilledIcon from '@/shared/assets/icons/like-filled.svg?react'
@@ -10,7 +10,6 @@ import ShareIcon from '@/shared/assets/icons/share.svg?react'
 import MoreIcon from '@/shared/assets/icons/more-square.svg?react'
 import ClockIcon from '@/shared/assets/icons/clock.svg?react'
 import { Button } from '@/shared/ui/Button'
-import { ReactNode } from 'react'
 
 const CATEGORY = {
   creativity: {
@@ -58,15 +57,6 @@ const meta: Meta<typeof SkillInfo> = {
 export default meta
 
 type Story = StoryObj<typeof meta>
-
-const allActions: SkillInfoActions = {
-  like: <IconButton ariaLabel='Добавить в избранное' onClick={() => {}} icon=<LikeIcon />/>,
-  createOffer: <Button onClick={() => {}}>Предложить обмен</Button>,
-
-  /* Заглушки */
-  share: <IconButton ariaLabel='Поделиться' icon=<ShareIcon />/>,
-  more: <IconButton ariaLabel='Больше опций' icon=<MoreIcon />/>,
-}
 
 export const Default: Story = {
   args: {
