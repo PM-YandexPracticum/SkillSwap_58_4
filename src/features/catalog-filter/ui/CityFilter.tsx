@@ -41,6 +41,7 @@ export function CityFilter({ className, cities }: CityFilterProps) {
             label={city.name}
             checked={selectedCities.includes(city.id)}
             onChange={() => toggleCity(city.id)}
+            className={styles.cityItem} 
           />
         ))}
       </div>

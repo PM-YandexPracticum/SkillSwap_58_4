@@ -20,7 +20,6 @@ export function SkillsFilter({ className, categories }: SkillsFilterProps) {
   // Храним ID раскрытых категорий
   const [expandedIds, setExpandedIds] = useState<ID[]>([]);
 
-  // Стейты для визуализации выбора (на Фазе 3 логика не нужна, но для Storybook полезно)
   const [selectedCategories, setSelectedCategories] = useState<ID[]>([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState<ID[]>([]);
 
@@ -65,6 +64,7 @@ export function SkillsFilter({ className, categories }: SkillsFilterProps) {
                   checked={isCategoryChecked || hasSelectedSub}
                   indeterminate={!isCategoryChecked && hasSelectedSub}
                   onChange={() => toggleCategory(category.id)}
+                  className={styles.skillItem}
                 />
                 <button
                   type="button"

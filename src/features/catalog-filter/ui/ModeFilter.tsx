@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { RadioGroup } from '@/shared/ui/RadioGroup';
+import styles from './ModeFilter.module.css';
 
 export interface ModeFilterProps {
   /** Дополнительный CSS-класс */
   className?: string;
 }
 
+/**
+ * Радио «Всё / Хочу научиться / Могу научить».
+ */
 export function ModeFilter({ className }: ModeFilterProps) {
-  // Локальный стейт для визуализации. По умолчанию выбрано "Всё", как в макете.
+  // Локальный стейт для визуализации
   const [mode, setMode] = useState('all');
 
-  // Опции по макету
   const options = [
     { value: 'all', label: 'Всё' },
     { value: 'learn', label: 'Хочу научиться' },
@@ -23,7 +26,7 @@ export function ModeFilter({ className }: ModeFilterProps) {
       options={options}
       value={mode}
       onChange={setMode}
-      className={className}
+      className={[styles.modeFilter, className].filter(Boolean).join(' ')}
     />
   );
 }

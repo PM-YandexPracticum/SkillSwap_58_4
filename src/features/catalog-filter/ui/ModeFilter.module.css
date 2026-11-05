@@ -1,5 +1,22 @@
 .modeFilter {
-  margin-bottom: var(--space-24);
+  border: none;
+  padding: 0;
+  margin: 0;
+  margin-bottom: var(--space-32);
+  width: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.modeFilter label {
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+
+.modeFilter > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
 }
