@@ -97,4 +97,14 @@ describe('PasswordInput', () => {
 
     expect(onValid).toHaveBeenCalledWith({ password: 'secret123' }, expect.anything())
   })
+
+    it('в disabled-состоянии поле недоступно, а кнопка-«глаз» не рендерится', () => {
+    render(<PasswordInput label="Пароль" disabled />)
+
+    const input = screen.getByLabelText('Пароль')
+
+    expect(input).toBeDisabled()
+    expect(input).toHaveAttribute('type', 'password')
+    expect(screen.queryByRole('button', { name: 'Показать пароль' })).not.toBeInTheDocument()
+  })
 })
