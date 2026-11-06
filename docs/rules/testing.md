@@ -21,7 +21,7 @@
 | `npm run test:watch` | перезапуск при сохранении файла — удобно, пока пишешь тест |
 | `npx vitest run src/entities/user/lib/getAge.test.ts` | один файл |
 | `npx vitest run -t "29 февраля"` | тесты, в названии которых есть текст |
-| `npm run test:coverage` | отчёт о покрытии тестами (порог 70 % — цель к финишу) |
+| `npm run test:coverage` | отчёт о покрытии; Vitest проверяет порог statements 70 %; отдельно покрытие ядра — P8-07 |
 
 ## Что проверяем
 
@@ -35,16 +35,18 @@
 
 ## Тестовые помощники
 
-### Фабрики данных: `createUser()`, `createSkill()`
+### Фабрики данных: `createUser()`, `createSkill()`, `createNotification()`
 
-Возвращают полного валидного пользователя или навык. Передаёшь только то поле, которое важно для теста:
+Возвращают полного валидного пользователя, навык или уведомление. Передаёшь только то поле, которое важно для теста:
 
 ```ts
 import { createUser } from '@/entities/user/testing'
 import { createSkill } from '@/entities/skill/testing'
+import { createNotification } from '@/entities/notification/testing'
 
 const user = createUser({ gender: 'female' })
 const skill = createSkill({ title: 'Игра на барабанах', authorId: user.id })
+const notification = createNotification({ isRead: true })
 const list = [createUser({ id: 'u1' }), createUser({ id: 'u2', likesCount: 99 })]
 ```
 
@@ -52,6 +54,10 @@ const list = [createUser({ id: 'u1' }), createUser({ id: 'u2', likesCount: 99 })
 - Линтер разрешает `…/testing` только в тестах (`*.test.ts(x)`) и stories (`*.stories.tsx`); в коде приложения фабрик быть не должно.
 - У всех пользователей фабрики одинаковый `id` (`u-test`). В списке задавай `id` сам.
 - Фабрики используют и stories (см. [storybook.md](storybook.md)). Не копируй куски JSON из `public/db/`.
+
+### `createTestStore`
+
+Для тестов логики с несколькими слайсами используй `createTestStore` из `@/app/test/createTestStore`: это `createAppStore` по разрешённому для тестов FSD-пути. Передавай сессию через `preloadedState`; для проверки перезагрузки создай новый store и загрузи данные API-thunk. Не импортируй `@/app/store` или соседние сущности напрямую из теста сущности.
 
 ### `renderWithProviders`
 

@@ -10,6 +10,7 @@
 
 - **Уже готово:** «Категория / Подкатегория» и город по id — `selectSubcategoryById`, `selectCategoryBySubcategoryId`, `selectCityById` (P4-02); блоки получают их строками (см. P3-02).
 - **Файлы:** `src/pages/skill/`, `src/widgets/skill-details/`
+- **Issue:** [#74](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/74)
 - **Зависит от:** P3-09, P4-03
 
 ### P7-02 · Похожие предложения 🟢
@@ -18,6 +19,7 @@
 > Если похожих нет — блок не показываем.
 
 - **Файлы:** `src/entities/user/model/selectors.ts` + тест, `src/widgets/offers-carousel/`
+- **Issue:** [#75](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/75)
 - **Зависит от:** P7-01
 
 ### P7-03 · «Предложить обмен» 🔴
@@ -26,8 +28,10 @@
 > Теперь дождитесь подтверждения. Вам придёт уведомление». После «Готово» кнопка становится неактивной «🕓 Обмен предложен»,
 > на колокольчике — красная точка. Второй раз тому же человеку предложить нельзя.
 
-- **Уже готово:** кто предлагает обмен — `selectCurrentUser` из `@/entities/user` (P4-09), гость — `null`.
+- **Готовая зависимость P4-07:** `fetchExchanges` / `addExchange` / `selectHasProposed` из `@/entities/exchange`, `fetchNotifications` / `addNotification` из `@/entities/notification`. Владелец уведомления — текущий пользователь, который предложил обмен; текст, toast и окно собирает эта задача. P7-03 остаётся в Backlog до готовности остальных зависимостей.
+- **После зависимостей:** кто предлагает обмен — `selectCurrentUser` из `@/entities/user` (P4-09), гость — `null`.
 - **Файлы:** `src/features/exchange-propose/` + тесты на логику
+- **Issue:** [#76](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/76)
 - **Где в макете:** окно 1:1977, после «Готово» 1:1919
 - **Зависит от:** P4-07, P7-01, P2-10, P4-08, P4-09, P2-18
 - **Готово, когда:** после перезагрузки кнопка остаётся «Обмен предложен», а уведомление — в колокольчике (ТЗ наставника).
@@ -37,7 +41,9 @@
 > На карточке вместо «Подробнее» — серый бейдж «Обмен предложен» с иконкой часов.
 > Гость и остальные видят обычную карточку.
 
+- **Готовые зависимости:** загрузка — `fetchExchanges()`, проверка — `selectHasProposed(state, user.id)` из `@/entities/exchange`; данные сохраняются после перезагрузки. P3-08 и P4-07 готовы, поэтому P7-04 можно перенести из Backlog в Todo.
 - **Файлы:** `src/widgets/offer-card/`, `src/entities/exchange/ui/ExchangeStatusBadge.tsx`
+- **Issue:** [#77](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/77)
 - **Где в макете:** 1:2106
 - **Зависит от:** P4-07, P3-08
 
@@ -46,8 +52,11 @@
 > «Перейти» открывает страницу навыка того, кому предложили обмен. «Прочитать все» переносит новые в «Просмотренные»,
 > где они больше не кликаются. «Очистить» удаляет все уведомления. Больше уведомления ничего не делают — обмены номинальные.
 
-- **Уже готово:** точка на колокольчике и слот `notifications` в шапке (P5-09); чьи уведомления — по `userId` у `selectCurrentUser` (P4-09).
+- **Уже готово:** `NotificationsPanel`, `NotificationItem` и `MarkAllReadButton` из P3-15 принимают данные и обработчики через пропсы; открытие окна управляется снаружи через `Dropdown` с `align="end"`. Имя в нужном падеже передаёт вызывающий код.
+- **Готовая зависимость P4-07:** `fetchNotifications`, `selectNotifications`, `selectHasUnread`, `markAllRead()` и `clearAllNotifications()` из `@/entities/notification`; чтение и очистка сами берут владельца из сессии. В P4-07 панель к Redux не подключается.
+- **Остаётся дождаться:** шапки вошедшего пользователя (P5-09); текущего пользователя определяет `selectCurrentUser` из P4-09. Подключение панели не начинается автоматически после её вёрстки.
 - **Файлы:** `src/widgets/notifications-panel/`, `src/features/notifications-read/`, `src/widgets/header/`
+- **Issue:** [#78](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/78)
 - **Где в макете:** 1:2328, 1:2239, 1:2148
 - **Зависит от:** P4-07, P3-15, P5-09
 - **Готово, когда:** «Прочитать все» и «Очистить» работают и сохраняются после перезагрузки.
@@ -57,8 +66,9 @@
 > «Изменить пароль» открывает дополнительное поле нового пароля (не окно). «Сохранить» активна, только когда что-то изменили
 > и всё верно; данные сохраняются в «базе», новые имя и аватар сразу видны в шапке, заполненное «О себе» появляется на странице навыка.
 
-- **Уже готово:** черновик `profile-edit/model/schema.ts` из шаблона — привести к `validation.md` и модели (`cityId`, пол «Не указан»); чьи данные — `selectCurrentUser` (P4-09); правила полей — `@/shared/lib/validation` (P2-16), город — `cityField(cityIds)` с id из `selectCities` (P4-02); фото — `validateImageFile` и `fileToDataUrl` (P2-14).
+- **Уже готово:** черновик `profile-edit/model/schema.ts` из шаблона — привести к `validation.md` и модели (`cityId`, пол «Не указан»); после P4-09 чьи данные — `selectCurrentUser`; правила полей — `@/shared/lib/validation` (P2-16), город — `cityField(cityIds)` с id из `selectCities` (P4-02); фото — `validateImageFile` и `fileToDataUrl` (P2-14).
 - **Файлы:** `src/features/profile-edit/`, `src/features/avatar-upload/`, `src/pages/profile/ui/ProfilePersonal.tsx`
+- **Issue:** [#79](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/79)
 - **Где в макете:** 1:2370
 - **Зависит от:** P3-14, P4-06, P2-16, P4-08, P4-09, P6-04 (там сделана загрузка аватара)
 - **Готово, когда:** после перезагрузки страницы изменения на месте.

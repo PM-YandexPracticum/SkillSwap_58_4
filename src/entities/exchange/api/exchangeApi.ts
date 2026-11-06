@@ -1,4 +1,5 @@
 import { createMockCollection, loadSeed } from '@/shared/api'
+import { DATA_ERRORS } from '@/shared/config'
 import type { Exchange } from '../model/types'
 
 /**
@@ -7,12 +8,26 @@ import type { Exchange } from '../model/types'
  */
 const exchanges = createMockCollection<Exchange>('exchanges', loadSeed<Exchange>('exchanges'))
 
+// Проверку пары и запись выполняем вместе: два одновременных вызова не создадут дубль.
+let creationQueue: Promise<unknown> = Promise.resolve()
+
 /** Все предложенные обмены */
 export function getExchanges(): Promise<Exchange[]> {
-  return exchanges.getAll()
+  return creationQueue.then(() => exchanges.getAll())
 }
 
-/** Сохранить новое предложение обмена */
+/** Сохранить предложение. Повторная пара fromUserId + toUserId запрещена, независимо от skillId. */
 export function createExchange(exchange: Exchange): Promise<Exchange> {
-  return exchanges.create(exchange)
+  const input = { ...exchange }
+  const result = creationQueue.then(async () => {
+    const items = await exchanges.getAll()
+    if (
+      items.some((item) => item.fromUserId === input.fromUserId && item.toUserId === input.toUserId)
+    ) {
+      throw new Error(DATA_ERRORS.DUPLICATE_EXCHANGE)
+    }
+    return exchanges.create(input)
+  })
+  creationQueue = result.catch(() => undefined)
+  return result
 }
