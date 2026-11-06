@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { UserProfileCard } from './UserProfileCard'
 import { createUser } from '../testing'
 import { UserCardTag } from './UserCard'
+import { UserProfileCard } from './UserProfileCard'
 
 const user = createUser({
   name: 'Иван',
@@ -27,13 +27,10 @@ const CITY = {
 
 const teachSkillArg: UserCardTag = {
   title: 'Игра на барабанах',
-  categoryId: 'creativity'
+  categoryId: 'creativity',
 }
 
-const learnSubcategoriesArg = [
-  SUBCATEGORIES.timeManagement,
-  SUBCATEGORIES.yoga,
-]
+const learnSubcategoriesArg = [SUBCATEGORIES.timeManagement, SUBCATEGORIES.yoga]
 
 const meta: Meta<typeof UserProfileCard> = {
   title: 'entities/user/UserProfileCard',
@@ -44,7 +41,7 @@ const meta: Meta<typeof UserProfileCard> = {
     cityName: CITY.name,
     teachSkill: teachSkillArg,
     learnSubcategories: learnSubcategoriesArg,
-  }
+  },
 }
 export default meta
 
@@ -54,6 +51,29 @@ export const Default: Story = {}
 
 export const ManyLearningTags: Story = {
   args: {
-    learnSubcategories: [SUBCATEGORIES.timeManagement, SUBCATEGORIES.english, SUBCATEGORIES.photo, SUBCATEGORIES.yoga]
-  }
+    learnSubcategories: [
+      SUBCATEGORIES.timeManagement,
+      SUBCATEGORIES.english,
+      SUBCATEGORIES.photo,
+      SUBCATEGORIES.yoga,
+    ],
+  },
+}
+
+export const LongTitles: Story = {
+  args: {
+    teachSkill: { title: 'Быстрая уборка и организация пространства', categoryId: 'home' },
+  },
+}
+
+export const NoPhoto: Story = {
+  args: {
+    user: createUser({ name: 'Анна', gender: 'female', avatarUrl: null }),
+  },
+}
+
+export const NoDescription: Story = {
+  args: {
+    user: createUser({ name: 'Анна', gender: 'female', avatarUrl: null, about: '' }),
+  },
 }
