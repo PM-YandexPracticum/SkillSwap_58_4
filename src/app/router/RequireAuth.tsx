@@ -5,19 +5,20 @@ import { selectIsAuth } from '@/entities/session'
 import { ROUTES } from '@/shared/config'
 import { useAppSelector } from '@/shared/lib/store'
 
-interface RequireAuthProps {
+export interface RequireAuthProps {
+  /** Содержимое закрытой страницы, доступное только вошедшему пользователю. */
   children: ReactNode
 }
 
 /**
- * Защита приватных маршрутов (/profile/*). Гостя отправляет на /login,
+ * Защита приватных маршрутов /profile/* и /favorites. Гостя отправляет на /login,
  * запоминая, откуда он пришёл (state.from), чтобы вернуть после входа.
  *
  * Логика, фрейм не требуется (P4-08).
  */
 export function RequireAuth({ children }: RequireAuthProps) {
-  const isAuth = useAppSelector(selectIsAuth) // true или false
-  const location = useLocation() // объект { pathname, search, hash, state, key }
+  const isAuth = useAppSelector(selectIsAuth)
+  const location = useLocation()
 
   if (!isAuth) {
     return <Navigate to={ROUTES.LOGIN} replace state={{ from: location }} />
