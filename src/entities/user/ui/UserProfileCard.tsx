@@ -1,10 +1,11 @@
-import { Tag, TagColor } from '@/shared/ui/Tag'
+import { CATALOG } from '@/shared/config'
+import { Tag } from '@/shared/ui/Tag'
 import type { PublicUser } from '../model/types'
 import { type UserCardTag, Chip } from './UserCard'
 import { UserSummary } from './UserSummary'
 
-import styles from './UserProfileCard.module.css'
 import { ReactNode } from 'react'
+import styles from './UserProfileCard.module.css'
 
 export interface UserProfileCardProps {
   user: PublicUser
@@ -26,15 +27,32 @@ export interface UserProfileCardProps {
 export function UserProfileCard(_props: UserProfileCardProps) {
   // TODO: реализовать по макету (P3-02)
 
-  const renderedSubcategories = _props.learnSubcategories.map(
-    (subcategory: UserCardTag & { id: string }, index: number): ReactNode => {
-      return (
-        <li key={index} className={styles.subcategoriesElement}>
-          <Chip title={subcategory.title} categoryId={subcategory.categoryId} />
-        </li>
-      )
-    },
-  )
+  const renderSubcategories = (
+    subcategories: ReadonlyArray<UserCardTag & { id: string }>,
+  ): ReactNode => {
+    const result = subcategories.map(
+      (subcategory: UserCardTag & { id: string }, index: number): ReactNode => {
+        if (index === CATALOG.CARD_LEARN_TAGS) {
+          return (
+            <li key={index} className={styles.subcategoriesMoreElement}>
+              <Tag label={`+${subcategories.length - 2}`} color={'more'} />
+            </li>
+          )
+        }
+        if (index < CATALOG.CARD_LEARN_TAGS) {
+          return (
+            <li key={index} className={styles.subcategoriesElement}>
+              <Chip title={subcategory.title} categoryId={subcategory.categoryId} />
+            </li>
+          )
+        }
+
+        return null
+      },
+    )
+
+    return result
+  }
 
   return (
     <article className={styles.card}>
@@ -49,7 +67,7 @@ export function UserProfileCard(_props: UserProfileCardProps) {
       <section className={styles.teachSkills}>
         <h4 className={styles.skillsHeading}>Хочет научиться</h4>
         <ul className={styles.subcategoriesList}>
-          {renderedSubcategories}
+          {renderSubcategories(_props.learnSubcategories)}
         </ul>
       </section>
     </article>
