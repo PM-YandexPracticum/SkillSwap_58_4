@@ -6,7 +6,7 @@
 
 Я сверил задачи и исполнителей с GitHub после влития P3-02 ([PR #150](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/150)) и P4-08 ([PR #149](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/149)). Сводка учитывает эти задачи и ранее завершённую P4-07. Учёт на [доске проекта](https://github.com/orgs/PM-YandexPracticum/projects/133/views/1) ведётся отдельно от прогресса плана. Назначение исполнителя само по себе не означает готовность зависимостей: P2-17 ждёт P2-09.
 
-Снимок доски на 06.11.2026 после синхронизации: Backlog — 39, Todo — 0, In Progress — 6, Review — 3, Need fix — 0, Done — 39. P3-02 и P4-08 находятся в Done; P3-09 — в In Progress, P2-06, P2-09 и P3-07 — в Review. P2-17 сохранена в Backlog до готовности Select. P7-04 взята `alicevdr` и находится в In Progress; Todo пуст.
+Снимок доски на 06.11.2026 после синхронизации: Backlog — 38, Todo — 0, In Progress — 7, Review — 3, Need fix — 0, Done — 39. P3-02 и P4-08 находятся в Done; P3-09 — в In Progress, P2-06, P2-09 и P3-07 — в Review. P2-17 остаётся в In Progress у `Laurovsky` и ждёт готовности Select. P7-04 взята `alicevdr` и находится в In Progress; Todo пуст.
 
 Счётчики доски приведены отдельно от прогресса плана: отчёт учитывает девять задач фундамента и исключает закрытые ICS-задачи (#90 и #91); их старые ID P9-04/P9-05 теперь используются для задач о бейджах (#92 и #93). Готовность к Todo проверена по всем задачам фаз 1–8; результат — в [отдельном разделе](#готовность-к-todo).
 
@@ -66,7 +66,7 @@ P7-04 (#77) уже в In Progress у `alicevdr`: P3-08 и P4-07 готовы. П
 | [P2-09 Select](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/25) 🟡 | Stanislave0 | 02.11 | Review; открыт [PR #145](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/145) |
 | [P2-12 DatePicker](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/28) 🟡 | Laurovsky | 03.11 | `react-datepicker` и Input готовы |
 | [P2-15 Лента с догрузкой](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/31) 🟡 | Al-Du9270-art | 03.11 | настройки каталога готовы |
-| [P2-17 MultiSelect](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/33) 🟡 | Laurovsky | 03.11 | Backlog; ждёт Select (P2-09), Checkbox готов |
+| [P2-17 MultiSelect](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/33) 🟡 | Laurovsky | 03.11 | In Progress; ждёт Select (P2-09), Checkbox готов |
 | [P3-04 Шапка (вёрстка)](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/37) 🟡 | kkiitlin | 04.11 | зависимости готовы; открывает работу над лейаутами |
 | [P3-07 Панель фильтров (вёрстка)](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/40) 🟡 | alicevdr | 04.11 | Review; открыт [PR #148](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/148) |
 | [P3-09 Страница навыка (вёрстка)](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/42) 🟡 | sosolet | 05.11 | In Progress; все зависимости готовы после влития P3-02 |
@@ -75,7 +75,7 @@ P7-04 (#77) уже в In Progress у `alicevdr`: P3-08 и P4-07 готовы. П
 
 Назначены заранее, начнутся после фаз 5–7: [P8-04](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/83) Доступность и [P8-06](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/85) Сверка с макетом (viceede), [P8-05](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/84) Автотесты и [P8-07](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/86) Критерии приёмки (kirill-ai-dev).
 
-У kkiitlin, Laurovsky и alicevdr назначено по две текущие задачи. Общее правило одной задачи одновременно сохраняется: сначала завершаем текущую; назначенный P2-17 не начинаем до влития Select. Даты выше — даты назначения в GitHub, а не подтверждённого начала разработки.
+У kkiitlin, Laurovsky и alicevdr назначено по две текущие задачи. Общее правило одной задачи одновременно сохраняется: сначала завершаем текущую; P2-17 уже в работе у Laurovsky и ожидает влития Select; ожидание зависимости само по себе не меняет статус задачи. Даты выше — даты назначения в GitHub, а не подтверждённого начала разработки.
 
 ## Готовность к Todo
 
@@ -88,9 +88,9 @@ P7-04 (#77) уже в In Progress у `alicevdr`: P3-08 и P4-07 готовы. П
 | P3-05 (#38) | Backlog, без исполнителя | P3-04 (шапка) |
 | P4-06 (#55) | Backlog, без исполнителя | P4-03 (пользователи и навыки) |
 | P5-01 (#59) | Backlog, без исполнителя | P4-03 |
-| P2-17 (#33) | Backlog, Laurovsky | P2-09 (Select); назначение не снимает блокировку |
+| P2-17 (#33) | In Progress, Laurovsky | P2-09 (Select); назначение не снимает блокировку |
 
-P3-05, P4-06, P5-01 и P2-17 возвращены в Backlog: их зависимости ещё не готовы. P7-04 уже взята `alicevdr`; Todo пуст.
+P3-05, P4-06 и P5-01 возвращены в Backlog: их зависимости ещё не готовы. P2-17 сохраняет In Progress и исполнителя Laurovsky, ожидая Select. P7-04 уже взята `alicevdr`; Todo пуст.
 
 Ближайшие разблокировки:
 
