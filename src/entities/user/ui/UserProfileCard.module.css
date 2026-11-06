@@ -31,5 +31,22 @@ ul li {
 
 .subcategoriesList {
   display: flex;
+  flex-wrap: nowrap;
   gap: 8px;
+  width: 100%;
+}
+
+.subcategoriesElement {
+  flex: 0 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subcategoriesMoreElement {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
 }
