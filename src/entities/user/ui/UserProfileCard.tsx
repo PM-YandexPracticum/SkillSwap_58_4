@@ -61,7 +61,7 @@ export function UserProfileCard(_props: UserProfileCardProps) {
       </section>
       <section className={styles.learnSkills}>
         <h4 className={styles.skillsHeading}>Может научить</h4>
-        <Chip title={_props.teachSkill.title} categoryId={_props.teachSkill.categoryId} />
+        <Chip  title={_props.teachSkill.title} categoryId={_props.teachSkill.categoryId} />
       </section>
       <section className={styles.teachSkills}>
         <h4 className={styles.skillsHeading}>Хочет научиться</h4>
