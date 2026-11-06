@@ -26,15 +26,16 @@
 - **Issue:** [#34](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/34) · PR [#133](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/133)
 - **Зависит от:** P2-03, P2-04, P1-04
 
-### P3-02 · Карточка автора и блок навыка 🟡
+### P3-02 · Карточка автора и блок навыка ✅ 🟡
 > **Что нужно сделать:** сверстать две части страницы навыка. Слева — карточка автора: тот же блок «аватар + имя + город, возраст»,
 > что в UserCard, плюс «О себе» (если заполнено) и чипы. По центру — своё название навыка, «Категория / Подкатегория» и описание.
 > Кнопки (лайк, «Предложить обмен») блоки получают пропсами — их добавит P3-09.
 
 - **Уже готово:** блок «аватар + имя + город, возраст» — `UserSummary` в `entities/user/ui` (P3-01), его же использует UserCard; чипы навыка — `SkillTag`.
-- **Как в P3-01:** блоки «глупые» — соседние сущности (город, категории) не импортируют, всё получают пропсами. Пропсы в заготовках уже такие: `UserProfileCard` — `PublicUser` (без пароля), `cityName` и чипы как у `UserCard` (`teachSkill`, `learnSubcategories`); `SkillInfo` — название и описание навыка, строки `categoryTitle` / `subcategoryTitle` и слот `actions`. Собирать эти пропсы будет страница навыка (P3-09, P7-01) селекторами P4-02. Образец stories и тестов — `UserCard.stories.tsx` и `UserCard.test.tsx`.
+- **Как в P3-01:** блоки «глупые» — соседние сущности (город, категории) не импортируют, всё получают пропсами. Пропсы готовых компонентов: `UserProfileCard` — `PublicUser` (без пароля), `cityName` и чипы как у `UserCard` (`teachSkill`, `learnSubcategories`); `SkillInfo` — `skill` (название, описание, изображения), строки `categoryTitle` / `subcategoryTitle` и объект `actions` со слотами `like`, `createOffer`, `share`, `more`. Собирать эти пропсы будет страница навыка (P3-09, P7-01) селекторами P4-02. Образец stories и тестов — `UserCard.stories.tsx` и `UserCard.test.tsx`.
 - **Файлы:** `src/entities/user/ui/UserProfileCard.tsx`, `src/entities/skill/ui/SkillInfo.tsx`
-- **Issue:** [#35](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/35)
+- **Результат:** `UserProfileCard` и `SkillInfo` реализованы, экспортированы через публичные API сущностей; добавлены галерея на Carousel, тесты и stories. Сборка страницы и обработчики действий остаются в P3-09/P7-01.
+- **Issue:** [#35](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/35) · PR [#150](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/150)
 - **Где в макете:** 1:2764
 - **Зависит от:** P3-01
 
@@ -112,7 +113,7 @@
 > («поделиться» и «⋯» — заглушки). Ниже — «Похожие предложения» в карусели на 4 карточки.
 > Сверстать и два состояния кнопки: «Предложить обмен» и обведённая «🕓 Обмен предложен», и окно «Вы предложили обмен» (ExchangeProposedModal).
 
-- **Уже готово:** `OfferCard` (P3-08) передаём в `OffersCarousel` через `renderItem`, чтобы виджет не импортировал другой виджет; Carousel (P2-13) готов. Остаётся дождаться P3-02. Окно «Вы предложили обмен» — на `Modal` (P2-10): `isOpen`, `onClose`, `children`, обязательный `ariaLabel`; отступы 80/60 px задаёт содержимое окна.
+- **Уже готово:** `OfferCard` (P3-08) передаём в `OffersCarousel` через `renderItem`, чтобы виджет не импортировал другой виджет; `UserProfileCard` и `SkillInfo` (P3-02), Carousel (P2-13) готовы. Все зависимости влиты; задача назначена `sosolet` и находится в In Progress. Галерея уже есть в `SkillInfo`, повторно её не пишем. Окно «Вы предложили обмен» — на `Modal` (P2-10): `isOpen`, `onClose`, `children`, обязательный `ariaLabel`; отступы 80/60 px задаёт содержимое окна.
 - **Файлы:** `src/widgets/skill-details/`, `src/widgets/offers-carousel/`, `src/pages/skill/`, `src/features/exchange-propose/ui/`
 - **Issue:** [#42](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/42)
 - **Где в макете:** 1:2764, окно — 1:1977, «Обмен предложен» — 1:1919

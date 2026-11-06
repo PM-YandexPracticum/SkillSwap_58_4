@@ -29,6 +29,7 @@
 > на колокольчике — красная точка. Второй раз тому же человеку предложить нельзя.
 
 - **Готовая зависимость P4-07:** `fetchExchanges` / `addExchange` / `selectHasProposed` из `@/entities/exchange`, `fetchNotifications` / `addNotification` из `@/entities/notification`. Владелец уведомления — текущий пользователь, который предложил обмен; текст, toast и окно собирает эта задача. P7-03 остаётся в Backlog до готовности остальных зависимостей.
+- **Готовая зависимость P4-08:** закрытые маршруты защищены, исходный адрес сохраняется в `state.from`. До начала P7-03 остаются P7-01 и P4-09.
 - **После зависимостей:** кто предлагает обмен — `selectCurrentUser` из `@/entities/user` (P4-09), гость — `null`.
 - **Файлы:** `src/features/exchange-propose/` + тесты на логику
 - **Issue:** [#76](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/76)
@@ -41,7 +42,7 @@
 > На карточке вместо «Подробнее» — серый бейдж «Обмен предложен» с иконкой часов.
 > Гость и остальные видят обычную карточку.
 
-- **Готовые зависимости:** загрузка — `fetchExchanges()`, проверка — `selectHasProposed(state, user.id)` из `@/entities/exchange`; данные сохраняются после перезагрузки. P3-08 и P4-07 готовы, поэтому P7-04 можно перенести из Backlog в Todo.
+- **Готовые зависимости:** загрузка — `fetchExchanges()`, проверка — `selectHasProposed(state, user.id)` из `@/entities/exchange`; данные сохраняются после перезагрузки. P3-08 и P4-07 готовы; P7-04 уже в In Progress у `alicevdr` на 06.11.2026.
 - **Файлы:** `src/widgets/offer-card/`, `src/entities/exchange/ui/ExchangeStatusBadge.tsx`
 - **Issue:** [#77](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/77)
 - **Где в макете:** 1:2106
