@@ -1,21 +1,21 @@
 # Storybook
 
-> Сейчас лежит **каркас**: конфиги и заглушки stories есть, пакеты не установлены.
-> Установка — задача [P1-11](../tasks/phases/phase-01-preparation.md). До неё `npm run storybook` не работает.
+> Storybook установлен в P1-11 вместе с Vite-фреймворком и аддонами a11y, docs и designs.
+> Для проверки всех stories запускайте `npm run build-storybook` перед PR.
 
 ## Зачем
 
 Наставник: «я крайне рекомендую Storybook — живая документация лишней не бывает; команды, которые отказались, потом жалеют».
 
 Storybook — витрина компонентов. Компонент верстается и проверяется **отдельно от приложения**:
-не нужны страница, store и роутер. Ревьюер сверяет story с макетом, не запуская проект.
+не нужно собирать целую страницу. Если компонент использует Link или store, добавь нужный провайдер в decorator. Ревьюер сверяет story с макетом, не проходя пользовательский сценарий в приложении.
 
 ## Где что лежит
 
 ```
 .storybook/
 ├── main.ts        # где искать stories, аддоны (docs, a11y), сборщик — Vite
-└── preview.ts     # общее для всех stories: global.css, фон, layout
+└── preview.tsx    # общее для всех stories: global.css, фон, layout
 
 src/shared/ui/Button/
 ├── Button.tsx
@@ -36,7 +36,7 @@ src/shared/ui/Button/
 ## Как писать story
 
 ```tsx
-import type { Meta, StoryObj } from '@storybook/react'   // появится после P1-11
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Button } from './Button'
 
 const meta: Meta<typeof Button> = {
@@ -70,7 +70,7 @@ export const FromDatabase: Story = {
 Файлы базы в story читаем загрузчиком `loadSeed` из `@/shared/api`: story сущности не может импортировать соседние
 сущности, а `shared` доступен всем. В коде приложения так не делаем — там данные идут через `entities/*/api` и store.
 
-## Команды (после P1-11)
+## Команды
 
 | Команда | Что делает |
 |---|---|

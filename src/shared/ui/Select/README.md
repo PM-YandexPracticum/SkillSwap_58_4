@@ -9,6 +9,6 @@ UI-компонент **Select**. Выпадающий список с одни�
 
 ## Что внутри
 
-- `Select.stories.tsx` — Stories компонента Select — ЗАГЛУШКА. Пакеты Storybook ставит задача P1-11; после неё добавить типы: `const meta: Meta<typeof Select>` и `export const Default: StoryObj<typeof meta>`
+- `Select.stories.tsx` — Stories компонента Select — пока заглушка; Storybook установлен. При реализации добавить типы: `const meta: Meta<typeof Select>` и `export const Default: StoryObj<typeof meta>`
 - `Select.tsx` — Выпадающий список с одним выбором: «Пол» (Не указан / Мужской / Женский), «Город», «Категория», «Подкатегория»
 - `index.ts` — публичный API — импортировать снаружи только отсюда

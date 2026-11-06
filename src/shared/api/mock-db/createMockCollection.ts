@@ -1,4 +1,4 @@
-import { MOCK_DB } from '@/shared/config'
+import { DATA_ERRORS, MOCK_DB } from '@/shared/config'
 
 /** Любая запись «базы» обязана иметь строковый id */
 export interface WithId {
@@ -119,9 +119,7 @@ function writeList<T extends WithId>(key: string, list: readonly T[]): void {
     memoryStore.delete(key)
   } catch (error) {
     if (isQuotaError(error)) {
-      throw new Error(
-        'Не хватает места в браузере, чтобы сохранить данные. Уменьшите фото или сбросьте данные сайта',
-      )
+      throw new Error(DATA_ERRORS.STORAGE_FULL)
     }
     memoryStore.set(key, value)
   }

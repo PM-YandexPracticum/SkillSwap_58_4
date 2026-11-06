@@ -13,6 +13,8 @@ UI-компонент **PasswordInput**. Поле пароля с кнопкой
 - `PasswordInput.module.css` — стили подсказки и размер иконки глаза
 - `PasswordInput.stories.tsx` — состояния из макета: скрыт, с подсказкой, показан, ошибка, disabled
 - `PasswordInput.test.tsx` — тесты: переключение, клавиатура, подсказка/ошибка, aria, ref, react-hook-form
+- `PasswordInput.stories.tsx` — Stories компонента PasswordInput — пока заглушка; Storybook установлен. При реализации добавить типы: `const meta: Meta<typeof PasswordInput>` и `export const Default: StoryObj<typeof meta>`
+- `PasswordInput.tsx` — Поле пароля с кнопкой «глаз» для показа/скрытия и подсказкой «Пароль должен содержать не менее 8 знаков»
 - `index.ts` — публичный API — импортировать снаружи только отсюда
 
 ## Макеты

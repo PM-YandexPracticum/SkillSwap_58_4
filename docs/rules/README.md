@@ -7,7 +7,7 @@
 |---|---|
 | [git-workflow.md](git-workflow.md) | Ветки, коммиты, pull request, ревью |
 | [code-style.md](code-style.md) | Именование, компоненты, стили, обработка ошибок, README в папках |
-| [storybook.md](storybook.md) | Где лежат stories, что в них обязательно, как писать (каркас, пакеты — P1-11) |
+| [storybook.md](storybook.md) | Где лежат stories, что в них обязательно, как писать (Storybook установлен в P1-11) |
 | [validation.md](validation.md) | Правила проверки всех полей и файлов, тексты ошибок (черновик) |
 | [testing.md](testing.md) | Где лежат тесты, как называть и запускать, что проверяем, тестовые помощники |
 | [../architecture/fsd.md](../architecture/fsd.md) | Правила слоёв FSD и импортов — тоже обязательны |
