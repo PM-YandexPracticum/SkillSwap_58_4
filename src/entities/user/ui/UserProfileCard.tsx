@@ -25,7 +25,6 @@ export interface UserProfileCardProps {
  * @see Figma: «Страница навыка» (1:2764), левая колонка
  */
 export function UserProfileCard(_props: UserProfileCardProps) {
-  // TODO: реализовать по макету (P3-02)
 
   const renderSubcategories = (
     subcategories: ReadonlyArray<UserCardTag & { id: string }>,

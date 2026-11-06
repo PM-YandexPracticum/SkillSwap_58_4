@@ -38,7 +38,6 @@ export interface SkillInfoProps {
  * @see Figma: «Страница навыка» (1:2764)
  */
 export function SkillInfo(_props: SkillInfoProps) {
-  // TODO: реализовать по макету (P3-02)
   const [mainApi, setMainApi] = useState<EmblaApi>();
 
   const scrollTo = (index: number) => {
