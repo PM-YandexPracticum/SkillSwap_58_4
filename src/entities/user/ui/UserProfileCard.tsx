@@ -1,5 +1,10 @@
+import { Tag, TagColor } from '@/shared/ui/Tag'
 import type { PublicUser } from '../model/types'
-import type { UserCardTag } from './UserCard'
+import { type UserCardTag, Chip } from './UserCard'
+import { UserSummary } from './UserSummary'
+
+import styles from './UserProfileCard.module.css'
+import { ReactNode } from 'react'
 
 export interface UserProfileCardProps {
   user: PublicUser
@@ -20,5 +25,33 @@ export interface UserProfileCardProps {
  */
 export function UserProfileCard(_props: UserProfileCardProps) {
   // TODO: реализовать по макету (P3-02)
-  return null
+
+  const renderedSubcategories = _props.learnSubcategories.map(
+    (subcategory: UserCardTag & { id: string }, index: number): ReactNode => {
+      return (
+        <li key={index} className={styles.subcategoriesElement}>
+          <Chip title={subcategory.title} categoryId={subcategory.categoryId} />
+        </li>
+      )
+    },
+  )
+
+  return (
+    <article className={styles.card}>
+      <section className={styles.summary}>
+        <UserSummary user={_props.user} cityName={_props.cityName} />
+        <div className={styles.about}> {_props.user.about ?? ''}</div>
+      </section>
+      <section className={styles.learnSkills}>
+        <h4 className={styles.skillsHeading}>Может научить</h4>
+        <Chip title={_props.teachSkill.title} categoryId={_props.teachSkill.categoryId} />
+      </section>
+      <section className={styles.teachSkills}>
+        <h4 className={styles.skillsHeading}>Хочет научиться</h4>
+        <ul className={styles.subcategoriesList}>
+          {renderedSubcategories}
+        </ul>
+      </section>
+    </article>
+  )
 }
