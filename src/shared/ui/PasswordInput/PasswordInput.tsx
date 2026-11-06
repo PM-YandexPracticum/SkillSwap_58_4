@@ -18,7 +18,10 @@ export interface PasswordInputProps extends Omit<InputProps, 'type' | 'rightIcon
  * @see Figma: «Вход» (1:2400), «Регистрация 1 шаг» (1:2548), ошибка (1:2627)
  */
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
-  function PasswordInput({ hint, error, 'aria-describedby': describedBy, ...props }, ref) {
+  function PasswordInput(
+    { hint, error, disabled, 'aria-describedby': describedBy, ...props },
+    ref,
+  ) {
     const [isVisible, setIsVisible] = useState(false)
     const hintId = useId()
     const showHint = Boolean(hint) && !error
@@ -32,12 +35,17 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           type={isVisible ? 'text' : 'password'}
           error={error}
           aria-describedby={description || undefined}
+          disabled={disabled}
           rightAction={
-            <IconButton
-              ariaLabel={isVisible ? 'Скрыть пароль' : 'Показать пароль'}
-              icon={<span className={styles.eye}>{isVisible ? <EyeOffIcon /> : <EyeIcon />}</span>}
-              onClick={() => setIsVisible((visible) => !visible)}
-            />
+            disabled ? undefined : (
+              <IconButton
+                ariaLabel={isVisible ? 'Скрыть пароль' : 'Показать пароль'}
+                icon={
+                  <span className={styles.eye}>{isVisible ? <EyeOffIcon /> : <EyeIcon />}</span>
+                }
+                onClick={() => setIsVisible((visible) => !visible)}
+              />
+            )
           }
         />
         {showHint && (
