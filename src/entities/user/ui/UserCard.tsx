@@ -28,7 +28,7 @@ export interface UserCardProps {
   bottomAction?: ReactNode
 }
 
-function Chip({ title, categoryId }: UserCardTag) {
+export function Chip({ title, categoryId }: UserCardTag) {
   return <Tag label={title} color={isTagColor(categoryId) ? categoryId : undefined} />
 }
 
