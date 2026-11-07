@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Provider } from 'react-redux'
+import { MemoryRouter } from 'react-router-dom'
 
 import { categoriesReducer, type Category } from '@/entities/category'
 import { citiesReducer } from '@/entities/city'
@@ -9,7 +10,8 @@ import { sessionReducer } from '@/entities/session'
 import { skillsReducer } from '@/entities/skill'
 import { createSkill } from '@/entities/skill/testing'
 import { createUser } from '@/entities/user/testing'
-import { MemoryRouter } from 'react-router-dom'
+import { ROUTER_FUTURE } from '@/shared/config'
+
 import { OfferCard } from './OfferCard'
 
 const author = createUser({
@@ -62,13 +64,12 @@ const meta = {
     docs: {
       description: {
         component:
-          'P3-08: данные из preloadedState, без запросов и сохранения. Счётчик рядом с сердечком добавлен по ТЗ — в Figma есть только иконка. «Подробнее» — ссылка; обработка лайка появится в P5-07. Размер карточки из макета — 324 × 368 px.',
+          'P3-08 / P7-04: данные из preloadedState, без запросов и сохранения. Гость и вошедший без исходящего предложения видят ссылку; собственное предложение заменяет её статусом. Счётчик рядом с сердечком добавлен по ТЗ — в Figma есть только иконка. «Подробнее» — ссылка; обработка лайка появится в P5-07. Размер карточки из макета — 324 × 368 px.',
       },
     },
   },
   decorators: [
-    (Story, { args }) => {
-      // ВНИМАНИЕ: Роутер мы не добавляем, он уже есть в глобальном preview.tsx
+    (Story, { args, parameters }) => {
       const store = configureStore({
         reducer: {
           cities: citiesReducer,
@@ -96,19 +97,31 @@ const meta = {
             error: null,
           },
           session: {
-            session: { userId: 'current-user-id', token: 'mock-token' },
+            session: parameters.authorized
+              ? { userId: 'current-user-id', token: 'mock-token' }
+              : null,
           },
           exchanges: {
-            items: [],
-            status: 'idle' as const,
+            items: parameters.proposed
+              ? [
+                  {
+                    id: 'exchange-story',
+                    fromUserId: 'current-user-id',
+                    toUserId: args.user.id,
+                    skillId: args.user.teachSkillId,
+                    createdAt: '2026-01-15T10:00:00.000Z',
+                  },
+                ]
+              : [],
+            status: 'succeeded' as const,
             error: null,
             pendingRequests: 0,
           },
         },
       })
-        return (
+      return (
         <Provider store={store}>
-          <MemoryRouter>
+          <MemoryRouter future={ROUTER_FUTURE}>
             <div style={{ width: 324 }}>
               <Story />
             </div>
@@ -129,52 +142,21 @@ export const LongName: Story = {
   args: { user: createUser({ ...author, name: 'Александра-Екатерина', likesCount: 12345 }) },
 }
 
+export const Guest: Story = {
+  parameters: { proposed: true },
+}
+
+export const Authorized: Story = {
+  parameters: { authorized: true },
+}
 
 export const WithProposedExchange: Story = {
-  decorators: [
-    (Story, { args }) => {
-      const store = configureStore({
-        reducer: {
-          cities: citiesReducer,
-          categories: categoriesReducer,
-          skills: skillsReducer,
-          session: sessionReducer,
-          exchanges: exchangesReducer,
-        },
-        preloadedState: {
-          cities: { items: [{ id: args.user.cityId, name: 'Санкт-Петербург' }], status: 'succeeded' as const },
-          categories: { items: categories, status: 'succeeded' as const },
-          skills: {
-            items: [createSkill({ id: args.user.teachSkillId, title: 'Игра на барабанах', categoryId: 'creativity', subcategoryId: 'photography' })],
-            status: 'succeeded' as const,
-            error: null,
-          },
-          session: {
-            session: { userId: 'current-user-id', token: 'mock-token' }
-          },
-          exchanges: {
-            items: [
-              {
-                id: 'exchange-1',
-                fromUserId: 'current-user-id', // <--- ID текущего пользователя (из сессии)
-                toUserId: args.user.id,        // <--- ID автора карточки
-                skillId: 'skill-1',
-                createdAt: new Date().toISOString(),
-              }
-            ],
-            status: 'succeeded' as const,
-            error: null,
-            pendingRequests: 0,
-          },
-        },
-      })
-      return (
-        <Provider store={store}>
-          <div style={{ width: 324 }}>
-            <Story />
-          </div>
-        </Provider>
-      )
+  parameters: {
+    authorized: true,
+    proposed: true,
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2106',
     },
-  ],
-};
+  },
+}

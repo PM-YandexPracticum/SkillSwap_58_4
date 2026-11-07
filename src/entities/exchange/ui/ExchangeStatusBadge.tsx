@@ -1,5 +1,6 @@
-import styles from './ExchangeStatusBadge.module.css'
 import ClockIcon from '@/shared/assets/icons/clock.svg?react'
+
+import styles from './ExchangeStatusBadge.module.css'
 
 export interface ExchangeStatusBadgeProps {
   /** Дополнительный CSS-класс */
@@ -7,7 +8,9 @@ export interface ExchangeStatusBadgeProps {
 }
 
 /**
- * Бейдж «Обмен предложен» с иконкой часов.
+ * Статичный неинтерактивный бейдж «Обмен предложен» с иконкой часов.
+ * Не читает store и не загружает обмены; условие показа определяет вызывающий виджет.
+ * Не является live-регионом, не занимает остановку Tab; иконка скрыта от скринридера.
  * @see Figma: «Каталог - обмен предложен» (1:2106)
  */
 export function ExchangeStatusBadge({ className }: ExchangeStatusBadgeProps) {
