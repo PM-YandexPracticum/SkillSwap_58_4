@@ -50,7 +50,7 @@
 - **Issue:** [#36](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/36) · PR [#141](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/141)
 - **Зависит от:** P2-01
 
-### P3-04 · Шапка (вёрстка) 🟡
+### P3-04 · Шапка (вёрстка) ✅ 🟡
 > **Что нужно сделать:** сверстать оба вида шапки. Гость: логотип, «О проекте», «Все навыки ▾», поле «Искать навык» с лупой слева,
 > иконка темы, «Войти», «Зарегистрироваться». Вошедший: колокольчик (с красной точкой, если есть новые), сердечко, имя и аватар
 > с меню «Личный кабинет» / «Выйти». Пока вид переключаем пропом `isAuth`; выбирать его по сессии научит P5-09.
@@ -58,9 +58,10 @@
 
 - **Уже готово:** `Logo` (P2-01), `Button` и `IconButton` (P2-02), `Avatar` размера `sm` (P2-04), `Dropdown` (P2-08) — для меню пользователя `align="end"`; в его stories есть пример меню «Личный кабинет / Выйти»; поле поиска — `Input` (P2-05), лупа слева, «×» очистки — в `rightAction`.
 - **Правило FSD:** виджет не импортирует другие виджеты. Меню «Все навыки» и окно уведомлений шапка получает слотами `categoriesMenu` и `notifications` (они уже в заготовке `Header`), их передаёт `MainLayout` (P3-05). Панель `NotificationsPanel` уже готова в P3-15; в stories шапки можно передавать содержимое слота, а подключение к данным выполняется в P7-05.
+- **Результат:** Header гостя и вошедшего, слоты меню и уведомлений, SearchInput с поиском по Enter/лупе и очисткой. На ревью я уточнил доступность, работу пустых слотов, клавиатуру и использование токенов. Redux-подключение остаётся в P5-03/P5-09/P7-05.
 - **Файлы:** `src/widgets/header/`, `src/features/skill-search/ui/SearchInput.tsx`
-- **Статус на 07.11.2026:** In Progress, исполнитель: `kkiitlin`. Для интеграции: все прямые зависимости закрыты.
-- **Issue:** [#37](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/37)
+- **Статус на 07.11.2026:** Done, исполнитель: `kkiitlin`; PR #153 влит в `develop`.
+- **Issue:** [#37](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/37) · PR [#153](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/153)
 - **Где в макете:** 1:2861 (гость), 1:2996 (вошедший), точка на колокольчике — 1:1919
 - **Зависит от:** P2-01, P2-02, P2-04, P2-05, P2-08
 
@@ -69,9 +70,9 @@
 > Для входа и регистрации — упрощённая: только логотип и «Закрыть ×», который возвращает на шаг назад.
 > Ширина контейнера фиксированная — только десктоп.
 
-- **Уже готово:** маршруты всех страниц с lazy-загрузкой в `RouterProvider.tsx` — только верстаем рамки.
+- **Уже готово:** маршруты всех страниц с lazy-загрузкой в `RouterProvider.tsx`; `Header` (P3-04) и `Footer` (P3-03) влиты. Шапка принимает `isAuth`, имя, аватар, `hasUnread`, `onLogout` и слоты `categoriesMenu` / `notifications`; соседние виджеты соединяем здесь, в app-слое. Подключение к сессии, поиску и уведомлениям остаётся в P5-09, P5-03 и P7-05 — здесь верстаем рамки.
 - **Файлы:** `src/app/layouts/`
-- **Статус на 07.11.2026:** In Progress, исполнитель: `Al-Du9270-art`. Для интеграции: P3-04 (In Progress).
+- **Статус на 07.11.2026:** In Progress, исполнитель: `Al-Du9270-art`. Для интеграции: все прямые зависимости закрыты.
 - **Issue:** [#38](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/38)
 - **Зависит от:** P3-03, P3-04
 
@@ -146,7 +147,7 @@
 
 - **Уже готово:** `Stepper` (P2-11) — `<Stepper current={1} total={3} />`; `Button` (P2-02); поле Email — `Input` (P2-05), пароль — готовый `PasswordInput` (P2-06, PR #146); оба работают с `register` из react-hook-form; подсказку пароля передаём пропом `hint`, ошибка её заменяет; иллюстрации входа и шагов — `src/shared/assets/images/`.
 - **Файлы:** `src/pages/login/`, `src/features/auth-by-email/ui/LoginForm.tsx`, `src/features/auth-oauth/`, `src/pages/register/ui/RegisterLayout.tsx`, `RegisterStep1Page.tsx`, `src/features/register/ui/StepCredentials.tsx`
-- **Статус на 07.11.2026:** Todo, исполнитель: не назначен. Для интеграции: P3-05 (In Progress).
+- **Статус на 07.11.2026:** In Progress, исполнитель: `kkiitlin`. Для интеграции: P3-05 (In Progress).
 - **Issue:** [#44](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/44)
 - **Где в макете:** 1:2400, ошибка 1:2473, «Регистрация 1 шаг» 1:2548
 - **Зависит от:** P2-02, P2-05, P2-06, P2-11, P3-05
@@ -159,7 +160,7 @@
 
 - **Уже готово:** `Avatar` (P2-04) для аватара с «+»; поле «Имя» — `Input` (P2-05); города и категории — `selectCities` и `selectCategories` (P4-02).
 - **Файлы:** `src/pages/register/ui/RegisterStep2Page.tsx`, `src/features/register/ui/StepProfile.tsx`, `src/features/avatar-upload/`, `src/entities/category/ui/CategorySubcategorySelect.tsx`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-11 (Todo), P2-09 (In Progress), P2-12 (In Progress), P2-17 (In Progress).
+- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-11 (In Progress), P2-12 (In Progress), P2-17 (In Progress).
 - **Issue:** [#45](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/45)
 - **Где в макете:** «Регистрация 2 шаг»: 1:1497, календарь 1:1541, пол 1:1585, город 1:1629, категории 1:1673, подкатегории 1:1717
 - **Зависит от:** P3-11, P2-09, P2-12, P2-17, P2-03, P2-04
@@ -209,7 +210,7 @@
 > Каждый участник потом сам добавит себя в `team.ts` (P8-02).
 
 - **Файлы:** `src/pages/about/`, `src/pages/not-found/`, `src/pages/server-error/`
-- **Статус на 07.11.2026:** Todo, исполнитель: не назначен. Для интеграции: P3-05 (In Progress).
+- **Статус на 07.11.2026:** In Progress, исполнитель: `muntaniolirina`. Для интеграции: P3-05 (In Progress).
 - **Issue:** [#49](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/49)
 - **Где в макете:** 1:3249, 1:2048, 1:2077
 - **Зависит от:** P3-05, P1-03

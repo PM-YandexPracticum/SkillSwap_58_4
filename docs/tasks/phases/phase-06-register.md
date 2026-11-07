@@ -12,7 +12,7 @@
 
 - **Уже готово:** форма состояния `registerSlice` (шаг, черновик) и `RegisterStepGuard` на маршрутах шагов 2–3 — остаются редьюсеры и логика охраны.
 - **Файлы:** `src/features/register/model/registerSlice.ts`, `src/app/router/RegisterStepGuard.tsx`, `src/pages/register/ui/RegisterLayout.tsx`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-11 (Todo).
+- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-11 (In Progress).
 - **Issue:** [#68](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/68)
 - **Зависит от:** P3-11
 
