@@ -47,7 +47,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** `Loader` (P2-01); «база» (P4-01) отвечает через ~300 мс — Loader будет виден по-настоящему; справочники грузят `fetchCategories` и `fetchCities` из `@/entities/category` и `@/entities/city` (P4-02), статусы — `selectCategoriesStatus` и `selectCitiesStatus`.
 - **Файлы:** `src/app/providers/DataProvider.tsx` (новый), `src/app/App.tsx`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P4-03 (In Progress), P3-16 (Todo).
+- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P4-03 (In Progress), P3-16 (In Progress).
 - **Issue:** [#53](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/53)
 - **Зависит от:** P4-02, P4-03, P2-01, P3-16
 
@@ -110,7 +110,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
   Через `createSelector`, чтобы без входа и выхода он возвращал тот же объект и компоненты не перерисовывались. Сессию читает через общий тип `RootState`, без импорта из `entities/session` — так же, как заготовка `selectFavoriteIds`.
   С этой задачи «кто вошёл» во всём проекте берём только из него — им пользуются шапка (P5-09), лайки (P5-07), избранное (P5-08), обмены (P7-03) и профиль (P7-06).
 - **Файлы:** `src/features/auth-by-email/` + тесты
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P4-03 (In Progress), P3-11 (Todo).
+- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P4-03 (In Progress), P3-11 (In Progress).
 - **Issue:** [#58](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/58)
 - **Где в макете:** ошибка 1:2473
 - **Зависит от:** P4-03, P4-05, P3-11, P2-16, P4-08
