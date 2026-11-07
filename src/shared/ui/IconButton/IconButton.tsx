@@ -1,12 +1,15 @@
+import type { ButtonHTMLAttributes, ReactNode } from 'react'
+
 import styles from './IconButton.module.css'
 
-export interface IconButtonProps {
+export interface IconButtonProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'aria-label' | 'children'
+> {
   /** Подпись для скринридера — обязательна, т.к. текста нет */
   ariaLabel: string
   /** Содержимое icon */
-  icon: React.ReactNode
-  /** Обработчик нажатия */
-  onClick?: () => void
+  icon: ReactNode
 }
 
 /**
@@ -14,9 +17,14 @@ export interface IconButtonProps {
  * @see Figma: 1:2765  — шапка:  лайк, тема, колокольчик
  * @see Figma: 1:15143 - шапка: закрыть
  */
-export function IconButton({ ariaLabel, onClick, icon }: IconButtonProps) {
+export function IconButton({ ariaLabel, icon, className, ...buttonProps }: IconButtonProps) {
   return (
-    <button className={styles.iconButton} onClick={onClick} type="button" aria-label={ariaLabel}>
+    <button
+      {...buttonProps}
+      className={[styles.iconButton, className].filter(Boolean).join(' ')}
+      type="button"
+      aria-label={ariaLabel}
+    >
       {icon}
     </button>
   )
