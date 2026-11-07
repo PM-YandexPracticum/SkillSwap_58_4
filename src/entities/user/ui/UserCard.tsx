@@ -24,11 +24,11 @@ export interface UserCardProps {
   learnSubcategories: ReadonlyArray<UserCardTag & { id: string }>
   /** Слот в правом верхнем углу (лайк со счётчиком, P3-08) */
   topAction?: ReactNode
-  /** Слот внизу карточки («Подробнее» / «Обмен предложен», P3-08) */
+  /** Слот внизу карточки («Подробнее» / «Обмен предложен», P3-08 / P7-04) */
   bottomAction?: ReactNode
 }
 
-function Chip({ title, categoryId }: UserCardTag) {
+export function Chip({ title, categoryId }: UserCardTag) {
   return <Tag label={title} color={isTagColor(categoryId) ? categoryId : undefined} />
 }
 

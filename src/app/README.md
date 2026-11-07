@@ -16,5 +16,5 @@
 - [`test/`](test/README.md) — помощники для тестов: рендер компонента со store и роутером
 - [`styles/`](styles/README.md) — Глобальные стили: CSS-переменные (цвета, отступы, шрифты) и reset
 - `App.tsx` — корневой компонент: провайдеры + роутер + глобальные стили
-- `CatalogSections.stories.tsx` — демонстрация композиции OfferCard и OffersSection с mock store
+- `CatalogSections.stories.tsx` — демонстрация композиции OfferCard и OffersSection с mock store, включая состояние «Обмен предложен»
 - `App.test.tsx` — проверяет доступность уведомлений внутри дерева маршрутов

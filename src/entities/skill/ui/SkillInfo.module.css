@@ -1,0 +1,113 @@
+.card {
+  --mini-preview-image-width: 92px;
+  --square-aspect-ratio: 1/1;
+
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-s);
+  padding: var(--space-36) var(--space-52);
+  gap: var(--space-24);
+  max-width: 1020px;
+}
+
+.action {
+  display: flex;
+  justify-content: end;
+  gap: var(--space-16);
+}
+
+.container {
+  display: flex;
+  gap: 77px;
+}
+
+.content {
+  min-width: 399px;
+}
+
+.skill {
+  margin-bottom: var(--space-20);
+}
+
+.skillName {
+  font-family: var(--font-title);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-medium);
+  line-height: 45px;
+  letter-spacing: -0.011em;
+}
+
+.categories {
+  font-size: var(--font-size-xs);
+  line-height: 16px;
+  letter-spacing: 4%;
+  color: var(--color-neutral);
+}
+
+.skillDescription {
+  letter-spacing: 0.02em;
+  margin-bottom: var(--space-24);
+}
+
+.image {
+  width: 324px;
+  border-radius: var(--radius-s);
+}
+
+.gallery {
+  display: flex;
+  gap: var(--space-24);
+}
+
+.galleryCarousel {
+  min-width: 324px;
+  aspect-ratio: var(--square-aspect-ratio);
+}
+
+.miniPreview {
+  min-width: 92px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+.miniPreviewWrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.miniPreviewOverlay {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: var(--color-bg-secondary);
+  opacity: 0.5;
+  border-radius: var(--radius-s);
+  color: var(--color-neutral);
+  width: 92px;
+  aspect-ratio: 1/1;
+}
+
+.miniPreviewLabel {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  font-size: var(--font-size-base);
+  line-height: 24px;
+  letter-spacing: -0.011em;
+  width: 92px;
+  aspect-ratio: 1/1;
+}
+
+.previewImage {
+  border-radius: var(--radius-s);
+}
+
+.actionCreateOffer > * {
+  width: 100%;
+}

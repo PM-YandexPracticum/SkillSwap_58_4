@@ -1,13 +1,59 @@
-export interface PasswordInputProps {
-  label?: string
+import { forwardRef, useId, useState } from 'react'
+import EyeIcon from '@/shared/assets/icons/eye.svg?react'
+import EyeOffIcon from '@/shared/assets/icons/eye-off.svg?react'
+import { IconButton } from '@/shared/ui/IconButton'
+import { Input, type InputProps } from '@/shared/ui/Input'
+import styles from './PasswordInput.module.css'
+
+export interface PasswordInputProps extends Omit<InputProps, 'type' | 'rightIcon' | 'rightAction'> {
+  /** Подсказка под полем, например «Пароль должен содержать не менее 8 знаков». Вместо неё при ошибке показывается `error` */
   hint?: string
-  error?: string
 }
 
 /**
- * Поле пароля с кнопкой «глаз» для показа/скрытия и подсказкой «Пароль должен содержать не менее 8 знаков».
+ * Поле пароля на основе `Input` с кнопкой-«глазом»: показать или скрыть пароль.
+ * Под полем — подсказка (`hint`); если есть ошибка, показывается она, а подсказка скрывается.
+ * Кнопка доступна с клавиатуры (Tab после поля), её подпись меняется: «Показать пароль» / «Скрыть пароль».
+ * Ref передаётся на HTML-поле для react-hook-form.
+ * @see Figma: «Вход» (1:2400), «Регистрация 1 шаг» (1:2548), ошибка (1:2627)
  */
-export function PasswordInput(_props: PasswordInputProps) {
-  // TODO: реализовать по макету
-  return null
-}
+export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
+  function PasswordInput(
+    { hint, error, disabled, 'aria-describedby': describedBy, ...props },
+    ref,
+  ) {
+    const [isVisible, setIsVisible] = useState(false)
+    const hintId = useId()
+    const showHint = Boolean(hint) && !error
+    const description = [describedBy, showHint ? hintId : undefined].filter(Boolean).join(' ')
+
+    return (
+      <div className={styles.root}>
+        <Input
+          {...props}
+          ref={ref}
+          type={isVisible ? 'text' : 'password'}
+          error={error}
+          aria-describedby={description || undefined}
+          disabled={disabled}
+          rightAction={
+            disabled ? undefined : (
+              <IconButton
+                ariaLabel={isVisible ? 'Скрыть пароль' : 'Показать пароль'}
+                icon={
+                  <span className={styles.eye}>{isVisible ? <EyeOffIcon /> : <EyeIcon />}</span>
+                }
+                onClick={() => setIsVisible((visible) => !visible)}
+              />
+            )
+          }
+        />
+        {showHint && (
+          <p id={hintId} className={styles.hint}>
+            {hint}
+          </p>
+        )}
+      </div>
+    )
+  },
+)

@@ -6,14 +6,26 @@ import { Select } from './Select'
 
 /**
  * Stories компонента Select. Интерактивное состояние синхронизируется с Controls.
- *
- * Нужны stories для состояний из макета: «Не указан», выбрано значение, открыт, ошибка, disabled.
- * Правила — docs/rules/storybook.md.
  */
 const meta: Meta<typeof Select> = {
   title: 'shared/ui/Select',
   component: Select,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Один выбор и поиск. Макет: [Пол](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-1585), [Город](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-1629). Ширину поля задаёт родитель.',
+      },
+    },
+  },
+  decorators: [
+    (Story, { args }) => (
+      <div style={{ width: args.searchable ? 436 : 208, maxWidth: '100%' }}>
+        <Story />
+      </div>
+    ),
+  ],
   args: {
     onChange: fn(),
   },
@@ -94,4 +106,41 @@ export const Searchable: Story = {
     value: null,
     searchable: true,
   },
+}
+
+/** Ошибка на раскрытом поле: красная рамка охватывает весь список. */
+export const OpenError: Story = {
+  args: { ...Error.args, defaultOpen: true },
+}
+
+export const SearchableError: Story = {
+  args: { ...Searchable.args, error: 'Выберите город', defaultOpen: true },
+}
+
+export const SearchableDisabled: Story = {
+  args: { ...Searchable.args, value: 'samara', disabled: true },
+}
+
+/** Проверка прокрутки активного пункта при навигации стрелками. */
+export const LongList: Story = {
+  args: {
+    ...Searchable.args,
+    options: Array.from({ length: 30 }, (_, index) => ({
+      value: `city-${index + 1}`,
+      label: `Город ${index + 1}`,
+    })),
+  },
+}
+
+export const Hover: Story = {
+  args: { ...Default.args },
+  parameters: {
+    docs: { description: { story: 'Наведите курсор на поле: рамка становится акцентной.' } },
+  },
+}
+
+export const Focus: Story = {
+  args: { ...Default.args },
+  play: ({ canvasElement }) =>
+    canvasElement.querySelector<HTMLButtonElement>('[role="combobox"]')?.focus(),
 }

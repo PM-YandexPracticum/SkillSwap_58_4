@@ -19,6 +19,7 @@
 > Начинать любую фичу фазы — с этой задачи.
 
 - **Файлы:** `src/shared/config/features.ts` (новый), `src/shared/config/index.ts`
+- **Issue:** [#87](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/87)
 - **Зависит от:** —
 
 ### P9-02 · Цвета тёмной темы 🟡
@@ -27,6 +28,7 @@
 > Остальной код менять не придётся.
 
 - **Файлы:** `src/app/styles/global.css`
+- **Issue:** [#88](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/88)
 - **Зависит от:** P1-01
 
 ### P9-03 · Переключатель темы 🟡
@@ -36,6 +38,7 @@
 
 - **Уже готово:** заглушки `ThemeProvider` и `features/theme-toggle`, ключ `STORAGE_KEYS.THEME`.
 - **Файлы:** `src/features/theme-toggle/`, `src/app/providers/ThemeProvider.tsx`, `src/widgets/header/`, `.storybook/preview.tsx`
+- **Issue:** [#89](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/89)
 - **Зависит от:** P9-01, P9-02, P5-09
 
 ### P9-04 · Бейджи и правила выдачи 🔴
@@ -44,6 +47,7 @@
 > Выданные бейджи хранятся в localStorage и повторно не выдаются.
 
 - **Файлы:** `src/entities/badge/` (новый), `src/features/badge-award/` (новый) + тесты
+- **Issue:** [#92](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/92)
 - **Зависит от:** P9-01, P4-07, P5-07
 
 ### P9-05 · Список бейджей и toast при выдаче 🟡
@@ -51,6 +55,7 @@
 > В «Личных данных» — ряд бейджей: полученные цветные, остальные серые с подсказкой, как получить.
 
 - **Файлы:** `src/widgets/badges/` (новый), `src/pages/profile/ui/ProfilePersonal.tsx`
+- **Issue:** [#93](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/93)
 - **Зависит от:** P9-04, P7-06, P2-18
 
 ### P9-06 · Мок WebSocket и история сообщений 🔴
@@ -59,6 +64,7 @@
 > Замена на настоящий сервер потом — одна строка.
 
 - **Файлы:** `src/shared/api/mockSocket.ts` (новый), `src/entities/message/` (новый) + тесты
+- **Issue:** [#94](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/94)
 - **Зависит от:** P9-01, P4-05
 
 ### P9-07 · Окно чата 🟡
@@ -67,6 +73,7 @@
 > Новые сообщения видны сразу — окно само прокручивается вниз.
 
 - **Файлы:** `src/features/chat-send/` (новый), `src/widgets/chat-window/` (новый)
+- **Issue:** [#95](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/95)
 - **Зависит от:** P9-06, P7-03
 
 ### P9-08 · Установка и офлайн-страница 🟢
@@ -75,6 +82,7 @@
 > Её будет показывать Service Worker из P9-09.
 
 - **Файлы:** `public/manifest.webmanifest` (новый), `public/icons/` (новый), `public/offline.html` (новый), `index.html`
+- **Issue:** [#96](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/96)
 - **Зависит от:** P9-01, P1-02
 
 ### P9-09 · Service Worker 🔴
@@ -83,4 +91,5 @@
 > Проверить можно, включив режим «Офлайн» в DevTools после первого визита.
 
 - **Файлы:** `vite.config.ts`, `src/app/providers/`
+- **Issue:** [#97](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/97)
 - **Зависит от:** P9-08

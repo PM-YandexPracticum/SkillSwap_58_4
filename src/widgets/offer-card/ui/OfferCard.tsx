@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 
 import { selectCategoryBySubcategoryId, selectSubcategoryById } from '@/entities/category'
 import { selectCityById } from '@/entities/city'
+import { ExchangeStatusBadge, selectHasProposed } from '@/entities/exchange'
 import { selectSkills } from '@/entities/skill'
 import { UserCard, type PublicUser } from '@/entities/user'
 import { FavoriteButton } from '@/features/favorite-toggle'
@@ -12,15 +13,19 @@ import { useAppSelector } from '@/shared/lib/store'
 import styles from './OfferCard.module.css'
 
 export interface OfferCardProps {
-  /** Автор предложения без пароля; справочники виджет читает из store */
+  /** Автор карточки без пароля; справочники, сессия и обмены читаются из store. */
   user: PublicUser
 }
 
 /**
- * UserCard с сердечком, счётчиком и ссылкой на навык автора. Статус обмена подключит P7-04.
- * @see Figma: каталог (1:2861), карточка Ивана (1:2877)
+ * Собирает UserCard из автора и данных store: справочников, сессии и обменов.
+ * Исходящее предложение текущего пользователя этому автору заменяет «Подробнее» статичным бейджем.
+ * Проверка выполняется по паре пользователей независимо от навыка; входящего предложения недостаточно.
+ * Сам виджет данные не загружает: контейнер должен вызвать fetchExchanges() при подключении каталога.
+ * @see Figma: каталог (1:2861), карточка со статусом обмена (1:2106)
  */
 export function OfferCard({ user }: OfferCardProps) {
+  const hasProposed = useAppSelector((state) => selectHasProposed(state, user.id))
   const city = useAppSelector((state) => selectCityById(state, user.cityId))
   const skills = useAppSelector(selectSkills)
   const skill = skills.find((item) => item.id === user.teachSkillId)
@@ -46,9 +51,13 @@ export function OfferCard({ user }: OfferCardProps) {
       learnSubcategories={learnSubcategories}
       topAction={<FavoriteButton userId={user.id} likesCount={user.likesCount} />}
       bottomAction={
-        <Link className={styles.details} to={getSkillRoute(user.teachSkillId)}>
-          Подробнее
-        </Link>
+        hasProposed ? (
+          <ExchangeStatusBadge />
+        ) : (
+          <Link className={styles.details} to={getSkillRoute(user.teachSkillId)}>
+            Подробнее
+          </Link>
+        )
       }
     />
   )
