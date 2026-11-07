@@ -1,7 +1,7 @@
 # Справка по фазам 2–3: что уже готово и что дальше
 
 Коротко: что уже есть в проекте и можно брать в свою задачу, что сейчас в работе и что можно начинать.
-Перед стартом задачи загляни сюда — возможно, половина нужного уже сделана. Общий срез — на **05.11.2026**, сведения о P5-01, P5-02 и P5-03 уточнены **07.11.2026**.
+Перед стартом задачи загляни сюда — возможно, половина нужного уже сделана. Актуально на **07.11.2026**.
 
 ## Уже готово — используй, не делай заново
 
@@ -16,6 +16,7 @@
 - `Stepper` — `import { Stepper } from '@/shared/ui/Stepper'`. «Шаг N из 3» над формой регистрации: `current`, `total`.
 - `Tag` — `import { Tag } from '@/shared/ui/Tag'`. Чип навыка: `label`, `color` — id категории (`business`, `creativity`, `languages`, `education`, `health`, `home`) или `more` для «+N»; с `onRemove` появляется крестик — это плашка фильтра. Длинное название обрезается многоточием, полное — в подсказке. `isTagColor(id)` проверяет, есть ли цвет у категории.
 - `Input` и `Textarea` — `import { Input } from '@/shared/ui/Input'`, `import { Textarea } from '@/shared/ui/Textarea'`. Подпись `label`, ошибка `error`, декоративная иконка `rightIcon` (карандаш); кликабельная кнопка справа — `rightAction` («глаз», «×» очистки). Работают с `register` из react-hook-form. Высота Input — 48 px, как в макете.
+- `PasswordInput` — `import { PasswordInput } from '@/shared/ui/PasswordInput'` (P2-06, [PR #146](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/146)). `hint` передаётся явно, при `error` скрывается; видимость переключается доступной кнопкой. При `disabled` глаз скрыт; `ref` и пропсы Input поддерживают react-hook-form. Валидация пароля остаётся в схеме формы.
 - `Checkbox` и `RadioGroup` — `import { Checkbox } from '@/shared/ui/Checkbox'`, `import { RadioGroup } from '@/shared/ui/RadioGroup'`. Управляемые: `checked` / `value` и `onChange`; у Checkbox есть `indeterminate` — частичный выбор категории; у RadioGroup — заголовок группы `label` и стрелки с клавиатуры.
 - `Modal` — `import { Modal } from '@/shared/ui/Modal'`. Обёртка: `isOpen`, `onClose`, `children` и обязательный `ariaLabel`. Esc и клик по фону закрывают, фокус остаётся внутри; внутренние отступы задаёт содержимое.
 - `FileDropzone` — `import { FileDropzone } from '@/shared/ui/FileDropzone'`. Зона «Перетащите или выберите изображения»: отдаёт `File[]` в `onFiles`, превью (`previews`) и ошибку (`error`) получает пропсами — проверку файлов делает форма.
@@ -25,8 +26,10 @@
 **Блоки (`src/entities`)**
 
 - `UserCard` — `import { UserCard } from '@/entities/user'`. Карточка каталога: `user`, `cityName`, `teachSkill`, `learnSubcategories`, слоты `topAction` (лайк) и `bottomAction` («Подробнее»). Задача-образец — P3-01 ([PR #133](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/133)).
+- `UserProfileCard` из `@/entities/user` — карточка автора с `user`, `cityName`, `teachSkill`, `learnSubcategories`. `SkillInfo` из `@/entities/skill` — `skill` (название, описание, изображения), `categoryTitle`, `subcategoryTitle`, объект `actions` со слотами `like`, `createOffer`, `share`, `more`. Галерея уже внутри `SkillInfo`; сборка страницы — P3-09. Готовы в [PR #150](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/150).
 - `UserSummary` — блок «аватар + имя + город, возраст» для карточки автора (P3-02); `SkillTag` из `@/entities/skill` — чип навыка в цвете категории.
 - Сессия (P4-05): `selectIsAuth`, `selectSession`, вход `startSession(userId)` и выход `endSession()` из `@/entities/session` — каждое сразу меняет store и localStorage.
+- Защита страниц (P4-08): `RequireAuth` закрывает `/profile/*` и `/favorites`, отправляет гостя на вход с `replace` и полным `state.from`; возврат после входа — P4-09.
 - Справочники в store (P4-02): `fetchCategories`, `selectSubcategoryById`, `selectCategoryBySubcategoryId`, `selectCategoryColor` из `@/entities/category`; `fetchCities`, `selectCityById` из `@/entities/city`.
 
 **Блоки (`src/widgets`)**
@@ -44,6 +47,7 @@
 - `useAppSelector`, `useAppDispatch` из `@/shared/lib/store` — хуки Redux с типами.
 - «База данных» в браузере (P4-01, P4-10) — данные берём только через `entities/*/api` (`getUsers()`, `getSkills()`…): ответ приходит через ~300 мс, изменения сохраняются в localStorage. Напрямую в localStorage и в файлы `public/db` не ходим.
 - Правила полей для форм — `emailField()`, `passwordField()`, `nameField()`, `birthDateField()`, `textField(min, max)`, `cityField(cityIds)` из `@/shared/lib/validation` (yup, тексты ошибок как в `validation.md`).
+- `useInfiniteScroll(items, batch, delayMs)` из `@/shared/lib/hooks` (P2-15, [PR #152](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/152)) — `visibleItems`, `sentinelRef`, `isLoading`, `hasMore`; каждая порция требует прокрутки. Смена ссылки `items` сбрасывает ленту и отменяет таймер: фильтрацию и сортировку мемоизируй через `useMemo`. Размер и задержку передавай из `CATALOG`, маркер ставь в конце списка.
 - `useDebounce`, `useLocalStorage`, `useClickOutside` из `@/shared/lib/hooks`; `formatDate`, `truncate`, `generateId` из `@/shared/lib/helpers`.
 
 **Стили и ресурсы**
@@ -73,22 +77,26 @@
 
 ## Сейчас в работе
 
-Не берём — уже назначены:
+Не берём повторно — уже назначены:
 
-- P2-06 PasswordInput, P2-09 Select, P2-12 DatePicker, P2-15 Лента с догрузкой, P2-17 MultiSelect;
-- P3-02 Карточка автора и блок навыка, P3-04 Шапка, P3-07 Панель фильтров;
-- P4-03 Пользователи и навыки, P4-08 Защита закрытых страниц.
+- P2-09 Select — `Stanislave0`, P2-12 DatePicker и P2-17 MultiSelect — `Laurovsky`;
+- P3-04 Шапка — `kkiitlin`, P3-05 Лейауты — `Al-Du9270-art`, P3-09 Страница навыка — `sosolet`;
+- P3-07 Панель фильтров — `alicevdr`, Review (PR #148); P7-04 — у неё же в In Progress;
+- P4-03 Пользователи и навыки — `Nick-Shvd`; P4-06 Сохранение и P5-02 Панель фильтров в действии — `pwkdmc`.
 
-P2-17 назначен заранее относительно своей зависимости: сначала ждём влития Select (P2-09).
-Актуальный список с исполнителями — в [отчёте](report.md#сейчас-в-работе).
+Select остаётся In Progress, даже при открытом PR #145. P2-17 сохраняет In Progress и исполнителя, ожидая Select. P2-06, P2-15 и P5-01 уже завершены. Полный список — в [отчёте](report.md#сейчас-в-работе).
 
 ## Можно брать сейчас
 
-**P7-04 «Обмен предложен» на карточке** 🟢 — свободна, P3-08 и P4-07 готовы. Задачу можно перенести в Todo.
+На доске Todo уже шесть задач без исполнителей: **P5-03 (#61), P7-01 (#74), P3-06 (#39), P3-10 (#43), P3-11 (#44) и P3-16 (#49)**. Для интеграции остаются P3-04, P3-09, P4-03, P3-05 и P3-07 согласно конкретной карточке.
 
-**P4-07 Обмены и уведомления** завершена: API и Redux сохраняют обмены и уведомления, а операции чтения и очистки учитывают текущую сессию.
+Todo — ближайшая очередь команды; зависимости не обязаны быть закрыты до переноса. До окончательной интеграции они должны быть готовы и совместимы. Четыре задачи из предыдущей рекомендации уже перенесены; новые карточки в этой актуализации не создавались. Полный список Backlog — в [отчёте](report.md#готовность-к-todo).
 
-P5-01 влита в `develop` — [PR #154](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/154): состояние фильтров, `applyFilters`, публичный API и тесты готовы. P5-02 уже выполняется у `pwkdmc` (In Progress): для интеграции остаётся влить P3-07; P5-01 и P4-02 готовы. P5-03 находится в Todo без исполнителя; для интеграции остаётся влить P3-04; P5-01 готова. Незавершённые зависимости указаны отдельно и не исключают задачу из ближайшей очереди.
+## P5-01 — готово для следующих задач
+
+Из `@/features/catalog-filter` доступны `applyFilters`, `setMode`, `toggleSubcategory`, `toggleCategory`, `setGender`, `toggleCity`, `setSort`, `removeFilter`, `resetFilters`, `selectCatalogFilter`, `selectActiveFiltersCount` и типы. `toggleCategory` принимает id подкатегорий; поиск хранится отдельно, общий сброс координирует вызывающий код. Данные и фильтры соединяются на уровне страницы, соседние фичи друг друга не импортируют.
+
+«Хочу научиться» — желания автора карточки, «Могу научить» — его предложение; поиск — по названию предлагаемого навыка. Ядро готово в [PR #154](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/154); подключение к UI — отдельные задачи P5-02/P5-03.
 
 ## P4-07 — готово для следующих задач
 
@@ -96,7 +104,7 @@ P5-01 влита в `develop` — [PR #154](https://github.com/PM-YandexPracticu
 
 - `@/entities/exchange`: `fetchExchanges()`, `addExchange(exchange)`, `selectExchanges` и `selectHasProposed(state, otherUserId)`. Повторный обмен от того же пользователя тому же получателю запрещён.
 - `@/entities/notification`: `fetchNotifications()`, `addNotification(notification)`, `markAllRead()`, `clearAllNotifications()`, `selectNotifications` и `selectHasUnread`. Селекторы показывают данные только текущего пользователя; чтение и очистка берут владельца из сессии.
-- Подключение сценария обмена/toast — P7-03, бейджа — P7-04, панели и колокольчика — P7-05. P7-04 может переходить к работе: P3-08 и P4-07 готовы. P7-03 и P7-05 дополнительно ждут остальные зависимости из [фазы 7](phases/phase-07-skill-profile.md).
+- Подключение сценария обмена/toast — P7-03, бейджа — P7-04, панели и колокольчика — P7-05. P7-04 уже в работе у `alicevdr`: P3-08 и P4-07 готовы. P7-03 и P7-05 дополнительно ждут остальные зависимости из [фазы 7](phases/phase-07-skill-profile.md).
 
 ## Что дальше
 
@@ -104,14 +112,14 @@ P5-01 влита в `develop` — [PR #154](https://github.com/PM-YandexPracticu
 
 - P2-17 MultiSelect — после Select (P2-09): устроен так же, как открытый Select, пункты — `Checkbox`.
 
-**Фаза 3** открывается по мере готовности компонентов. Следующими станут доступны:
+**Фаза 3** открывается по мере готовности компонентов. Текущее состояние и ближайшие зависимости:
 
 - P3-05 лейауты — после шапки (P3-04); подвал (P3-03) уже готов; за ними «Все навыки» (P3-06), «О проекте», 404 и 500 (P3-16), вход и регистрация (P3-11);
-- P3-09 страница навыка — после P3-02; P3-08, Carousel и Modal уже готовы;
+- P3-09 страница навыка уже в работе: P3-02, P3-08, Carousel и Modal готовы;
 - P3-10 каталог — после панели фильтров P3-07 и лейаутов P3-05; карточка и секция P3-08 уже готовы;
 - P3-13 шаг 3 регистрации — после шага 2 (P3-12). Carousel и Modal уже готовы.
 
-Шапка (P3-04) в работе и остаётся ближайшей зависимостью: от неё через лейауты зависят почти все страницы.
+Шапка P3-04 и лейауты P3-05 уже в работе. Их завершение позволит интегрировать ближайшую очередь страниц; это не причина держать очередь Todo пустой.
 
 ## Перед PR — частые замечания ревью
 
