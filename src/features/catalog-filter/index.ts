@@ -1,5 +1,15 @@
-export type { CatalogFilterState, FilterMode, SortOrder } from './model/types'
-export { catalogFilterReducer } from './model/catalogFilterSlice'
+export type { CatalogFilterState, FilterMode, FilterRemoval, SortOrder } from './model/types'
+export {
+  catalogFilterReducer,
+  setMode,
+  toggleSubcategory,
+  toggleCategory,
+  setGender,
+  toggleCity,
+  setSort,
+  removeFilter,
+  resetFilters,
+} from './model/catalogFilterSlice'
 export { selectCatalogFilter, selectActiveFiltersCount } from './model/selectors'
 export { applyFilters } from './lib/applyFilters'
 export { ModeFilter } from './ui/ModeFilter'
