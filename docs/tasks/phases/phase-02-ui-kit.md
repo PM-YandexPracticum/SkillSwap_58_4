@@ -56,14 +56,15 @@
 - **Где в макете:** «Регистрация 1 шаг» (1:2548), ошибка под полем (1:2627), поле с карандашом и «О себе» в «Личных данных» (1:2370)
 - **Зависит от:** —
 
-### P2-06 · PasswordInput 🟢
+### P2-06 · PasswordInput ✅ 🟢
 > **Что нужно сделать:** сделать поле пароля на основе Input с кнопкой-«глазом»: показать или скрыть пароль.
 > Под полем — подсказка «Пароль должен содержать не менее 8 знаков».
 > Используется на входе, в регистрации и в «Изменить пароль» в профиле.
 
 - **Уже готово:** `Input` (P2-05) — «глаз» передаётся в проп `rightAction` (кликабельная кнопка справа, доступна по Tab), пример — story `WithAction`; иконки `eye` и `eye-off`, кнопка — `IconButton` с `ariaLabel`.
 - **Файлы:** `src/shared/ui/PasswordInput/`
-- **Issue:** [#22](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/22)
+- **Результат:** `PasswordInput` на основе `Input`: показ/скрытие пароля, `hint`, ошибка вместо подсказки, доступная кнопка, `forwardRef` и совместимость с react-hook-form. При `disabled` кнопка глаза скрыта; 9 тестов и 5 stories. Ревью и влитие — `viceede`.
+- **Issue:** [#22](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/22) · PR [#146](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/146)
 - **Где в макете:** «Вход» (1:2400), «Регистрация 1 шаг» (1:2548)
 - **Зависит от:** P2-05
 
@@ -100,6 +101,7 @@
 - **Как работает:** `<ul role="listbox">`, пункты `<li role="option" aria-selected>`; Enter или ↓ открывают, ↑↓ двигают подсветку,
   Enter выбирает, Esc закрывает, фокус возвращается на поле. `searchable` — текстовое поле на основе Input (P2-05) с «×».
 - **Файлы:** `src/shared/ui/Select/`
+- **Статус на 07.11.2026:** In Progress, исполнитель: `Stanislave0`. Для интеграции: все прямые зависимости закрыты.
 - **Issue:** [#25](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/25)
 - **Где в макете:** «Регистрация 2 шаг» — открытый «Пол» (1:1585), «Город» с поиском (1:1629)
 - **Зависит от:** P2-05, P2-08
@@ -129,6 +131,7 @@
 
 - **Уже готово:** `react-datepicker` 9 в зависимостях; его стили подключаются импортом `react-datepicker/dist/react-datepicker.css`, поверх — свои по макету; поле — `Input` (P2-05): подпись, ошибка и иконка календаря в `rightIcon` (или `rightAction`, если иконка открывает календарь).
 - **Файлы:** `src/shared/ui/DatePicker/`
+- **Статус на 07.11.2026:** In Progress, исполнитель: `Laurovsky`. Для интеграции: все прямые зависимости закрыты.
 - **Issue:** [#28](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/28)
 - **Где в макете:** «Регистрация 2 шаг» с открытым календарём (1:1541): списки месяца и года, «Отменить» / «Выбрать»
 - **Зависит от:** P1-10, P2-05
@@ -165,15 +168,16 @@
 - **Подсказки к утилитам:** перед `drawImage` залить холст белым — иначе прозрачные части PNG в JPEG станут чёрными; в тестах (jsdom) `getContext` возвращает `null` — подменить canvas или вынести расчёт размеров в отдельную функцию с тестом.
 - **Зависит от:** P1-02
 
-### P2-15 · Лента с догрузкой (useInfiniteScroll) 🟡
+### P2-15 · Лента с догрузкой (useInfiniteScroll) ✅ 🟡
 > **Что нужно сделать:** написать хук бесконечной ленты — это и есть «пагинация» по словам наставника: сначала 6 карточек, при прокрутке к концу на секунду
 > появляется спиннер и добавляются ещё 6. Догрузка только по мере прокрутки пользователя.
 > Хук общий для «Рекомендуем», результатов фильтров и избранного; числа — в `shared/config/catalog.ts`.
 
-- **Уже готово:** числа ленты (`CATALOG.SCROLL_BATCH`, `CATALOG.SCROLL_DELAY_MS`) в `shared/config/catalog.ts`; заготовка `useInfiniteScroll(items, batch, delayMs)` с типом результата (`visibleItems`, `sentinelRef`, `isLoading`, `hasMore`) уже экспортируется из `@/shared/lib/hooks` — остаётся тело и тест; спиннер для ленты — `Loader` (P2-01). Правила тестов — [testing.md](../../rules/testing.md), образец `getAge.test.ts`.
+- **Уже готово:** `useInfiniteScroll(items, batch, delayMs)` из `@/shared/lib/hooks` возвращает `visibleItems`, `sentinelRef`, `isLoading`, `hasMore`. Потребитель передаёт `CATALOG.SCROLL_BATCH` и `CATALOG.SCROLL_DELAY_MS` из `@/shared/config`; спиннер — `Loader`. Каждая порция требует прокрутки пользователя; смена ссылки `items` или `batch` сбрасывает список и отменяет догрузку. Производные списки мемоизируем через `useMemo`.
+- **Результат:** реализованы догрузка, вложенные контейнеры, отмена таймера, смена DOM-маркера и очистка ресурсов; 36 тестов и браузерная проверка с настоящим IntersectionObserver. Подключение в каталоге и избранном — P5-06/P5-08.
 - **Подсказки к тесту:** хук рендерим через `renderHook` из `@testing-library/react`; в jsdom нет `IntersectionObserver` — подменить через `vi.stubGlobal` и вызвать его колбэк вручную; задержку — `vi.useFakeTimers()` и `vi.advanceTimersByTime(CATALOG.SCROLL_DELAY_MS)`.
 - **Файлы:** `src/shared/lib/hooks/useInfiniteScroll.ts` + тест
-- **Issue:** [#31](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/31)
+- **Issue:** [#31](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/31) · PR [#152](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/152)
 - **Зависит от:** P1-04
 
 ### P2-16 · Общие правила валидации ✅ 🟡
@@ -194,6 +198,7 @@
 - **Уже готово:** `Checkbox` (P2-07) с частичным выбором — для пунктов списка; иконки чекбоксов `checkbox-empty`, `checkbox-done` в `src/shared/assets/icons/`.
 - **Как выглядит:** так же, как открытый Select (P2-09) — одна раскрытая вниз рамка с полем и списком, только у пунктов чекбоксы. Берём устройство Select, `Dropdown` не используем.
 - **Файлы:** `src/shared/ui/MultiSelect/`
+- **Статус на 07.11.2026:** In Progress, исполнитель: `Laurovsky`. Для интеграции: P2-09 (In Progress).
 - **Issue:** [#33](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/33)
 - **Где в макете:** «Регистрация 2 шаг» — 1:1673 (категории), 1:1717 (подкатегории)
 - **Зависит от:** P2-07, P2-09
