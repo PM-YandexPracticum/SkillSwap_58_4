@@ -1,0 +1,27 @@
+/* Поле «Search» в макете (1:2861): 48 px высотой, радиус 12, отступ 12, лупа 24 и зазор 8 */
+.root {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.search {
+  position: absolute;
+  top: 50%;
+  left: var(--space-12);
+  z-index: 1;
+  display: flex;
+  color: var(--color-neutral);
+  transform: translateY(-50%);
+}
+
+.icon {
+  width: var(--space-24);
+  height: var(--space-24);
+}
+
+/* Два класса, чтобы перебить отступы и рамку поля Input независимо от порядка стилей */
+.root .input {
+  padding-left: calc(var(--space-12) + var(--space-24) + var(--space-8));
+  border-color: transparent;
+}
