@@ -12,4 +12,4 @@ export {
   selectExchangesError,
 } from './model/selectors'
 export { getExchanges, createExchange } from './api/exchangeApi'
-export { ExchangeStatusBadge } from './ui/ExchangeStatusBadge'
+export { ExchangeStatusBadge, type ExchangeStatusBadgeProps } from './ui/ExchangeStatusBadge'
