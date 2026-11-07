@@ -1,6 +1,6 @@
 import type { Gender } from '@/entities/user'
 
-/** Радио-группа «Всё / Хочу научиться / Могу научить» */
+/** Режим автора карточки: learn — хочет учиться, teach — может научить, all — оба набора. */
 export type FilterMode = 'all' | 'learn' | 'teach'
 
 /** Сортировка результатов: сначала новые / сначала старые (по `createdAt`) */
@@ -17,3 +17,11 @@ export interface CatalogFilterState {
   cityIds: string[]
   sort: SortOrder
 }
+
+/** Фильтр для снятия отдельной плашки; sort возвращает порядок по умолчанию. */
+export type FilterRemoval =
+  | { type: 'mode' }
+  | { type: 'subcategory'; id: string }
+  | { type: 'gender' }
+  | { type: 'city'; id: string }
+  | { type: 'sort' }

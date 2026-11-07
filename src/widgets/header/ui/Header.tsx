@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useId, useState, type ReactNode } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 
 import { SearchInput } from '@/features/skill-search'
@@ -57,6 +57,13 @@ export function Header({
 }: HeaderProps) {
   const navigate = useNavigate()
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null)
+  const userMenuId = useId()
+  const notificationsPanelId = useId()
+  const hasCategoriesMenu = Boolean(categoriesMenu)
+  const hasNotifications = Boolean(notifications)
+  const isCategoriesOpen = openMenu === 'categories' && hasCategoriesMenu
+  const isNotificationsOpen = openMenu === 'notifications' && hasNotifications
+  const isUserMenuOpen = openMenu === 'user'
 
   const toggle = (menu: OpenMenu) => setOpenMenu((current) => (current === menu ? null : menu))
   const closer = (menu: OpenMenu) => () =>
@@ -71,14 +78,14 @@ export function Header({
           О проекте
         </Link>
         <Dropdown
-          isOpen={openMenu === 'categories' && Boolean(categoriesMenu)}
+          isOpen={isCategoriesOpen}
           onClose={closer('categories')}
           trigger={
             <button
               className={`${styles.link} ${styles.categories}`}
               type="button"
-              aria-expanded={openMenu === 'categories'}
-              onClick={() => toggle('categories')}
+              aria-expanded={isCategoriesOpen}
+              onClick={() => hasCategoriesMenu && toggle('categories')}
             >
               Все навыки
               <ChevronDownIcon
@@ -103,20 +110,24 @@ export function Header({
           <>
             <Dropdown
               align="end"
-              isOpen={openMenu === 'notifications' && Boolean(notifications)}
+              isOpen={isNotificationsOpen}
               onClose={closer('notifications')}
               trigger={
                 <span className={styles.bell}>
                   <IconButton
                     ariaLabel={hasUnread ? 'Уведомления, есть новые' : 'Уведомления'}
                     icon={<NotificationIcon className={styles.icon} />}
-                    onClick={() => toggle('notifications')}
+                    aria-expanded={isNotificationsOpen}
+                    aria-controls={hasNotifications ? notificationsPanelId : undefined}
+                    onClick={() => hasNotifications && toggle('notifications')}
                   />
                   {hasUnread && <span className={styles.dot} aria-hidden="true" />}
                 </span>
               }
             >
-              {notifications}
+              <div id={notificationsPanelId} role="region" aria-label="Уведомления">
+                {notifications}
+              </div>
             </Dropdown>
 
             <NavLink className={styles.iconLink} to={ROUTES.FAVORITES} aria-label="Избранное">
@@ -137,8 +148,8 @@ export function Header({
                 <button
                   className={styles.user}
                   type="button"
-                  aria-haspopup="menu"
-                  aria-expanded={openMenu === 'user'}
+                  aria-expanded={isUserMenuOpen}
+                  aria-controls={isUserMenuOpen ? userMenuId : undefined}
                   onClick={() => toggle('user')}
                 >
                   {userName}
@@ -146,7 +157,7 @@ export function Header({
                 </button>
               }
             >
-              <ul className={styles.menu}>
+              <ul id={userMenuId} className={styles.menu}>
                 <li>
                   <Link
                     className={styles.menuItem}

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 
 import { ROUTER_FUTURE, ROUTES } from '@/shared/config'
 
@@ -27,6 +27,25 @@ describe('Header', () => {
       renderHeader()
 
       expect(screen.getByRole('link', { name: 'О проекте' })).toHaveAttribute('href', ROUTES.ABOUT)
+    })
+
+    it.each([
+      ['Войти', ROUTES.LOGIN, 'Вход'],
+      ['Зарегистрироваться', ROUTES.REGISTER, 'Регистрация'],
+    ])('%s ведёт на нужную страницу', async (label, path, title) => {
+      const user = userEvent.setup()
+      render(
+        <MemoryRouter future={ROUTER_FUTURE} initialEntries={[ROUTES.HOME]}>
+          <Routes>
+            <Route path={ROUTES.HOME} element={<Header />} />
+            <Route path={path} element={<h1>{title}</h1>} />
+          </Routes>
+        </MemoryRouter>,
+      )
+
+      await user.click(screen.getByRole('button', { name: label }))
+
+      expect(screen.getByRole('heading', { name: title })).toBeInTheDocument()
     })
 
     it('есть поле поиска и иконка темы', () => {
@@ -73,6 +92,45 @@ describe('Header', () => {
       expect(screen.getByRole('button', { name: 'Уведомления, есть новые' })).toBeInTheDocument()
     })
 
+    it('объявляет состояние окна уведомлений', async () => {
+      const user = userEvent.setup()
+      renderHeader({ ...auth, notifications: <p>Список уведомлений</p> })
+
+      const trigger = screen.getByRole('button', { name: 'Уведомления' })
+      expect(trigger).toHaveAttribute('aria-expanded', 'false')
+
+      await user.click(trigger)
+
+      expect(trigger).toHaveAttribute('aria-expanded', 'true')
+      expect(trigger).toHaveAttribute(
+        'aria-controls',
+        screen.getByRole('region', { name: 'Уведомления' }).id,
+      )
+
+      await user.keyboard('{Escape}')
+
+      expect(trigger).toHaveAttribute('aria-expanded', 'false')
+      expect(screen.queryByRole('region', { name: 'Уведомления' })).not.toBeInTheDocument()
+    })
+
+    it('не объявляет меню открытым, если слот уведомлений не передан', () => {
+      renderHeader(auth)
+
+      const trigger = screen.getByRole('button', { name: 'Уведомления' })
+      expect(trigger).toHaveAttribute('aria-expanded', 'false')
+      expect(trigger).not.toHaveAttribute('aria-controls')
+    })
+
+    it('не открывает категории без переданного слота', async () => {
+      const user = userEvent.setup()
+      renderHeader()
+
+      const trigger = screen.getByRole('button', { name: 'Все навыки' })
+      await user.click(trigger)
+
+      expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    })
+
     it('на странице избранного сердечко отмечено как текущая страница', () => {
       renderHeader(auth, ROUTES.FAVORITES)
 
@@ -96,11 +154,16 @@ describe('Header', () => {
       const onLogout = vi.fn()
       renderHeader({ ...auth, onLogout })
 
-      await user.click(screen.getByRole('button', { name: 'Мария' }))
+      const trigger = screen.getByRole('button', { name: 'Мария' })
+      expect(trigger).not.toHaveAttribute('aria-controls')
+
+      await user.click(trigger)
       expect(screen.getByRole('link', { name: 'Личный кабинет' })).toHaveAttribute(
         'href',
         ROUTES.PROFILE,
       )
+      expect(trigger).toHaveAttribute('aria-controls', screen.getByRole('list').id)
+      expect(screen.getByRole('link', { name: 'Личный кабинет' })).toBeInTheDocument()
 
       await user.click(screen.getByRole('button', { name: 'Выйти' }))
       expect(onLogout).toHaveBeenCalledTimes(1)

@@ -35,6 +35,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** образец — P4-02 ([PR #131](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/131)): thunk и `extraReducers`, экспорт в `index.ts`, тесты статусов через редьюсер и загрузки из `public/db` (`categoriesSlice.test.ts`); заготовки `shuffle` и список нужных селекторов (TODO в `selectors.ts`); `userApi.ts`, `skillApi.ts`, типы `User` / `PublicUser` / `Skill` и пустые слайсы в store; «база» (P4-01): методы коллекций асинхронные, отвечают через ~300 мс, ошибки приходят как отклонённый промис; в тестах «база» сбрасывается сама после каждого теста; для тестов — `createUser()` и `createSkill()` из `@/entities/*/testing`.
 - **Файлы:** `src/entities/user/model/`, `src/entities/skill/model/`, `src/shared/lib/shuffle.ts` + тесты
+- **Статус на 07.11.2026:** In Progress, исполнитель: `Nick-Shvd`. Для интеграции: все прямые зависимости закрыты.
 - **Issue:** [#52](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/52)
 - **Зависит от:** P4-01
 
@@ -46,6 +47,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** `Loader` (P2-01); «база» (P4-01) отвечает через ~300 мс — Loader будет виден по-настоящему; справочники грузят `fetchCategories` и `fetchCities` из `@/entities/category` и `@/entities/city` (P4-02), статусы — `selectCategoriesStatus` и `selectCitiesStatus`.
 - **Файлы:** `src/app/providers/DataProvider.tsx` (новый), `src/app/App.tsx`
+- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P4-03 (In Progress), P3-16 (Todo).
 - **Issue:** [#53](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/53)
 - **Зависит от:** P4-02, P4-03, P2-01, P3-16
 
@@ -67,6 +69,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** «база» (P4-01): `create` и `update` сами сохраняют в localStorage и возвращают новую запись. Если в браузере кончилось место, «база» бросает ошибку «Не хватает места…» — её нужно донести до пользователя (статус `failed` и текст ошибки в слайсе), а не проглотить.
 - **Файлы:** `src/entities/user/model/usersSlice.ts`, `src/entities/skill/model/skillsSlice.ts`, `api/` обеих сущностей
+- **Статус на 07.11.2026:** In Progress, исполнитель: `pwkdmc`. Для интеграции: P4-03 (In Progress).
 - **Issue:** [#55](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/55)
 - **Зависит от:** P4-03, P4-01
 
@@ -86,14 +89,14 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 Вход стоит здесь, а не в регистрации: без него нельзя проверить лайки, избранное и шапку вошедшего в фазе 5.
 
-### P4-08 · Защита закрытых страниц 🟢
+### P4-08 · Защита закрытых страниц ✅ 🟢
 > **Что нужно сделать:** закрыть страницы от гостей: гость, открывший `/profile` или `/favorites`, попадает на вход.
 > После входа его возвращаем туда, куда он шёл, а не на главную.
 > Вошедший пользователь открывает эти страницы как обычно.
 
-- **Уже готово:** `RequireAuth` уже обёрнут вокруг `/profile` и `/favorites` в роутере — остаётся логика внутри; вошёл ли — `selectIsAuth` из `@/entities/session` (P4-05), сессия переживает перезагрузку. Куда возвращать после входа — сохранить адрес в `state` перехода на `ROUTES.LOGIN` (его прочитает P4-09).
+- **Уже готово:** `RequireAuth` защищает `/profile/*` и `/favorites` через `selectIsAuth` из `@/entities/session`. Гостя отправляет на `ROUTES.LOGIN` с `replace` и полным `state.from` (включая query и hash); вошедшего пропускает, восстановленная сессия сохраняет доступ. Возврат после успешного входа подключается в P4-09. Добавлены 10 тестов, включая выход на закрытой странице и историю переходов.
 - **Файлы:** `src/app/router/RequireAuth.tsx`
-- **Issue:** [#57](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/57)
+- **Issue:** [#57](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/57) · PR [#149](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/149)
 - **Зависит от:** P4-05
 
 ### P4-09 · Вход 🟡
@@ -102,10 +105,12 @@ P4-01 делаем первой — остальные задачи фазы ч�
 > Не совпало — общая ошибка «Email или пароль введён неверно», как в макете, без подсказки, что именно не так.
 
 - **Уже готово:** «база» (P4-01) и `getUsers()` из `@/entities/user`; после P4-03 — селекторы пользователя по email и по id; сессию создаёт `dispatch(startSession(user.id))` из `@/entities/session` (P4-05) — сразу и в store, и в localStorage.
+- **Готовая зависимость P4-08:** guard уже передаёт исходный `Location` в `location.state.from`; после успешного входа возвращаем туда с сохранением query/hash, без исходного адреса — в каталог. Для интеграции остаются P4-03 и P3-11; очередь Todo не требует заранее закрывать все зависимости.
 - **Здесь же — «текущий пользователь»:** селектор `selectCurrentUser` в `entities/user/model/selectors.ts` + тест: по `userId` из сессии находит пользователя и отдаёт `PublicUser`, гостю — `null`.
   Через `createSelector`, чтобы без входа и выхода он возвращал тот же объект и компоненты не перерисовывались. Сессию читает через общий тип `RootState`, без импорта из `entities/session` — так же, как заготовка `selectFavoriteIds`.
   С этой задачи «кто вошёл» во всём проекте берём только из него — им пользуются шапка (P5-09), лайки (P5-07), избранное (P5-08), обмены (P7-03) и профиль (P7-06).
 - **Файлы:** `src/features/auth-by-email/` + тесты
+- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P4-03 (In Progress), P3-11 (Todo).
 - **Issue:** [#58](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/58)
 - **Где в макете:** ошибка 1:2473
 - **Зависит от:** P4-03, P4-05, P3-11, P2-16, P4-08
