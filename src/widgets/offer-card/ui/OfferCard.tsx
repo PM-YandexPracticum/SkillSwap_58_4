@@ -3,24 +3,32 @@ import { Link } from 'react-router-dom'
 
 import { selectCategoryBySubcategoryId, selectSubcategoryById } from '@/entities/category'
 import { selectCityById } from '@/entities/city'
+import { selectHasProposed, ExchangeStatusBadge } from '@/entities/exchange'
 import { selectSkills } from '@/entities/skill'
 import { UserCard, type PublicUser } from '@/entities/user'
+import { selectSession } from '@/entities/session'
 import { FavoriteButton } from '@/features/favorite-toggle'
 import { getSkillRoute } from '@/shared/config'
 import { useAppSelector } from '@/shared/lib/store'
 
+
 import styles from './OfferCard.module.css'
 
 export interface OfferCardProps {
-  /** Автор предложения без пароля; справочники виджет читает из store */
   user: PublicUser
 }
 
-/**
- * UserCard с сердечком, счётчиком и ссылкой на навык автора. Статус обмена подключит P7-04.
- * @see Figma: каталог (1:2861), карточка Ивана (1:2877)
- */
 export function OfferCard({ user }: OfferCardProps) {
+
+  const session = useAppSelector(selectSession);
+  const currentUserId = session?.userId;
+
+
+  const hasProposed = useAppSelector((state) =>
+    currentUserId ? selectHasProposed(state, user.id) : false
+  );
+
+
   const city = useAppSelector((state) => selectCityById(state, user.cityId))
   const skills = useAppSelector(selectSkills)
   const skill = skills.find((item) => item.id === user.teachSkillId)
@@ -46,9 +54,13 @@ export function OfferCard({ user }: OfferCardProps) {
       learnSubcategories={learnSubcategories}
       topAction={<FavoriteButton userId={user.id} likesCount={user.likesCount} />}
       bottomAction={
-        <Link className={styles.details} to={getSkillRoute(user.teachSkillId)}>
-          Подробнее
-        </Link>
+        hasProposed ? (
+          <ExchangeStatusBadge />
+        ) : (
+          <Link className={styles.details} to={getSkillRoute(user.teachSkillId)}>
+            Подробнее
+          </Link>
+        )
       }
     />
   )

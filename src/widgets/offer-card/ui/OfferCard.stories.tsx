@@ -1,21 +1,22 @@
 import { configureStore } from '@reduxjs/toolkit'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Provider } from 'react-redux'
-import { MemoryRouter } from 'react-router-dom'
 
 import { categoriesReducer, type Category } from '@/entities/category'
 import { citiesReducer } from '@/entities/city'
+import { exchangesReducer } from '@/entities/exchange'
+import { sessionReducer } from '@/entities/session'
 import { skillsReducer } from '@/entities/skill'
 import { createSkill } from '@/entities/skill/testing'
 import { createUser } from '@/entities/user/testing'
-import { ROUTER_FUTURE } from '@/shared/config'
-
+import { MemoryRouter } from 'react-router-dom'
 import { OfferCard } from './OfferCard'
 
 const author = createUser({
   avatarUrl: '/images/avatars/u01.jpg',
   learnSubcategoryIds: ['time-management', 'yoga', 'english', 'photography'],
 })
+
 const categories: Category[] = [
   {
     id: 'business',
@@ -53,6 +54,7 @@ const meta = {
   tags: ['autodocs'],
   args: { user: author },
   parameters: {
+    layout: 'centered',
     design: {
       type: 'figma',
       url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2877',
@@ -66,8 +68,15 @@ const meta = {
   },
   decorators: [
     (Story, { args }) => {
+      // ВНИМАНИЕ: Роутер мы не добавляем, он уже есть в глобальном preview.tsx
       const store = configureStore({
-        reducer: { cities: citiesReducer, categories: categoriesReducer, skills: skillsReducer },
+        reducer: {
+          cities: citiesReducer,
+          categories: categoriesReducer,
+          skills: skillsReducer,
+          session: sessionReducer,
+          exchanges: exchangesReducer,
+        },
         preloadedState: {
           cities: {
             items: [{ id: args.user.cityId, name: 'Санкт-Петербург' }],
@@ -86,11 +95,20 @@ const meta = {
             status: 'succeeded' as const,
             error: null,
           },
+          session: {
+            session: { userId: 'current-user-id', token: 'mock-token' },
+          },
+          exchanges: {
+            items: [],
+            status: 'idle' as const,
+            error: null,
+            pendingRequests: 0,
+          },
         },
       })
-      return (
+        return (
         <Provider store={store}>
-          <MemoryRouter future={ROUTER_FUTURE}>
+          <MemoryRouter>
             <div style={{ width: 324 }}>
               <Story />
             </div>
@@ -102,7 +120,6 @@ const meta = {
 } satisfies Meta<typeof OfferCard>
 
 export default meta
-
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
@@ -111,3 +128,53 @@ export const NoPhoto: Story = { args: { user: createUser({ ...author, avatarUrl:
 export const LongName: Story = {
   args: { user: createUser({ ...author, name: 'Александра-Екатерина', likesCount: 12345 }) },
 }
+
+
+export const WithProposedExchange: Story = {
+  decorators: [
+    (Story, { args }) => {
+      const store = configureStore({
+        reducer: {
+          cities: citiesReducer,
+          categories: categoriesReducer,
+          skills: skillsReducer,
+          session: sessionReducer,
+          exchanges: exchangesReducer,
+        },
+        preloadedState: {
+          cities: { items: [{ id: args.user.cityId, name: 'Санкт-Петербург' }], status: 'succeeded' as const },
+          categories: { items: categories, status: 'succeeded' as const },
+          skills: {
+            items: [createSkill({ id: args.user.teachSkillId, title: 'Игра на барабанах', categoryId: 'creativity', subcategoryId: 'photography' })],
+            status: 'succeeded' as const,
+            error: null,
+          },
+          session: {
+            session: { userId: 'current-user-id', token: 'mock-token' }
+          },
+          exchanges: {
+            items: [
+              {
+                id: 'exchange-1',
+                fromUserId: 'current-user-id', // <--- ID текущего пользователя (из сессии)
+                toUserId: args.user.id,        // <--- ID автора карточки
+                skillId: 'skill-1',
+                createdAt: new Date().toISOString(),
+              }
+            ],
+            status: 'succeeded' as const,
+            error: null,
+            pendingRequests: 0,
+          },
+        },
+      })
+      return (
+        <Provider store={store}>
+          <div style={{ width: 324 }}>
+            <Story />
+          </div>
+        </Provider>
+      )
+    },
+  ],
+};

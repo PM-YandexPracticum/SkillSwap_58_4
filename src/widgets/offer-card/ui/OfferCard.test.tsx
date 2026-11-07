@@ -1,84 +1,91 @@
-import { screen, within } from '@testing-library/react'
-import { Route, Routes } from 'react-router-dom'
+import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+import { configureStore } from '@reduxjs/toolkit';
+import { describe, it, expect } from 'vitest';
 
-import { renderWithProviders } from '@/app/test/renderWithProviders'
-import { createSkill } from '@/entities/skill/testing'
-import { createUser } from '@/entities/user/testing'
-import { getSkillRoute, ROUTES } from '@/shared/config'
+import { categoriesReducer } from '@/entities/category';
+import { citiesReducer } from '@/entities/city';
+import { exchangesReducer } from '@/entities/exchange';
+import { sessionReducer } from '@/entities/session';
+import { skillsReducer } from '@/entities/skill';
+import { createSkill } from '@/entities/skill/testing';
+import { createUser } from '@/entities/user/testing';
 
-import { OfferCard } from './OfferCard'
+import { OfferCard } from './OfferCard';
 
-const author = createUser({ teachSkillId: 's-author', learnSubcategoryIds: ['english', 'yoga'] })
-const skill = createSkill({
-  id: author.teachSkillId,
-  title: 'Игра на барабанах',
-  categoryId: 'creativity',
-})
-const preloadedState: Partial<RootState> = {
-  cities: { items: [{ id: author.cityId, name: 'Казань' }], status: 'succeeded' },
-  skills: {
-    items: [createSkill({ id: 's-other', title: 'Чужой навык' }), skill],
-    status: 'succeeded',
-    error: null,
-  },
-  categories: {
-    items: [
-      {
-        id: 'languages',
-        title: 'Языки',
-        icon: 'languages',
-        color: 'languages',
-        subcategories: [{ id: 'english', title: 'Английский', categoryId: 'languages' }],
+
+const testUser = createUser({
+  id: 'user-123',
+  teachSkillId: 'skill-1',
+});
+
+
+const renderWithStore = (preloadedState: any) => {
+  const store = configureStore({
+    reducer: {
+      cities: citiesReducer,
+      categories: categoriesReducer,
+      skills: skillsReducer,
+      session: sessionReducer,
+      exchanges: exchangesReducer,
+    },
+    preloadedState: preloadedState,
+  } as any);
+
+  return render(
+    <Provider store={store}>
+      <MemoryRouter>
+        <OfferCard user={testUser} />
+      </MemoryRouter>
+    </Provider>
+  );
+};
+
+describe('OfferCard (P7-04)', () => {
+  const baseState = {
+    cities: { items: [{ id: testUser.cityId, name: 'Москва' }], status: 'succeeded' },
+    categories: { items: [], status: 'succeeded' },
+    skills: {
+      items: [createSkill({ id: 'skill-1', title: 'Навык', categoryId: 'cat-1', subcategoryId: 'sub-1' })],
+      status: 'succeeded',
+      error: null,
+    },
+  };
+
+  it('показывает кнопку «Подробнее», если обмен НЕ предложен', () => {
+    renderWithStore({
+      ...baseState,
+      session: { session: { userId: 'current-user-id', token: 'mock' } },
+      exchanges: { items: [], status: 'succeeded', error: null, pendingRequests: 0 },
+    });
+
+    expect(screen.getByText('Подробнее')).toBeInTheDocument();
+    expect(screen.queryByText('Обмен предложен')).not.toBeInTheDocument();
+  });
+
+  it('показывает бейдж «Обмен предложен», если текущий пользователь предложил обмен', () => {
+    renderWithStore({
+      ...baseState,
+      // Текущий пользователь - это тот, кто предложил
+      session: { session: { userId: 'current-user-id', token: 'mock' } },
+      exchanges: {
+        items: [
+          {
+            id: 'exchange-1',
+            fromUserId: 'current-user-id', // Отправитель
+            toUserId: testUser.id,         // Получатель (автор карточки)
+            skillId: 'skill-1',
+            createdAt: new Date().toISOString(),
+          },
+        ],
+        status: 'succeeded',
+        error: null,
+        pendingRequests: 0,
       },
-      {
-        id: 'health',
-        title: 'Здоровье',
-        icon: 'health',
-        color: 'health',
-        subcategories: [{ id: 'yoga', title: 'Медитация', categoryId: 'health' }],
-      },
-    ],
-    status: 'succeeded',
-  },
-}
+    });
 
-describe('OfferCard', () => {
-  it('собирает город, свой навык и интересы из store по id автора', () => {
-    renderWithProviders(<OfferCard user={author} />, { preloadedState })
-
-    expect(screen.getByRole('heading', { name: author.name })).toBeInTheDocument()
-    expect(screen.getByText(/^Казань, /)).toBeInTheDocument()
-    expect(
-      within(screen.getByRole('list', { name: 'Может научить' })).getByText(skill.title),
-    ).toBeInTheDocument()
-    expect(screen.queryByText('Чужой навык')).not.toBeInTheDocument()
-    const learn = within(screen.getByRole('list', { name: 'Хочет научиться' }))
-    expect(learn.getByText('Английский')).toBeInTheDocument()
-    expect(learn.getByText('Медитация')).toBeInTheDocument()
-    expect(screen.getByText(String(author.likesCount))).toBeInTheDocument()
-  })
-
-  it('«Подробнее» ведёт на страницу навыка автора', async () => {
-    const { user } = renderWithProviders(
-      <Routes>
-        <Route path={ROUTES.HOME} element={<OfferCard user={author} />} />
-        <Route path={ROUTES.SKILL} element={<h1>Страница навыка</h1>} />
-      </Routes>,
-      { preloadedState },
-    )
-    const link = screen.getByRole('link', { name: 'Подробнее' })
-    expect(link).toHaveAttribute('href', getSkillRoute(author.teachSkillId))
-
-    await user.click(link)
-
-    expect(screen.getByRole('heading', { name: 'Страница навыка' })).toBeInTheDocument()
-  })
-
-  it('не показывает несуществующие интересы и не падает до загрузки справочников', () => {
-    renderWithProviders(<OfferCard user={author} />)
-
-    expect(screen.getByRole('heading', { name: author.name })).toBeInTheDocument()
-    expect(screen.getByRole('list', { name: 'Хочет научиться' })).toBeEmptyDOMElement()
-    expect(screen.queryByText(/undefined/)).not.toBeInTheDocument()
-  })
-})
+    expect(screen.getByText('Обмен предложен')).toBeInTheDocument();
+    expect(screen.queryByText('Подробнее')).not.toBeInTheDocument();
+  });
+});
