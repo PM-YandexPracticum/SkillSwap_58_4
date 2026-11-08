@@ -6,5 +6,12 @@
  */
 export function shuffle<T>(_items: readonly T[], _random: () => number = Math.random): T[] {
   // TODO: реализовать без мутации входного массива + unit-тест
-  throw new Error('Not implemented: shuffle')
+  const copyOfArray = [..._items]
+
+  for (let i = copyOfArray.length - 1; i > 0; i--) {
+    const j = Math.floor(_random() * (i + 1))
+    ;[copyOfArray[i], copyOfArray[j]] = [copyOfArray[j], copyOfArray[i]]
+  }
+
+  return copyOfArray
 }
