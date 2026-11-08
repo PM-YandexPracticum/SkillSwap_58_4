@@ -1,1 +1,1 @@
-export { SkillDetails } from './ui/SkillDetails'
+export { SkillDetails, type SkillDetailsProps } from './ui/SkillDetails'
