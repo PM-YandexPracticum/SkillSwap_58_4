@@ -11,7 +11,7 @@
 
 ## Что внутри
 
-- [`categories-menu/`](categories-menu/README.md) — «Все навыки»: статичный список категорий (`CategoriesList`) и выпадающее меню в шапке (`CategoriesMenu`)
+- [`categories-menu/`](categories-menu/README.md) — «Все навыки»: общий CategoriesList и панель CategoriesMenu для слота Header и страницы `/skills` (P3-06)
 - [`filters-panel/`](filters-panel/README.md) — Левая колонка «Фильтры» в каталоге и избранном
 - [`footer/`](footer/README.md) — Подвал: рабочие ссылки «О проекте» и «Все навыки», остальные («Контакты», «Блог», политики) — заглушки
 - [`header/`](header/README.md) — Шапка сайта: логотип, навигация, поиск, тема, уведомления, вход / меню пользователя

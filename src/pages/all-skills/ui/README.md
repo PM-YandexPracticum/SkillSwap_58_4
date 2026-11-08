@@ -1,14 +1,10 @@
 # src/pages/all-skills/ui
 
-> **SkillSwap** — платформа обмена навыками (только фронтенд: React + TypeScript + Redux Toolkit).
-> Архитектура — Feature-Sliced Design, подробности в [docs/architecture/fsd.md](../../../../docs/architecture/fsd.md).
-
-## Зачем эта папка
-
-Сегмент **ui** слайса `all-skills` — React-компоненты. Получают данные пропсами или из store через селекторы.
-
-**Текущее состояние:** страница пока выводит заголовок и «Страница в разработке». Меню и список категорий — P3-06. Описания ниже задают целевую ответственность файлов.
-
 ## Что внутри
 
-- `AllSkillsPage.tsx` — Страница «Все навыки» (`/skills`) — сюда ведёт ссылка из футера. Шапка, подвал и список категорий с подкатегориями (CategoriesList из widgets/categories-menu). Полностью статичная: ничего не кликается
+- `AllSkillsPage.tsx` — единственная основная область страницы с общим CategoriesMenu. `h1` «Все навыки» скрыт визуально: в Figma нет видимого заголовка, скринридер получает название страницы.
+- `AllSkillsPage.module.css` — отступ 20 px сверху и 60 px перед Footer; скрытие h1 без удаления из дерева доступности.
+- `AllSkillsPage.test.tsx` — основная область, h1 и шесть категорий; Header/Footer не дублируются.
+
+[Макет — 1:3165](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-3165).
+Открытие меню, Esc, Tab и переход из Footer проверяются интеграционно в `src/app/layouts/MainLayout.test.tsx`.

@@ -1,0 +1,143 @@
+/* stylelint-disable selector-pseudo-class-no-unknown -- CSS Modules :global targets react-datepicker classes within .popup. */
+.root {
+  position: relative;
+  min-width: 0;
+}
+
+.popup {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: calc(100% + var(--space-4));
+  inset-inline-start: 0;
+  display: grid;
+  justify-items: center;
+  width: calc(var(--space-100) * 2 + var(--space-80));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-s);
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+}
+
+.header,
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-8);
+}
+
+.header {
+  gap: 0;
+}
+
+.selector {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.selector select {
+  appearance: none;
+  field-sizing: content;
+  height: var(--space-40);
+  padding: var(--space-8) var(--space-32) var(--space-8) var(--space-16);
+  border: 0;
+  border-radius: var(--space-4);
+  background: var(--color-bg-secondary);
+  font: inherit;
+  font-size: var(--font-size-base);
+  line-height: var(--space-24);
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.selector select:hover {
+  background: var(--color-hover);
+}
+
+.selector select:focus-visible,
+.popup :global(.react-datepicker__day):focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: -2px;
+}
+
+.selector svg {
+  position: absolute;
+  inset-inline-end: var(--space-8);
+  width: var(--space-24);
+  height: var(--space-24);
+  pointer-events: none;
+}
+
+.actions {
+  width: 100%;
+  padding: 0 var(--space-16) var(--space-16);
+}
+
+.actions button {
+  flex: 1;
+  height: var(--space-48);
+  padding-block: 0;
+  padding-inline: var(--space-24);
+}
+
+.popup :global(.react-datepicker) {
+  border: 0;
+  padding-block: calc(var(--space-16) - 1px); /* Рамка входит в размер 280 × 360 из Figma. */
+  background: var(--color-bg-secondary);
+  font-family: var(--font-main);
+  font-size: var(--font-size-xs);
+  color: var(--color-text);
+}
+
+.popup :global(.react-datepicker__header) {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.popup :global(.react-datepicker__month) {
+  margin: 0;
+}
+
+.popup :global(.react-datepicker__day-names) {
+  margin-bottom: 0;
+}
+
+.popup :global(.react-datepicker__day-name),
+.popup :global(.react-datepicker__day) {
+  width: var(--space-32);
+  margin: 0;
+  line-height: var(--space-32);
+  color: var(--color-text);
+}
+
+.popup :global(.react-datepicker__day-name) {
+  color: color-mix(in srgb, var(--color-accent-strong) 80%, var(--color-text));
+  text-transform: capitalize;
+}
+
+.popup :global(.react-datepicker__day) {
+  border-radius: var(--radius-l);
+  font-weight: var(--font-weight-regular);
+}
+
+.popup :global(.react-datepicker__day--outside-month),
+.popup :global(.react-datepicker__day--disabled) {
+  color: var(--color-neutral);
+}
+
+.popup :global(.react-datepicker__day--keyboard-selected) {
+  background: var(--color-accent-soft);
+}
+
+.popup :global(.react-datepicker__day--selected) {
+  background: var(--color-accent);
+  color: var(--color-text);
+}
+
+.popup :global(.react-datepicker__day:not(.react-datepicker__day--disabled):hover) {
+  border-radius: var(--radius-l);
+  background: var(--color-hover);
+}
