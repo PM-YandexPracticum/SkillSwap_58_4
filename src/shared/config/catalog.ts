@@ -14,4 +14,6 @@ export const CATALOG = {
   CARD_LEARN_TAGS: 2,
   /** Сколько городов в фильтре видно до «Все города» */
   CITIES_VISIBLE: 5,
+  /** Сколько карточек видно в карусели «Похожие предложения» на странице навыка */
+  SIMILAR_OFFERS_VISIBLE: 4,
 } as const

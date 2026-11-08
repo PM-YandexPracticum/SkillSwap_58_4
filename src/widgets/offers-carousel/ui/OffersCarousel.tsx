@@ -1,5 +1,10 @@
-import type { ReactNode } from 'react'
+import { Fragment, useId, type ReactNode } from 'react'
+
 import type { PublicUser } from '@/entities/user'
+import { CATALOG } from '@/shared/config'
+import { Carousel } from '@/shared/ui/Carousel'
+
+import styles from './OffersCarousel.module.css'
 
 export interface OffersCarouselProps {
   /** Похожие предложения: пользователи с навыками той же подкатегории */
@@ -13,9 +18,24 @@ export interface OffersCarouselProps {
 
 /**
  * Блок «Похожие предложения» на странице навыка: заголовок + shared/ui/Carousel на 4 карточки.
- * @see Figma: «Страница навыка» (1:2764)
+ * Если похожих предложений нет, блок не показывается.
+ * @see Figma: «Страница навыка» (1:2764), карусель — 1:2812
  */
-export function OffersCarousel(_props: OffersCarouselProps) {
-  // TODO: <Carousel visibleCount={4} ariaLabel="Похожие предложения">{users.map(renderItem)}</Carousel>
-  return null
+export function OffersCarousel({ users, renderItem }: OffersCarouselProps) {
+  const titleId = useId()
+
+  if (users.length === 0) return null
+
+  return (
+    <section aria-labelledby={titleId}>
+      <h2 className={styles.title} id={titleId}>
+        Похожие предложения
+      </h2>
+      <Carousel slidesToShow={CATALOG.SIMILAR_OFFERS_VISIBLE}>
+        {users.map((user) => (
+          <Fragment key={user.id}>{renderItem(user)}</Fragment>
+        ))}
+      </Carousel>
+    </section>
+  )
 }

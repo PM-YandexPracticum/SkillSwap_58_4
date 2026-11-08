@@ -9,4 +9,5 @@
 
 ## Что внутри
 
-- `OffersCarousel.tsx` — Блок «Похожие предложения» на странице навыка: заголовок + shared/ui/Carousel на 4 карточки
+- `OffersCarousel.tsx` — Блок «Похожие предложения» на странице навыка: заголовок + shared/ui/Carousel на 4 карточки; карточку отрисовывает `renderItem` (страница передаёт `OfferCard`), без предложений блок скрыт
+- `OffersCarousel.stories.tsx`, `OffersCarousel.test.tsx` — stories и тесты

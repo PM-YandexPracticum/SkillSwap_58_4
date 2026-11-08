@@ -1,0 +1,6 @@
+.title {
+  margin-bottom: var(--space-32);
+  font-family: var(--font-title);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+}
