@@ -6,6 +6,8 @@ import { Checkbox } from '@/shared/ui/Checkbox'
 import { useState } from 'react'
 import styles from './SkillsFilter.module.css'
 
+const CATEGORIES_VISIBLE = 6; // Локальная константа
+
 export interface SkillsFilterProps {
   /** Дополнительный CSS-класс */
   className?: string
@@ -41,6 +43,9 @@ export function SkillsFilter({ className, categories }: SkillsFilterProps) {
     )
   }
 
+  const visibleCategories = showAll ? categories : categories.slice(0, CATEGORIES_VISIBLE);
+  const hasMore = categories.length > CATEGORIES_VISIBLE;
+
   return (
     <div className={[styles.container, className].filter(Boolean).join(' ')}>
       <h3 className={styles.title}>Навыки</h3>
@@ -60,9 +65,9 @@ export function SkillsFilter({ className, categories }: SkillsFilterProps) {
               <div className={styles.categoryHeader}>
                 <Checkbox
                   label={category.title}
-                  checked={isCategoryChecked || hasSelectedSub}
-                  indeterminate={!isCategoryChecked && hasSelectedSub}
-                  onChange={() => toggleCategory(category.id)}
+                  checked={isCategoryChecked}
+                  indeterminate={isIndeterminate}
+                  onChange={() => toggleCategory(subcategoryIds)} // Передаем только ID подкатегорий
                   className={styles.skillItem}
                 />
                 <button
@@ -92,10 +97,16 @@ export function SkillsFilter({ className, categories }: SkillsFilterProps) {
         })}
       </div>
 
-      {/* В макете эта кнопка внизу */}
-      <button type="button" className={styles.showAllButton}>
-        Все категории <ChevronDownIcon className={styles.smallIcon} />
-      </button>
+      {hasMore && (
+        <button
+          type="button"
+          className={styles.showAllButton}
+          onClick={() => setShowAll(!showAll)}
+          aria-expanded={showAll}
+        >
+          {showAll ? 'Свернуть' : 'Все категории'} <ChevronDownIcon className={styles.smallIcon} />
+        </button>
+      )}
     </div>
   )
 }

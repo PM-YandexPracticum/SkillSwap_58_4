@@ -1,19 +1,16 @@
 import { ModeFilter, SkillsFilter, GenderFilter, CityFilter, ResetFiltersButton } from '@/features/catalog-filter';
 import type { Category } from '@/entities/category';
-import type { City } from '@/entities/city';
 import styles from './FiltersPanel.module.css';
 
 export interface FiltersPanelProps {
   className?: string;
   categories?: Category[];
-  cities?: City[];
   filtersCount?: number;
 }
 
 export function FiltersPanel({
   className,
   categories = [],
-  cities = [],
   filtersCount = 0 //
 }: FiltersPanelProps) {
 
@@ -32,7 +29,7 @@ export function FiltersPanel({
         <ModeFilter />
         <SkillsFilter categories={categories} />
         <GenderFilter />
-        <CityFilter cities={cities} />
+        <CityFilter />
       </div>
 
     </aside>
