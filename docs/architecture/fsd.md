@@ -3,6 +3,8 @@
 Макет: [Figma — SkillSwap (Red.1)](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-)
 Методология: [feature-sliced.design](https://feature-sliced.design/ru/)
 
+**Снимок реализации на 08.11.2026:** документ описывает архитектуру и целевое поведение MVP. Уже готовы лейауты, шапка/подвал, карточки, UI уведомлений, ядро фильтров и поиск, API сессии/обменов/уведомлений, справочники и защита закрытых страниц. Страницы и часть действий ещё заготовки: актуальные статусы и границы — в [отчёте](../tasks/report.md) и README модулей. Карта «макет → код» ниже указывает место будущей реализации, а не гарантирует готовность экрана.
+
 ## 1. Слои
 
 ```
@@ -33,8 +35,7 @@ app → pages → widgets → features → entities → shared
 - Внутри своего слайса — относительные импорты (`./model`, `../ui/UserCard`).
 
 Эти правила проверяет `npm run lint` (правило `no-restricted-imports` в `eslint.config.js`, задача P1-12):
-нарушение — ошибка с подсказкой, как сделать правильно. Единственное исключение — тесты (`*.test.ts(x)`)
-могут импортировать `@/app/test`, где лежит `renderWithProviders`.
+нарушение — ошибка с подсказкой, как сделать правильно. Тесты (`*.test.ts(x)`) могут импортировать `@/app/test`, где лежит `renderWithProviders`. Фабрики `@/entities/*/testing` разрешены только в тестах и stories; в код приложения они не попадают.
 
 ## 2. Структура слайса
 
@@ -123,10 +124,10 @@ entities/user/
 | Лента с догрузкой | `shared/lib/hooks/useInfiniteScroll` + `Loader` (номеров страниц нет) |
 | Календарь | `shared/ui/DatePicker` — обёртка над установленной `react-datepicker` (P2-12 в работе) |
 | Карусель | `shared/ui/Carousel` — готовая обёртка над `embla-carousel-react` (P2-13) |
-| Категория ↔ подкатегория | `entities/category/ui/CategorySubcategorySelect`: категория ограничивает подкатегории, подкатегория сама подставляет категорию |
+| Категория ↔ подкатегория | пока заготовки `entities/category/ui/CategorySubcategorySelect` и `lib/linkCategories` (P3-12/P6-03); целевое поведение: категория ограничивает подкатегории, подкатегория сама подставляет категорию |
 | Плашка | `shared/ui/Tag` с `onRemove` — выбранные фильтры и «Хочу научиться» на шаге 2 |
 
-`widgets/offers-carousel` и `widgets/offers-section` получают карточку через `renderItem` — страница передаёт туда `OfferCard`,
+Готовый `widgets/offers-section` получает карточку через `renderItem`; такой же контракт предусмотрен в пока не реализованном `widgets/offers-carousel` (P7-02) — страница передаёт туда `OfferCard`,
 потому что виджет не может импортировать другой виджет.
 
 ## 5. Карта «макет → код»

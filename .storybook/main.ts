@@ -1,9 +1,6 @@
 /**
- * Конфигурация Storybook — КАРКАС. Пакеты ещё не установлены (задача P1-11 в docs/tasks/phases/phase-01-preparation.md).
- * После установки добавить тип: `import type { StorybookConfig } from '@storybook/react-vite'`
- * и написать `const config: StorybookConfig = { ... }`.
- *
- * Где лежат stories: рядом с компонентом, `Component.stories.tsx`.
+ * Конфигурация Storybook с React/Vite и аддонами a11y, docs и designs (P1-11).
+ * Stories лежат рядом с компонентами: Component.stories.tsx.
  * Правила — docs/rules/storybook.md.
  */
 

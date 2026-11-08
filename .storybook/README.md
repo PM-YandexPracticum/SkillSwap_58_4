@@ -5,9 +5,11 @@
 
 ## Зачем эта папка
 
-Конфигурация Storybook — витрины компонентов. Сейчас каркас: пакеты ставит задача P1-07. Правила — `docs/rules/storybook.md`.
+Конфигурация работающего Storybook (P1-11, PR #99). Правила — [docs/rules/storybook.md](../docs/rules/storybook.md).
 
 ## Что внутри
 
-- `main.ts` — Конфигурация Storybook — КАРКАС. Пакеты ещё не установлены (задача P1-11 в docs/tasks/phases/phase-01-preparation.md). После установки добавить тип: `import type { StorybookConfig } from '@storybook/react-vite'` и написать `const config: StorybookConfig = { ... }`
-- `preview.ts` — Общие настройки всех stories — КАРКАС (пакеты ставит задача P1-11). После установки: `import type { Preview } from '@storybook/react'` и `const preview: Preview = { ... }`
+- `main.ts` — типизированная конфигурация `@storybook/react-vite`: stories из `src/**/*.stories.*`, аддоны a11y, docs и designs.
+- `preview.tsx` — общие стили `global.css`, центрирование холста и настройки controls. Тема остаётся в P9-03.
+
+`npm run storybook` запускает каталог на порту 6006; `npm run build-storybook` собирает его. Незавершённые компоненты пока имеют stories-заготовки; состояние самого компонента смотри в его README и плане.

@@ -1,10 +1,15 @@
+import { configureStore } from '@reduxjs/toolkit'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import { expect, userEvent, within } from 'storybook/test'
 
+import { searchReducer } from '@/features/skill-search'
 import { ROUTER_FUTURE } from '@/shared/config'
 
 import { Header } from './Header'
+
+const makeStore = () => configureStore({ reducer: { search: searchReducer } })
 
 const FIGMA_GUEST =
   'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2861'
@@ -30,9 +35,11 @@ const meta: Meta<typeof Header> = {
   args: { categoriesMenu, notifications },
   decorators: [
     (Story) => (
-      <MemoryRouter future={ROUTER_FUTURE}>
-        <Story />
-      </MemoryRouter>
+      <Provider store={makeStore()}>
+        <MemoryRouter future={ROUTER_FUTURE}>
+          <Story />
+        </MemoryRouter>
+      </Provider>
     ),
   ],
 }
