@@ -17,13 +17,13 @@ export interface MultiSelectProps {
   onChange: (value: string[]) => void
   error?: string
   disabled?: boolean
-  /** Первоначально раскрытый список, например для Storybook. */
+  /** Первоначально раскрытый список, например для Storybook. Игнорируется при disabled или пустых options. */
   defaultOpen?: boolean
 }
 
 /**
  * Выпадающий список с чекбоксами — множественный выбор. В закрытом виде выглядит как Select,
- * показывает выбранные значения (лишние — «+N»).
+ * показывает выбранные значения (лишние — «+N»). При удалении активного пункта возвращает фокус на поле.
  * @see Figma: «Регистрация 2 шаг» — «Категория…» (1:1673) и «Подкатегория навыка, которому хотите научиться» (1:1717)
  */
 export function MultiSelect({
@@ -42,6 +42,7 @@ export function MultiSelect({
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
+  const focusedOptionRef = useRef<HTMLInputElement | null>(null)
   const focusOnOpen = useRef<'first' | 'last' | null>(null)
   const id = useId()
   const triggerId = `${id}-trigger`
@@ -54,12 +55,24 @@ export function MultiSelect({
   const firstLabel = selectedLabels[0]
   const remainingCount = selectedLabels.length - 1
 
-  const close = useCallback(() => setIsOpen(false), [])
+  const close = useCallback(() => {
+    focusedOptionRef.current = null
+    setIsOpen(false)
+  }, [])
   useClickOutside(rootRef, close, expanded)
 
   useEffect(() => {
     if (!canOpen) setIsOpen(false)
   }, [canOpen])
+
+  useEffect(() => {
+    const focusedOption = focusedOptionRef.current
+    if (!focusedOption || focusedOption.isConnected) return
+
+    // Удалённый пункт не получает blur: браузер переводит фокус на body.
+    focusedOptionRef.current = null
+    if (document.activeElement === document.body) triggerRef.current?.focus()
+  }, [options, expanded])
 
   useEffect(() => {
     const target = focusOnOpen.current
@@ -107,6 +120,9 @@ export function MultiSelect({
       ref={rootRef}
       className={[fieldStyles.root, expanded && fieldStyles.rootOpen].filter(Boolean).join(' ')}
       onKeyDown={handleKeyDown}
+      onFocusCapture={(event) => {
+        focusedOptionRef.current = event.target instanceof HTMLInputElement ? event.target : null
+      }}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) close()
       }}

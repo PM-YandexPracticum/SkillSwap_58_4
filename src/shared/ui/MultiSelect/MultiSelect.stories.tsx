@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useEffect, useState } from 'react'
-import { fn, userEvent, within } from 'storybook/test'
+import { fn, within } from 'storybook/test'
 
 import { MultiSelect } from './MultiSelect'
 
@@ -83,9 +83,11 @@ export const Error: Story = { args: { error: 'Выберите хотя бы о�
 
 export const Disabled: Story = { args: { disabled: true } }
 
+export const EmptyOptions: Story = { args: { options: [] } }
+
 export const Hover: Story = {
-  play: async ({ canvasElement }) => {
-    await userEvent.hover(within(canvasElement).getByRole('button'))
+  parameters: {
+    docs: { description: { story: 'Наведите курсор на поле, чтобы увидеть CSS-состояние hover.' } },
   },
 }
 
