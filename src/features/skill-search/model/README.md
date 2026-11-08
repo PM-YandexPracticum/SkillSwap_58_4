@@ -9,4 +9,5 @@
 
 ## Что внутри
 
-- `searchSlice.ts` — Строка поиска в шапке («Искать навык»). В store попадает только применённый запрос — по Enter или клику на лупу; набираемый текст живёт в самом поле. TODO: queryApplied(query), queryCleared
+- `searchSlice.ts` - Строка поиска в шапке («Искать навык»). В store попадает только применённый запрос - по Enter или клику на лупу; набираемый текст живёт в самом поле. Редьюсеры `queryApplied(query)` (триминг, пустая строка = сброс) и `queryCleared()`; селекторы `selectSearchQuery` и `selectIsSearchActive`.
+- `searchSlice.test.ts` - тесты редьюсеров и селекторов.

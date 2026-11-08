@@ -6,6 +6,9 @@ import { ROUTER_FUTURE } from '@/shared/config'
 
 import { Header } from './Header'
 
+import { createAppStore } from '@/app/store'
+import { Provider } from 'react-redux'
+
 const FIGMA_GUEST =
   'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2861'
 const FIGMA_LOGGED_IN =
@@ -30,9 +33,11 @@ const meta: Meta<typeof Header> = {
   args: { categoriesMenu, notifications },
   decorators: [
     (Story) => (
-      <MemoryRouter future={ROUTER_FUTURE}>
-        <Story />
-      </MemoryRouter>
+      <Provider store={createAppStore()}>
+        <MemoryRouter future={ROUTER_FUTURE}>
+          <Story />
+        </MemoryRouter>
+      </Provider>
     ),
   ],
 }

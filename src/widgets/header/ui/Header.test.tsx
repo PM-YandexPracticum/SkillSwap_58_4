@@ -6,11 +6,16 @@ import { ROUTER_FUTURE, ROUTES } from '@/shared/config'
 
 import { Header, type HeaderProps } from './Header'
 
+import { createAppStore } from '@/app/store'
+import { Provider } from 'react-redux'
+
 const renderHeader = (props: HeaderProps = {}, route: string = ROUTES.HOME) =>
   render(
-    <MemoryRouter future={ROUTER_FUTURE} initialEntries={[route]}>
-      <Header {...props} />
-    </MemoryRouter>,
+    <Provider store={createAppStore()}>
+      <MemoryRouter future={ROUTER_FUTURE} initialEntries={[route]}>
+        <Header {...props} />
+      </MemoryRouter>
+    </Provider>,
   )
 
 describe('Header', () => {
@@ -35,12 +40,14 @@ describe('Header', () => {
     ])('%s ведёт на нужную страницу', async (label, path, title) => {
       const user = userEvent.setup()
       render(
-        <MemoryRouter future={ROUTER_FUTURE} initialEntries={[ROUTES.HOME]}>
-          <Routes>
-            <Route path={ROUTES.HOME} element={<Header />} />
-            <Route path={path} element={<h1>{title}</h1>} />
-          </Routes>
-        </MemoryRouter>,
+        <Provider store={createAppStore()}>
+          <MemoryRouter future={ROUTER_FUTURE} initialEntries={[ROUTES.HOME]}>
+            <Routes>
+              <Route path={ROUTES.HOME} element={<Header />} />
+              <Route path={path} element={<h1>{title}</h1>} />
+            </Routes>
+          </MemoryRouter>
+        </Provider>,
       )
 
       await user.click(screen.getByRole('button', { name: label }))
