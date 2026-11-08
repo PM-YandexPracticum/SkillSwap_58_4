@@ -1,14 +1,19 @@
-# src/shared/ui/MultiSelect
+# MultiSelect
 
-> **SkillSwap** — платформа обмена навыками (только фронтенд: React + TypeScript + Redux Toolkit).
-> Архитектура — Feature-Sliced Design, подробности в [docs/architecture/fsd.md](../../../../docs/architecture/fsd.md).
+Управляемый выпадающий список с чекбоксами. Состояние выбора передаётся через `value`, изменения через `onChange`. В закрытом поле видно первое выбранное название и счётчик остальных `+N`.
 
-## Зачем эта папка
+Enter и пробел открывают поле. Стрелки перемещают фокус по пунктам, пробел и Enter переключают чекбокс. Escape закрывает список и возвращает фокус на поле. Клик снаружи и переход фокуса за пределы списка также закрывают его.
 
-UI-компонент **MultiSelect**. Выпадающий список с чекбоксами — множественный выбор. В закрытом виде выглядит как Select, показывает выбранные значения (лишние — «+N»).
+## Использование
 
-## Что внутри
+```tsx
+import { MultiSelect } from '@/shared/ui/MultiSelect'
 
-- `MultiSelect.stories.tsx` — Stories компонента MultiSelect — пока заглушка; Storybook установлен. При реализации добавить типы: `const meta: Meta<typeof MultiSelect>` и `export const Default: StoryObj<typeof meta>`
-- `MultiSelect.tsx` — Выпадающий список с чекбоксами — множественный выбор. В закрытом виде выглядит как Select, показывает выбранные значения (лишние — «+N»)
-- `index.ts` — публичный API — импортировать снаружи только отсюда
+<MultiSelect
+  label="Категории"
+  placeholder="Выберите категорию"
+  options={options}
+  value={selectedIds}
+  onChange={setSelectedIds}
+/>
+```

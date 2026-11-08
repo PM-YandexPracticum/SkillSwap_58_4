@@ -1,0 +1,28 @@
+.selection {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.count {
+  flex-shrink: 0;
+}
+
+.panel::after {
+  z-index: 2;
+}
+
+ul.options {
+  max-height: calc(var(--space-32) * 8 + var(--space-4) * 7 + var(--space-16));
+}
+
+.option {
+  padding: var(--space-4) var(--space-12);
+  overflow-wrap: anywhere;
+}
+
+.option:hover,
+.option:focus-within {
+  background-color: var(--color-bg);
+}
