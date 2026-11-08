@@ -7,8 +7,7 @@ import type { ReactElement } from 'react'
 import { searchReducer, selectSearchQuery } from '../model/searchSlice'
 import { SearchInput } from './SearchInput'
 
-import { createAppStore } from '@/app/store'
-const makeStore = () => createAppStore()
+const makeStore = () => configureStore({ reducer: { search: searchReducer } })
 
 /** Рендер с реальным store, чтобы проверить и колбэки, и запись в searchSlice */
 const render = (ui: ReactElement) => {

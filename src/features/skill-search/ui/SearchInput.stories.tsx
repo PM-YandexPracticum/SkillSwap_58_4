@@ -1,10 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { configureStore } from '@reduxjs/toolkit'
 import { expect, userEvent, within } from 'storybook/test'
 import { Provider } from 'react-redux'
 
+import { searchReducer } from '../model/searchSlice'
 import { SearchInput } from './SearchInput'
 
-import { createAppStore } from '@/app/store'
+const makeStore = () => configureStore({ reducer: { search: searchReducer } })
 
 const FIGMA = 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2819'
 
@@ -19,7 +21,7 @@ const meta: Meta<typeof SearchInput> = {
   parameters: { design: { type: 'figma', url: FIGMA } },
   decorators: [
     (Story) => (
-      <Provider store={createAppStore()}>
+      <Provider store={makeStore()}>
         <div style={{ width: 'min(648px, 80vw)' }}>
           <Story />
         </div>

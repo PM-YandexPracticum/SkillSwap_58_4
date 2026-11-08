@@ -6,12 +6,38 @@ import { ROUTER_FUTURE, ROUTES } from '@/shared/config'
 
 import { Header, type HeaderProps } from './Header'
 
-import { createAppStore } from '@/app/store'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { categoriesReducer } from '@/entities/category'
+import { citiesReducer } from '@/entities/city'
+import { exchangesReducer } from '@/entities/exchange'
+import { notificationsReducer } from '@/entities/notification'
+import { sessionReducer } from '@/entities/session'
+import { skillsReducer } from '@/entities/skill'
+import { usersReducer } from '@/entities/user'
+import { catalogFilterReducer } from '@/features/catalog-filter'
+import { registerReducer } from '@/features/register'
+import { searchReducer } from '@/features/skill-search'
 import { Provider } from 'react-redux'
+
+const makeStore = () =>
+  configureStore({
+    reducer: combineReducers({
+    categories: categoriesReducer,
+    cities: citiesReducer,
+    exchanges: exchangesReducer,
+    notifications: notificationsReducer,
+    session: sessionReducer,
+    skills: skillsReducer,
+    users: usersReducer,
+    catalogFilter: catalogFilterReducer,
+    register: registerReducer,
+    search: searchReducer,
+  }),
+})
 
 const renderHeader = (props: HeaderProps = {}, route: string = ROUTES.HOME) =>
   render(
-    <Provider store={createAppStore()}>
+    <Provider store={makeStore()}>
       <MemoryRouter future={ROUTER_FUTURE} initialEntries={[route]}>
         <Header {...props} />
       </MemoryRouter>
@@ -40,7 +66,7 @@ describe('Header', () => {
     ])('%s ведёт на нужную страницу', async (label, path, title) => {
       const user = userEvent.setup()
       render(
-        <Provider store={createAppStore()}>
+        <Provider store={makeStore()}>
           <MemoryRouter future={ROUTER_FUTURE} initialEntries={[ROUTES.HOME]}>
             <Routes>
               <Route path={ROUTES.HOME} element={<Header />} />
