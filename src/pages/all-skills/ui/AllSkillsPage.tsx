@@ -1,14 +1,22 @@
+import { useId } from 'react'
+
+import { CategoriesMenu } from '@/widgets/categories-menu'
+import styles from './AllSkillsPage.module.css'
+
 /**
- * Страница «Все навыки» (`/skills`) — сюда ведёт ссылка из футера. Шапка, подвал и список категорий
- * с подкатегориями (CategoriesList из widgets/categories-menu). Полностью статичная: ничего не кликается.
- * @see Figma: «Страница - все навыки All Skills» (1:3165)
+ * Страница `/skills`: общий список категорий; Header и Footer предоставляет MainLayout.
+ * Заголовок доступен скринридеру и скрыт визуально, поскольку в макете его нет.
+ * @see Figma: «Все навыки» (1:3165)
  */
 export function AllSkillsPage() {
-  // TODO: собрать страницу из виджетов
+  const titleId = useId()
+
   return (
-    <main>
-      <h1>AllSkillsPage</h1>
-      <p>Страница в разработке</p>
+    <main className={styles.page} aria-labelledby={titleId}>
+      <h1 className={styles.title} id={titleId}>
+        Все навыки
+      </h1>
+      <CategoriesMenu />
     </main>
   )
 }

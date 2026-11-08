@@ -4,6 +4,8 @@ import { Route, Routes } from 'react-router-dom'
 import { renderWithProviders } from '@/app/test/renderWithProviders'
 import { selectSearchQuery } from '@/features/skill-search'
 import { ROUTES } from '@/shared/config'
+import { AllSkillsPage } from '@/pages/all-skills'
+import categories from '../../../public/db/categories.json'
 import { AuthLayout } from './AuthLayout'
 import { MainLayout } from './MainLayout'
 
@@ -19,6 +21,7 @@ function renderLayout() {
             </main>
           }
         />
+        <Route path={ROUTES.ALL_SKILLS} element={<AllSkillsPage />} />
       </Route>
       <Route element={<AuthLayout />}>
         <Route
@@ -31,6 +34,7 @@ function renderLayout() {
         />
       </Route>
     </Routes>,
+    { preloadedState: { categories: { items: categories, status: 'succeeded' } } },
   )
 }
 
@@ -69,5 +73,50 @@ describe('MainLayout', () => {
     expect(selectSearchQuery(store.getState())).toBe('')
     expect(screen.getByRole('textbox', { name: 'Искать навык' })).toHaveValue('')
     expect(screen.getByRole('textbox', { name: 'Искать навык' })).toHaveFocus()
+  })
+})
+
+describe('MainLayout — Все навыки', () => {
+  it('открывает один список готовым Dropdown и закрывает по Esc и клику мимо', async () => {
+    const { user } = renderLayout()
+    const trigger = screen.getByRole('button', { name: 'Все навыки' })
+
+    await user.click(trigger)
+    expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(6)
+    await user.click(screen.getByText('Управление командой'))
+    expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('heading', { level: 2 })).not.toBeInTheDocument()
+
+    await user.click(trigger)
+    await user.click(screen.getByRole('heading', { name: 'Каталог' }))
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it('открывает список с клавиатуры и не добавляет статичные пункты в Tab-порядок', async () => {
+    const { user } = renderLayout()
+    const trigger = screen.getByRole('button', { name: 'Все навыки' })
+    trigger.focus()
+    await user.keyboard('{Enter}')
+    expect(screen.getByRole('heading', { name: 'Бизнес и карьера' })).toBeInTheDocument()
+    await user.tab()
+    expect(screen.getByRole('region', { name: 'Все навыки' })).toHaveFocus()
+    await user.tab()
+    expect(screen.getByRole('button', { name: 'Искать' })).toHaveFocus()
+    await user.tab({ shift: true })
+    await user.keyboard('{Escape}')
+    expect(trigger).toHaveFocus()
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it('ссылка из подвала ведёт на страницу с теми же шестью категориями', async () => {
+    const { user } = renderLayout()
+    await user.click(screen.getByRole('link', { name: 'Все навыки' }))
+
+    expect(screen.getByRole('main', { name: 'Все навыки' })).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(6)
+    expect(screen.getByRole('banner')).toBeInTheDocument()
+    expect(screen.getByRole('contentinfo')).toBeInTheDocument()
   })
 })

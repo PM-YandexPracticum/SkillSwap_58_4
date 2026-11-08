@@ -15,12 +15,20 @@ const initialState: CategoriesState = {
 }
 
 /**
- * Справочник категорий. Загружается один раз при старте приложения.
- * Данные приходят из "базы" через entities/category/api.
+ * Справочник категорий. Загружается по запросу страницы/меню и доступен через селекторы.
+ * Данные приходят из «базы» через entities/category/api.
  */
-export const fetchCategories = createAsyncThunk<Category[]>('categories/fetch', async () =>
-  getCategories(),
-)
+export const fetchCategories = createAsyncThunk<
+  Category[],
+  void,
+  { state: { categories: CategoriesState } }
+>('categories/fetch', async () => getCategories(), {
+  // Общий справочник для страницы и меню: один запрос, включая повтор эффектов StrictMode.
+  condition: (_, { getState }) => {
+    const { status } = getState().categories
+    return status === 'idle' || status === 'failed'
+  },
+})
 
 export const categoriesSlice = createSlice({
   name: 'categories',
