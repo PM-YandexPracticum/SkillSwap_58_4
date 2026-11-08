@@ -8,7 +8,7 @@
 > Для этого всё приложение оборачиваем в ErrorBoundary. В новом ТЗ страницы 500 нет, но наставник просил её на созвоне — оставляем.
 
 - **Файлы:** `src/app/providers/ErrorBoundary.tsx` (новый), `src/app/App.tsx`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-16 (Todo), P4-04 (Backlog).
+- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-16 (In Progress), P4-04 (Backlog).
 - **Issue:** [#80](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/80)
 - **Зависит от:** P3-16, P4-04 (обе меняют `App.tsx`)
 
@@ -18,7 +18,7 @@
 > Удобно сделать одной общей задачей: каждый присылает свой маленький PR.
 
 - **Файлы:** `src/pages/about/config/team.ts`, `public/images/team/` (новая)
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-16 (Todo).
+- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-16 (In Progress).
 - **Issue:** [#81](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/81)
 - **Зависит от:** P3-16
 
