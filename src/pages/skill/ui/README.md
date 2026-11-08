@@ -9,4 +9,5 @@
 
 ## Что внутри
 
-- `SkillPage.tsx` — Страница навыка `/skill/:id`: SkillDetails + OffersCarousel
+- `SkillPage.tsx` — Страница навыка `/skill/:id`: SkillDetails + OffersCarousel + окно «Вы предложили обмен»; данные пока из `entities/*/api`
+- `SkillPage.stories.tsx`, `SkillPage.test.tsx` — stories и тесты
