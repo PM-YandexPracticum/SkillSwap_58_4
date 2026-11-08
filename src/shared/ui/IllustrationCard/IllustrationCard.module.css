@@ -1,0 +1,48 @@
+/* Карточка 556 × 688 по макету: белая, текст шириной 436 (поля по 60 px) */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-48);
+  min-height: 688px;
+  padding: var(--space-60);
+  border-radius: var(--radius-s);
+  background-color: var(--color-bg-secondary);
+  text-align: center;
+}
+
+.image {
+  display: block;
+  width: 300px;
+  height: 300px;
+}
+
+.caption {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  max-width: 436px;
+}
+
+/* H2 в макете: Jost Medium 24 / 28, −1,1 % */
+.title {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+  line-height: 28px;
+  letter-spacing: -0.011em;
+  color: var(--color-text);
+}
+
+/* Body: Roboto 16 / 24, 2 % */
+.text {
+  margin: 0;
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+}

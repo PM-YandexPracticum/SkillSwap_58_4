@@ -1,1 +1,1 @@
-export { OAuthButtons } from './ui/OAuthButtons'
+export { OAuthButtons, type OAuthButtonsProps } from './ui/OAuthButtons'

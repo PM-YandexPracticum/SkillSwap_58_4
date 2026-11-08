@@ -1,0 +1,68 @@
+/* По макету (1:2400): кнопки 436 × 48 с зазором 16, до «или» — 24 */
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  width: 100%;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-12);
+  width: 100%;
+
+  /* 48 px вместе с рамкой */
+  padding: calc(var(--space-12) - 1px) var(--space-24);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-s);
+  background-color: var(--color-bg-secondary);
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  transition: border-color 0.2s;
+}
+
+.button:hover {
+  border-color: var(--color-accent-strong);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
+}
+
+.icon {
+  width: var(--space-24);
+  height: var(--space-24);
+}
+
+/* «или» с линиями слева и справа (Body: Roboto 16 / 24, 2 %) */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-disabled);
+}

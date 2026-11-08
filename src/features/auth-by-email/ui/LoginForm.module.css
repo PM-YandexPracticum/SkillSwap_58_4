@@ -1,0 +1,49 @@
+/* По макету (1:2400): поля с зазором 16, до кнопки — 32, кнопка → ссылка — 12; ширина 436 */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-32);
+  width: 100%;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+/* Общая ошибка входа под паролем (1:2473): 12 px, красная */
+.error {
+  margin: 0;
+  font-family: var(--font-main);
+  font-size: var(--font-size-xs);
+  line-height: 16px;
+  color: var(--color-error);
+}
+
+/* Кнопка во всю ширину: в колонке flex растягивает её сам */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+/* Text link: Roboto 16 / 24, 2 %, #508826 */
+.link {
+  align-self: center;
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: var(--color-accent-strong);
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
+}

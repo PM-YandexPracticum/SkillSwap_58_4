@@ -17,6 +17,7 @@ UI-кит: базовые компоненты из макета без бизн
 - [`Dropdown/`](Dropdown/README.md) — компонент `Dropdown`
 - [`FileDropzone/`](FileDropzone/README.md) — компонент `FileDropzone`
 - [`IconButton/`](IconButton/README.md) — компонент `IconButton`
+- [`IllustrationCard/`](IllustrationCard/README.md) — карточка с иллюстрацией, заголовком и текстом (правая половина входа и регистрации)
 - [`Input/`](Input/README.md) — компонент `Input`
 - [`Loader/`](Loader/README.md) — компонент `Loader`
 - [`Logo/`](Logo/README.md) — компонент `Logo`
