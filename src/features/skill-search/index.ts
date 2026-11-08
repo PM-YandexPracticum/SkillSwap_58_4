@@ -1,2 +1,8 @@
 export { SearchInput } from './ui/SearchInput'
-export { searchReducer, selectSearchQuery } from './model/searchSlice'
+export {
+  searchReducer,
+  selectSearchQuery,
+  selectIsSearchActive,
+  queryApplied,
+  queryCleared,
+} from './model/searchSlice'
