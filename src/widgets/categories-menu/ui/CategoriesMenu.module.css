@@ -1,0 +1,7 @@
+.panel {
+  width: var(--container-width-narrow);
+  max-width: calc(100vw - var(--space-36) * 2);
+  padding: var(--space-60);
+  border-radius: var(--radius-s);
+  background-color: var(--color-bg-secondary);
+}
