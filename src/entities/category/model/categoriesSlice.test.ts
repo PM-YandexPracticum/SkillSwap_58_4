@@ -45,3 +45,16 @@ describe('categoriesSlice', () => {
     expect(store.getState().categories.items).toEqual(categoriesFromDb)
   })
 })
+
+describe('fetchCategories — общий запрос справочника', () => {
+  it('не запускает второй запрос, пока справочник уже загружается или готов', async () => {
+    const store = configureStore({ reducer: { categories: categoriesReducer } })
+    store.dispatch(fetchCategories.pending('first'))
+    const whileLoading = await store.dispatch(fetchCategories())
+    expect(whileLoading.meta).toHaveProperty('condition', true)
+
+    store.dispatch(fetchCategories.fulfilled(categoriesFromDb, 'first'))
+    const whileReady = await store.dispatch(fetchCategories())
+    expect(whileReady.meta).toHaveProperty('condition', true)
+  })
+})
