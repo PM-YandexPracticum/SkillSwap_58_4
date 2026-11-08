@@ -66,15 +66,14 @@ const list = [createUser({ id: 'u1' }), createUser({ id: 'u2', likesCount: 99 })
 ```tsx
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '@/app/test/renderWithProviders'
+import { SearchInput, selectSearchQuery } from '@/features/skill-search'
 
-const { store, user } = renderWithProviders(<FavoriteButton userId="u02" />, {
-  preloadedState: { session: { session: { userId: 'u01', token: 'test' } } }, // вошедший
-  route: '/favorites',                    // адрес страницы, по умолчанию '/'
-  // path: ROUTES.SKILL, route: getSkillRoute('s01')  — если компонент читает useParams
-})
-await user.click(screen.getByRole('button', { name: 'Добавить в избранное' }))
+const { store, user } = renderWithProviders(<SearchInput />)
+await user.type(screen.getByRole('textbox', { name: 'Искать навык' }), '  Барабаны  {Enter}')
+expect(selectSearchQuery(store.getState())).toBe('Барабаны')
 ```
 
+- Для начальных данных передай `preloadedState`; адрес задаётся через `route` (по умолчанию `/`), шаблон маршрута для `useParams` — через `path`.
 - Роутер внутри уже настроен с флагами `ROUTER_FUTURE` из `@/shared/config`. Если оборачиваешь компонент в `MemoryRouter` сам (тест или story в `shared`), передай `future={ROUTER_FUTURE}` — иначе в консоли предупреждения React Router.
 - На каждый вызов создаётся **новый store** (`createAppStore()` из `app/store`), поэтому тесты не влияют друг на друга.
 - `user` — уже настроенный `userEvent`, кликать и печатать через него, а не через `fireEvent`.

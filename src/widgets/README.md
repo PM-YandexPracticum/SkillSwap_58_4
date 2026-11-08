@@ -7,6 +7,8 @@
 
 Слой **widgets** — крупные самостоятельные блоки интерфейса, собранные из features и entities (шапка, панель фильтров, карточка предложения).
 
+Готовы Header, Footer, OfferCard, OffersSection и NotificationsPanel; остальные виджеты пока заготовки. Подключение сессии, данных каталога и действий остаётся в задачах фаз 4–7.
+
 ## Что внутри
 
 - [`categories-menu/`](categories-menu/README.md) — «Все навыки»: статичный список категорий (`CategoriesList`) и выпадающее меню в шапке (`CategoriesMenu`)
