@@ -8,7 +8,7 @@
 > Для этого всё приложение оборачиваем в ErrorBoundary. В новом ТЗ страницы 500 нет, но наставник просил её на созвоне — оставляем.
 
 - **Файлы:** `src/app/providers/ErrorBoundary.tsx` (новый), `src/app/App.tsx`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-16 (Todo), P4-04 (Backlog).
+- **Статус на 08.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-16 (In Progress), P4-04 (Todo).
 - **Issue:** [#80](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/80)
 - **Зависит от:** P3-16, P4-04 (обе меняют `App.tsx`)
 
@@ -17,8 +17,9 @@
 > Это традиция наставника — в портфолио видно, кто делал эту версию проекта.
 > Удобно сделать одной общей задачей: каждый присылает свой маленький PR.
 
-- **Файлы:** `src/pages/about/config/team.ts`, `public/images/team/` (новая)
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-16 (Todo).
+- **Файлы:** `src/pages/about/config/team.ts`, `public/images/team/`
+- **Уже принято:** вклад Дианы (`pwkdmc`) в [PR #159](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/159): запись в TEAM и фото `/images/team/t0.jpg`. Общая задача остаётся открытой для остальных участников; список на странице подключает P3-16. В личных мини-PR ссылаемся на #81 без `Closes #81`; всю карточку закрываем после добавления команды.
+- **Статус на 08.11.2026:** Review, исполнитель: `pwkdmc`. Для интеграции: P3-16 (In Progress).
 - **Issue:** [#81](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/81)
 - **Зависит от:** P3-16
 
@@ -28,7 +29,7 @@
 > Проверить, что везде, где данные грузятся, виден Loader.
 
 - **Файлы:** `src/shared/ui/EmptyState/` (новый), места использования
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P5-05 (Backlog), P5-08 (Backlog).
+- **Статус на 08.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P5-05 (Backlog), P5-08 (Backlog).
 - **Issue:** [#82](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/82)
 - **Зависит от:** P5-05, P5-08
 
@@ -38,7 +39,7 @@
 > Найденное исправляем здесь или заводим мелкие задачи.
 
 - **Файлы:** весь `src/`
-- **Статус на 07.11.2026:** Backlog, исполнитель: `viceede`. Для интеграции: завершение фаз 5–7.
+- **Статус на 08.11.2026:** Backlog, исполнитель: `viceede`. Для интеграции: завершение фаз 5–7.
 - **Issue:** [#83](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/83)
 - **Зависит от:** фазы 5–7
 
@@ -50,7 +51,7 @@
 
 - **Уже готово:** Playwright, `playwright.config.ts` (тесты в `e2e/`, сам поднимает dev-сервер), команда `npm run e2e`. Перед первым запуском: `npx playwright install chromium`.
 - **Файлы:** `e2e/*.spec.ts` (новые), при необходимости `playwright.config.ts`
-- **Статус на 07.11.2026:** Backlog, исполнитель: `kirill-ai-dev`. Для интеграции: завершение фаз 5–7.
+- **Статус на 08.11.2026:** Backlog, исполнитель: `kirill-ai-dev`. Для интеграции: завершение фаз 5–7.
 - **Issue:** [#84](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/84)
 - **Зависит от:** фазы 5–7, P1-10
 
@@ -60,7 +61,7 @@
 > Список расхождений приложить к PR.
 
 - **Файлы:** весь `src/`, `README.md`
-- **Статус на 07.11.2026:** Backlog, исполнитель: `viceede`. Для интеграции: P8-04 (Backlog).
+- **Статус на 08.11.2026:** Backlog, исполнитель: `viceede`. Для интеграции: P8-04 (Backlog).
 - **Issue:** [#85](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/85)
 - **Зависит от:** P8-04
 
@@ -72,7 +73,7 @@
 
 - **Уже готово:** пакет покрытия и порог 70 % в `vitest.config.ts` (P1-10).
 - **Файлы:** весь `src/`, `vitest.config.ts`
-- **Статус на 07.11.2026:** Backlog, исполнитель: `kirill-ai-dev`. Для интеграции: P8-05 (Backlog), P8-06 (Backlog).
+- **Статус на 08.11.2026:** Backlog, исполнитель: `kirill-ai-dev`. Для интеграции: P8-05 (Backlog), P8-06 (Backlog).
 - **Issue:** [#86](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/86)
 - **Зависит от:** P8-05, P8-06, P1-10
 - **Готово, когда:** все пункты выше зелёные; отчёт (цифры Lighthouse и покрытия) приложен к PR.

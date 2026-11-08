@@ -7,7 +7,10 @@
 
 Сегмент **ui** слайса `skill-details` — React-компоненты. Получают данные пропсами или из store через селекторы.
 
+**Текущее состояние:** SkillDetails пока возвращает `null` (P3-09). UserProfileCard, SkillInfo и Carousel уже готовы, их нужно собрать; загрузка данных — P7-01. Описания ниже задают целевую ответственность файлов.
+
 ## Что внутри
 
 - `SkillDetails.tsx` — Верх страницы навыка: UserProfileCard автора + SkillInfo с галереей на Carousel. Данные приходят пропсами (собирает страница). Справа сверху: лайк (FavoriteButton — только вид), «поделиться» и «⋯» — заглушки; кнопка «Предложить обмен» в двух состояниях (`isExchangeProposed`)
 - `SkillDetails.stories.tsx`, `SkillDetails.test.tsx` — stories и тесты
+- 

@@ -1,0 +1,154 @@
+/* Размеры — по макету: шапка 1440 × 116, отступы 36 / 36 / 20 / 36, зазор между блоками 32 */
+.header {
+  --header-height: 116px; /* Figma: 1:2861 — desktop header */
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-32);
+  width: 100%;
+  height: var(--header-height);
+  padding: var(--space-36) var(--space-36) var(--space-20);
+  background-color: var(--color-bg);
+}
+
+/* «О проекте» и «Все навыки» — блок 222 × 24, зазор 24 */
+.nav {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-24);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--space-24);
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: var(--color-accent-strong);
+}
+
+.link:focus-visible,
+.iconLink:focus-visible,
+.user:focus-visible,
+.menuItem:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
+}
+
+.categories {
+  padding: 0;
+}
+
+.categories:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+}
+
+.categoriesRegion:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: -2px;
+}
+
+.icon {
+  width: var(--space-24);
+  height: var(--space-24);
+}
+
+.flipped {
+  transform: rotate(180deg);
+}
+
+/* Поле поиска растягивается на всё свободное место (в макете Fill 648) */
+.search {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-24);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+
+.bell {
+  position: relative;
+  display: flex;
+}
+
+/* Красная точка непрочитанных (1:1919): 12 × 12, слева 12 px в рамке иконки 24 × 24, то есть у правого края */
+.dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--space-12);
+  height: var(--space-12);
+  border-radius: var(--radius-l);
+  background-color: var(--color-notification);
+  pointer-events: none;
+}
+
+.iconLink {
+  display: flex;
+  width: var(--space-24);
+  height: var(--space-24);
+  color: var(--color-text);
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  line-height: var(--space-24);
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-20);
+  list-style: none;
+}
+
+.menuItem {
+  display: block;
+  width: 100%;
+  font-family: var(--font-main);
+  font-size: var(--font-size-base);
+  line-height: var(--space-24);
+  letter-spacing: 0.02em;
+  text-align: left;
+  color: var(--color-text);
+  transition: color 0.2s;
+}
+
+.menuItem:hover {
+  color: var(--color-accent-strong);
+}
+
+/* Центрируем панель под триггером; Dropdown удерживает её внутри окна. */
+.categoriesPopover {
+  left: calc(50% - var(--container-width-narrow) / 2);
+  border: 0;
+  max-height: calc(100dvh - var(--space-100) - var(--space-20));
+  overflow-y: auto;
+}

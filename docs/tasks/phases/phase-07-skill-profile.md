@@ -10,7 +10,7 @@
 
 - **Уже готово:** «Категория / Подкатегория» и город по id — `selectSubcategoryById`, `selectCategoryBySubcategoryId`, `selectCityById` (P4-02); блоки получают их строками (см. P3-02).
 - **Файлы:** `src/pages/skill/`, `src/widgets/skill-details/`
-- **Статус на 07.11.2026:** Todo, исполнитель: не назначен. Для интеграции: P3-09 (In Progress), P4-03 (In Progress).
+- **Статус на 08.11.2026:** Todo, исполнитель: не назначен. Для интеграции: P3-09 (In Progress), P4-03 (In Progress).
 - **Issue:** [#74](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/74)
 - **Зависит от:** P3-09, P4-03
 
@@ -20,7 +20,7 @@
 > Если похожих нет — блок не показываем.
 
 - **Файлы:** `src/entities/user/model/selectors.ts` + тест, `src/widgets/offers-carousel/`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P7-01 (Todo).
+- **Статус на 08.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P7-01 (Todo).
 - **Issue:** [#75](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/75)
 - **Зависит от:** P7-01
 
@@ -34,21 +34,22 @@
 - **Готовая зависимость P4-08:** закрытые маршруты защищены, исходный адрес сохраняется в `state.from`. Для интеграции P7-03 остаются P7-01 и P4-09.
 - **После зависимостей:** кто предлагает обмен — `selectCurrentUser` из `@/entities/user` (P4-09), гость — `null`.
 - **Файлы:** `src/features/exchange-propose/` + тесты на логику
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P7-01 (Todo), P4-09 (Backlog).
+- **Статус на 08.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P7-01 (Todo), P4-09 (Todo).
 - **Issue:** [#76](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/76)
 - **Где в макете:** окно 1:1977, после «Готово» 1:1919
 - **Зависит от:** P4-07, P7-01, P2-10, P4-08, P4-09, P2-18
 - **Готово, когда:** после перезагрузки кнопка остаётся «Обмен предложен», а уведомление — в колокольчике (ТЗ наставника).
 
-### P7-04 · «Обмен предложен» на карточке 🟢
+### P7-04 · «Обмен предложен» на карточке ✅ 🟢
 > **Что нужно сделать:** показать прямо в каталоге, кому текущий пользователь уже предложил обмен.
 > На карточке вместо «Подробнее» — серый бейдж «Обмен предложен» с иконкой часов.
 > Гость и остальные видят обычную карточку.
 
-- **Готовые зависимости:** загрузка — `fetchExchanges()`, проверка — `selectHasProposed(state, user.id)` из `@/entities/exchange`; данные сохраняются после перезагрузки. P3-08 и P4-07 готовы; P7-04 уже в In Progress у `alicevdr` на 07.11.2026.
+- **Готовые зависимости:** загрузка — `fetchExchanges()`, проверка — `selectHasProposed(state, user.id)` из `@/entities/exchange`; данные сохраняются после перезагрузки. P3-08 и P4-07 готовы; бейдж использует уже загруженные в store обмены, запрос на каждую карточку не выполняется.
+- **Результат:** OfferCard заменяет ссылку на статичный ExchangeStatusBadge только для исходящего обмена текущего пользователя этому автору. На ревью я восстановил исходные тесты и дополнил проверки смены сессии, направления обмена, сохранения и ошибок. Загрузку обменов подключает контейнер каталога в P5-04/P5-06.
 - **Файлы:** `src/widgets/offer-card/`, `src/entities/exchange/ui/ExchangeStatusBadge.tsx`
-- **Статус на 07.11.2026:** In Progress, исполнитель: `alicevdr`. Для интеграции: все прямые зависимости закрыты.
-- **Issue:** [#77](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/77)
+- **Статус на 08.11.2026:** завершена, влита в `develop`; исполнитель: `alicevdr`.
+- **Issue:** [#77](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/77) · PR [#155](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/155)
 - **Где в макете:** 1:2106
 - **Зависит от:** P4-07, P3-08
 
@@ -61,7 +62,7 @@
 - **Готовая зависимость P4-07:** `fetchNotifications`, `selectNotifications`, `selectHasUnread`, `markAllRead()` и `clearAllNotifications()` из `@/entities/notification`; чтение и очистка сами берут владельца из сессии. В P4-07 панель к Redux не подключается.
 - **Остаётся дождаться:** шапки вошедшего пользователя (P5-09); текущего пользователя определяет `selectCurrentUser` из P4-09. Подключение панели не начинается автоматически после её вёрстки.
 - **Файлы:** `src/widgets/notifications-panel/`, `src/features/notifications-read/`, `src/widgets/header/`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P5-09 (Backlog).
+- **Статус на 08.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P5-09 (Backlog).
 - **Issue:** [#78](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/78)
 - **Где в макете:** 1:2328, 1:2239, 1:2148
 - **Зависит от:** P4-07, P3-15, P5-09
@@ -74,7 +75,7 @@
 
 - **Уже готово:** для смены пароля — `PasswordInput` из P2-06 (передаём `hint` / `error`, правила задаёт схема формы); черновик `profile-edit/model/schema.ts` из шаблона — привести к `validation.md` и модели (`cityId`, пол «Не указан»); после P4-09 чьи данные — `selectCurrentUser`; правила полей — `@/shared/lib/validation` (P2-16), город — `cityField(cityIds)` с id из `selectCities` (P4-02); фото — `validateImageFile` и `fileToDataUrl` (P2-14).
 - **Файлы:** `src/features/profile-edit/`, `src/features/avatar-upload/`, `src/pages/profile/ui/ProfilePersonal.tsx`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-14 (Backlog), P4-06 (In Progress), P4-09 (Backlog), P6-04 (Backlog).
+- **Статус на 08.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P3-14 (Todo), P4-06 (Todo), P4-09 (Todo), P6-04 (Backlog).
 - **Issue:** [#79](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/79)
 - **Где в макете:** 1:2370
 - **Зависит от:** P3-14, P4-06, P2-16, P4-08, P4-09, P6-04 (там сделана загрузка аватара)

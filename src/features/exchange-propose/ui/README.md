@@ -7,6 +7,8 @@
 
 Сегмент **ui** слайса `exchange-propose` — React-компоненты. Получают данные пропсами или из store через селекторы.
 
+**Текущее состояние:** кнопка и окно пока возвращают `null`, сценарий `proposeExchange` бросает `Not implemented`. Подключение готового API P4-07 — P7-03. Описания ниже задают целевую ответственность файлов.
+
 ## Что внутри
 
 - `ProposeExchangeButton.stories.tsx`, `ProposeExchangeButton.test.tsx`, `ExchangeProposedModal.stories.tsx`, `ExchangeProposedModal.test.tsx`, `ExchangeProposedModal.module.css` — stories, тесты и стили

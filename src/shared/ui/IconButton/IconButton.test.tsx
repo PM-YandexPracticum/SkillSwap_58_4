@@ -18,4 +18,24 @@ describe('IconButton', () => {
 
     expect(screen.getByLabelText('Уведомления')).toBeInTheDocument()
   })
+
+  test('передаёт стандартные атрибуты доступности кнопки', () => {
+    render(
+      <IconButton
+        ariaLabel="Уведомления"
+        aria-expanded={true}
+        aria-controls="notifications-panel"
+        icon={<NotificationIcon />}
+      />,
+    )
+
+    expect(screen.getByRole('button', { name: 'Уведомления' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    )
+    expect(screen.getByRole('button', { name: 'Уведомления' })).toHaveAttribute(
+      'aria-controls',
+      'notifications-panel',
+    )
+  })
 })
