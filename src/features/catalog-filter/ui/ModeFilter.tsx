@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { RadioGroup } from '@/shared/ui/RadioGroup';
-import styles from './ModeFilter.module.css';
+import { RadioGroup } from '@/shared/ui/RadioGroup'
+import { useState } from 'react'
+import styles from './ModeFilter.module.css'
 
 export interface ModeFilterProps {
   /** Дополнительный CSS-класс */
-  className?: string;
+  className?: string
 }
 
 /**
@@ -12,13 +12,13 @@ export interface ModeFilterProps {
  */
 export function ModeFilter({ className }: ModeFilterProps) {
   // Локальный стейт для визуализации
-  const [mode, setMode] = useState('all');
+  const [mode, setMode] = useState('all')
 
   const options = [
     { value: 'all', label: 'Всё' },
     { value: 'learn', label: 'Хочу научиться' },
     { value: 'teach', label: 'Могу научить' },
-  ];
+  ]
 
   return (
     <RadioGroup
@@ -28,5 +28,5 @@ export function ModeFilter({ className }: ModeFilterProps) {
       onChange={setMode}
       className={[styles.modeFilter, className].filter(Boolean).join(' ')}
     />
-  );
+  )
 }

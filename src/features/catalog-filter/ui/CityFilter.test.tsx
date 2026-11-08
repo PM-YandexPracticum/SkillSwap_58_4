@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { CityFilter } from './CityFilter';
-import { describe, it, expect } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
+import { CityFilter } from './CityFilter'
 
 // Моки городов (передаем 6 городов, чтобы проверить работу кнопки)
 const mockCities = [
@@ -10,24 +10,24 @@ const mockCities = [
   { id: '4', name: 'Екатеринбург' },
   { id: '5', name: 'Казань' },
   { id: '6', name: 'Краснодар' },
-];
+]
 
 describe('CityFilter', () => {
   it('рендерит только первые 5 городов и скрывает остальные', () => {
-    render(<CityFilter cities={mockCities} />);
+    render(<CityFilter cities={mockCities} />)
 
-    expect(screen.getByText('Казань')).toBeInTheDocument();
-    expect(screen.queryByText('Краснодар')).not.toBeInTheDocument();
-  });
+    expect(screen.getByText('Казань')).toBeInTheDocument()
+    expect(screen.queryByText('Краснодар')).not.toBeInTheDocument()
+  })
 
   it('раскрывает полный список при клике на "Все города"', () => {
-    render(<CityFilter cities={mockCities} />);
+    render(<CityFilter cities={mockCities} />)
 
     // Находим кнопку и кликаем
-    const showAllButton = screen.getByText(/все города/i);
-    fireEvent.click(showAllButton);
+    const showAllButton = screen.getByText(/все города/i)
+    fireEvent.click(showAllButton)
 
-    expect(screen.getByText('Краснодар')).toBeInTheDocument();
-    expect(screen.getByText(/свернуть/i)).toBeInTheDocument();
-  });
-});
+    expect(screen.getByText('Краснодар')).toBeInTheDocument()
+    expect(screen.getByText(/свернуть/i)).toBeInTheDocument()
+  })
+})

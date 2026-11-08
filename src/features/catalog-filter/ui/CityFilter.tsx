@@ -1,34 +1,33 @@
-import { useState } from 'react';
-import { Checkbox } from '@/shared/ui/Checkbox';
-import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react';
-import ChevronUpIcon from '@/shared/assets/icons/chevron-up.svg?react';
-import type { City } from '@/entities/city';
-import styles from './CityFilter.module.css';
+import type { City } from '@/entities/city'
+import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react'
+import ChevronUpIcon from '@/shared/assets/icons/chevron-up.svg?react'
+import { Checkbox } from '@/shared/ui/Checkbox'
+import { useState } from 'react'
+import styles from './CityFilter.module.css'
 
-
-const CITIES_VISIBLE = 5;
+const CITIES_VISIBLE = 5
 
 export interface CityFilterProps {
-  className?: string;
-  cities: City[];
+  className?: string
+  cities: City[]
 }
 
 /**
  * Чекбоксы «Город» из справочника entities/city.
  */
 export function CityFilter({ className, cities }: CityFilterProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false)
 
-  const [selectedCities, setSelectedCities] = useState<string[]>([]);
+  const [selectedCities, setSelectedCities] = useState<string[]>([])
 
   const toggleCity = (id: string) => {
     setSelectedCities((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    )
+  }
 
-  const visibleCities = isExpanded ? cities : cities.slice(0, CITIES_VISIBLE);
-  const hasMore = cities.length > CITIES_VISIBLE;
+  const visibleCities = isExpanded ? cities : cities.slice(0, CITIES_VISIBLE)
+  const hasMore = cities.length > CITIES_VISIBLE
 
   return (
     <div className={[styles.container, className].filter(Boolean).join(' ')}>
@@ -41,7 +40,7 @@ export function CityFilter({ className, cities }: CityFilterProps) {
             label={city.name}
             checked={selectedCities.includes(city.id)}
             onChange={() => toggleCity(city.id)}
-            className={styles.cityItem} 
+            className={styles.cityItem}
           />
         ))}
       </div>
@@ -54,12 +53,16 @@ export function CityFilter({ className, cities }: CityFilterProps) {
           aria-expanded={isExpanded}
         >
           {isExpanded ? (
-            <>Свернуть <ChevronUpIcon className={styles.icon} /></>
+            <>
+              Свернуть <ChevronUpIcon className={styles.icon} />
+            </>
           ) : (
-            <>Все города <ChevronDownIcon className={styles.icon} /></>
+            <>
+              Все города <ChevronDownIcon className={styles.icon} />
+            </>
           )}
         </button>
       )}
     </div>
-  );
+  )
 }

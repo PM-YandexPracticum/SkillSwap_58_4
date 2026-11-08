@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { SkillsFilter } from './SkillsFilter';
-import type { Category } from '@/entities/category';
+import type { Category } from '@/entities/category'
+import type { Meta, StoryObj } from '@storybook/react-vite'
+import { SkillsFilter } from './SkillsFilter'
 
 // Моковые данные, имитирующие ответ от API или фабрики
 const mockCategories: Category[] = [
@@ -25,19 +25,19 @@ const mockCategories: Category[] = [
       { id: 'music', categoryId: 'creativity', title: 'Музыка и звук' },
     ],
   },
-];
+]
 
 const meta: Meta<typeof SkillsFilter> = {
   title: 'features/catalog-filter/SkillsFilter',
   component: SkillsFilter,
   tags: ['autodocs'],
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
     categories: mockCategories,
   },
-};
+}

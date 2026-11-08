@@ -1,16 +1,16 @@
-import { useState } from 'react';
-import { Checkbox } from '@/shared/ui/Checkbox';
-import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react';
-import ChevronUpIcon from '@/shared/assets/icons/chevron-up.svg?react';
-import type { Category } from '@/entities/category';
-import type { ID } from '@/shared/types';
-import styles from './SkillsFilter.module.css';
+import type { Category } from '@/entities/category'
+import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react'
+import ChevronUpIcon from '@/shared/assets/icons/chevron-up.svg?react'
+import type { ID } from '@/shared/types'
+import { Checkbox } from '@/shared/ui/Checkbox'
+import { useState } from 'react'
+import styles from './SkillsFilter.module.css'
 
 export interface SkillsFilterProps {
   /** Дополнительный CSS-класс */
-  className?: string;
+  className?: string
   /** Список категорий, который придет из API */
-  categories: Category[];
+  categories: Category[]
 }
 
 /**
@@ -18,28 +18,28 @@ export interface SkillsFilterProps {
  */
 export function SkillsFilter({ className, categories }: SkillsFilterProps) {
   // Храним ID раскрытых категорий
-  const [expandedIds, setExpandedIds] = useState<ID[]>([]);
+  const [expandedIds, setExpandedIds] = useState<ID[]>([])
 
-  const [selectedCategories, setSelectedCategories] = useState<ID[]>([]);
-  const [selectedSubcategories, setSelectedSubcategories] = useState<ID[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<ID[]>([])
+  const [selectedSubcategories, setSelectedSubcategories] = useState<ID[]>([])
 
   const toggleExpand = (id: ID) => {
     setExpandedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    )
+  }
 
   const toggleCategory = (id: ID) => {
     setSelectedCategories((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    )
+  }
 
   const toggleSubcategory = (id: ID) => {
     setSelectedSubcategories((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    )
+  }
 
   return (
     <div className={[styles.container, className].filter(Boolean).join(' ')}>
@@ -47,17 +47,16 @@ export function SkillsFilter({ className, categories }: SkillsFilterProps) {
 
       <div className={styles.list}>
         {categories.map((category) => {
-          const isExpanded = expandedIds.includes(category.id);
+          const isExpanded = expandedIds.includes(category.id)
 
           // Логика для "частичного выбора" (когда выбрана подкатегория, но не вся категория)
-          const isCategoryChecked = selectedCategories.includes(category.id);
+          const isCategoryChecked = selectedCategories.includes(category.id)
           const hasSelectedSub = category.subcategories.some((sub) =>
-            selectedSubcategories.includes(sub.id)
-          );
+            selectedSubcategories.includes(sub.id),
+          )
 
           return (
             <div key={category.id} className={styles.categoryGroup}>
-
               <div className={styles.categoryHeader}>
                 <Checkbox
                   label={category.title}
@@ -89,7 +88,7 @@ export function SkillsFilter({ className, categories }: SkillsFilterProps) {
                 </div>
               )}
             </div>
-          );
+          )
         })}
       </div>
 
@@ -98,5 +97,5 @@ export function SkillsFilter({ className, categories }: SkillsFilterProps) {
         Все категории <ChevronDownIcon className={styles.smallIcon} />
       </button>
     </div>
-  );
+  )
 }
