@@ -1,48 +1,15 @@
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { act, screen } from '@testing-library/react'
+import { Route, Routes } from 'react-router-dom'
 
-import { ROUTER_FUTURE, ROUTES } from '@/shared/config'
+import { renderWithProviders } from '@/app/test/renderWithProviders'
+import { setSort } from '@/features/catalog-filter'
+import { selectSearchQuery } from '@/features/skill-search'
+import { ROUTES } from '@/shared/config'
 
 import { Header, type HeaderProps } from './Header'
 
-import { combineReducers, configureStore } from '@reduxjs/toolkit'
-import { categoriesReducer } from '@/entities/category'
-import { citiesReducer } from '@/entities/city'
-import { exchangesReducer } from '@/entities/exchange'
-import { notificationsReducer } from '@/entities/notification'
-import { sessionReducer } from '@/entities/session'
-import { skillsReducer } from '@/entities/skill'
-import { usersReducer } from '@/entities/user'
-import { catalogFilterReducer } from '@/features/catalog-filter'
-import { registerReducer } from '@/features/register'
-import { searchReducer } from '@/features/skill-search'
-import { Provider } from 'react-redux'
-
-const makeStore = () =>
-  configureStore({
-    reducer: combineReducers({
-    categories: categoriesReducer,
-    cities: citiesReducer,
-    exchanges: exchangesReducer,
-    notifications: notificationsReducer,
-    session: sessionReducer,
-    skills: skillsReducer,
-    users: usersReducer,
-    catalogFilter: catalogFilterReducer,
-    register: registerReducer,
-    search: searchReducer,
-  }),
-})
-
 const renderHeader = (props: HeaderProps = {}, route: string = ROUTES.HOME) =>
-  render(
-    <Provider store={makeStore()}>
-      <MemoryRouter future={ROUTER_FUTURE} initialEntries={[route]}>
-        <Header {...props} />
-      </MemoryRouter>
-    </Provider>,
-  )
+  renderWithProviders(<Header {...props} />, { route })
 
 describe('Header', () => {
   describe('гость', () => {
@@ -64,16 +31,11 @@ describe('Header', () => {
       ['Войти', ROUTES.LOGIN, 'Вход'],
       ['Зарегистрироваться', ROUTES.REGISTER, 'Регистрация'],
     ])('%s ведёт на нужную страницу', async (label, path, title) => {
-      const user = userEvent.setup()
-      render(
-        <Provider store={makeStore()}>
-          <MemoryRouter future={ROUTER_FUTURE} initialEntries={[ROUTES.HOME]}>
-            <Routes>
-              <Route path={ROUTES.HOME} element={<Header />} />
-              <Route path={path} element={<h1>{title}</h1>} />
-            </Routes>
-          </MemoryRouter>
-        </Provider>,
+      const { user } = renderWithProviders(
+        <Routes>
+          <Route path={ROUTES.HOME} element={<Header />} />
+          <Route path={path} element={<h1>{title}</h1>} />
+        </Routes>,
       )
 
       await user.click(screen.getByRole('button', { name: label }))
@@ -88,9 +50,30 @@ describe('Header', () => {
       expect(screen.getByRole('button', { name: 'Сменить тему' })).toBeInTheDocument()
     })
 
+    it('применяет и очищает поиск через поле шапки', async () => {
+      const { user, store } = renderHeader()
+      await user.type(screen.getByRole('textbox', { name: 'Искать навык' }), '  Гитара  ')
+      expect(selectSearchQuery(store.getState())).toBe('')
+
+      await user.click(screen.getByRole('button', { name: 'Искать' }))
+      expect(selectSearchQuery(store.getState())).toBe('Гитара')
+
+      await user.click(screen.getByRole('button', { name: 'Очистить поиск' }))
+      expect(selectSearchQuery(store.getState())).toBe('')
+      expect(screen.getByRole('textbox', { name: 'Искать навык' })).toHaveFocus()
+    })
+
+    it('смена сортировки каталога не стирает черновик поиска', async () => {
+      const { store, user } = renderHeader()
+      await user.type(screen.getByRole('textbox', { name: 'Искать навык' }), 'Черновик')
+
+      act(() => store.dispatch(setSort('oldest')))
+
+      expect(screen.getByRole('textbox', { name: 'Искать навык' })).toHaveValue('Черновик')
+    })
+
     it('«Все навыки» открывает и закрывает слот categoriesMenu', async () => {
-      const user = userEvent.setup()
-      renderHeader({ categoriesMenu: <p>Меню навыков</p> })
+      const { user } = renderHeader({ categoriesMenu: <p>Меню навыков</p> })
 
       const trigger = screen.getByRole('button', { name: 'Все навыки' })
       expect(trigger).toHaveAttribute('aria-expanded', 'false')
@@ -126,8 +109,7 @@ describe('Header', () => {
     })
 
     it('объявляет состояние окна уведомлений', async () => {
-      const user = userEvent.setup()
-      renderHeader({ ...auth, notifications: <p>Список уведомлений</p> })
+      const { user } = renderHeader({ ...auth, notifications: <p>Список уведомлений</p> })
 
       const trigger = screen.getByRole('button', { name: 'Уведомления' })
       expect(trigger).toHaveAttribute('aria-expanded', 'false')
@@ -155,8 +137,7 @@ describe('Header', () => {
     })
 
     it('не открывает категории без переданного слота', async () => {
-      const user = userEvent.setup()
-      renderHeader()
+      const { user } = renderHeader()
 
       const trigger = screen.getByRole('button', { name: 'Все навыки' })
       await user.click(trigger)
@@ -174,8 +155,7 @@ describe('Header', () => {
     })
 
     it('колокольчик открывает слот notifications', async () => {
-      const user = userEvent.setup()
-      renderHeader({ ...auth, notifications: <p>Список уведомлений</p> })
+      const { user } = renderHeader({ ...auth, notifications: <p>Список уведомлений</p> })
 
       await user.click(screen.getByRole('button', { name: 'Уведомления' }))
 
@@ -183,9 +163,8 @@ describe('Header', () => {
     })
 
     it('меню пользователя: «Личный кабинет» — ссылка, «Выйти» вызывает onLogout', async () => {
-      const user = userEvent.setup()
       const onLogout = vi.fn()
-      renderHeader({ ...auth, onLogout })
+      const { user } = renderHeader({ ...auth, onLogout })
 
       const trigger = screen.getByRole('button', { name: 'Мария' })
       expect(trigger).not.toHaveAttribute('aria-controls')
@@ -204,8 +183,7 @@ describe('Header', () => {
     })
 
     it('одновременно открыто только одно меню', async () => {
-      const user = userEvent.setup()
-      renderHeader({
+      const { user } = renderHeader({
         ...auth,
         categoriesMenu: <p>Меню навыков</p>,
         notifications: <p>Список уведомлений</p>,
@@ -219,8 +197,7 @@ describe('Header', () => {
     })
 
     it('до меню пользователя можно дойти с клавиатуры', async () => {
-      const user = userEvent.setup()
-      renderHeader(auth)
+      const { user } = renderHeader(auth)
 
       const trigger = screen.getByRole('button', { name: 'Мария' })
       for (let i = 0; i < 20 && document.activeElement !== trigger; i += 1) {

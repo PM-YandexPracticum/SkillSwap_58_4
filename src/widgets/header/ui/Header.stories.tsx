@@ -1,39 +1,15 @@
+import { configureStore } from '@reduxjs/toolkit'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import { expect, userEvent, within } from 'storybook/test'
 
+import { searchReducer } from '@/features/skill-search'
 import { ROUTER_FUTURE } from '@/shared/config'
 
 import { Header } from './Header'
 
-import { combineReducers, configureStore } from '@reduxjs/toolkit'
-import { categoriesReducer } from '@/entities/category'
-import { citiesReducer } from '@/entities/city'
-import { exchangesReducer } from '@/entities/exchange'
-import { notificationsReducer } from '@/entities/notification'
-import { sessionReducer } from '@/entities/session'
-import { skillsReducer } from '@/entities/skill'
-import { usersReducer } from '@/entities/user'
-import { catalogFilterReducer } from '@/features/catalog-filter'
-import { registerReducer } from '@/features/register'
-import { searchReducer } from '@/features/skill-search'
-import { Provider } from 'react-redux'
-
-const makeStore = () =>
-  configureStore({
-    reducer: combineReducers({
-    categories: categoriesReducer,
-    cities: citiesReducer,
-    exchanges: exchangesReducer,
-    notifications: notificationsReducer,
-    session: sessionReducer,
-    skills: skillsReducer,
-    users: usersReducer,
-    catalogFilter: catalogFilterReducer,
-    register: registerReducer,
-    search: searchReducer,
-  }),
-})
+const makeStore = () => configureStore({ reducer: { search: searchReducer } })
 
 const FIGMA_GUEST =
   'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2861'

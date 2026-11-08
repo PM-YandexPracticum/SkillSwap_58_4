@@ -17,14 +17,11 @@ export const searchSlice = createSlice({
   name: 'search',
   initialState,
   reducers: {
+    // Новое состояние даже при том же запросе: явная команда должна заменить черновик поля.
     /** Применённый запрос (Enter / клик по лупе). Пустая строка = поиск сброшен */
-    queryApplied(state, action: PayloadAction<string>) {
-      state.query = action.payload.trim()
-    },
-    /** Крестик в поле - каталог возвращается к секциям */
-    queryCleared(state) {
-      state.query = ''
-    },
+    queryApplied: (_state, action: PayloadAction<string>) => ({ query: action.payload.trim() }),
+    /** Сброс из поля или общего управления каталогом */
+    queryCleared: () => ({ query: '' }),
   },
 })
 
@@ -35,7 +32,9 @@ export interface SearchSliceState {
   search: SearchState
 }
 
+/** Состояние последней команды поиска — для синхронизации черновика поля */
+export const selectSearchState = (state: SearchSliceState) => state.search
 /** Текущая поисковая строка */
-export const selectSearchQuery = (state: SearchSliceState) => state.search.query
+export const selectSearchQuery = (state: SearchSliceState) => selectSearchState(state).query
 /** Активен ли поиск (есть непустой запрос) */
 export const selectIsSearchActive = (state: SearchSliceState) => state.search.query !== ''

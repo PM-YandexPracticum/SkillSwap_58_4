@@ -4,7 +4,7 @@ import {
   searchReducer,
   selectIsSearchActive,
   selectSearchQuery,
-  type SearchState
+  type SearchState,
 } from './searchSlice'
 
 const makeState = (query = ''): { search: SearchState } => ({ search: { query } })
