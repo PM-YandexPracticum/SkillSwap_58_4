@@ -1,0 +1,37 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-52);
+  padding: var(--space-80) var(--space-60);
+  text-align: center;
+}
+
+.icon {
+  width: var(--space-80);
+  height: var(--space-80);
+  stroke-width: 0.5;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-32);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+}
+
+.description {
+  color: var(--color-neutral);
+}
