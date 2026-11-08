@@ -1,16 +1,14 @@
 /* ─── Локальные токены ───
    Макет «404» (1:2048) */
 
-:root {
+.page {
   --notfound-column-width: 460px; /* макс. ширина колонки контента */
   --notfound-space-top: 204px; /* Top: 204 от шапки в Figma */
   --notfound-track-title: -0.011em; /* -1.1% из Figma = -0.011em */
   --notfound-track-text: 0.02em; /* 2% из Figma = 0.02em */
   --notfound-leading-title: 28px; /* line-height заголовка */
   --notfound-leading-text: 24px; /* line-height описания */
-}
 
-.page {
   display: flex;
   justify-content: center;
   padding-top: var(--notfound-space-top); /* 204px от шапки (макет) */
