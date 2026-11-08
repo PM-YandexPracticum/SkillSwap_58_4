@@ -78,10 +78,12 @@ export const OpenCalendar: Story = {
 
 export const WithForm: Story = {
   render: function Form(args) {
-    const { control, handleSubmit } = useForm<{ birthDate: string | null }>({
+    const { control, handleSubmit, reset } = useForm<{ birthDate: string | null }>({
+      mode: 'onBlur',
       defaultValues: { birthDate: args.value },
     })
     const [saved, setSaved] = useState<string | null>(null)
+    const [resetKey, setResetKey] = useState(0)
     return (
       <form onSubmit={handleSubmit(({ birthDate }) => setSaved(birthDate))}>
         <Controller
@@ -89,11 +91,26 @@ export const WithForm: Story = {
           control={control}
           rules={{ required: 'Укажите дату рождения' }}
           render={({ field, fieldState }) => (
-            <DatePicker {...args} {...field} error={fieldState.error?.message} />
+            <DatePicker
+              {...args}
+              {...field}
+              resetKey={resetKey}
+              error={fieldState.error?.message}
+            />
           )}
         />
         <div style={{ marginTop: 'var(--space-16)' }}>
           <Button type="submit">Сохранить</Button>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              reset({ birthDate: null })
+              setResetKey((key) => key + 1)
+              setSaved(null)
+            }}
+          >
+            Сбросить
+          </Button>
         </div>
         <output aria-live="polite">{saved}</output>
       </form>

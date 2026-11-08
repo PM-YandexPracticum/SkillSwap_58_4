@@ -1,37 +1,13 @@
 import { forwardRef, useEffect, useId, useImperativeHandle, useRef, useState } from 'react'
-import { format, isValid, parse, parseISO, startOfDay } from 'date-fns'
-import { ru } from 'date-fns/locale'
-import Calendar from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
+import { format } from 'date-fns'
 import CalendarIcon from '@/shared/assets/icons/calendar.svg?react'
-import ChevronDown from '@/shared/assets/icons/chevron-down.svg?react'
 import { useClickOutside } from '@/shared/lib/hooks'
 import { Button } from '@/shared/ui/Button'
 import { IconButton } from '@/shared/ui/IconButton'
 import { Input } from '@/shared/ui/Input'
+import { DatePickerCalendar } from './DatePickerCalendar'
+import { DISPLAY_FORMAT, ISO_FORMAT, isAllowed, parseDate, parseDisplayDate } from './dateUtils'
 import styles from './DatePicker.module.css'
-
-const ISO_FORMAT = 'yyyy-MM-dd'
-const DISPLAY_FORMAT = 'dd.MM.yyyy'
-const MONTHS = Array.from({ length: 12 }, (_, month) =>
-  format(new Date(2000, month, 1), 'LLLL', { locale: ru }),
-)
-
-function parseDate(value: string | null | undefined) {
-  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined
-  const date = parseISO(value)
-  return isValid(date) ? date : undefined
-}
-
-function parseDisplayDate(text: string) {
-  const date = parse(text, DISPLAY_FORMAT, new Date(2000, 0, 1))
-  return isValid(date) && format(date, DISPLAY_FORMAT) === text ? date : undefined
-}
-
-function isAllowed(date: Date, min?: Date, max?: Date) {
-  const day = startOfDay(date)
-  return (!min || day >= min) && (!max || day <= max)
-}
 
 export interface DatePickerProps {
   label?: string
@@ -47,6 +23,8 @@ export interface DatePickerProps {
   id?: string
   name?: string
   onBlur?: () => void
+  /** Измените при reset формы, чтобы очистить и неподтверждённый текст при value=null */
+  resetKey?: string | number
 }
 
 /**
@@ -67,6 +45,7 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function
     id,
     name,
     onBlur,
+    resetKey,
   },
   ref,
 ) {
@@ -76,19 +55,13 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function
   const [showInputError, setShowInputError] = useState(false)
   const root = useRef<HTMLDivElement>(null)
   const input = useRef<HTMLInputElement>(null)
-  const monthSelect = useRef<HTMLSelectElement>(null)
+  const lastEmittedValue = useRef(value)
+  const previousResetKey = useRef(resetKey)
   const dialogId = useId()
   const selected = parseDate(value)
   const minDate = parseDate(min)
   const maxDate = parseDate(max)
   const isOpen = open && !disabled
-  const initialDate = selected ?? startOfDay(new Date())
-  const visibleDate =
-    maxDate && initialDate > maxDate
-      ? maxDate
-      : minDate && initialDate < minDate
-        ? minDate
-        : initialDate
   const canConfirm = draft && isAllowed(draft, minDate, maxDate)
   const inputValue = selected ? format(selected, DISPLAY_FORMAT) : unparsedText
   const inputError =
@@ -97,21 +70,40 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function
       : undefined
 
   useImperativeHandle(ref, () => input.current!, [])
-  useClickOutside(root, () => setOpen(false), isOpen)
+  useClickOutside(
+    root,
+    () => {
+      // blur до удаления календаря: иначе Controller не получит потерю фокуса.
+      const active = document.activeElement
+      if (active instanceof HTMLElement && root.current?.contains(active)) active.blur()
+      setOpen(false)
+    },
+    isOpen,
+  )
   useEffect(() => {
     if (disabled) setOpen(false)
-    if (isOpen) monthSelect.current?.focus()
-  }, [disabled, isOpen])
+  }, [disabled])
 
   useEffect(() => {
-    if (value !== null) setUnparsedText('')
-  }, [value])
+    const isReset = previousResetKey.current !== resetKey
+    previousResetKey.current = resetKey
+    if (!isReset && lastEmittedValue.current === value) return
+    lastEmittedValue.current = value
+    setUnparsedText('')
+    setShowInputError(false)
+    setDraft(null)
+    if (root.current?.querySelector('[role="dialog"]')?.contains(document.activeElement)) {
+      input.current?.focus()
+    }
+    setOpen(false)
+  }, [value, resetKey])
 
   function changeText(text: string) {
     const date = parseDisplayDate(text)
     const next = date && isAllowed(date, minDate, maxDate) ? format(date, ISO_FORMAT) : null
     setUnparsedText(next === null ? text : '')
     setShowInputError(false)
+    lastEmittedValue.current = next
     if (next !== value) onChange(next)
   }
 
@@ -178,87 +170,12 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function
 
       {isOpen && (
         <div id={dialogId} className={styles.popup} role="dialog" aria-label="Выбор даты">
-          <Calendar
-            inline
-            locale={ru}
-            calendarStartDay={1}
-            openToDate={visibleDate}
+          <DatePickerCalendar
             selected={draft}
+            initialDate={selected}
             minDate={minDate}
             maxDate={maxDate}
-            fixedHeight
-            shouldCloseOnSelect={false}
-            chooseDayAriaLabelPrefix="Выбрать"
-            disabledDayAriaLabelPrefix="Недоступно"
-            renderCustomDayName={({ day, fullName }) => (
-              <>
-                <span className="react-datepicker__sr-only">{fullName}</span>
-                <span aria-hidden="true">{format(day, 'EEEEEE', { locale: ru })}</span>
-              </>
-            )}
             onChange={setDraft}
-            renderCustomHeader={({ date, changeMonth, changeYear }) => {
-              const year = date.getFullYear()
-              const first = minDate?.getFullYear() ?? Math.min(1900, year)
-              const last = maxDate?.getFullYear() ?? Math.max(2100, year)
-              return (
-                <div className={styles.header}>
-                  <label className={styles.selector}>
-                    <select
-                      ref={monthSelect}
-                      aria-label="Месяц"
-                      value={date.getMonth()}
-                      onChange={(event) => changeMonth(Number(event.target.value))}
-                    >
-                      {MONTHS.map((month, index) => (
-                        <option
-                          key={month}
-                          value={index}
-                          disabled={
-                            (year === minDate?.getFullYear() && index < minDate.getMonth()) ||
-                            (year === maxDate?.getFullYear() && index > maxDate.getMonth())
-                          }
-                        >
-                          {month}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown aria-hidden="true" />
-                  </label>
-                  <label className={styles.selector}>
-                    <select
-                      aria-label="Год"
-                      value={year}
-                      onChange={(event) => {
-                        const nextYear = Number(event.target.value)
-                        changeYear(nextYear)
-                        if (
-                          nextYear === minDate?.getFullYear() &&
-                          date.getMonth() < minDate.getMonth()
-                        ) {
-                          changeMonth(minDate.getMonth())
-                        }
-                        if (
-                          nextYear === maxDate?.getFullYear() &&
-                          date.getMonth() > maxDate.getMonth()
-                        ) {
-                          changeMonth(maxDate.getMonth())
-                        }
-                      }}
-                    >
-                      {Array.from({ length: last - first + 1 }, (_, index) => last - index).map(
-                        (item) => (
-                          <option key={item} value={item}>
-                            {item}
-                          </option>
-                        ),
-                      )}
-                    </select>
-                    <ChevronDown aria-hidden="true" />
-                  </label>
-                </div>
-              )
-            }}
           />
           <div className={styles.actions}>
             <Button variant="secondary" onClick={closeCalendar}>
@@ -270,7 +187,9 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function
                 if (!canConfirm) return
                 setUnparsedText('')
                 setShowInputError(false)
-                onChange(format(draft, ISO_FORMAT))
+                const next = format(draft, ISO_FORMAT)
+                lastEmittedValue.current = next
+                onChange(next)
                 closeCalendar()
               }}
             >
