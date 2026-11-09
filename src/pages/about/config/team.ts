@@ -1,5 +1,10 @@
+import { nanoid } from 'nanoid'
+
 /** Участник команды для страницы «О проекте» */
 export interface TeamMember {
+  /* Уникальный ID для каждого члена команды, при заполнении в качестве значения ставить id: nanoid() */
+  id: string
+  /* Имя */
   name: string
   /** Роль: «Тимлид», «Помощник тимлида», «Разработчик» */
   role: string
@@ -17,6 +22,7 @@ export interface TeamMember {
  */
 export const TEAM: readonly TeamMember[] = [
   {
+    id: nanoid(),
     name: 'Диана Дунаева',
     role: 'Разработчик',
     github: 'https://github.com/pwkdmc',

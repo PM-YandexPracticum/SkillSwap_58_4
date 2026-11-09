@@ -1,0 +1,172 @@
+/* Страница «О проекте». Figma: 1:3249 */
+
+.page {
+  /* Локальные токены */
+  --about-card-px: 33px; /* (672 − 606) / 2 — контент в Figma 606px */
+  --about-card-min-h: 435px; /* about-card Height */
+  --about-card-max-w: 672px; /* ширина карточки в Figma 1:3249 */
+  --about-avatar-size: 100px; /* аватар в макете */
+  --about-column-min: 28rem; /* граница «двух в ряд» */
+  --about-container-w: calc(
+    var(--container-width) + var(--space-36) * 2
+  ); /* 1368 контент + 72 паддинга = 1440 */
+
+  --about-title-mg: 6px; /* H1 42 vs карточки 36 — разница */
+  --about-text-underline-offset: 2px; /* отступ подчёркивания от букв */
+  --about-tracking-tight: -0.011em; /* −1.1% */
+  --about-tracking-wide: 0.02em; /* 2% */
+  --about-line-height: 24px; /* 24 для текста 16 */
+  --about-transition-hover: 120ms; /* плавность смены цвета иконки */
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-32);
+  background-color: var(--color-bg); /* #f9faf7 — фон страницы, Figma 1:3249 */
+  max-width: var(--about-container-w);
+  margin-inline: auto;
+  padding-inline: var(--space-36);
+  padding-block: var(--space-32) var(--space-60);
+}
+
+/* Заголовок страницы */
+.title {
+  font-family: var(--font-title); /* Jost */
+  font-size: var(--font-size-2xl); /* 32 */
+  font-weight: var(--font-weight-medium); /* 500 */
+  line-height: var(--space-40);
+  letter-spacing: var(--about-tracking-tight);
+  color: var(--color-text);
+  margin-left: var(--about-title-mg);
+}
+
+/* Сетка карточек */
+.cards {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--about-column-min)), 1fr));
+  gap: var(--space-32) var(--space-24); /* ряд / колонка */
+}
+
+/* Ячейка списка */
+.cardsItem {
+  display: flex;
+  min-width: 0;
+  max-width: var(--about-card-max-w);
+}
+
+/* Карточка */
+.card {
+  min-height: var(--about-card-min-h);
+  padding: var(--space-40) var(--about-card-px);
+  border-radius: var(--radius-s);
+  background-color: var(--color-bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  flex: 1;
+}
+
+/* Шапка: аватар + текст */
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-20);
+  min-height: var(--about-avatar-size);
+}
+
+/* Фото и инициал: общие размеры */
+.avatar,
+.avatarFallback {
+  width: var(--about-avatar-size);
+  height: var(--about-avatar-size);
+  border-radius: var(--radius-l);
+  flex-shrink: 0;
+}
+
+/* Фото */
+.avatar {
+  object-fit: cover;
+}
+
+/* Инициал без фото - креативное решение. Заглушка, если нет фото */
+.avatarFallback {
+  background-color: var(--color-accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-name);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--about-tracking-tight);
+  color: var(--color-text);
+}
+
+/* Имя + роль */
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.name {
+  font-family: var(--font-name); /* Open Sans */
+  font-size: var(--font-size-lg); /* 20 */
+  font-weight: var(--font-weight-semibold); /* 600 */
+  line-height: var(--about-line-height); /* 24 */
+  letter-spacing: var(--about-tracking-tight);
+  color: var(--color-text);
+}
+
+/* Основной текст карточки (роль, h4, «Обо мне») */
+.text {
+  font-family: var(--font-main);
+  font-size: var(--font-size-base); /* 16 */
+  font-weight: var(--font-weight-regular); /* 400 */
+  line-height: var(--about-line-height); /* 24 */
+  letter-spacing: var(--about-tracking-wide);
+  color: var(--color-text);
+}
+
+/* Блоки «Обо мне» и «Связаться» */
+.about,
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.about {
+  flex: 1;
+}
+
+.contact {
+  margin-top: auto;
+}
+
+/* Ссылка на GitHub */
+.githubLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  text-decoration: underline;
+  text-underline-offset: var(--about-text-underline-offset);
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Иконка */
+.githubIcon {
+  flex-shrink: 0;
+  transition: color var(--about-transition-hover) ease;
+}
+
+.githubUrl {
+  min-width: 0;
+  overflow-wrap: break-word; /* перенос только если слово не помещается */
+}
+
+/* Hover */
+.githubLink:hover .githubIcon {
+  color: var(--color-accent-strong);
+}
