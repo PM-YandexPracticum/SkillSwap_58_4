@@ -1,37 +1,59 @@
-import type { City } from '@/entities/city'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { userEvent, within } from 'storybook/test'
+import type { City } from '@/entities/city'
+import { loadSeed } from '@/shared/api'
 import { CityFilter } from './CityFilter'
 
-const mockCities: City[] = [
-  { id: 'msk', name: 'Москва' },
-  { id: 'spb', name: 'Новосибирск' },
-  { id: 'ekb', name: 'Екатеринбург' },
-  { id: 'kzn', name: 'Казань' },
-  { id: 'krd', name: 'Краснодар' },
-  { id: 'kem', name: 'Кемерово' },
-  { id: 'vld', name: 'Владивосток' },
-  { id: 'sochi', name: 'Сочи' },
-  { id: 'krs', name: 'Красноярск' },
-  { id: 'irk', name: 'Иркутск' },
-  { id: 'abakan', name: 'Абакан' },
-  { id: 'perm', name: 'Пермь' },
-  { id: 'yar', name: 'Ярославль' },
-  { id: 'arkh', name: 'Архангельск' },
-  { id: 'samara', name: 'Самара' },
-  { id: 'saratov', name: 'Саратов' },
-]
-
-const meta: Meta<typeof CityFilter> = {
+const meta = {
   title: 'features/catalog-filter/CityFilter',
   component: CityFilter,
   tags: ['autodocs'],
-}
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2860',
+    },
+    docs: {
+      description: {
+        component:
+          'P3-07. Сначала пять городов, остальные раскрываются кнопкой. Макет: [Figma](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2860).',
+      },
+    },
+  },
+  args: { cities: [] },
+  loaders: [async () => ({ cities: await loadSeed<City>('cities')() })],
+  render: (args, { loaded, parameters }) => (
+    <div style={{ width: '284px' }}>
+      <CityFilter
+        {...args}
+        cities={parameters.empty ? [] : args.cities.length ? args.cities : loaded.cities}
+      />
+    </div>
+  ),
+} satisfies Meta<typeof CityFilter>
 
 export default meta
 type Story = StoryObj<typeof meta>
+export const Default: Story = {}
+export const Empty: Story = { parameters: { empty: true } }
+export const Expanded: Story = {
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Все города' }))
+  },
+}
+export const Selected: Story = {
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('checkbox', { name: 'Москва' }))
+  },
+}
 
-export const Default: Story = {
+export const LongLabels: Story = {
   args: {
-    cities: mockCities,
+    cities: [
+      {
+        id: 'long',
+        name: 'Город с очень длинным названием, которое переносится на несколько строк',
+      },
+    ],
   },
 }

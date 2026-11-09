@@ -1,48 +1,50 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
+import { CATALOG } from '@/shared/config'
 import { CityFilter } from './CityFilter'
 
-// Моки городов
-const mockCities = [
-  { id: '1', name: 'Москва' },
-  { id: '2', name: 'Санкт-Петербург' },
-  { id: '3', name: 'Новосибирск' },
-  { id: '4', name: 'Екатеринбург' },
-  { id: '5', name: 'Казань' },
-  { id: '6', name: 'Краснодар' },
-]
-
-const renderWithStore = () => {
-  const store = configureStore({
-    reducer: { cities: citiesReducer },
-    preloadedState: {
-      cities: { items: mockCities, status: 'succeeded' as const },
-    },
-  });
-
-  return render(
-    <Provider store={store}>
-      <CityFilter />
-    </Provider>
-  );
-};
+const cities = Array.from({ length: CATALOG.CITIES_VISIBLE + 1 }, (_, index) => ({
+  id: `city-${index}`,
+  name: `Город ${index + 1}`,
+}))
 
 describe('CityFilter', () => {
-  it('рендерит только первые 5 городов и скрывает остальные', () => {
-    render(<CityFilter cities={mockCities} />)
-
-    expect(screen.getByText('Казань')).toBeInTheDocument()
-    expect(screen.queryByText('Краснодар')).not.toBeInTheDocument()
+  it.each([0, 1, CATALOG.CITIES_VISIBLE])('не показывает раскрытие для %i городов', (count) => {
+    render(<CityFilter cities={cities.slice(0, count)} />)
+    expect(screen.queryAllByRole('checkbox')).toHaveLength(count)
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
-  it('раскрывает полный список при клике на "Все города"', () => {
-    render(<CityFilter cities={mockCities} />)
+  it('показывает первые города и раскрывает остальные с клавиатуры', async () => {
+    const user = userEvent.setup()
+    render(<CityFilter cities={cities} />)
+    expect(screen.getAllByRole('checkbox')).toHaveLength(CATALOG.CITIES_VISIBLE)
+    const button = screen.getByRole('button', { name: 'Все города' })
+    button.focus()
+    await user.keyboard('{Enter}')
+    expect(screen.getAllByRole('checkbox')).toHaveLength(cities.length)
+    expect(button).toHaveAttribute('aria-expanded', 'true')
+    expect(document.getElementById(button.getAttribute('aria-controls')!)).toBeVisible()
+  })
 
-    // Находим кнопку и кликаем
-    const showAllButton = screen.getByText(/все города/i)
-    fireEvent.click(showAllButton)
+  it('сохраняет выбор скрытого города после сворачивания и снимает его повторным кликом', async () => {
+    const user = userEvent.setup()
+    render(<CityFilter cities={cities} />)
+    await user.click(screen.getByRole('button', { name: 'Все города' }))
+    const name = cities.at(-1)!.name
+    await user.click(screen.getByRole('checkbox', { name }))
+    await user.click(screen.getByRole('button', { name: 'Свернуть города' }))
+    expect(screen.queryByRole('checkbox', { name })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Все города' }))
+    expect(screen.getByRole('checkbox', { name })).toBeChecked()
+    await user.click(screen.getByRole('checkbox', { name }))
+    expect(screen.getByRole('checkbox', { name })).not.toBeChecked()
+  })
 
-    expect(screen.getByText('Краснодар')).toBeInTheDocument()
-    expect(screen.getByText(/свернуть/i)).toBeInTheDocument()
+  it('отображает справочник, который появился после пустого состояния', () => {
+    const { rerender } = render(<CityFilter cities={[]} />)
+    rerender(<CityFilter cities={cities} />)
+    expect(screen.getByRole('checkbox', { name: cities[0].name })).toBeInTheDocument()
   })
 })

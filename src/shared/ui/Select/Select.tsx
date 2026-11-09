@@ -1,9 +1,9 @@
-import { useCallback, useId, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 
-import { useClickOutside } from '@/shared/lib/hooks/useClickOutside'
 import CrossIcon from '@/shared/assets/icons/cross.svg?react'
-import chevronUp from '@/shared/assets/icons/chevron-up.svg'
-import chevronDown from '@/shared/assets/icons/chevron-down.svg'
+import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react'
+import ChevronUpIcon from '@/shared/assets/icons/chevron-up.svg?react'
+import { useClickOutside } from '@/shared/lib/hooks'
 import { IconButton } from '@/shared/ui/IconButton'
 import { Input } from '@/shared/ui/Input'
 import styles from './Select.module.css'
@@ -12,26 +12,25 @@ export interface SelectProps {
   label?: string
   placeholder?: string
   options: ReadonlyArray<{ value: string | null; label: string }>
-  /** Выбранное значение или null («Не указан») */
+  /** Управляемое значение; для выбора «Не указан» передайте вариант с value: null. */
   value: string | null
   onChange: (value: string | null) => void
-  /**
-   * Список с поиском: в поле можно печатать, варианты фильтруются по введённому тексту, справа «×».
-   * Нужен для «Город» (в макете «Са» → «Санкт-Петербург, Самара, Саратов»).
-   */
+  /** Поиск по подписи варианта. Кнопка «×» очищает запрос и выбранное значение. */
   searchable?: boolean
   error?: string
   disabled?: boolean
+  /** Первоначально раскрытый список, например для Storybook. Игнорируется при disabled. */
   defaultOpen?: boolean
 }
 
 /**
- * Выпадающий список с одним выбором: «Пол» (Не указан / Мужской / Женский), «Город», «Категория», «Подкатегория».
- * @see Figma: «Регистрация 2 шаг» — открытый «Пол» (1:1585), «Город» с поиском (1:1629)
+ * Управляемый список с одним выбором, необязательным поиском и клавиатурной навигацией.
+ * Не загружает данные и не управляет связью категории с подкатегорией.
+ * @see Figma: «Регистрация 2 шаг» — «Пол» (1:1585), поиск «Город» (1:1629).
  */
 export function Select({
   label,
-  placeholder,
+  placeholder = 'Не указан',
   options,
   value,
   onChange,
@@ -40,150 +39,120 @@ export function Select({
   disabled = false,
   defaultOpen = false,
 }: SelectProps) {
-  const [isOpen, setIsOpen] = useState(defaultOpen)
-  const [activeIndex, setActiveIndex] = useState(-1)
+  const [isOpen, setIsOpen] = useState(defaultOpen && !disabled)
+  const [activeValue, setActiveValue] = useState<string | null | undefined>()
   const [searchValue, setSearchValue] = useState('')
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
   const id = useId()
   const listboxId = `${id}-listbox`
   const labelId = `${id}-label`
   const errorId = `${id}-error`
   const selectedOption = options.find((option) => option.value === value)
-  const selectedLabel = selectedOption?.label ?? placeholder ?? 'Не указан'
-  const inputValue = isOpen
-    ? searchValue
-    : value !== null && selectedOption
-      ? selectedOption.label
-      : ''
   const filteredOptions = searchable
     ? options.filter((option) =>
         option.label.toLocaleLowerCase().includes(searchValue.trim().toLocaleLowerCase()),
       )
     : options
+  const activeIndex = filteredOptions.findIndex((option) => option.value === activeValue)
+  const expanded = isOpen && !disabled
+  const inputValue = expanded ? searchValue : (selectedOption?.label ?? '')
+  const activeId = expanded && activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined
 
   const close = useCallback(() => {
     setIsOpen(false)
-    setActiveIndex(-1)
+    setActiveValue(undefined)
   }, [])
 
-  useClickOutside(rootRef, close, isOpen)
+  useClickOutside(rootRef, close, expanded)
+
+  useEffect(() => {
+    if (disabled) close()
+  }, [disabled, close])
+
+  useEffect(() => {
+    if (expanded && activeIndex >= 0) {
+      listRef.current?.children[activeIndex]?.scrollIntoView({ block: 'nearest' })
+    }
+  }, [expanded, activeIndex, searchValue, options])
+
+  const focusField = () => (searchable ? searchInputRef.current : triggerRef.current)?.focus()
 
   const open = (direction: 'first' | 'last' = 'first') => {
-    if (options.length === 0) return
+    if (disabled || (!searchable && options.length === 0)) return
     const selectedIndex = options.findIndex((option) => option.value === value)
-    setActiveIndex(
-      selectedIndex >= 0 ? selectedIndex : direction === 'first' ? 0 : options.length - 1,
-    )
+    const index =
+      selectedIndex >= 0 ? selectedIndex : direction === 'first' ? 0 : options.length - 1
+    setSearchValue('')
+    setActiveValue(options[index]?.value)
     setIsOpen(true)
-  }
-
-  const openSearch = () => {
-    if (!isOpen) {
-      setSearchValue(value !== null && selectedOption ? selectedOption.label : '')
-      setActiveIndex(-1)
-      setIsOpen(true)
-    }
   }
 
   const selectOption = (index: number) => {
     const option = filteredOptions[index]
-    if (!option) return
-
+    if (disabled || !option) return
     onChange(option.value)
     setSearchValue('')
     close()
-    if (searchable) {
-      searchInputRef.current?.focus()
-    } else {
-      triggerRef.current?.focus()
-    }
+    focusField()
   }
 
-  const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Tab' && isOpen) {
-      close()
-      return
-    }
-
-    if (event.key === 'Escape' && isOpen) {
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return
+    if (event.key === 'Escape' && expanded) {
       event.preventDefault()
+      event.stopPropagation()
       close()
+      focusField()
       return
     }
-
+    // На кнопке очистки Enter и пробел должны сохранить обычное поведение кнопки.
+    if (event.target !== triggerRef.current && event.target !== searchInputRef.current) return
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
-      if (!isOpen) {
-        openSearch()
-        return
-      }
-
-      setActiveIndex((currentIndex) => {
-        if (filteredOptions.length === 0) return -1
-        if (currentIndex < 0) return event.key === 'ArrowDown' ? 0 : filteredOptions.length - 1
-        const nextIndex = currentIndex + (event.key === 'ArrowDown' ? 1 : -1)
-        return Math.max(0, Math.min(filteredOptions.length - 1, nextIndex))
-      })
-      return
-    }
-
-    if (event.key === 'Enter') {
-      event.preventDefault()
-      if (!isOpen) {
-        openSearch()
-      } else {
-        selectOption(activeIndex)
-      }
-    }
-  }
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key === 'Tab' && isOpen) {
-      close()
-      return
-    }
-
-    if (event.key === 'Escape' && isOpen) {
-      event.preventDefault()
-      close()
-      triggerRef.current?.focus()
-      return
-    }
-
-    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-      event.preventDefault()
-      if (!isOpen) {
+      if (!expanded) {
         open(event.key === 'ArrowDown' ? 'first' : 'last')
-        return
-      }
-
-      setActiveIndex((currentIndex) => {
-        const nextIndex = currentIndex + (event.key === 'ArrowDown' ? 1 : -1)
-        return Math.max(0, Math.min(options.length - 1, nextIndex))
-      })
-      return
-    }
-
-    if (event.key === 'Enter') {
-      event.preventDefault()
-      if (!isOpen) {
-        open()
       } else {
-        selectOption(activeIndex)
+        const nextIndex =
+          activeIndex < 0
+            ? event.key === 'ArrowDown'
+              ? 0
+              : filteredOptions.length - 1
+            : Math.max(
+                0,
+                Math.min(
+                  filteredOptions.length - 1,
+                  activeIndex + (event.key === 'ArrowDown' ? 1 : -1),
+                ),
+              )
+        setActiveValue(filteredOptions[nextIndex]?.value)
       }
+    } else if (event.key === 'Enter' || (!searchable && event.key === ' ')) {
+      event.preventDefault()
+      if (expanded) selectOption(activeIndex)
+      else open()
     }
+  }
+
+  const fieldAria = {
+    'aria-expanded': expanded,
+    'aria-controls': expanded ? listboxId : undefined,
+    'aria-activedescendant': activeId,
+    'aria-labelledby': label ? labelId : undefined,
+    'aria-label': label ? undefined : placeholder,
+    'aria-invalid': Boolean(error),
+    'aria-describedby': error ? errorId : undefined,
   }
 
   return (
     <div
       ref={rootRef}
-      className={styles.root}
+      className={[styles.root, expanded ? styles.rootOpen : ''].filter(Boolean).join(' ')}
+      onKeyDown={handleKeyDown}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-          close()
-        }
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) close()
       }}
     >
       {label && (
@@ -191,103 +160,87 @@ export function Select({
           {label}
         </label>
       )}
-
       <div className={styles.control}>
-        {searchable ? (
-          <Input
-            ref={searchInputRef}
-            id={`${id}-trigger`}
-            role="combobox"
-            placeholder={placeholder ?? 'Не указан'}
-            value={inputValue}
-            onChange={(event) => {
-              const nextSearchValue = event.target.value
-              setSearchValue(nextSearchValue)
-              setActiveIndex(
-                options.some((option) =>
-                  option.label
-                    .toLocaleLowerCase()
-                    .includes(nextSearchValue.trim().toLocaleLowerCase()),
+        <div className={styles.field}>
+          {searchable ? (
+            <Input
+              {...fieldAria}
+              ref={searchInputRef}
+              id={`${id}-trigger`}
+              role="combobox"
+              aria-autocomplete="list"
+              autoComplete="off"
+              className={expanded ? styles.inputOpen : undefined}
+              placeholder={placeholder}
+              value={inputValue}
+              disabled={disabled}
+              onClick={() => {
+                if (!expanded) open()
+              }}
+              onChange={(event) => {
+                const query = event.target.value
+                setSearchValue(query)
+                setActiveValue(
+                  options.find((option) =>
+                    option.label.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()),
+                  )?.value,
                 )
-                  ? 0
-                  : -1,
-              )
-              setIsOpen(true)
-            }}
-            onFocus={openSearch}
-            onClick={() => setIsOpen(true)}
-            onKeyDown={handleSearchKeyDown}
-            aria-haspopup="listbox"
-            aria-expanded={isOpen}
-            aria-controls={isOpen ? listboxId : undefined}
-            aria-activedescendant={
-              isOpen && activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined
-            }
-            aria-labelledby={label ? labelId : undefined}
-            aria-label={!label ? (placeholder ?? 'Выберите значение') : undefined}
-            aria-invalid={Boolean(error)}
-            aria-describedby={error ? errorId : undefined}
-            disabled={disabled}
-            rightAction={
-              inputValue && (
-                <IconButton
-                  ariaLabel="Очистить"
-                  icon={<CrossIcon />}
-                  onClick={() => {
-                    setSearchValue('')
-                    setActiveIndex(-1)
-                    setIsOpen(true)
-                    onChange(null)
-                    searchInputRef.current?.focus()
-                  }}
-                />
-              )
-            }
-          />
-        ) : (
-          <button
-            ref={triggerRef}
-            id={`${id}-trigger`}
-            type="button"
-            className={[
-              styles.trigger,
-              isOpen ? styles.triggerOpen : '',
-              selectedOption && selectedOption.value !== null ? styles.triggerSelected : '',
-              error ? styles.triggerError : '',
-              disabled ? styles.triggerDisabled : '',
-            ]
-              .filter(Boolean)
-              .join(' ')}
-            role="combobox"
-            aria-haspopup="listbox"
-            aria-expanded={isOpen}
-            aria-controls={isOpen ? listboxId : undefined}
-            aria-activedescendant={
-              isOpen && activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined
-            }
-            aria-labelledby={label ? labelId : undefined}
-            aria-label={!label ? (placeholder ?? 'Выберите значение') : undefined}
-            aria-invalid={Boolean(error)}
-            aria-describedby={error ? errorId : undefined}
-            disabled={disabled}
-            onClick={() => (isOpen ? close() : open())}
-            onKeyDown={handleKeyDown}
-          >
-            <span className={selectedOption ? styles.value : styles.placeholder}>
-              {selectedLabel}
-            </span>
-            <img className={styles.chevron} src={isOpen ? chevronUp : chevronDown} alt="" />
-          </button>
-        )}
-
-        {isOpen && (
-          <div className={[styles.panel, error ? styles.panelError : ''].join(' ')}>
+                setIsOpen(true)
+              }}
+              rightIcon={expanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
+              rightAction={
+                inputValue && !disabled ? (
+                  <IconButton
+                    ariaLabel="Очистить"
+                    icon={<CrossIcon aria-hidden="true" />}
+                    onClick={() => {
+                      setSearchValue('')
+                      setActiveValue(undefined)
+                      setIsOpen(true)
+                      onChange(null)
+                      focusField()
+                    }}
+                  />
+                ) : undefined
+              }
+            />
+          ) : (
+            <button
+              {...fieldAria}
+              ref={triggerRef}
+              id={`${id}-trigger`}
+              type="button"
+              role="combobox"
+              className={[
+                styles.trigger,
+                expanded ? styles.triggerOpen : '',
+                error ? styles.triggerError : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              disabled={disabled}
+              onClick={() => (expanded ? close() : open())}
+            >
+              <span className={selectedOption ? styles.value : styles.placeholder}>
+                {selectedOption?.label ?? placeholder}
+              </span>
+              {expanded ? (
+                <ChevronUpIcon className={styles.chevron} aria-hidden="true" />
+              ) : (
+                <ChevronDownIcon className={styles.chevron} aria-hidden="true" />
+              )}
+            </button>
+          )}
+        </div>
+        {expanded && (
+          <div className={[styles.panel, error ? styles.panelError : ''].filter(Boolean).join(' ')}>
             <ul
+              ref={listRef}
               id={listboxId}
               className={styles.options}
               role="listbox"
               aria-labelledby={label ? labelId : undefined}
-              aria-label={!label ? (placeholder ?? 'Выберите значение') : undefined}
+              aria-label={!label ? placeholder : undefined}
             >
               {filteredOptions.map((option, index) => (
                 <li
@@ -299,7 +252,7 @@ export function Select({
                   role="option"
                   aria-selected={option.value === value}
                   onMouseDown={(event) => event.preventDefault()}
-                  onMouseEnter={() => setActiveIndex(index)}
+                  onMouseEnter={() => setActiveValue(option.value)}
                   onClick={() => selectOption(index)}
                 >
                   {option.label}
@@ -309,7 +262,6 @@ export function Select({
           </div>
         )}
       </div>
-
       {error && (
         <span id={errorId} className={styles.error} role="alert">
           {error}

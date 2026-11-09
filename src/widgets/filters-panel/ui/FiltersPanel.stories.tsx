@@ -1,115 +1,72 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit'
+import type { Meta, StoryObj } from '@storybook/react-vite'
+import { Provider } from 'react-redux'
+import { userEvent, within } from 'storybook/test'
+import { categoriesReducer, type Category } from '@/entities/category'
+import { citiesReducer, type City } from '@/entities/city'
+import { loadSeed } from '@/shared/api'
+import { FiltersPanel } from './FiltersPanel'
 
-import { citiesReducer } from '@/entities/city';
-import { categoriesReducer, type Category } from '@/entities/category';
-import { skillsReducer } from '@/entities/skill';
-import { sessionReducer } from '@/entities/session';
-import { exchangesReducer } from '@/entities/exchange';
-
-import { FiltersPanel } from './FiltersPanel';
-
-const mockCategories: Category[] = [
-  {
-    id: 'business',
-    title: 'Бизнес и карьера',
-    icon: 'briefcase',
-    color: '#EEE7F7',
-    subcategories: [{ id: 'management', categoryId: 'business', title: 'Менеджмент' }],
-  },
-  {
-    id: 'creativity',
-    title: 'Творчество и искусство',
-    icon: 'palette',
-    color: '#F7E7F2',
-    subcategories: [{ id: 'drawing', categoryId: 'creativity', title: 'Рисование' }],
-  },
-
-  {
-    id: 'languages',
-    title: 'Иностранные языки',
-    icon: 'languages',
-    color: '#EBE5C5',
-    subcategories: []
-  },
-  {
-    id: 'education',
-    title: 'Образование и развитие',
-    icon: 'education',
-    color: '#E7F2F6', subcategories: []
-  },
-  {
-    id: 'health',
-    title: 'Здоровье и лайфстайл',
-    icon: 'health',
-    color: '#E9F7E7',
-    subcategories: []
-  },
-  {
-    id: 'home',
-    title: 'Дом и уют',
-    icon: 'home',
-    color: '#F7EBE5',
-    subcategories: []
-  },
-  {
-    id: 'extra',
-    title: 'Еще одна категория',
-    icon: 'briefcase',
-    color: '#EEE7F7',
-    subcategories: []
-  },
-];
-
-const mockCities = [
-  { id: 'msk', name: 'Москва' },
-  { id: 'spb', name: 'Санкт-Петербург' },
-  { id: 'nsk', name: 'Новосибирск' },
-  { id: 'ekb', name: 'Екатеринбург' },
-  { id: 'kzn', name: 'Казань' },
-  { id: 'krd', name: 'Краснодар' },
-  { id: 'vld', name: 'Владивосток' },
-];
-
-const meta: Meta<typeof FiltersPanel> = {
+const meta = {
   title: 'widgets/filters-panel/FiltersPanel',
   component: FiltersPanel,
   tags: ['autodocs'],
+  parameters: {
+    layout: 'padded',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2860',
+    },
+    docs: {
+      description: {
+        component:
+          'P3-07. Панель читает справочники селекторами. Выбор пока локальный, счётчик и сброс передаются пропсами; применение фильтров — P5-02. Макет: [Figma](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2860). Пустое состояние в макете не нарисовано: оставлены заголовки без списков.',
+      },
+    },
+  },
+  loaders: [
+    async () => {
+      const [categories, cities] = await Promise.all([
+        loadSeed<Category>('categories')(),
+        loadSeed<City>('cities')(),
+      ])
+      return { categories, cities }
+    },
+  ],
   decorators: [
-    (Story) => {
+    (Story, { loaded, parameters }) => {
       const store = configureStore({
-        reducer: {
-          cities: citiesReducer,
-          categories: categoriesReducer,
-          skills: skillsReducer,
-          session: sessionReducer,
-          exchanges: exchangesReducer,
-        },
+        reducer: { categories: categoriesReducer, cities: citiesReducer },
         preloadedState: {
-          cities: { items: mockCities, status: 'succeeded' as const },
-          categories: { items: mockCategories, status: 'succeeded' as const },
-          skills: { items: [], status: 'succeeded' as const, error: null },
-          session: { session: null },
-          exchanges: { items: [], status: 'idle' as const, error: null, pendingRequests: 0 },
+          categories: {
+            items: parameters.empty ? [] : loaded.categories,
+            status: 'succeeded' as const,
+          },
+          cities: { items: parameters.empty ? [] : loaded.cities, status: 'succeeded' as const },
         },
-      });
-
+      })
       return (
         <Provider store={store}>
           <Story />
         </Provider>
-      );
+      )
     },
   ],
-};
+} satisfies Meta<typeof FiltersPanel>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {
-  args: {
-    categories: mockCategories,
-    filtersCount: 2,
+export default meta
+type Story = StoryObj<typeof meta>
+export const Default: Story = {}
+export const WithCount: Story = { args: { filtersCount: 2 } }
+export const Empty: Story = { parameters: { empty: true } }
+export const PartialSelection: Story = {
+  args: { filtersCount: 2 },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Развернуть категорию «Творчество и искусство»' }),
+    )
+    await userEvent.click(canvas.getByRole('radio', { name: 'Хочу научиться' }))
+    await userEvent.click(canvas.getByRole('checkbox', { name: 'Музыка и звук' }))
   },
-};
+}

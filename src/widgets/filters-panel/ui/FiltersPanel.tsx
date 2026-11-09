@@ -1,37 +1,52 @@
-import { ModeFilter, SkillsFilter, GenderFilter, CityFilter, ResetFiltersButton } from '@/features/catalog-filter';
-import type { Category } from '@/entities/category';
-import styles from './FiltersPanel.module.css';
+import { useId } from 'react'
+import {
+  ModeFilter,
+  SkillsFilter,
+  GenderFilter,
+  CityFilter,
+  ResetFiltersButton,
+} from '@/features/catalog-filter'
+import { selectCategories } from '@/entities/category'
+import { selectCities } from '@/entities/city'
+import { useAppSelector } from '@/shared/lib/store'
+import styles from './FiltersPanel.module.css'
 
 export interface FiltersPanelProps {
-  className?: string;
-  categories?: Category[];
-  filtersCount?: number;
+  /** Дополнительный CSS-класс */
+  className?: string
+  /** Количество выбранных фильтров; подключение счётчика — P5-02 */
+  filtersCount?: number
+  /** Сброс фильтров; в P3-07 действие ещё не подключено */
+  onReset?: () => void
 }
 
-export function FiltersPanel({
-  className,
-  categories = [],
-  filtersCount = 0 //
-}: FiltersPanelProps) {
-
-
-  const titleText = filtersCount > 0 ? `Фильтры (${filtersCount})` : 'Фильтры';
+/**
+ * Левая колонка каталога: режим, навыки, пол автора и города из готовых селекторов.
+ * Загрузкой справочников управляет страница; выбор пока только визуальный (P3-07).
+ * @see Figma: «Каталог — фильтры применены» (1:2860)
+ */
+export function FiltersPanel({ className, filtersCount = 0, onReset }: FiltersPanelProps) {
+  const categories = useAppSelector(selectCategories)
+  const cities = useAppSelector(selectCities)
+  const titleId = useId()
 
   return (
-    <aside className={[styles.panel, className].filter(Boolean).join(' ')}>
-
+    <aside
+      aria-labelledby={titleId}
+      className={[styles.panel, className].filter(Boolean).join(' ')}
+    >
       <div className={styles.header}>
-        <h2 className={styles.title}>{titleText}</h2>
-        <ResetFiltersButton onClick={() => console.log('Сброс фильтров')} />
+        <h2 className={styles.title} id={titleId}>
+          {filtersCount > 0 ? `Фильтры (${filtersCount})` : 'Фильтры'}
+        </h2>
+        <ResetFiltersButton onClick={onReset} />
       </div>
-
       <div className={styles.content}>
         <ModeFilter />
         <SkillsFilter categories={categories} />
         <GenderFilter />
-        <CityFilter />
+        <CityFilter cities={cities} />
       </div>
-
     </aside>
-  );
+  )
 }

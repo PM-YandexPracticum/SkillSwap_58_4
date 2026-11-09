@@ -1,32 +1,33 @@
+import { useId, useState } from 'react'
 import { RadioGroup } from '@/shared/ui/RadioGroup'
-import { useState } from 'react'
-import styles from './GenderFilter.module.css'
 
 export interface GenderFilterProps {
   /** Дополнительный CSS-класс */
   className?: string
 }
 
+const OPTIONS = [
+  { value: 'any', label: 'Не имеет значения' },
+  { value: 'male', label: 'Мужской' },
+  { value: 'female', label: 'Женский' },
+]
+
 /**
- * Радио «Не имеет значения / Мужской / Женский».
+ * Радио пола автора. До P5-02 выбор только визуальный, без изменения store.
+ * @see Figma: «Каталог — фильтры применены» (1:2860)
  */
 export function GenderFilter({ className }: GenderFilterProps) {
   const [gender, setGender] = useState('any')
-
-  const options = [
-    { value: 'any', label: 'Не имеет значения' },
-    { value: 'male', label: 'Мужской' },
-    { value: 'female', label: 'Женский' },
-  ]
+  const name = useId()
 
   return (
     <RadioGroup
       label="Пол автора"
-      name="catalog-gender"
-      options={options}
+      name={name}
+      options={OPTIONS}
       value={gender}
       onChange={setGender}
-      className={[styles.genderFilter, className].filter(Boolean).join(' ')}
+      className={className}
     />
   )
 }

@@ -1,32 +1,33 @@
+import { useId, useState } from 'react'
 import { RadioGroup } from '@/shared/ui/RadioGroup'
-import { useState } from 'react'
-import styles from './ModeFilter.module.css'
 
 export interface ModeFilterProps {
   /** Дополнительный CSS-класс */
   className?: string
 }
 
+const OPTIONS = [
+  { value: 'all', label: 'Всё' },
+  { value: 'learn', label: 'Хочу научиться' },
+  { value: 'teach', label: 'Могу научить' },
+]
+
 /**
- * Радио «Всё / Хочу научиться / Могу научить».
+ * Радио режима каталога. До P5-02 выбор только визуальный, без изменения store.
+ * @see Figma: «Каталог — фильтры применены» (1:2860)
  */
 export function ModeFilter({ className }: ModeFilterProps) {
-  // Локальный стейт для визуализации
   const [mode, setMode] = useState('all')
-
-  const options = [
-    { value: 'all', label: 'Всё' },
-    { value: 'learn', label: 'Хочу научиться' },
-    { value: 'teach', label: 'Могу научить' },
-  ]
+  const name = useId()
 
   return (
     <RadioGroup
-      name="catalog-mode"
-      options={options}
+      name={name}
+      aria-label="Режим каталога"
+      options={OPTIONS}
       value={mode}
       onChange={setMode}
-      className={[styles.modeFilter, className].filter(Boolean).join(' ')}
+      className={className}
     />
   )
 }

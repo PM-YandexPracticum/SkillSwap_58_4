@@ -1,68 +1,62 @@
+import { useId, useState } from 'react'
 import type { City } from '@/entities/city'
+import { CATALOG } from '@/shared/config'
 import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react'
 import ChevronUpIcon from '@/shared/assets/icons/chevron-up.svg?react'
 import { Checkbox } from '@/shared/ui/Checkbox'
-import { useState } from 'react'
-import styles from './CityFilter.module.css'
-
-const CITIES_VISIBLE = 5
+import styles from './FilterGroup.module.css'
 
 export interface CityFilterProps {
+  /** Дополнительный CSS-класс */
   className?: string
-  cities: City[]
+  /** Справочник из selectCities; загрузку выполняет страница */
+  cities: readonly City[]
 }
 
 /**
- * Чекбоксы «Город» из справочника entities/city.
+ * Города: первые CATALOG.CITIES_VISIBLE и раскрытие остальных.
+ * До P5-02 галочки хранятся локально и не фильтруют каталог.
+ * @see Figma: «Каталог — фильтры применены» (1:2860)
  */
 export function CityFilter({ className, cities }: CityFilterProps) {
   const [isExpanded, setIsExpanded] = useState(false)
-
   const [selectedCities, setSelectedCities] = useState<string[]>([])
-
-  const toggleCity = (id: string) => {
-    setSelectedCities((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
-    )
-  }
-
-  const visibleCities = isExpanded ? cities : cities.slice(0, CITIES_VISIBLE)
-  const hasMore = cities.length > CITIES_VISIBLE
+  const id = useId()
+  const visibleCities = isExpanded ? cities : cities.slice(0, CATALOG.CITIES_VISIBLE)
+  const hasMore = cities.length > CATALOG.CITIES_VISIBLE
+  const Icon = isExpanded ? ChevronUpIcon : ChevronDownIcon
 
   return (
-    <div className={[styles.container, className].filter(Boolean).join(' ')}>
-      <h3 className={styles.title}>Город</h3>
-
-      <div className={styles.list}>
+    <fieldset className={[styles.group, className].filter(Boolean).join(' ')}>
+      <legend className={styles.title}>Город</legend>
+      <div id={id} className={styles.list}>
         {visibleCities.map((city) => (
           <Checkbox
             key={city.id}
             label={city.name}
             checked={selectedCities.includes(city.id)}
-            onChange={() => toggleCity(city.id)}
-            className={styles.cityItem}
+            onChange={(checked) =>
+              setSelectedCities((current) =>
+                checked ? [...current, city.id] : current.filter((item) => item !== city.id),
+              )
+            }
+            className={styles.item}
           />
         ))}
       </div>
-
       {hasMore && (
         <button
           type="button"
-          className={styles.toggleButton}
-          onClick={() => setIsExpanded(!isExpanded)}
+          className={[styles.toggleButton, styles.action].join(' ')}
+          onClick={() => setIsExpanded((current) => !current)}
           aria-expanded={isExpanded}
+          aria-controls={id}
+          aria-label={isExpanded ? 'Свернуть города' : 'Все города'}
         >
-          {isExpanded ? (
-            <>
-              Свернуть <ChevronUpIcon className={styles.icon} />
-            </>
-          ) : (
-            <>
-              Все города <ChevronDownIcon className={styles.icon} />
-            </>
-          )}
+          {isExpanded ? 'Свернуть' : 'Все города'}
+          <Icon aria-hidden="true" />
         </button>
       )}
-    </div>
+    </fieldset>
   )
 }

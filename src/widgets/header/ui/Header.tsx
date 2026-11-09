@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from 'react'
+import { useId, useRef, useState, type ReactNode } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 
 import { SearchInput } from '@/features/skill-search'
@@ -58,6 +58,8 @@ export function Header({
   const navigate = useNavigate()
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null)
   const userMenuId = useId()
+  const categoriesMenuId = useId()
+  const categoriesTriggerRef = useRef<HTMLButtonElement>(null)
   const notificationsPanelId = useId()
   const hasCategoriesMenu = Boolean(categoriesMenu)
   const hasNotifications = Boolean(notifications)
@@ -78,13 +80,16 @@ export function Header({
           О проекте
         </Link>
         <Dropdown
+          className={styles.categoriesPopover}
           isOpen={isCategoriesOpen}
           onClose={closer('categories')}
           trigger={
             <button
+              ref={categoriesTriggerRef}
               className={`${styles.link} ${styles.categories}`}
               type="button"
               aria-expanded={isCategoriesOpen}
+              aria-controls={isCategoriesOpen ? categoriesMenuId : undefined}
               onClick={() => hasCategoriesMenu && toggle('categories')}
             >
               Все навыки
@@ -95,7 +100,18 @@ export function Header({
             </button>
           }
         >
-          {categoriesMenu}
+          <div
+            id={categoriesMenuId}
+            className={styles.categoriesRegion}
+            role="region"
+            aria-label="Все навыки"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') categoriesTriggerRef.current?.focus()
+            }}
+          >
+            {categoriesMenu}
+          </div>
         </Dropdown>
       </nav>
 
