@@ -4,6 +4,7 @@ import { ROUTES } from '@/shared/config'
 import errorImage from '@/shared/assets/images/error-500.svg'
 import { Button } from '@/shared/ui/Button'
 import styles from './ServerErrorPage.module.css'
+import { ErrorPage } from '@/shared/ui/ErrorPage'
 
 /** Заголовок по макету «500» (1:2077) */
 const TITLE = 'На сервере произошла ошибка'
@@ -24,17 +25,7 @@ export function ServerErrorPage() {
   return (
     <main className={styles.page}>
       <div className={styles.content}>
-        <img
-          className={styles.image}
-          src={errorImage}
-          alt="Монитор с надписью 500 SERVER ERROR"
-          width={460}
-          height={304}
-        />
-        <div className={styles.text}>
-          <h1 className={styles.title}>{TITLE}</h1>
-          <p className={styles.description}>{DESCRIPTION}</p>
-        </div>
+        <ErrorPage errorImage={errorImage} title={TITLE} description={DESCRIPTION} errorType='500'/>
         <div className={styles.actions}>
           <Button variant="secondary" onClick={() => {}}>
             Сообщить об ошибке
