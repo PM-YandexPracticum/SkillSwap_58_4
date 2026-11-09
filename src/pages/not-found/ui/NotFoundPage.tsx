@@ -4,6 +4,7 @@ import { ROUTES } from '@/shared/config'
 import errorImage from '@/shared/assets/images/error-404.svg'
 import { Button } from '@/shared/ui/Button'
 import styles from './NotFoundPage.module.css'
+import { ErrorPage } from '@/shared/ui/ErrorPage'
 
 /** Заголовок по макету «404» (1:2048) */
 const TITLE = 'Страница не найдена'
@@ -23,17 +24,7 @@ export function NotFoundPage() {
   return (
     <main className={styles.page}>
       <div className={styles.content}>
-        <img
-          className={styles.image}
-          src={errorImage}
-          alt="Монитор с надписью 404 ERROR"
-          width={460}
-          height={304}
-        />
-        <div className={styles.text}>
-          <h1 className={styles.title}>{TITLE}</h1>
-          <p className={styles.description}>{DESCRIPTION}</p>
-        </div>
+        <ErrorPage title={TITLE} description={DESCRIPTION} errorImage={errorImage} errorType='404'/>
         <div className={styles.actions}>
           <Button variant="secondary" onClick={() => {}}>
             Сообщить об ошибке

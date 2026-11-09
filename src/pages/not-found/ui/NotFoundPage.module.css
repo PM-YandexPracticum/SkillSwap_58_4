@@ -4,10 +4,6 @@
 .page {
   --notfound-column-width: 460px; /* макс. ширина колонки контента */
   --notfound-space-top: 204px; /* Top: 204 от шапки в Figma */
-  --notfound-track-title: -0.011em; /* -1.1% из Figma = -0.011em */
-  --notfound-track-text: 0.02em; /* 2% из Figma = 0.02em */
-  --notfound-leading-title: 28px; /* line-height заголовка */
-  --notfound-leading-text: 24px; /* line-height описания */
 
   display: flex;
   justify-content: center;
@@ -22,39 +18,6 @@
   align-items: center;
   width: 100%;
   max-width: var(--notfound-column-width); /* не более 460px по макету */
-}
-
-.image {
-  width: 100%; /* растягивается под .content */
-  height: auto; /* высота по пропорциям SVG */
-  margin-bottom: var(--space-40);
-}
-
-.text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  margin-bottom: var(--space-32);
-}
-
-.title {
-  margin-bottom: var(--space-4);
-  font-family: var(--font-title); /* Jost */
-  font-size: var(--font-size-xl); /* 24px */
-  font-weight: var(--font-weight-medium); /* 500 Medium */
-  line-height: var(--notfound-leading-title);
-  letter-spacing: var(--notfound-track-title);
-  text-align: center;
-}
-
-.description {
-  font-family: var(--font-main); /* Roboto */
-  font-size: var(--font-size-base); /* 16px */
-  font-weight: var(--font-weight-regular); /* 400 */
-  line-height: var(--notfound-leading-text);
-  letter-spacing: var(--notfound-track-text);
-  text-align: center;
 }
 
 /* две кнопки в ряд */
