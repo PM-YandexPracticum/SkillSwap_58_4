@@ -9,14 +9,17 @@ UI-кит: базовые компоненты из макета без бизн
 
 ## Что внутри
 
+- [`AuthPageLayout/`](AuthPageLayout/README.md) — общая область входа и регистрации: заголовок, форма и иллюстрация
 - [`Avatar/`](Avatar/README.md) — компонент `Avatar`
 - [`Button/`](Button/README.md) — компонент `Button`
 - [`Carousel/`](Carousel/README.md) — компонент `Carousel`
 - [`Checkbox/`](Checkbox/README.md) — компонент `Checkbox`
+- [`CredentialsForm/`](CredentialsForm/README.md) — общая вёрстка полей email/пароля, ошибок и действий
 - [`DatePicker/`](DatePicker/README.md) — компонент `DatePicker`
 - [`Dropdown/`](Dropdown/README.md) — компонент `Dropdown`
 - [`FileDropzone/`](FileDropzone/README.md) — компонент `FileDropzone`
 - [`IconButton/`](IconButton/README.md) — компонент `IconButton`
+- [`IllustrationCard/`](IllustrationCard/README.md) — карточка с иллюстрацией, заголовком и текстом (правая половина входа и регистрации)
 - [`Input/`](Input/README.md) — компонент `Input`
 - [`Loader/`](Loader/README.md) — компонент `Loader`
 - [`Logo/`](Logo/README.md) — компонент `Logo`
