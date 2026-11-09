@@ -14,6 +14,7 @@
 > Оба компонента простые — хорошая первая задача, чтобы разобраться со Storybook и токенами.
 
 - **Файлы:** `src/shared/ui/Logo/`, `src/shared/ui/Loader/`
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `Stanislave0`.
 - **Issue:** [#17](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/17) · PR [#113](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/113)
 - **Зависит от:** P1-02
 
@@ -24,6 +25,7 @@
 > Кнопки есть почти на каждом экране, поэтому делаем их одними из первых.
 
 - **Файлы:** `src/shared/ui/Button/`, `src/shared/ui/IconButton/`
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `Al-Du9270-art`.
 - **Issue:** [#18](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/18) · PR [#114](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/114)
 - **Зависит от:** P1-02
 
@@ -33,6 +35,7 @@
 > и выбранное «Хочу научиться» на шаге 2. Наставник просит один компонент для обоих случаев.
 
 - **Файлы:** `src/shared/ui/Tag/`
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `alicevdr`.
 - **Issue:** [#19](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/19) · PR [#121](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/121)
 - **Где в макете:** чипы на карточке каталога (1:2861), плашки выбранных фильтров (1:2860)
 - **Зависит от:** P1-02
@@ -43,6 +46,7 @@
 > Размеры сними с макета (шапка 1:2996, карточка 1:2861, профиль 1:2370).
 
 - **Файлы:** `src/shared/ui/Avatar/`, `src/shared/lib/image/resolveImageUrl.ts` + тест
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `muntaniolirina`.
 - **Issue:** [#20](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/20) · PR [#116](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/116)
 - **Зависит от:** — (если фото нет — заглушка; файлы заглушек добавит P1-03)
 
@@ -52,6 +56,7 @@
 > Оба должны работать с react-hook-form (передавать `ref`).
 
 - **Файлы:** `src/shared/ui/Input/`, `src/shared/ui/Textarea/`
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `Laurovsky`.
 - **Issue:** [#21](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/21) · PR [#135](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/135)
 - **Где в макете:** «Регистрация 1 шаг» (1:2548), ошибка под полем (1:2627), поле с карандашом и «О себе» в «Личных данных» (1:2370)
 - **Зависит от:** —
@@ -64,6 +69,7 @@
 - **Уже готово:** `Input` (P2-05) — «глаз» передаётся в проп `rightAction` (кликабельная кнопка справа, доступна по Tab), пример — story `WithAction`; иконки `eye` и `eye-off`, кнопка — `IconButton` с `ariaLabel`.
 - **Файлы:** `src/shared/ui/PasswordInput/`
 - **Результат:** `PasswordInput` на основе `Input`: показ/скрытие пароля, `hint`, ошибка вместо подсказки, доступная кнопка, `forwardRef` и совместимость с react-hook-form. При `disabled` кнопка глаза скрыта; 9 тестов и 5 stories. Ревью и влитие — `viceede`.
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `kkiitlin`.
 - **Issue:** [#22](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/22) · PR [#146](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/146)
 - **Где в макете:** «Вход» (1:2400), «Регистрация 1 шаг» (1:2548)
 - **Зависит от:** P2-05
@@ -75,6 +81,7 @@
 
 - **Уже готово:** иконки всех состояний — `checkbox-empty`, `checkbox-done`, `checkbox-remove` (частично), `radio-empty`, `radio-done` в `src/shared/assets/icons/`.
 - **Файлы:** `src/shared/ui/Checkbox/`, `src/shared/ui/RadioGroup/`
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `Laurovsky`.
 - **Issue:** [#23](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/23) · PR [#137](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/137)
 - **Где в макете:** панель фильтров в каталоге (1:2861), с выбранными фильтрами (1:2860)
 - **Зависит от:** —
@@ -85,6 +92,7 @@
 > Сам Dropdown не знает о содержимом — внутрь кладут что угодно.
 
 - **Файлы:** `src/shared/ui/Dropdown/`, `src/shared/lib/hooks/useClickOutside.ts` + тест
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `pwkdmc`.
 - **Issue:** [#24](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/24) · PR [#119](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/119)
 - **Зависит от:** —
 
@@ -102,7 +110,7 @@
   Enter выбирает, Esc закрывает, фокус возвращается на поле. `searchable` — текстовое поле на основе Input (P2-05) с «×».
 - **Результат:** Обычный и searchable Select: один выбор, поиск и очистка, единая раскрывающаяся рамка, клавиатура, disabled и ошибки. На ревью я уточнил фокус, ARIA-связи, смену вариантов и тесты.
 - **Файлы:** `src/shared/ui/Select/`
-- **Статус на 08.11.2026:** завершена, влита в `develop`; исполнитель: `Stanislave0`.
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `Stanislave0`.
 - **Issue:** [#25](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/25) · PR [#145](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/145)
 - **Где в макете:** «Регистрация 2 шаг» — открытый «Пол» (1:1585), «Город» с поиском (1:1629)
 - **Зависит от:** P2-05, P2-08
@@ -113,6 +121,7 @@
 > Рисуется через portal, чтобы его не обрезали родительские блоки.
 
 - **Файлы:** `src/shared/ui/Modal/`
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `Al-Du9270-art`.
 - **Issue:** [#26](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/26) · PR [#138](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/138)
 - **Где в макете:** превью навыка (1:1799), «Вы предложили обмен» (1:1977), «Ваше предложение создано» (1:2950)
 - **Зависит от:** P2-02
@@ -122,18 +131,20 @@
 > Компонент только показывает номер — переходами управляют страницы шагов.
 
 - **Файлы:** `src/shared/ui/Stepper/`
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `muntaniolirina`.
 - **Issue:** [#27](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/27) · PR [#118](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/118)
 - **Зависит от:** —
 
-### P2-12 · DatePicker 🟡
+### P2-12 · DatePicker ✅ 🟡
 > **Что нужно сделать:** сделать поле «Дата рождения» с иконкой календаря на основе библиотеки `react-datepicker` (поставлена в P1-10).
 > Календарь сами не верстаем: включаем выбор месяца и года, русский язык, неделю с понедельника и стилизуем под макет.
 > Наружу компонент отдаёт дату строкой ISO и работает с react-hook-form.
 
 - **Уже готово:** `react-datepicker` 9 в зависимостях; его стили подключаются импортом `react-datepicker/dist/react-datepicker.css`, поверх — свои по макету; поле — `Input` (P2-05): подпись, ошибка и иконка календаря в `rightIcon` (или `rightAction`, если иконка открывает календарь).
 - **Файлы:** `src/shared/ui/DatePicker/`
-- **Статус на 08.11.2026:** In Progress, исполнитель: `Laurovsky`. Для интеграции: все прямые зависимости закрыты.
-- **Issue:** [#28](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/28)
+- **Результат:** DatePicker на Input и react-datepicker: ручной ввод и календарь, русский язык, месяц/год, «Отменить» / «Выбрать», ISO без часового пояса, ошибка и сброс. Добавлены тесты и stories; правила возраста задаёт форма.
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `Laurovsky`.
+- **Issue:** [#28](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/28) · PR [#162](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/162)
 - **Где в макете:** «Регистрация 2 шаг» с открытым календарём (1:1541): списки месяца и года, «Отменить» / «Выбрать»
 - **Зависит от:** P1-10, P2-05
 
@@ -144,6 +155,7 @@
 
 - **Уже готово:** `embla-carousel-react` 8 в зависимостях (хук `useEmblaCarousel`); стрелки рисуем сами иконками `chevron-right`.
 - **Файлы:** `src/shared/ui/Carousel/`
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `pwkdmc`.
 - **Issue:** [#29](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/29) · PR [#127](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/127)
 - **Где в макете:** «Страница навыка» 1:2764, превью навыка 1:1799
 - **Зависит от:** P1-10, P2-02
@@ -165,6 +177,7 @@
   Файл выбирает скрытый `<input type="file" accept="image/jpeg,image/png,image/webp" multiple>`; клик по кнопке не должен открыть окно дважды.
   Пока над зоной тащат файл — можно выделить рамку `var(--color-accent-strong)` (в макете не нарисовано).
   Превью выбранных фото в макете не нарисованы — раскладку предлагает исполнитель на токенах (скругление `--radius-s`, крестик — `IconButton` с `cross`) и показывает скриншотом в PR.
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `muntaniolirina`.
 - **Issue:** [#30](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/30) · PR [#132](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/132)
 - **Подсказки к утилитам:** перед `drawImage` залить холст белым — иначе прозрачные части PNG в JPEG станут чёрными; в тестах (jsdom) `getContext` возвращает `null` — подменить canvas или вынести расчёт размеров в отдельную функцию с тестом.
 - **Зависит от:** P1-02
@@ -178,6 +191,7 @@
 - **Результат:** реализованы догрузка, вложенные контейнеры, отмена таймера, смена DOM-маркера и очистка ресурсов; 36 тестов и браузерная проверка с настоящим IntersectionObserver. Подключение в каталоге и избранном — P5-06/P5-08.
 - **Подсказки к тесту:** хук рендерим через `renderHook` из `@testing-library/react`; в jsdom нет `IntersectionObserver` — подменить через `vi.stubGlobal` и вызвать его колбэк вручную; задержку — `vi.useFakeTimers()` и `vi.advanceTimersByTime(CATALOG.SCROLL_DELAY_MS)`.
 - **Файлы:** `src/shared/lib/hooks/useInfiniteScroll.ts` + тест
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `Al-Du9270-art`.
 - **Issue:** [#31](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/31) · PR [#152](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/152)
 - **Зависит от:** P1-04
 
@@ -188,10 +202,11 @@
 
 - **Уже готово:** все лимиты (длины, возраст, размер файла) в `shared/config/validation.ts` — брать оттуда; правила тестов — [testing.md](../../rules/testing.md), повторяющиеся случаи — таблицей через `it.each`, как в `getAge.test.ts`.
 - **Файлы:** `src/shared/lib/validation/fields.ts` + тест на каждое правило
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `pwkdmc`.
 - **Issue:** [#32](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/32) · PR [#128](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/128)
 - **Зависит от:** P1-04
 
-### P2-17 · MultiSelect 🟡
+### P2-17 · MultiSelect ✅ 🟡
 > **Что нужно сделать:** сделать выпадающий список с чекбоксами — можно отметить несколько значений. В закрытом виде выглядит как Select
 > и показывает выбранное (лишнее — «+N»). Нужен на шаге 2 регистрации для «Категория / Подкатегория навыка, которому хотите научиться» —
 > так нарисовано в макете.
@@ -199,8 +214,9 @@
 - **Уже готово:** Select (P2-09, PR #145) с единым раскрытым полем, клавиатурой и обработкой фокуса; `Checkbox` (P2-07) с частичным выбором — для пунктов списка; иконки чекбоксов `checkbox-empty`, `checkbox-done` в `src/shared/assets/icons/`.
 - **Как выглядит:** так же, как открытый Select (P2-09) — одна раскрытая вниз рамка с полем и списком, только у пунктов чекбоксы. Берём устройство Select, `Dropdown` не используем.
 - **Файлы:** `src/shared/ui/MultiSelect/`
-- **Статус на 08.11.2026:** In Progress, исполнитель: `Laurovsky`. Для интеграции: все прямые зависимости закрыты.
-- **Issue:** [#33](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/33)
+- **Результат:** MultiSelect переиспользует стили раскрывающегося поля Select и Checkbox; управляемый множественный выбор, первое выбранное название и «+N», клавиатура, ошибка и disabled. Добавлены тесты и stories; связь категорий остаётся в P6-03.
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `Laurovsky`.
+- **Issue:** [#33](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/33) · PR [#163](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/163)
 - **Где в макете:** «Регистрация 2 шаг» — 1:1673 (категории), 1:1717 (подкатегории)
 - **Зависит от:** P2-07, P2-09
 
@@ -210,6 +226,7 @@
 > рисует `ToastProvider` в `app`. По ТЗ наставника toast появляется после «Предложить обмен» (P7-03).
 
 - **Файлы:** `src/shared/ui/Toast/`, `src/shared/lib/toast/` (контекст и `useToast`), `src/app/providers/ToastProvider.tsx`
+- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `sosolet`.
 - **Issue:** [#106](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/106) · PR [#140](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/140)
 - **Где в макете:** тосты в 1:2148 (1:1975, 1:1976) — берём только внешний вид, текст у нас свой
 - **Граница задачи:** UI, контекст, хук и провайдер показа готовы. Вызов после предложения обмена — P7-03; вёрстка панели колокольчика готова в P3-15, действия и переход «Перейти» подключит P7-05; хранение уведомлений — P4-07.

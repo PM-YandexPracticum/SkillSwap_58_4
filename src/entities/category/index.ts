@@ -8,6 +8,6 @@ export {
   selectCategoryColor,
 } from './model/selectors'
 export { getCategories } from './api/categoryApi'
-export { CategoryIcon } from './ui/CategoryIcon'
+export { CategoryIcon, type CategoryIconProps } from './ui/CategoryIcon'
 export { CategorySubcategorySelect } from './ui/CategorySubcategorySelect'
 export { getAvailableSubcategories, syncCategorySelection } from './lib/linkCategories'

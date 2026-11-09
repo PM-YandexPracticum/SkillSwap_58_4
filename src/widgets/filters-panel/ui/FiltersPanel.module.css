@@ -1,0 +1,29 @@
+.panel {
+  width: 324px; /* Figma: левая колонка каталога */
+  max-width: 100%;
+  padding: var(--space-20);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-s);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+  margin-bottom: var(--space-40);
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+  line-height: calc(28 / 24);
+  letter-spacing: -0.011em;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-32);
+}

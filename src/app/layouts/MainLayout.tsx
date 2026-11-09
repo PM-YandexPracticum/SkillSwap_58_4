@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 
+import { CategoriesMenu } from '@/widgets/categories-menu'
 import { Footer } from '@/widgets/footer'
 import { Header } from '@/widgets/header'
 import styles from './MainLayout.module.css'
@@ -14,7 +15,7 @@ export function MainLayout() {
   return (
     <div className={styles.layout}>
       <div className={styles.headerWrap}>
-        <Header />
+        <Header categoriesMenu={<CategoriesMenu />} />
       </div>
       <div className={styles.content}>
         <Outlet />

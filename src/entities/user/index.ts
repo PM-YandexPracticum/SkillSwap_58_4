@@ -1,6 +1,14 @@
 export type { User, PublicUser, Gender } from './model/types'
-export { usersReducer, type UsersState } from './model/usersSlice'
-export { selectUsers, selectUsersStatus } from './model/selectors'
+export { usersReducer, fetchUsers, type UsersState } from './model/usersSlice'
+export {
+  selectUsers,
+  selectUsersStatus,
+  selectUserById,
+  selectUserByEmail,
+  selectPopularUsers,
+  selectNewUsers,
+  selectRecommendedUsers,
+} from './model/selectors'
 export { getUsers, getUserById, createUser, updateUser } from './api/userApi'
 export { getAge } from './lib/getAge'
 export { UserCard, type UserCardProps, type UserCardTag } from './ui/UserCard'

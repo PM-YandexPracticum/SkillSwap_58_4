@@ -1,0 +1,29 @@
+/* ─── Локальные токены ───
+   Макет «404» (1:2048) */
+
+.page {
+  --notfound-column-width: 460px; /* макс. ширина колонки контента */
+  --notfound-space-top: 204px; /* Top: 204 от шапки в Figma */
+
+  display: flex;
+  justify-content: center;
+  padding-top: var(--notfound-space-top); /* 204px от шапки (макет) */
+  padding-bottom: var(--space-80); /* 80px до подвала */
+  background-color: var(--color-bg);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: var(--notfound-column-width); /* не более 460px по макету */
+}
+
+/* две кнопки в ряд */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-24); /* промежуток 24px между кнопками */
+  width: 100%;
+}
