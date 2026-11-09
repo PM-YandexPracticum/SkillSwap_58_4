@@ -1,65 +1,47 @@
-import { ID } from '@/shared/types'
-import { PublicUser } from '../../user/model/types'
 import { createSelector } from '@reduxjs/toolkit'
-import { shuffle } from '@/shared/lib/shuffle'
+import type { ID } from '@/shared/types'
+import type { PublicUser, User } from './types'
 
-/** Все пользователи */
-export const selectUsers = (state: RootState) => state.users.items
+/** Общая проекция для UI: учебный пароль остаётся только в store и API. */
+function toPublicUser({ password: _password, ...publicUser }: User): PublicUser {
+  return publicUser
+}
+
+const selectStoredUsers = (state: RootState) => state.users.items
+
+/** Все пользователи без паролей; ссылка стабильна, пока список в store не изменился. */
+export const selectUsers = createSelector([selectStoredUsers], (users): PublicUser[] =>
+  users.map(toPublicUser),
+)
 
 /** Статус загрузки */
 export const selectUsersStatus = (state: RootState) => state.users.status
 
-// TODO:(Готово) selectUserById(id), selectUserByEmail(email)
-// TODO:(Готово) selectPopularUsers — по полю likesCount (его меняет лайк, P5-07), selectNewUsers — по createdAt; через createSelector
+/** Пользователь для компонента по id; undefined, если его нет. */
+export const selectUserById = (state: RootState, userId: ID): PublicUser | undefined =>
+  selectUsers(state).find((user) => user.id === userId)
 
-//пользователь по ID или undefined
-export const selectUserById = (state: RootState, userId: ID): PublicUser | undefined => {
-  const found = selectUsers(state).find((item) => item.id === userId)
-  if (!found) return undefined
-
-  const { password, ...publicUser } = found
-  return publicUser
+/**
+ * Полная запись только для логики входа (P4-09) и проверки уникальности email (P4-06).
+ * Сравнивает email без учёта регистра и краевых пробелов. Не передавать результат в UI:
+ * для компонентов используются selectUsers / selectUserById с типом PublicUser.
+ */
+export const selectUserByEmail = (state: RootState, email: string): User | undefined => {
+  const normalizedEmail = email.trim().toLowerCase()
+  return selectStoredUsers(state).find(
+    (user) => user.email.trim().toLowerCase() === normalizedEmail,
+  )
 }
 
-//пользователи по почте
-export const selectUserByEmail = (state: RootState, email: string): PublicUser | undefined => {
-  const found = selectUsers(state).find((item) => item.email === email)
-  if (!found) return undefined
-
-  const { password, ...publicUser } = found
-  return publicUser
-}
-
-//сортировка по лайкам аккаунта
-export const selectPopularUsers = createSelector(
-  [selectUsers],
-  (completeListOfUsers): PublicUser[] => {
-    return completeListOfUsers
-      .slice()
-      .map((item) => {
-        const { password, ...publicUser } = item
-        return publicUser
-      })
-      .sort((a, b) => b.likesCount - a.likesCount)
-  },
+/** Все пользователи по убыванию likesCount, без изменения исходного порядка в store. */
+export const selectPopularUsers = createSelector([selectUsers], (users): PublicUser[] =>
+  [...users].sort((a, b) => b.likesCount - a.likesCount),
 )
 
-//сортировка по разделу Новое
-export const selectNewUsers = createSelector([selectUsers], (completeListOfUsers): PublicUser[] => {
-  return completeListOfUsers
-    .slice()
-    .map((item) => {
-      const { password, ...publicUser } = item
-      return publicUser
-    })
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-})
+/** Все пользователи от новых к старым; при одинаковой дате сохраняется порядок загрузки. */
+export const selectNewUsers = createSelector([selectUsers], (users): PublicUser[] =>
+  [...users].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)),
+)
 
-//селектор для раздела Рекомендуем
-export const selectRecomendUsers = createSelector([selectUsers], (allUsers): PublicUser[] => {
-  const publicUsers = allUsers.map((item) => {
-    const { password, ...publicUser } = item
-    return publicUser
-  })
-  return shuffle(publicUsers)
-})
+/** Порядок один раз перемешан в fetchUsers; лайки и чтение селектора его не меняют. */
+export const selectRecommendedUsers = selectUsers

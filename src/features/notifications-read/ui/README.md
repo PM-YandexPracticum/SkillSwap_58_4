@@ -9,4 +9,7 @@
 
 ## Что внутри
 
-- `MarkAllReadButton.tsx` — Кнопка «Прочитать все»: все новые уведомления переходят в «Просмотренные» и больше не кликаются
+- `MarkAllReadButton.tsx` — кнопка «Прочитать все»: новые уведомления переходят в просмотренные и больше не кликаются. В P3-15 вызывает переданный `onClick` (без Redux).
+- `MarkAllReadButton.module.css` — локальные стили кнопки: зелёный текст `#508826` и вес 500 по макету 1:2148. Остальная типографика наследуется из `shared/ui/Button`.
+- `MarkAllReadButton.test.tsx` — тесты: отрисовка и вызов `onClick`.
+- `MarkAllReadButton.stories.tsx` — story для Storybook (`features/notifications-read/MarkAllReadButton`), фрейм 1:2239.

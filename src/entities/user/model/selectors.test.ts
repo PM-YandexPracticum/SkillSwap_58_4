@@ -1,25 +1,38 @@
+import { createTestStore } from '@/app/test/createTestStore'
 import { createUser } from '../testing'
-import { describe, test, expect } from 'vitest'
 import {
+  selectUsers,
+  selectUsersStatus,
   selectUserById,
   selectUserByEmail,
   selectPopularUsers,
   selectNewUsers,
-  selectRecomendUsers,
-} from './selectors'
+  selectRecommendedUsers,
+} from '..'
+import type { User } from './types'
 
-const makeState = (items: ReturnType<typeof createUser>[]): RootState =>
-  ({
-    users: {
-      items,
-      status: 'idle',
-      error: null,
-    },
-  }) as RootState
+const makeState = (items: User[]): RootState =>
+  createTestStore({ users: { items, status: 'idle', error: null } }).getState()
 
 describe('Тестирование селекторов пользователей', () => {
+  it('возвращает статус загрузки', () => {
+    const state = makeState([])
+    expect(selectUsersStatus({ ...state, users: { ...state.users, status: 'failed' } })).toBe(
+      'failed',
+    )
+  })
+
+  it('общий публичный селектор не отдаёт пароли и сохраняет ссылку при неизменных пользователях', () => {
+    const state = makeState([createUser({ id: 'u1' })])
+    const users = selectUsers(state)
+
+    expect(users[0]).not.toHaveProperty('password')
+    expect(selectUsers(state)).toBe(users)
+    expect(selectUsers({ ...state })).toBe(users)
+  })
+
   describe('selectUserById', () => {
-    test('находит пользователя по id', () => {
+    it('находит пользователя по id', () => {
       const user = createUser({ id: 'u1' })
       const state = makeState([user])
 
@@ -29,16 +42,17 @@ describe('Тестирование селекторов пользователе
       expect(result?.id).toBe('u1')
     })
 
-    test('возвращает PublicUser без поля password', () => {
+    it('возвращает PublicUser без поля password', () => {
       const user = createUser({ id: 'u1' })
       const state = makeState([user])
 
       const result = selectUserById(state, 'u1')
 
       expect(result).not.toHaveProperty('password')
+      expect(selectUserById(state, 'u1')).toBe(result)
     })
 
-    test('возвращает undefined, если пользователь не найден', () => {
+    it('возвращает undefined, если пользователь не найден', () => {
       const state = makeState([])
 
       expect(selectUserById(state, 'u999')).toBeUndefined()
@@ -46,7 +60,7 @@ describe('Тестирование селекторов пользователе
   })
 
   describe('selectUserByEmail', () => {
-    test('находит пользователя по email', () => {
+    it('находит пользователя по email', () => {
       const user = createUser({ id: 'u1', email: 'test@example.com' })
       const state = makeState([user])
 
@@ -56,24 +70,36 @@ describe('Тестирование селекторов пользователе
       expect(result?.id).toBe('u1')
     })
 
-    test('возвращает PublicUser без поля password', () => {
+    it('возвращает исходного пользователя для проверки пароля в логике входа', () => {
       const user = createUser({ id: 'u1', email: 'test@example.com' })
       const state = makeState([user])
 
       const result = selectUserByEmail(state, 'test@example.com')
 
-      expect(result).not.toHaveProperty('password')
+      expect(result).toBe(user)
+      expect(result?.password).toBe(user.password)
     })
 
-    test('возвращает undefined, если email не найден', () => {
+    it('возвращает undefined, если email не найден', () => {
       const state = makeState([])
 
       expect(selectUserByEmail(state, 'nope@example.com')).toBeUndefined()
     })
+
+    it('находит email без учёта регистра и краевых пробелов', () => {
+      const state = makeState([createUser({ id: 'u1', email: 'Test@Example.com' })])
+
+      expect(selectUserByEmail(state, '  TEST@example.COM ')).toBe(state.users.items[0])
+    })
+
+    it.each(['', ' ', 'unknown@example.com'])('не находит отсутствующий email «%s»', (email) => {
+      const state = makeState([createUser()])
+      expect(selectUserByEmail(state, email)).toBeUndefined()
+    })
   })
 
   describe('selectPopularUsers', () => {
-    test('сортирует пользователей по likesCount по убыванию', () => {
+    it('сортирует пользователей по likesCount по убыванию', () => {
       const user1 = createUser({ id: 'u1', likesCount: 10 })
       const user2 = createUser({ id: 'u2', likesCount: 100 })
       const user3 = createUser({ id: 'u3', likesCount: 50 })
@@ -86,7 +112,7 @@ describe('Тестирование селекторов пользователе
       expect(result[2].id).toBe('u1')
     })
 
-    test('возвращает PublicUser[] без паролей', () => {
+    it('возвращает PublicUser[] без паролей', () => {
       const users = [createUser({ id: 'u1' }), createUser({ id: 'u2' })]
       const state = makeState(users)
 
@@ -97,7 +123,7 @@ describe('Тестирование селекторов пользователе
       })
     })
 
-    test('возвращает пустой массив для пустого state', () => {
+    it('возвращает пустой массив для пустого state', () => {
       const state = makeState([])
 
       expect(selectPopularUsers(state)).toEqual([])
@@ -105,7 +131,7 @@ describe('Тестирование селекторов пользователе
   })
 
   describe('selectNewUsers', () => {
-    test('сортирует пользователей по createdAt по убыванию', () => {
+    it('сортирует пользователей по createdAt по убыванию', () => {
       const user1 = createUser({ id: 'u1', createdAt: '2026-01-01T00:00:00.000Z' })
       const user2 = createUser({ id: 'u2', createdAt: '2026-11-01T00:00:00.000Z' })
       const user3 = createUser({ id: 'u3', createdAt: '2026-06-01T00:00:00.000Z' })
@@ -118,7 +144,7 @@ describe('Тестирование селекторов пользователе
       expect(result[2].id).toBe('u1')
     })
 
-    test('возвращает PublicUser[] без паролей', () => {
+    it('возвращает PublicUser[] без паролей', () => {
       const users = [createUser({ id: 'u1' }), createUser({ id: 'u2' })]
       const state = makeState(users)
 
@@ -130,38 +156,38 @@ describe('Тестирование селекторов пользователе
     })
   })
 
-  describe('selectRecomendUsers', () => {
-    test('возвращает массив того же размера', () => {
+  describe('selectRecommendedUsers', () => {
+    it('возвращает массив того же размера', () => {
       const users = [createUser({ id: 'u1' }), createUser({ id: 'u2' }), createUser({ id: 'u3' })]
       const state = makeState(users)
 
-      const result = selectRecomendUsers(state)
+      const result = selectRecommendedUsers(state)
 
       expect(result).toHaveLength(users.length)
     })
 
-    test('содержит все исходные id', () => {
+    it('содержит все исходные id', () => {
       const users = [createUser({ id: 'u1' }), createUser({ id: 'u2' }), createUser({ id: 'u3' })]
       const state = makeState(users)
 
-      const result = selectRecomendUsers(state)
+      const result = selectRecommendedUsers(state)
       const resultIds = result.map((u) => u.id).sort()
 
       expect(resultIds).toEqual(['u1', 'u2', 'u3'])
     })
 
-    test('возвращает PublicUser[] без паролей', () => {
+    it('возвращает PublicUser[] без паролей', () => {
       const users = [createUser({ id: 'u1' }), createUser({ id: 'u2' })]
       const state = makeState(users)
 
-      const result = selectRecomendUsers(state)
+      const result = selectRecommendedUsers(state)
 
       result.forEach((user) => {
         expect(user).not.toHaveProperty('password')
       })
     })
 
-    test('возвращает стабильный порядок при повторных вызовах (мемоизация)', () => {
+    it('возвращает стабильный порядок при повторных вызовах (мемоизация)', () => {
       const users = [
         createUser({ id: 'u1' }),
         createUser({ id: 'u2' }),
@@ -170,10 +196,62 @@ describe('Тестирование селекторов пользователе
       ]
       const state = makeState(users)
 
-      const result1 = selectRecomendUsers(state)
-      const result2 = selectRecomendUsers(state)
+      const result1 = selectRecommendedUsers(state)
+      const result2 = selectRecommendedUsers(state)
 
+      expect(result2).toBe(result1)
       expect(result1.map((u) => u.id)).toEqual(result2.map((u) => u.id))
     })
+
+    it('не меняет порядок после изменения числа лайков', () => {
+      const users = ['u3', 'u1', 'u2'].map((id) => createUser({ id }))
+      const before = selectRecommendedUsers(makeState(users))
+      const after = selectRecommendedUsers(
+        makeState(users.map((user) => (user.id === 'u1' ? { ...user, likesCount: 100 } : user))),
+      )
+
+      expect(after.map((user) => user.id)).toEqual(before.map((user) => user.id))
+      expect(after.find((user) => user.id === 'u1')?.likesCount).toBe(100)
+    })
+  })
+
+  it.each([
+    ['selectUsers', selectUsers],
+    ['selectPopularUsers', selectPopularUsers],
+    ['selectNewUsers', selectNewUsers],
+    ['selectRecommendedUsers', selectRecommendedUsers],
+  ] as const)('%s возвращает стабильный пустой список', (_name, select) => {
+    const state = makeState([])
+    expect(select(state)).toEqual([])
+    expect(select({ ...state })).toBe(select(state))
+  })
+
+  it.each([
+    ['selectPopularUsers', selectPopularUsers],
+    ['selectNewUsers', selectNewUsers],
+  ] as const)('%s сохраняет порядок при равных значениях и не меняет store', (_name, select) => {
+    const users = ['u3', 'u1', 'u2'].map((id) => createUser({ id }))
+    const state = makeState(users)
+    Object.freeze(users)
+    users.forEach(Object.freeze)
+
+    expect(select(state).map((user) => user.id)).toEqual(['u3', 'u1', 'u2'])
+    expect(select({ ...state })).toBe(select(state))
+    expect(state.users.items).toBe(users)
+  })
+
+  it('сортировки секций не переставляют публичный список и рекомендации', () => {
+    const state = makeState([
+      createUser({ id: 'u1', likesCount: 1, createdAt: '2026-01-01T00:00:00Z' }),
+      createUser({ id: 'u2', likesCount: 3, createdAt: '2026-02-01T00:00:00Z' }),
+      createUser({ id: 'u3', likesCount: 2, createdAt: '2026-03-01T00:00:00Z' }),
+    ])
+    const users = selectUsers(state)
+
+    expect(selectPopularUsers(state).map((user) => user.id)).toEqual(['u2', 'u3', 'u1'])
+    expect(selectNewUsers(state).map((user) => user.id)).toEqual(['u3', 'u2', 'u1'])
+    expect(selectRecommendedUsers(state).map((user) => user.id)).toEqual(['u1', 'u2', 'u3'])
+    expect(selectUsers(state)).toBe(users)
+    expect(state.users.items.map((user) => user.id)).toEqual(['u1', 'u2', 'u3'])
   })
 })

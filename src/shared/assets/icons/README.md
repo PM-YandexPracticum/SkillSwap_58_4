@@ -99,5 +99,7 @@ id — это `node-id` из ссылки на фрейм в Figma, он же п
 | Файл | Почему |
 |---|---|
 | `brands/google.svg` | Логотип бренда: многоцветный, цвета оригинальные |
-| `checkbox-done.svg`, `checkbox-remove.svg` | Фон `currentColor`, галочка и минус `#fff` — по макету. TODO: заменить на CSS-переменную, когда появятся токены (P1-01) |
+| `checkbox-done.svg`, `checkbox-remove.svg` | Фон `currentColor`, галочка и минус `#fff` — по макету. Белый цвет пока фиксирован; токены P1-01 уже есть, TODO по переходу на CSS-переменную ещё не выполнен |
 
+
+Подкаталоги: [иконки категорий](categories/README.md), [иконки брендов](brands/README.md).

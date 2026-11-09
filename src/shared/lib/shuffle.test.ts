@@ -1,8 +1,7 @@
-import { describe, test, expect } from 'vitest'
 import { shuffle } from './shuffle'
 
 describe('shuffle', () => {
-  test('не мутирует исходный массив', () => {
+  it('не мутирует исходный массив', () => {
     const original = [1, 2, 3, 4, 5]
     const copy = [...original]
 
@@ -11,7 +10,7 @@ describe('shuffle', () => {
     expect(original).toEqual(copy)
   })
 
-  test('возвращает новый массив', () => {
+  it('возвращает новый массив', () => {
     const original = [1, 2, 3]
 
     const result = shuffle(original)
@@ -19,7 +18,7 @@ describe('shuffle', () => {
     expect(result).not.toBe(original)
   })
 
-  test('возвращает массив той же длины', () => {
+  it('возвращает массив той же длины', () => {
     const items = [1, 2, 3, 4, 5]
 
     const result = shuffle(items)
@@ -27,7 +26,7 @@ describe('shuffle', () => {
     expect(result).toHaveLength(items.length)
   })
 
-  test('содержит те же элементы', () => {
+  it('содержит те же элементы', () => {
     const items = [1, 2, 3, 4, 5]
 
     const result = shuffle(items)
@@ -35,19 +34,19 @@ describe('shuffle', () => {
     expect(result.sort()).toEqual(items.sort())
   })
 
-  test('работает с пустым массивом', () => {
+  it('работает с пустым массивом', () => {
     const result = shuffle([])
 
     expect(result).toEqual([])
   })
 
-  test('работает с массивом из одного элемента', () => {
+  it('работает с массивом из одного элемента', () => {
     const result = shuffle([42])
 
     expect(result).toEqual([42])
   })
 
-  test('предсказуемый результат при подмене _random', () => {
+  it('предсказуемый результат при подмене random', () => {
     const items = [1, 2, 3, 4]
 
     const mockRandom = () => 0
@@ -57,13 +56,20 @@ describe('shuffle', () => {
     expect(result).toEqual([2, 3, 4, 1])
   })
 
-  test('перемешивает массив (не оставляет в исходном порядке)', () => {
-    const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  it('может сохранить исходный порядок — это допустимая случайная перестановка', () => {
+    expect(shuffle([1, 2, 3, 4], () => 0.999)).toEqual([1, 2, 3, 4])
+  })
 
-    const results = Array.from({ length: 10 }, () => shuffle(items))
+  it('работает с readonly-массивом и сохраняет повторяющиеся элементы и ссылки на объекты', () => {
+    const first = { id: 'first' }
+    const second = { id: 'second' }
+    const items = Object.freeze([first, first, second])
 
-    const allSameAsOriginal = results.every((r) => JSON.stringify(r) === JSON.stringify(items))
+    const result = shuffle(items, () => 0)
 
-    expect(allSameAsOriginal).toBe(false)
+    expect(result).toEqual([first, second, first])
+    expect(result[0]).toBe(first)
+    expect(result[1]).toBe(second)
+    expect(items).toEqual([first, first, second])
   })
 })

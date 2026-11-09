@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { LoadingStatus } from '@/shared/types'
+import { DATA_ERRORS } from '@/shared/config'
 import type { Skill } from './types'
 import { getSkills } from '../api/skillApi'
 
@@ -17,11 +18,9 @@ const initialState: SkillsState = {
 
 /**
  * Все навыки из «базы» (`entities/skill/api`): образцы + созданные при регистрации.
- * TODO: fetchSkills (createAsyncThunk), addSkill
+ * Сохранение нового навыка при регистрации — P4-06.
  */
-export const fetchSkills = createAsyncThunk('skills/fetchSkills', async () => {
-  return await getSkills()
-})
+export const fetchSkills = createAsyncThunk<Skill[]>('skills/fetchSkills', async () => getSkills())
 
 export const skillsSlice = createSlice({
   name: 'skills',
@@ -39,7 +38,7 @@ export const skillsSlice = createSlice({
     })
     builder.addCase(fetchSkills.rejected, (state) => {
       state.status = 'failed'
-      state.error = 'Ошибка загрузки навыков'
+      state.error = DATA_ERRORS.LOAD_SKILLS
     })
   },
 })

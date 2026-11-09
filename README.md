@@ -74,7 +74,7 @@ public/db/                    # образцы данных: users, skills, cate
 | `npm run format` | Форматирование через Prettier |
 | `npm run test` | Запуск тестов |
 | `npm run test:watch` | Тесты в watch-режиме |
-| `npm run test:coverage` | Отчёт о покрытии тестами. Порог 70 % — цель к финишу (P8-07): пока тестов мало, команда сообщает, что порог не достигнут, — это нормально |
+| `npm run test:coverage` | Отчёт о покрытии тестами; Vitest проверяет порог 70 % statements |
 | `npm run e2e` | Автотесты сценариев в браузере (Playwright, папка `e2e/`). Перед первым запуском: `npx playwright install chromium` |
 | `npm run storybook` | Storybook — каталог UI-компонентов |
 | `npm run build-storybook` | Сборка Storybook |
@@ -93,7 +93,7 @@ public/db/                    # образцы данных: users, skills, cate
 
 Lazy-загрузка уже настроена в `src/app/providers/RouterProvider.tsx`.
 
-Закрытые маршруты (`/profile/*`, `/favorites`) обёрнуты в `RequireAuth`, шаги 2 и 3 регистрации — в `RegisterStepGuard` (оба — `src/app/router/`).
+Для `/profile/*` и `/favorites` реализован `RequireAuth` (P4-08): гость попадает на `/login` через `replace`, исходный адрес с query/hash сохраняется в `state.from`. Вошедшего пользователя guard пропускает; возврат после успешного входа подключается в P4-09. Для шагов 2–3 регистрации пока подключён каркас `RegisterStepGuard` (P6-01), который пропускает содержимое; проверка предыдущих шагов ещё предстоит.
 
 ---
 
@@ -110,7 +110,7 @@ Lazy-загрузка уже настроена в `src/app/providers/RouterProv
 
 Коротко (подробно — [docs/rules/git-workflow.md](docs/rules/git-workflow.md)):
 
-- работаем от `develop`, `main` не трогаем; одна задача = одна ветка = один PR в `develop`;
+- работаем от `develop`, `main` не трогаем; одна задача = одна ветка = один PR в `develop` (исключение — общая P8-02: отдельный мини-PR от каждого участника);
 - ветка начинается с ID задачи: `feature/p2-02-buttons`;
 - одновременно — только одна задача; в коммит — только свои файлы, никогда `git add .`;
 - `package.json` и зависимости меняют только тимлид и помощник (задачи 👑);
@@ -121,8 +121,8 @@ Lazy-загрузка уже настроена в `src/app/providers/RouterProv
 
 ## Проверки качества
 
-CI/CD в проекте нет — всё проверяется локально.
-Файл `.github/workflows/ci.yml` из стартового шаблона оставлен как есть: GitHub может показывать его проверки в PR, но мы его не развиваем и на него не опираемся.
+Деплоя и публикации из CI пока нет. GitHub Actions проверяет каждый PR в `develop`, а также push в `develop` и `main`: устанавливает зависимости и запускает lint, TypeScript, тесты и сборку.
+Локальные проверки остаются обязательными перед PR и позволяют получить результат до отправки изменений.
 
 | Команда | Что проверяет |
 |---|---|

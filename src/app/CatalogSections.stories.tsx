@@ -1,17 +1,16 @@
-import { configureStore } from '@reduxjs/toolkit'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes, useParams } from 'react-router-dom'
 
-import { categoriesReducer, type Category } from '@/entities/category'
-import { citiesReducer } from '@/entities/city'
-import { skillsReducer } from '@/entities/skill'
+import type { Category } from '@/entities/category'
 import { createSkill } from '@/entities/skill/testing'
 import type { PublicUser } from '@/entities/user'
 import { createUser } from '@/entities/user/testing'
 import { ROUTES, ROUTER_FUTURE } from '@/shared/config'
 import { OfferCard } from '@/widgets/offer-card'
 import { OffersSection } from '@/widgets/offers-section'
+
+import { createAppStore } from './store'
 
 const users = Array.from({ length: 12 }, (_, index) =>
   createUser({
@@ -69,17 +68,36 @@ function SkillDestination() {
   return <h1>Страница навыка {id}</h1>
 }
 
-/** Композиция виджетов на уровне app; страницы каталога и загрузки данных в P3-08 нет. */
-function CatalogSections() {
-  const store = configureStore({
-    reducer: { cities: citiesReducer, categories: categoriesReducer, skills: skillsReducer },
-    preloadedState: {
-      cities: {
-        items: [{ id: users[0].cityId, name: 'Санкт-Петербург' }],
-        status: 'succeeded' as const,
-      },
-      categories: { items: categories, status: 'succeeded' as const },
-      skills: { items: skills, status: 'succeeded' as const, error: null },
+/**
+ * Демонстрация OfferCard и OffersSection на уровне app для P3-08 / P7-04.
+ * Данные фабрик передаются в store: Default показывает ссылки, WithProposedExchange — собственное предложение.
+ * Не реализует страницу каталога и не загружает обмены из базы.
+ * @see Figma: секции каталога (1:2871), каталог с предложенным обменом (1:2106)
+ */
+function CatalogSections({ proposed = false }: { proposed?: boolean }) {
+  const store = createAppStore({
+    cities: {
+      items: [{ id: users[0].cityId, name: 'Санкт-Петербург' }],
+      status: 'succeeded' as const,
+    },
+    categories: { items: categories, status: 'succeeded' as const },
+    skills: { items: skills, status: 'succeeded' as const, error: null },
+    session: { session: proposed ? { userId: 'catalog-viewer', token: 'test' } : null },
+    exchanges: {
+      items: proposed
+        ? [
+            {
+              id: 'catalog-exchange',
+              fromUserId: 'catalog-viewer',
+              toUserId: users[0].id,
+              skillId: users[0].teachSkillId,
+              createdAt: '2026-01-15T10:00:00.000Z',
+            },
+          ]
+        : [],
+      status: 'succeeded',
+      pendingRequests: 0,
+      error: null,
     },
   })
   return (
@@ -137,7 +155,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'P3-08: совместная проверка OfferCard и OffersSection. Две секции раскрываются независимо, следующая секция плавно сдвигается. «Подробнее» ведёт на демонстрационный маршрут навыка. Счётчик рядом с сердечком — требование ТЗ; анимация 250 ms и подпись «Свернуть» — решения для поведения, не показанного в Figma.',
+          'P3-08 / P7-04: совместная проверка OfferCard и OffersSection. Две секции раскрываются независимо, следующая секция плавно сдвигается. «Подробнее» ведёт на демонстрационный маршрут навыка, а собственное предложение показывает статичный статус «Обмен предложен». Счётчик рядом с сердечком — требование ТЗ; анимация 250 ms и подпись «Свернуть» — решения для поведения, не показанного в Figma.',
       },
     },
   },
@@ -148,3 +166,13 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
+
+export const WithProposedExchange: Story = {
+  args: { proposed: true },
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2106',
+    },
+  },
+}

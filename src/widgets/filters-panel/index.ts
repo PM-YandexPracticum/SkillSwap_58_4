@@ -1,1 +1,1 @@
-export { FiltersPanel } from './ui/FiltersPanel'
+export { FiltersPanel, type FiltersPanelProps } from './ui/FiltersPanel'
