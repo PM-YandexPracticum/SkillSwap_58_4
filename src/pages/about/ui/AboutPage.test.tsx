@@ -1,9 +1,11 @@
+import { nanoid } from 'nanoid'
 import { render, screen } from '@testing-library/react'
 import type { TeamMember } from '../config/team'
 import { AboutPage } from './AboutPage'
 
 function createMember(overrides: Partial<TeamMember> = {}): TeamMember {
   return {
+    id: nanoid(),
     name: 'Тестовый Участник',
     role: 'Разработчик',
     github: 'https://github.com/test-member',
