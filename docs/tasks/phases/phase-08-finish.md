@@ -19,6 +19,7 @@
 
 - **Файлы:** `src/pages/about/config/team.ts`, `public/images/team/`
 - **Уже принято:** Диана (`pwkdmc`, [PR #159](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/159), `/images/team/t0.jpg`) и Андрей (`viceede`, [PR #168](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/168), `/images/team/t1.jpg`). Страница уже выводит TEAM (P3-16). Общая issue остаётся открытой для остальных участников; в мини-PR пишем `Refs #81`, без `Closes #81`.
+- **Мой вклад:** добавил карточку тимлида (`kirill-ai-dev`) с GitHub и описанием работы над проектом. Добавил фото `public/images/team/t2.jpg`; осталось влить PR.
 - **Статус на 09.11.2026:** Review, исполнитель: `pwkdmc`. Для интеграции: все прямые зависимости закрыты.
 - **Issue:** [#81](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/81)
 - **Зависит от:** P3-16
