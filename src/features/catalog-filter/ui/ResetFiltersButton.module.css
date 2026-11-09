@@ -1,0 +1,12 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: var(--space-4);
+  letter-spacing: 0.02em;
+}
+
+.icon {
+  width: var(--space-24);
+  height: var(--space-24);
+}

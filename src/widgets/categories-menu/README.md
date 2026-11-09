@@ -2,6 +2,8 @@
 
 Статичный справочник «Все навыки» для меню Header и страницы `/skills` (P3-06).
 
+**Текущее состояние:** P3-06 завершена (PR #165). CategoriesList и CategoriesMenu реализованы, подключены в MainLayout и на `/skills`; загрузка, ошибка с повтором и пустой список покрыты тестами и stories.
+
 ## Что внутри
 
 - [`ui/`](ui/README.md) — общий `CategoriesList`, панель `CategoriesMenu`, стили, тесты и stories.
