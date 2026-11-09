@@ -16,7 +16,7 @@
 - **Файлы:** `src/features/catalog-filter/model/`, `src/features/catalog-filter/lib/applyFilters.ts` + тесты
 - **Issue:** [#59](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/59) · PR [#154](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/154)
 - **Зависит от:** P4-03 — для подключения загруженных данных; чистое ядро реализовано и проверено независимо на фабриках.
-- **Статус на 07.11.2026:** завершена, влита в `develop` — [PR #154](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/154). P4-03 остаётся зависимостью подключения реальных данных; ядро фильтров проверено на фабриках.
+- **Статус на 08.11.2026:** завершена, влита в `develop`; исполнитель: `kirill-ai-dev`.
 - **Проверки:** 523 теста проходят, включая 53 проверки P5-01; lint, TypeScript и сборка проходят; покрытие `applyFilters`, reducer и selectors — 100 % строк, функций и ветвей.
 
 ### P5-02 · Панель фильтров в действии 🟡
@@ -28,11 +28,11 @@
 - **Уже готово:** справочники в store — `selectCategories`, `selectCategoryBySubcategoryId`, `selectCities` (P4-02).
 - **Готово в P5-01:** действия `setMode`, `toggleSubcategory`, `toggleCategory`, `setGender`, `toggleCity`, `resetFilters`, селекторы и `applyFilters` доступны из `@/features/catalog-filter`. `toggleCategory` принимает id подкатегорий; общий сброс поиска координирует вызывающий код, поскольку запрос хранится отдельно.
 - **Файлы:** `src/widgets/filters-panel/`, `src/features/catalog-filter/ui/` (те же, что в P3-07)
-- **Статус на 07.11.2026:** In Progress, исполнитель: `pwkdmc`. Для интеграции: P3-07 (Review).
+- **Статус на 08.11.2026:** Todo, исполнитель: не назначен. Для интеграции: P3-07 (Need fix).
 - **Issue:** [#60](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/60)
 - **Зависит от:** P5-01, P3-07, P4-02
 
-### P5-03 · Поиск 🟡
+### P5-03 · Поиск ✅ 🟡
 > **Что нужно сделать:** подключить поиск: в поле «Искать навык» вводим запрос; поиск запускается по Enter или по клику на лупу (она работает как кнопка).
 > Когда в поле есть текст, справа появляется «×» — очищает поле, и каталог возвращается к обычным секциям.
 > Ищем по названию навыка («Игра на барабанах»), как в ТЗ наставника; результат — «Подходящие предложения: N».
@@ -40,8 +40,9 @@
 - **Готово в P5-01:** `applyFilters(users, skills, filters, query)` из `@/features/catalog-filter` применяет запрос вместе с фильтрами: обрезает пробелы по краям, не учитывает регистр и ищет только в названии предлагаемого навыка. Вызов из каталога координируется на уровне страницы, без импорта соседних фич друг в друга.
 - **Уже готово в P3-04:** `SearchInput` с `onSearch` / `onClear`, поиском по Enter/лупе и очисткой. Повторно поле не верстаем; связываем его со store и передаём обработчики из шапки. Фактическое отображение результатов согласуем с P3-10/P5-05 и данными P4-03; закрытые прямые зависимости не означают готовность всей страницы каталога.
 - **Файлы:** `src/features/skill-search/`
-- **Статус на 07.11.2026:** Todo, исполнитель: не назначен. Для интеграции: все прямые зависимости закрыты.
-- **Issue:** [#61](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/61)
+- **Статус на 08.11.2026:** завершена, влита в `develop`; исполнитель: `pwkdmc`.
+- **Результат:** SearchInput подключён к store внутри Header: черновик локальный, применённый запрос сохраняется по Enter/лупе и очищается крестиком. Внешнее применение/сброс, повторные команды и переход между лейаутами покрыты тестами. Каталог читает `selectSearchQuery` и передаёт его в `applyFilters` в P5-05; соседние фичи не импортируют друг друга.
+- **Issue:** [#61](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/61) · PR [#158](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/158)
 - **Где в макете:** 1:2819 — введено «Игра на барабанах», ниже «Подходящие предложения: 9» и «Сначала новые»
 - **Зависит от:** P5-01, P3-04
 
@@ -52,7 +53,7 @@
 
 - **Уже готово:** `OfferCard` и раскрытие секций (P3-08), статичный бейдж «Обмен предложен» (P7-04). Карточка только читает store: контейнер каталога загружает сохранённые обмены через `fetchExchanges()` из `@/entities/exchange`, а не отдельным запросом для каждой карточки. Для ленты P5-06 используем ту же загрузку.
 - **Файлы:** `src/pages/catalog/`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P4-03 (In Progress), P3-10 (Todo).
+- **Статус на 08.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P4-03 (In Progress), P3-10 (Todo).
 - **Issue:** [#62](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/62)
 - **Зависит от:** P4-03, P3-10
 
@@ -63,7 +64,7 @@
 
 - **Уже готово:** плашка — `Tag` с `onRemove` (P2-03); подписи плашек по id — `selectSubcategoryById` и `selectCityById` (P4-02).
 - **Файлы:** `src/pages/catalog/`, `src/features/catalog-filter/ui/ActiveFilters.tsx`, `SortToggle.tsx`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P5-02 (In Progress), P3-10 (Todo), P5-04 (Backlog).
+- **Статус на 08.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P5-02 (Todo), P3-10 (Todo), P5-04 (Backlog).
 - **Issue:** [#63](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/63)
 - **Где в макете:** 1:2860
 - **Зависит от:** P5-02, P3-10, P5-04 (обе меняют `CatalogPage`)
@@ -75,7 +76,7 @@
 
 - **Уже готово в P2-15:** `useInfiniteScroll` из `@/shared/lib/hooks`; производный список пользователей мемоизируем, иначе новая ссылка на каждом рендере сбросит ленту. `sentinelRef` ставим на маркер в конце, `isLoading` передаём в показ `Loader`; автодогрузки без прокрутки нет.
 - **Файлы:** `src/pages/catalog/`, `src/widgets/offers-section/`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P5-05 (Backlog), P5-04 (Backlog).
+- **Статус на 08.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P5-05 (Backlog), P5-04 (Backlog).
 - **Issue:** [#64](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/64)
 - **Зависит от:** P2-15, P5-05, P5-04
 
@@ -86,7 +87,7 @@
 
 - **После зависимостей:** кто вошёл — `selectCurrentUser` из `@/entities/user` (P4-09), гость — `null`; заготовка `selectFavoriteIds` — перевести её на `selectCurrentUser`.
 - **Файлы:** `src/features/favorite-toggle/`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P4-06 (In Progress), P4-09 (Backlog).
+- **Статус на 08.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P4-06 (Todo), P4-09 (Todo).
 - **Issue:** [#65](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/65)
 - **Зависит от:** P4-06, P4-05, P3-08, P4-09
 - **Готово, когда:** после перезагрузки лайк и счётчик на месте, «Популярное» пересчиталось.
@@ -99,7 +100,7 @@
 - **После зависимостей:** чьё избранное — `likedUserIds` у `selectCurrentUser` (P4-09), через `selectFavoriteIds` из P5-07.
 - **Уже готово:** `useInfiniteScroll` (P2-15) и `RequireAuth` (P4-08); остаются данные текущего пользователя и лайки из зависимостей ниже.
 - **Файлы:** `src/pages/favorites/`
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P5-07 (Backlog), P5-02 (In Progress), P4-09 (Backlog).
+- **Статус на 08.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P5-07 (Backlog), P5-02 (Todo), P4-09 (Todo).
 - **Issue:** [#66](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/66)
 - **Где в макете:** 1:15855
 - **Зависит от:** P5-07, P5-02, P2-15, P4-08, P4-09
@@ -149,7 +150,7 @@
   - на `/favorites` сердечко подсвечено (проверяем по `aria-current="page"` у ссылки, а не по классу).
 - **Stories:** `Guest` и `Authorized` — через декоратор со store; `AuthorizedWithUnread` — с точкой на колокольчике; `MenuOpen` — открытое меню (как живые stories у `Dropdown`).
 - **Файлы:** `src/widgets/header/`, `src/features/logout/`, `src/app/layouts/MainLayout.tsx` (передать слоты) + тесты и stories
-- **Статус на 07.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P4-09 (Backlog).
+- **Статус на 08.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P4-09 (Todo).
 - **Issue:** [#67](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/67)
 - **Где в макете:** гость 1:2861, вошедший 1:2996, точка на колокольчике 1:1919
 - **Зависит от:** P4-05, P3-04, P4-09

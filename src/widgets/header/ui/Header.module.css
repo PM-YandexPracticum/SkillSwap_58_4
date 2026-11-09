@@ -48,6 +48,16 @@
   padding: 0;
 }
 
+.categories:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+}
+
+.categoriesRegion:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: -2px;
+}
+
 .icon {
   width: var(--space-24);
   height: var(--space-24);
@@ -133,4 +143,12 @@
 
 .menuItem:hover {
   color: var(--color-accent-strong);
+}
+
+/* Центрируем панель под триггером; Dropdown удерживает её внутри окна. */
+.categoriesPopover {
+  left: calc(50% - var(--container-width-narrow) / 2);
+  border: 0;
+  max-height: calc(100dvh - var(--space-100) - var(--space-20));
+  overflow-y: auto;
 }

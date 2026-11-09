@@ -1,13 +1,11 @@
 # src/pages/all-skills
 
-> **SkillSwap** — платформа обмена навыками (только фронтенд: React + TypeScript + Redux Toolkit).
-> Архитектура — Feature-Sliced Design, подробности в [docs/architecture/fsd.md](../../../docs/architecture/fsd.md).
-
-## Зачем эта папка
-
-Страница «Все навыки» (`/skills`) — ссылка из футера. Статичный список категорий и подкатегорий.
+Страница «Все навыки» (`/skills`), P3-06. Сюда ведёт ссылка из Footer.
 
 ## Что внутри
 
-- [`ui/`](ui/README.md) — React-компоненты
-- `index.ts` — публичный API — импортировать снаружи только отсюда
+- [`ui/`](ui/README.md) — страница, её стили и тесты.
+- `index.ts` — публичный экспорт `AllSkillsPage`.
+
+Страница использует общий CategoriesMenu из `widgets/categories-menu`; Header и Footer предоставляет MainLayout.
+Бизнес-логики фильтрации и переходов по подкатегориям нет.

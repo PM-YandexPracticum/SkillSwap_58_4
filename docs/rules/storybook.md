@@ -15,7 +15,7 @@ Storybook — витрина компонентов. Компонент верс
 ```
 .storybook/
 ├── main.ts        # где искать stories, аддоны (docs, a11y), сборщик — Vite
-└── preview.tsx    # общее для всех stories: global.css, фон, layout
+└── preview.tsx    # общее для всех stories: global.css, layout, controls
 
 src/shared/ui/Button/
 ├── Button.tsx
