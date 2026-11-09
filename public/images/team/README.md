@@ -10,6 +10,6 @@
 
 - `t2.jpg` — моё фото (`kirill-ai-dev`, тимлид), 400×400. Добавил файл и подключил к карточке по пути `/images/team/t2.jpg`.
 
-- `t3.jpg` — фото Ирины Мунтаниол (`muntaniolirina`), 400×400. Публичный URL — `/images/team/t3.jpg`.
+- `t3.jpg` — фото Ирины Мунтаниол (`muntaniolirina`), 400×400, принято в [PR #170](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/170). Публичный URL — `/images/team/t3.jpg`.
 
 Моя карточка и фото `t2.jpg` включены в [PR #169](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/169). Остальные участники добавляют свои файлы и запись в TEAM отдельными мини-PR. При личном вкладе общую issue #81 не закрываем. Вывод списка на странице уже реализован в P3-16.
