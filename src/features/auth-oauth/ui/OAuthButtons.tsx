@@ -1,5 +1,6 @@
 import AppleIcon from '@/shared/assets/icons/brands/apple.svg?react'
 import GoogleIcon from '@/shared/assets/icons/brands/google.svg?react'
+import { Button } from '@/shared/ui/Button'
 import styles from './OAuthButtons.module.css'
 
 export interface OAuthButtonsProps {
@@ -22,10 +23,10 @@ export function OAuthButtons({ className }: OAuthButtonsProps) {
     <div className={[styles.root, className].filter(Boolean).join(' ')}>
       <div className={styles.buttons}>
         {PROVIDERS.map(({ id, label, Icon }) => (
-          <button key={id} className={styles.button} type="button">
+          <Button key={id} variant="secondary">
             <Icon className={styles.icon} aria-hidden="true" />
             {label}
-          </button>
+          </Button>
         ))}
       </div>
       <p className={styles.divider}>или</p>

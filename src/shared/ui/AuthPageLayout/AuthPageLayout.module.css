@@ -1,0 +1,64 @@
+.page {
+  /* Высота колонок по Figma 1:2400, 1:2548; общего токена такой геометрии нет. */
+  --auth-panel-height: 692px;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-32);
+  padding-bottom: var(--space-36);
+}
+
+.heading {
+  text-align: center;
+}
+
+.title {
+  font-family: var(--font-title);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-medium);
+  line-height: 28px;
+  letter-spacing: -0.011em;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-24);
+}
+
+.formPanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-24);
+  min-width: 0;
+  min-height: var(--auth-panel-height);
+  padding: var(--space-60);
+  border-radius: var(--radius-s);
+  background-color: var(--color-bg-secondary);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Узкое окно: сохраняем порядок формы и иллюстрации без горизонтального скролла. */
+@media (width <= 900px) {
+  .page {
+    padding: var(--space-24);
+  }
+
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .formPanel {
+    min-height: auto;
+    padding: var(--space-24);
+  }
+}

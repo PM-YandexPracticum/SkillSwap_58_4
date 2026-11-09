@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { MemoryRouter } from 'react-router-dom'
+import { userEvent, within } from 'storybook/test'
 
 import { ROUTER_FUTURE } from '@/shared/config'
 
@@ -38,8 +39,18 @@ export const Default: Story = {
   parameters: { design: { type: 'figma', url: FIGMA_LOGIN } },
 }
 
+export const Filled: Story = {
+  parameters: { design: { type: 'figma', url: FIGMA_LOGIN } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.type(canvas.getByLabelText('Email'), 'petrov@mail.ru')
+    await userEvent.type(canvas.getByLabelText('Пароль'), 'password123')
+  },
+}
+
 /** Неверная пара email / пароль: оба поля красные, общая ошибка под паролем (1:2473) */
 export const WrongCredentials: Story = {
+  play: Filled.play,
   args: {
     error: 'Email или пароль введён неверно. Пожалуйста проверьте правильность введённых данных',
   },

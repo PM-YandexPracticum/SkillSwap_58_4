@@ -12,34 +12,13 @@
   gap: var(--space-16);
 }
 
-.button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.buttons > button {
   gap: var(--space-12);
   width: 100%;
 
   /* 48 px вместе с рамкой */
   padding: calc(var(--space-12) - 1px) var(--space-24);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-s);
-  background-color: var(--color-bg-secondary);
-  font-family: var(--font-main);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-regular);
-  line-height: 24px;
-  letter-spacing: 0.02em;
-  color: var(--color-text);
-  transition: border-color 0.2s;
-}
-
-.button:hover {
-  border-color: var(--color-accent-strong);
-}
-
-.button:focus-visible {
-  outline: 2px solid var(--color-accent-strong);
-  outline-offset: 2px;
+  border-color: var(--color-border);
 }
 
 .icon {
@@ -51,6 +30,7 @@
 .divider {
   display: flex;
   align-items: center;
+  gap: var(--space-4);
   margin: 0;
   font-family: var(--font-main);
   font-size: var(--font-size-base);
