@@ -85,7 +85,7 @@ export function AboutPage({ members = TEAM }: AboutPageProps) {
       <h1 className={styles.title}>Команда разработчиков SkillSwap</h1>
       <ul className={styles.cards}>
         {members.map((member) => (
-          <li key={member.github} className={styles.cardsItem}>
+          <li key={member.id} className={styles.cardsItem}>
             <MemberCard member={member} />
           </li>
         ))}
