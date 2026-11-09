@@ -10,6 +10,13 @@ const meta: Meta<typeof ErrorPage> = {
   parameters: {
     layout: 'centered',
   },
+  decorators: [
+    (Story) => (
+      <div style={{ maxWidth: '460px' }}>
+        <Story />
+      </div>
+    ),
+  ],
   argTypes: {
     errorType: {
       control: 'inline-radio',
