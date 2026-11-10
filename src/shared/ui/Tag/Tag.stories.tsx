@@ -14,8 +14,8 @@ const meta: Meta<typeof Tag> = {
           'и выбранное «Хочу научиться» на шаге 2. Один компонент для обоих случаев.',
           '',
           '**Figma:**',
-          '- [Чипы на карточке — 1:2861](https://www.figma.com/file/AbCdEf123456/Design-System?node-id=1%3A2861)',
-          '- [Плашки фильтров — 1:2860](https://www.figma.com/file/AbCdEf123456/Design-System?node-id=1%3A2860)',
+          '- [Чипы на карточке — 1:2861](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1%3A2861)',
+          '- [Плашки фильтров — 1:2860](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1%3A2860)',
         ].join('\n'),
       },
     },
@@ -30,7 +30,7 @@ export const Default: Story = {
 }
 
 export const Removable: Story = {
-  args: { label: 'Москва', onRemove: () => {} },
+  args: { label: 'Москва', variant: 'filter', onRemove: () => {} },
 }
 
 export const PlusTwo: Story = {

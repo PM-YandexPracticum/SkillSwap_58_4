@@ -8,6 +8,8 @@ import styles from './OffersSection.module.css'
 
 export interface OffersSectionProps {
   title: string
+  /** Дополнительное действие заголовка, например сортировка результатов. */
+  headerAction?: ReactNode
   users: ReadonlyArray<PublicUser>
   /** `expandable` — 3 ⇄ 9; `infinite` — все переданные карточки, догрузка подключается в P5-06 */
   mode: 'expandable' | 'infinite'
@@ -20,7 +22,13 @@ export interface OffersSectionProps {
  * Секции независимы; в режиме ленты показывает все переданные карточки без собственной загрузки.
  * @see Figma: «Популярное» (1:2872), «Новое» (1:2880), «Рекомендуем» (1:2888)
  */
-export function OffersSection({ title, users, mode, renderItem }: OffersSectionProps) {
+export function OffersSection({
+  title,
+  users,
+  mode,
+  renderItem,
+  headerAction,
+}: OffersSectionProps) {
   const id = useId()
   const [expanded, setExpanded] = useState(false)
   const expandable = mode === 'expandable' && users.length > CATALOG.SECTION_COLLAPSED
@@ -33,6 +41,7 @@ export function OffersSection({ title, users, mode, renderItem }: OffersSectionP
         <h2 className={styles.title} id={`${id}-title`}>
           {title}
         </h2>
+        {headerAction}
         {expandable && (
           <button
             className={styles.toggle}

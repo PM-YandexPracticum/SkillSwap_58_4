@@ -29,6 +29,8 @@ export function isTagColor(value: string): value is TagColor {
 
 export interface TagProps {
   label: string
+  /** filter — крупная прямоугольная плашка каталога; chip — компактный чип навыка. */
+  variant?: 'chip' | 'filter'
   /** Семантический цвет, приходит снаружи */
   color?: TagColor
   /** Есть — показываем крестик, по клику плашка удаляется */
@@ -41,7 +43,7 @@ export interface TagProps {
  * с полным названием. Скринридер читает название целиком и без подсказки.
  * @see Figma: чипы на карточке (1:2861), плашки фильтров (1:2860)
  */
-export function Tag({ label, color, onRemove }: TagProps) {
+export function Tag({ label, color, onRemove, variant = 'chip' }: TagProps) {
   // Подсказку решаем показывать при наведении: только тогда известно, обрезан ли текст на самом деле
   const [hint, setHint] = useState<string | undefined>(undefined)
 
@@ -52,7 +54,7 @@ export function Tag({ label, color, onRemove }: TagProps) {
 
   return (
     <div
-      className={styles.tag}
+      className={[styles.tag, variant === 'filter' && styles.filter].filter(Boolean).join(' ')}
       style={{ backgroundColor: color ? CATEGORY_COLOR_VAR[color] : 'var(--color-bg-secondary)' }}
     >
       <span className={styles.label} title={hint} onMouseEnter={showHintIfTruncated}>
@@ -67,8 +69,8 @@ export function Tag({ label, color, onRemove }: TagProps) {
           aria-label={`Удалить ${label}`}
         >
           <svg
-            width="12"
-            height="12"
+            width={variant === 'filter' ? 24 : 12}
+            height={variant === 'filter' ? 24 : 12}
             viewBox="0 0 12 12"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
