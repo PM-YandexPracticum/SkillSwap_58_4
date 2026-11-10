@@ -2,14 +2,15 @@
 
 Кто какую задачу сделал, что получилось и кто что делает сейчас. Отчёт нужен для команды, наставников и итоговой защиты.
 
-**На 09.11.2026:** завершены **53 из 86 задач MVP**; вместе с девятью задачами фундамента — **62**. По фазам: 1 — 14/14, 2 — 18/18, 3 — 11/16, 4 — 7/10, 5 — 2/9, 6 — 0/6, 7 — 1/6, 8 — 0/7. Общая P8-02 пока не завершена: приняты четыре личных вклада.
+**На 10.11.2026:** завершены **54 из 86 задач MVP**; вместе с девятью задачами фундамента — **63**. По фазам: 1 — 14/14, 2 — 18/18, 3 — 12/16, 4 — 7/10, 5 — 2/9, 6 — 0/6, 7 — 1/6, 8 — 0/7. Общая P8-02 пока не завершена: приняты четыре личных вклада.
 
-Статусы, назначения и результаты сверены с issues, влитыми PR и [доской GitHub](https://github.com/orgs/PM-YandexPracticum/projects/133/views/1). Снимок: **Backlog — 20, Todo — 5, In Progress — 6, Review — 2, Need fix — 0, Done — 54**. Всего 87 карточек: 86 задач MVP и общая карточка фундамента #1. Done = 53 + 1; в плане фундамент состоит из девяти задач. Девять дополнительных задач фазы 9 вне доски MVP; старые ICS-задачи #90/#91 исключены, действующие P9-04/P9-05 — #92/#93.
+Статусы, назначения и результаты сверены с issues, влитыми PR и [доской GitHub](https://github.com/orgs/PM-YandexPracticum/projects/133/views/1). Снимок: **Backlog — 16, Todo — 6, In Progress — 8, Review — 2, Need fix — 0, Done — 55**. Всего 87 карточек: 86 задач MVP и общая карточка фундамента #1. Done = 54 + 1; в плане фундамент состоит из девяти задач. Девять дополнительных задач фазы 9 вне доски MVP; старые ICS-задачи #90/#91 исключены, действующие P9-04/P9-05 — #92/#93.
 
-## Последние принятые результаты — 08–09.11.2026
+## Последние принятые результаты — 08–10.11.2026
 
 | Задача | Исполнитель | Итог |
 |---|---|---|
+| P3-10 «Каталог (вёрстка)» | kirill-ai-dev | [PR #171](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/171) влит 10.11.2026, issue #43 закрыта. CatalogPage собирает панель фильтров и секции «Популярное», «Новое», «Рекомендуем», а режим результатов — `ActiveFilters` и `SortToggle`. Переиспользованы готовые `OffersSection`, `OfferCard`, `FiltersPanel` и `Tag`; добавлены stories, тесты и скриншоты. Бизнес-логика фильтров, поиска, лайков и догрузки остаётся в задачах фаз 4–5. |
 | P3-05 «Лейауты страниц» | Al-Du9270-art | [PR #157](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/157) влит. MainLayout собирает готовые Header и Footer, AuthLayout — Logo и Button; рамки на токенах, main предоставляет страница. Проверены навигация и клавиатура. Issue #38 закрыта, Done. |
 | P5-03 «Поиск» | pwkdmc | [PR #158](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/158) влит. Я исправил внешнее применение/сброс, включая повторные команды, убрал копии store в тестах и stories, актуализировал README/JSDoc. Проверил сохранение применённого запроса при переходе на вход и обратно; добавлен интеграционный тест лейаутов. Issue #61 закрыта, Done. |
 | P2-12 | Laurovsky | [PR #162](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/162) влит, issue #28 закрыта. DatePicker на Input и react-datepicker: ручной ввод и календарь, русский язык, месяц/год, «Отменить» / «Выбрать», ISO без часового пояса, ошибка и сброс. Добавлены тесты и stories; правила возраста задаёт форма. |
@@ -21,19 +22,19 @@
 | P4-03 | Nick-Shvd | [PR #161](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/161) влит, issue #52 закрыта. Готовы загрузочные thunks пользователей и навыков, статусы/ошибки и селекторы по id, пользователю, популярности и новизне. Учтены пустые данные и отсутствующие ссылки, добавлены тесты. Загрузка при старте — P4-04, запись — P4-06. |
 | P8-02, личные вклады | pwkdmc, viceede, kirill-ai-dev, muntaniolirina | [PR #159](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/159), [PR #168](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/168), [PR #169](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/169) и [PR #170](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/170) влиты; в TEAM на `develop` четыре записи. Общая issue #81 открыта. |
 
-P8-02 остаётся в Review с назначением `pwkdmc`; вклады Дианы и Андрея приняты. Я добавил свою карточку (`kirill-ai-dev`): роль тимлида и архитектора, GitHub и рассказ о себе. Добавил фото `public/images/team/t2.jpg`; карточка и фото включены в [PR #169](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/169). Для следующих участников общую карточку можно вернуть в Todo; закрываем её после наполнения команды.
+P8-02 остаётся в Review с назначением `pwkdmc`; четыре личных вклада приняты. Я добавил свою карточку (`kirill-ai-dev`): роль тимлида и архитектора, GitHub и рассказ о себе. Добавил фото `public/images/team/t2.jpg`; карточка и фото включены в [PR #169](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/169). Для следующих участников общую карточку можно вернуть в Todo; закрываем её после наполнения команды.
 
 ## Проверки текущего состояния
 
-Исходники синхронизированы с `origin/develop` (`2f710f1`, PR #168). Проверки ниже выполнены на этом снимке. Код приложения в рамках актуализации документации не менялся.
+Исходники синхронизированы с `origin/develop` (`97c9f81`, PR #171). Проверки ниже выполнены на этом снимке. Код приложения в рамках актуализации документации не менялся.
 
 | Проверка | Результат |
 |---|---|
 | `npm run lint` | ESLint и Stylelint проходят |
-| `npm run test:coverage` | 96 файлов, 824 теста — все проходят; statements/lines 97,03 %, branches 96,05 %, functions 83,03 % |
+| `npm run test:coverage` | 100 файлов, 843 теста — все проходят; statements/lines 97,24 %, branches 96,36 %, functions 84,37 % |
 | `npm run build` | TypeScript и production-сборка Vite проходят |
 | `npm run build-storybook` | Storybook собирается; Vite предупреждает о крупных чанках Storybook |
-| Документация | Проверены 202 Markdown-файла, 486 относительных ссылок (включая 12 якорей), README всех каталогов src, 95 статусов и зависимостей, счётчики, назначения и даты/авторы влитых PR |
+| Документация | Проверены Markdown-файлы, относительные ссылки, README каталогов src, статусы и зависимости, счётчики, назначения и даты/авторы влитых PR на 10.11.2026 |
 
 Покрытие считается по текущему `vitest.config.ts`, включая тестовые файлы; оно не заменяет отдельную оценку ядра в P8-07. Результаты браузерных проверок относятся к соответствующим ревью. Согласованное замечание по контрасту P3-15 остаётся в [бэклоге](backlog.md). Сквозные сценарии Playwright, Lighthouse и финальная сверка всех экранов с макетом остаются в P8-04…P8-07; готовность всего MVP пока не подтверждена.
 
@@ -56,7 +57,7 @@ P7-04 (#77) завершена в PR #155. P7-03 (#76) ждёт P7-01 и P4-09, 
 
 Для всех **95 задач фаз 1–9** сверены issue, статус, назначение и оставшиеся прямые зависимости. Для 86 задач MVP указан фактический статус доски; для фазы 9 — открытые issues вне доски MVP. Для каждой завершённой задачи результат и PR отражены ниже и в файле фазы. Общая P8-02 учитывается отдельно от завершённых задач.
 
-Статусы и результаты в документации сверены с `develop` и GitHub на 09.11.2026; исторические проверки помечены датой. Тексты issues могут отличаться от подробных описаний в файлах фаз. Ревью реализации и сверка экранов с Figma выполняются в соответствующих задачах.
+Статусы и результаты в документации сверены с `develop` и GitHub на 10.11.2026; исторические проверки помечены датой. Тексты issues могут отличаться от подробных описаний в файлах фаз. Ревью реализации и сверка экранов с Figma выполняются в соответствующих задачах.
 
 ## Как заполнять
 
@@ -74,7 +75,9 @@ P7-04 (#77) завершена в PR #155. P7-03 (#76) ждёт P7-01 и P4-09, 
 | [P3-12 Шаг 2 регистрации (вёрстка) 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/45) | `Al-Du9270-art` | In Progress; все прямые зависимости закрыты |
 | [P3-14 Личный кабинет (вёрстка) 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/47) | `alicevdr` | In Progress; P3-12 (In Progress) |
 | [P4-04 Загрузка при старте 🟢](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/53) | `Laurovsky` | In Progress; все прямые зависимости закрыты |
+| [P4-06 Сохранение пользователей и навыков 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/55) | `Nick-Shvd` | In Progress; все прямые зависимости закрыты |
 | [P4-09 Вход 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/58) | `Laurovsky` | In Progress; все прямые зависимости закрыты |
+| [P5-02 Панель фильтров в действии 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/60) | `viceede` | In Progress; все прямые зависимости закрыты |
 | [P6-01 Черновик регистрации и охрана шагов 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/68) | `kkiitlin` | In Progress; все прямые зависимости закрыты |
 | [P6-03 Связь «категория ↔ подкатегория» 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/70) | `muntaniolirina` | In Progress; P3-12 (In Progress) |
 | [P8-02 Команда на странице «О проекте» 🟢](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/81) | `pwkdmc` | Review; четыре личных вклада приняты, общая задача открыта; все прямые зависимости закрыты |
@@ -85,37 +88,34 @@ P7-04 (#77) завершена в PR #155. P7-03 (#76) ждёт P7-01 и P4-09, 
 
 Todo — ближайшая очередь фиксированного состава команды после текущих In Progress / Review. Незавершённая зависимость не запрещает перенос: её статус указываем явно, API и общие файлы согласуем перед интеграцией. Ниже — кандидаты на следующие задачи; фактические статусы указаны в таблицах.
 
-В Todo уже **пять задач без исполнителей**:
+В Todo уже **шесть задач без исполнителей**:
 
 | Задача | Для интеграции остаётся |
 |---|---|
-| [P3-10 Каталог (вёрстка) 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/43) | все прямые зависимости закрыты |
 | [P3-13 Шаг 3 регистрации и окна (вёрстка) 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/46) | P3-12 (In Progress) |
-| [P4-06 Сохранение пользователей и навыков 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/55) | все прямые зависимости закрыты |
-| [P5-02 Панель фильтров в действии 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/60) | все прямые зависимости закрыты |
+| [P5-04 Секции «Популярное» и «Новое» 🟢](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/62) | P3-10 (Done) |
+| [P5-09 Шапка вошедшего и выход 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/67) | P4-09 (In Progress) |
+| [P6-02 Шаг 1: email и пароль 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/69) | P6-01 (In Progress) |
 | [P7-01 Страница навыка с данными 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/74) | P3-09 (Review) |
+| [P8-01 Ошибка 500 и ErrorBoundary 🟢](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/80) | P4-04 (In Progress) |
 
-**Ближайшие дополнительные кандидаты:** P5-04 (#62, остаётся P3-10 — Todo), P6-02 (#69, P6-01 — In Progress), P5-09 (#67, P4-09 — In Progress), P8-01 (#80, P4-04 — In Progress). Их можно планировать для освободившихся участников уже сейчас, не ожидая закрытия всех зависимостей. Это очередь, а не предложение увеличивать число исполнителей или открывать человеку вторую задачу.
+Все задачи Todo сейчас без исполнителей. P5-04, P6-02, P5-09 и P8-01 — ближайшие кандидаты для следующего освобождённого участника; зависимости указываются явно, но не блокируют постановку в Todo.
 
-Ниже все **20 задач Backlog** с оставшимися прямыми зависимостями. «Следом» и «Позже» задают порядок, а не запрет переноса в Todo.
+Ниже все **16 задач Backlog** с оставшимися прямыми зависимостями. «Следом» и «Позже» задают порядок, а не запрет переноса в Todo.
 
 | Задача Backlog | Оставшиеся прямые зависимости | Очередь |
 |---|---|---|
-| [P5-04 Секции «Популярное» и «Новое» 🟢](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/62) | P3-10 (Todo) | Ближайшая — можно планировать в Todo |
-| [P5-05 Результаты: плашки и сортировка 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/63) | P5-02 (Todo), P3-10 (Todo), P5-04 (Backlog) | Позже |
-| [P5-06 Лента «Рекомендуем» и результатов 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/64) | P5-05 (Backlog), P5-04 (Backlog) | Позже |
-| [P5-07 Лайки со счётчиком 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/65) | P4-06 (Todo), P4-09 (In Progress) | Следом |
-| [P5-08 Страница избранного 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/66) | P5-07 (Backlog), P5-02 (Todo), P4-09 (In Progress) | Позже |
-| [P5-09 Шапка вошедшего и выход 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/67) | P4-09 (In Progress) | Ближайшая — можно планировать в Todo |
-| [P6-02 Шаг 1: email и пароль 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/69) | P6-01 (In Progress) | Ближайшая — можно планировать в Todo |
-| [P6-04 Шаг 2: о себе и «Хочу научиться» 🔴](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/71) | P6-01 (In Progress), P6-03 (In Progress), P6-02 (Backlog) | Позже |
+| [P5-05 Результаты: плашки и сортировка 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/63) | P5-02 (In Progress), P3-10 (Done), P5-04 (Todo) | Позже |
+| [P5-06 Лента «Рекомендуем» и результатов 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/64) | P5-05 (Backlog), P5-04 (Todo) | Позже |
+| [P5-07 Лайки со счётчиком 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/65) | P4-06 (In Progress), P4-09 (In Progress) | Следом |
+| [P5-08 Страница избранного 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/66) | P5-07 (Backlog), P5-02 (In Progress), P4-09 (In Progress) | Позже |
+| [P6-04 Шаг 2: о себе и «Хочу научиться» 🔴](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/71) | P6-01 (In Progress), P6-03 (In Progress), P6-02 (Todo) | Позже |
 | [P6-05 Шаг 3: свой навык и превью 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/72) | P6-01 (In Progress), P6-03 (In Progress), P3-13 (Todo) | Позже |
-| [P6-06 Завершение регистрации 🔴](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/73) | P6-02 (Backlog), P6-04 (Backlog), P6-05 (Backlog), P4-06 (Todo) | Позже |
+| [P6-06 Завершение регистрации 🔴](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/73) | P6-02 (Todo), P6-04 (Backlog), P6-05 (Backlog), P4-06 (In Progress) | Позже |
 | [P7-02 Похожие предложения 🟢](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/75) | P7-01 (Todo) | Следом |
 | [P7-03 «Предложить обмен» 🔴](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/76) | P7-01 (Todo), P4-09 (In Progress) | Следом |
-| [P7-05 Уведомления в действии 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/78) | P5-09 (Backlog) | Позже |
-| [P7-06 «Личные данные»: сохранение 🔴](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/79) | P3-14 (In Progress), P4-06 (Todo), P4-09 (In Progress), P6-04 (Backlog) | Позже |
-| [P8-01 Ошибка 500 и ErrorBoundary 🟢](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/80) | P4-04 (In Progress) | Ближайшая — можно планировать в Todo |
+| [P7-05 Уведомления в действии 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/78) | P5-09 (Todo) | Позже |
+| [P7-06 «Личные данные»: сохранение 🔴](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/79) | P3-14 (In Progress), P4-06 (In Progress), P4-09 (In Progress), P6-04 (Backlog) | Позже |
 | [P8-03 Пустые списки 🟢](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/82) | P5-05 (Backlog), P5-08 (Backlog) | Позже |
 | [P8-04 Доступность 🟡](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/83) | завершение фаз 5–7 | Позже |
 | [P8-05 Автотесты главных сценариев 🔴](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/84) | завершение фаз 5–7 | Позже |
@@ -130,8 +130,8 @@ P5-05 использует готовое ядро фильтров и поис�
 
 | Исполнитель | Сделано MVP | Завершённые задачи | Текущие назначения |
 |---|---|---|---|
-| kirill-ai-dev | 10; ещё 9 задач фундамента; личный вклад P8-02 принят | P1-10, P1-12, P3-01, P3-06, P3-08, P4-01, P4-05, P4-07, P4-10, P5-01 | P8-05 (Backlog), P8-07 (Backlog) |
-| viceede | 5; личный вклад P8-02 принят | P1-09, P1-11, P1-13, P1-14, P3-02 | P8-04 (Backlog), P8-06 (Backlog) |
+| kirill-ai-dev | 11; ещё 9 задач фундамента; личный вклад P8-02 принят | P1-10, P1-12, P3-01, P3-06, P3-08, P3-10, P4-01, P4-05, P4-07, P4-10, P5-01 | P8-05 (Backlog), P8-07 (Backlog) |
+| viceede | 5; личный вклад P8-02 принят | P1-09, P1-11, P1-13, P1-14, P3-02 | P5-02 (In Progress), P8-04 (Backlog), P8-06 (Backlog) |
 | muntaniolirina | 7; личный вклад P8-02 принят | P1-02, P2-04, P2-11, P2-14, P3-15, P3-16, P4-08 | P6-03 (In Progress) |
 | pwkdmc | 7; личный вклад P8-02 принят | P1-03, P1-08, P2-08, P2-13, P2-16, P4-02, P5-03 | P8-02 (Review) |
 | Laurovsky | 5 | P1-05, P2-05, P2-07, P2-12, P2-17 | P4-04 (In Progress), P4-09 (In Progress) |
@@ -139,7 +139,7 @@ P5-05 использует готовое ядро фильтров и поис�
 | alicevdr | 4 | P1-06, P2-03, P3-07, P7-04 | P3-14 (In Progress) |
 | sosolet | 2 | P1-01, P2-18 | P3-09 (Review) |
 | Stanislave0 | 2 | P2-01, P2-09 | без назначенной задачи |
-| Nick-Shvd | 2 | P1-07, P4-03 | без назначенной задачи |
+| Nick-Shvd | 2 | P1-07, P4-03 | P4-06 (In Progress) |
 | kkiitlin | 5 | P1-04, P2-06, P3-03, P3-04, P3-11 | P6-01 (In Progress) |
 
 ## Фаза 0 — Фундамент
@@ -204,6 +204,7 @@ P5-05 использует готовое ядро фильтров и поис�
 | [P3-06](phases/phase-03-layout.md) Все навыки: меню и страница 🟡 | kirill-ai-dev | CategoriesList и CategoriesMenu переиспользуются в слоте Header и на /skills; CategoryIcon использует токены. Предусмотрены загрузка, ошибка и повтор, пустой список, дедупликация запросов; тесты, stories и скриншоты в docs/assets. | 2026-11-08 | [#165](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/165) |
 | [P3-07](phases/phase-03-layout.md) Панель фильтров (вёрстка) 🟡 | alicevdr | Панель и группы фильтров свёрстаны на общих Checkbox/RadioGroup и токенах, справочники поступают через селекторы. Все 6 категорий видимы как в макете; раскрытие нужно только для дополнительных категорий. Выбор визуальный, без изменения Redux; подключение — P5-02. | 2026-11-09 | [#148](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/148) |
 | [P3-11](phases/phase-03-layout.md) Вход и шаг 1 регистрации (вёрстка) 🟢 | kkiitlin | Вход и шаг 1 регистрации собирают общие AuthPageLayout, CredentialsForm, Input, PasswordInput, Button и OAuthButtons. Поддержаны callback-пропсы, ошибки и отправка формы; добавлены тесты и stories. Вход с сессией — P4-09, черновик и валидация регистрации — фаза 6. | 2026-11-09 | [#164](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/164) |
+| [P3-10](phases/phase-03-layout.md) Каталог (вёрстка) 🟡 | kirill-ai-dev | CatalogPage собирает панель фильтров и секции «Популярное», «Новое», «Рекомендуем», а режим результатов — `ActiveFilters` и `SortToggle`. Переиспользованы готовые `OffersSection`, `OfferCard`, `FiltersPanel` и `Tag`; добавлены stories, тесты и скриншоты. Логика фильтров, поиска, лайков и догрузки остаётся в фазах 4–5. | 2026-11-10 | [#171](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/171) |
 | [P3-16](phases/phase-03-layout.md) «О проекте», 404 и 500 🟢 | muntaniolirina | Готовы /about с карточками TEAM, 404 и /500; ErrorPage переиспользует иллюстрацию, заголовок и описание, действия собраны страницами. ErrorBoundary остаётся в P8-01; наполнение всей команды — P8-02. | 2026-11-09 | [#167](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/167) |
 
 ## Фаза 4 — Данные и вход
@@ -233,7 +234,7 @@ P5-05 использует готовое ядро фильтров и поис�
 
 ## Фаза 8 — принятые частичные результаты
 
-Таблица не добавляет ✅ всей P8-02 и не входит в 53 завершённые задачи MVP. Страница TEAM уже подключена в P3-16. В TEAM четыре участника; личные вклады перечислены ниже.
+Таблица не добавляет ✅ всей P8-02 и не входит в 54 завершённые задачи MVP. Страница TEAM уже подключена в P3-16. В TEAM четыре участника; личные вклады перечислены ниже.
 
 | Общая задача | Участник | Принятый вклад | Влито (Москва) | PR |
 |---|---|---|---|---|

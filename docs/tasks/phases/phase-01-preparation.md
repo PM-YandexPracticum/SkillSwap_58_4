@@ -16,7 +16,7 @@
 > Это основа всей вёрстки, поэтому задача первая. Pixel perfect не нужен — нужно визуальное сходство.
 
 - **Файлы:** `src/app/styles/global.css`, `index.html` (подключение шрифтов)
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `sosolet`.
+- **Статус:** Done, влита в `develop`; исполнитель: `sosolet`.
 - **Issue:** [#5](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/5) · PR [#98](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/98)
 - **Зависит от:** —
 - **Готово, когда:** у каждого цвета понятное имя (`--color-accent`, `--color-tag-creativity`); заголовок «Популярное» и текст карточки похожи на макет; есть `--container-width`.
@@ -27,7 +27,7 @@
 > Внутри SVG цвет — `currentColor`, чтобы его можно было менять из CSS. Без иконок не сделать ни одну кнопку, поэтому задачу берут в первый же день.
 
 - **Файлы:** `src/shared/assets/icons/`
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `muntaniolirina`.
+- **Статус:** Done, влита в `develop`; исполнитель: `muntaniolirina`.
 - **Issue:** [#6](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/6) · PR [#102](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/102)
 - **Зависит от:** —
 - **Готово, когда:** все иконки на месте, имена `kebab-case.svg`, иконка импортируется как компонент (`like.svg?react`) — и в коде, и в тестах.
@@ -38,7 +38,7 @@
 > Фото для пользователей из P1-06…P1-08 кладут авторы этих задач. Пока картинок нет, показывается заглушка — задача не блокирует вёрстку.
 
 - **Файлы:** `public/images/avatars/`, `public/images/skills/`, `src/shared/assets/images/`
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `pwkdmc`.
+- **Статус:** Done, влита в `develop`; исполнитель: `pwkdmc`.
 - **Issue:** [#7](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/7) · PR [#101](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/101)
 - **Зависит от:** —
 - **Готово, когда:** у Ивана, Анны и Марии есть аватар, у их навыков — фото; есть иллюстрации и `placeholder.svg` для аватара и навыка.
@@ -58,7 +58,7 @@
 - **Файлы:** `src/entities/user/lib/getAge.ts` + `getAge.test.ts`, `src/entities/user/lib/createUser.ts` (новый),
   `src/entities/skill/lib/createSkill.ts` (новый), `src/app/store/index.ts`, `src/app/test/renderWithProviders.tsx` (новый),
   `docs/rules/testing.md` (новый), `docs/rules/README.md`
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `kkiitlin`.
+- **Статус:** Done, влита в `develop`; исполнитель: `kkiitlin`.
 - **Issue:** [#8](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/8) · PR [#122](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/122)
 - **Зависит от:** —
 - **Готово, когда:**
@@ -78,7 +78,7 @@
 
 - **Файлы:** `src/shared/api/mock-db/seed/cities.json`, `categories.json`
 - **Где в макете:** 1:3165 (категории), 1:2861 (города в фильтре)
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `Laurovsky`.
+- **Статус:** Done, влита в `develop`; исполнитель: `Laurovsky`.
 - **Issue:** [#9](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/9) · PR [#108](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/108)
 - **Зависит от:** —
 - **Готово, когда:** 6 категорий как в макете, у каждой подкатегории уникальный `id`; ~15 городов.
@@ -91,7 +91,7 @@
 > Наставник: наполнение моков — одна из важнейших задач, данные должны быть разнообразными.
 
 - **Файлы:** `src/shared/api/mock-db/seed/users/part-1.json`, `seed/skills/part-1.json`, `public/images/` (фото своих пользователей)
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `alicevdr`.
+- **Статус:** Done, влита в `develop`; исполнитель: `alicevdr`.
 - **Issue:** [#10](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/10) · PR [#112](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/112)
 - **Зависит от:** — (категории части 1 уже есть в образце)
 - **Готово, когда:** выполнены правила наполнения (ниже).
@@ -103,7 +103,7 @@
 
 - **Уже готово:** пустой `part-2.json` в обеих папках уже подключён в `index.ts`.
 - **Файлы:** `src/shared/api/mock-db/seed/users/part-2.json`, `seed/skills/part-2.json`, `public/images/` (фото своих пользователей)
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `Nick-Shvd`.
+- **Статус:** Done, влита в `develop`; исполнитель: `Nick-Shvd`.
 - **Issue:** [#11](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/11) · PR [#120](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/120)
 - **Зависит от:** P1-05 (достаточно списка id в чате)
 - **Готово, когда:** выполнены правила наполнения (ниже).
@@ -114,7 +114,7 @@
 > Всего с образцами получится 45 пользователей — в рамках 40–50, о которых говорил наставник.
 
 - **Файлы:** `src/shared/api/mock-db/seed/users/part-3.json`, `seed/skills/part-3.json`, `public/images/` (фото своих пользователей)
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `pwkdmc`.
+- **Статус:** Done, влита в `develop`; исполнитель: `pwkdmc`.
 - **Issue:** [#12](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/12) · PR [#115](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/115)
 - **Зависит от:** P1-05 (достаточно списка id в чате)
 - **Готово, когда:** выполнены правила наполнения (ниже).
@@ -137,7 +137,7 @@
 > Задача короткая, но избавляет от вечного «а у меня работает».
 
 - **Файлы:** `.nvmrc` (новый), `package.json`, `.vscode/` (новый), `.gitignore`
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `viceede`.
+- **Статус:** Done, влита в `develop`; исполнитель: `viceede`.
 - **Issue:** [#13](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/13) · PR [#100](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/100)
 - **Зависит от:** —
 
@@ -147,7 +147,7 @@
 > Написать в чат команды, что выбрано. Обёртки календаря и карусели делает команда (P2-12, P2-13).
 
 - **Файлы:** `package.json`, `package-lock.json`
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
+- **Статус:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
 - **Issue:** [#14](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/14) · PR [#110](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/110)
 - **Зависит от:** —
 - **Готово, когда:** пакеты стоят в `develop`, `npm run test:coverage` выдаёт отчёт, `npm run e2e` запускается (тестов пока нет).
@@ -160,7 +160,7 @@
 
 - **Файлы:** `.storybook/`, `package.json`, `src/shared/ui/*/*.stories.tsx`
 - **Зависит от:** —
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `viceede`.
+- **Статус:** Done, влита в `develop`; исполнитель: `viceede`.
 - **Issue:** [#2](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/2) · PR [#99](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/99)
 - **Готово, когда:** `npm run storybook` показывает все заглушки, `npm run build-storybook` собирается. Настоящие stories пишет автор каждого компонента в фазе 2.
 
@@ -170,7 +170,7 @@
 > Текст ошибки должен подсказывать, как сделать правильно.
 
 - **Файлы:** `eslint.config.js`, `package.json`
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
+- **Статус:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
 - **Issue:** [#15](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/15) · PR [#111](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/111)
 - **Зависит от:** —
 - **Готово, когда:** импорт `@/widgets/header` из `entities` — ошибка `npm run lint`; текущий код проходит.
@@ -183,7 +183,7 @@
 
 - **Итог:** доска с 6 колонками и задачами плана настроена, онбординг проведён на видеовстрече. Отдельный `onboarding.md` и доработку шаблона PR не выполняли; это не блокировало завершение задачи (см. [отчёт](../report.md)).
 - **Файлы:** доска на GitHub, `.github/pull_request_template.md`, `docs/onboarding.md` (новый)
-- **Статус на 09.11.2026:** Done, работа на доске и онбординг приняты без PR; исполнитель: `viceede`.
+- **Статус:** Done, работа на доске и онбординг приняты без PR; исполнитель: `viceede`.
 - **Issue:** [#16](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/16) · без PR — работа на доске и на видеовстрече
 - **Зависит от:** —
 
@@ -195,6 +195,6 @@
 
 - **Файлы:** `package.json`, `.czrc` или `cz.config.js` (новый), `.husky/` (новый, если включаем хуки), `docs/rules/git-workflow.md`
 - **Зависит от:** —
-- **Статус на 09.11.2026:** Done, влита в `develop`; исполнитель: `viceede`.
+- **Статус:** Done, влита в `develop`; исполнитель: `viceede`.
 - **Issue:** [#3](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/3) · PR [#103](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/103)
 - **Готово, когда:** `npm run commit` создаёт коммит вида `feat: …`; в `git-workflow.md` есть раздел про это.
