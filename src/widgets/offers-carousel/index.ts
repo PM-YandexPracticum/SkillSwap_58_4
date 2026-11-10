@@ -1,1 +1,1 @@
-export { OffersCarousel } from './ui/OffersCarousel'
+export { OffersCarousel, type OffersCarouselProps } from './ui/OffersCarousel'

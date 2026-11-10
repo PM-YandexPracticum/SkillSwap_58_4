@@ -11,4 +11,6 @@
 
 ## Что внутри
 
-- `SkillDetails.tsx` — Верх страницы навыка: UserProfileCard автора (с «О себе», если заполнено в профиле) + SkillInfo + галерея на Carousel. Справа сверху: лайк (FavoriteButton: пока только вид со счётчиком, действие подключит P5-07), «поделиться» и «⋯» — заглушки, ничего не делают
+- `SkillDetails.tsx` — Верх страницы навыка: UserProfileCard автора + SkillInfo с галереей на Carousel. Данные приходят пропсами (собирает страница). Справа сверху: лайк (FavoriteButton — только вид), «поделиться» и «⋯» — заглушки; кнопка «Предложить обмен» в двух состояниях (`isExchangeProposed`)
+- `SkillDetails.stories.tsx`, `SkillDetails.test.tsx` — stories и тесты
+- 

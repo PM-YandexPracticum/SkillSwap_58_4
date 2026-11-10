@@ -11,5 +11,6 @@
 
 ## Что внутри
 
+- `ProposeExchangeButton.stories.tsx`, `ProposeExchangeButton.test.tsx`, `ExchangeProposedModal.stories.tsx`, `ExchangeProposedModal.test.tsx`, `ExchangeProposedModal.module.css` — stories, тесты и стили
 - `ExchangeProposedModal.tsx` — Окно после «Предложить обмен»: иконка колокольчика, «Вы предложили обмен», «Теперь дождитесь подтверждения. Вам придёт уведомление», кнопка «Готово»
 - `ProposeExchangeButton.tsx` — Кнопка «Предложить обмен» на странице навыка. Гость → вход с возвратом; вошедший — обмен, уведомление, toast и окно «Вы предложили обмен»
