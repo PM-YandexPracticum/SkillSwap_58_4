@@ -1,6 +1,7 @@
 .card {
   --mini-preview-image-width: 92px;
   --square-aspect-ratio: 1/1;
+  --gallery-size: 324px;
 
   display: flex;
   flex-direction: column;
@@ -59,8 +60,8 @@
 }
 
 .image {
-  width: 324px;
-  height: 324px; /* Фиксируем высоту, чтобы сохранить квадрат */
+  width: var(--gallery-size);
+  height: var(--gallery-size); /* Фиксируем высоту, чтобы сохранить квадрат */
   object-fit: cover; /* Изображение заполняет блок без искажений */
   border-radius: var(--radius-s);
   display: block; /* Убирает лишние отступы снизу у img */
@@ -73,16 +74,16 @@
 }
 
 .galleryCarousel {
-  width: 324px; /* Фиксируем ширину */
-  min-width: 324px;
-  max-width: 324px;
+  width: var(--gallery-size); /* Фиксируем ширину */
+  min-width: var(--gallery-size);
+  max-width: var(--gallery-size);
   aspect-ratio: var(--square-aspect-ratio);
   overflow: hidden; /* Важно для работы карусели */
 }
 
 .miniPreview {
-  width: 92px; /* Фиксируем ширину колонки превью */
-  min-width: 92px;
+  width: var(--mini-preview-image-width); /* Фиксируем ширину колонки превью */
+  min-width: var(--mini-preview-image-width);
   display: flex;
   flex-direction: column;
   gap: var(--space-24);
@@ -91,8 +92,8 @@
 .miniPreviewWrapper {
   position: relative;
   cursor: pointer;
-  width: 92px;
-  height: 92px;
+  width: var(--mini-preview-image-width);
+  height: var(--mini-preview-image-width);
   padding: 0;
   border: none;
   background: none;
