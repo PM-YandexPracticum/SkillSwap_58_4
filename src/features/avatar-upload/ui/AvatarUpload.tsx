@@ -1,3 +1,8 @@
+import { Avatar } from '@/shared/ui/Avatar'
+import { IconButton } from '@/shared/ui/IconButton'
+import AddIcon from '@/shared/assets/icons/add.svg?react'
+import UserCircleIcon from '@/shared/assets/icons/user-circle.svg?react'
+import styles from './AvatarUpload.module.css'
 export interface AvatarUploadProps {
   /** Текущий путь к фото (`/images/avatars/u17.jpg`) или превью `blob:` */
   value: string | null
@@ -15,7 +20,18 @@ export interface AvatarUploadProps {
  * Превью — через `URL.createObjectURL`, картинка — через `resolveImageUrl`.
  * @see Figma: «Регистрация 2 шаг» (1:1497, блок `Icon+Add`), «Профиль_личные данные» (1:2370, блок `User photo`)
  */
-export function AvatarUpload(_props: AvatarUploadProps) {
-  // TODO: реализовать по макету
-  return null
+export function AvatarUpload(props: AvatarUploadProps) {
+  return (
+    <div className={styles.container}>
+      <div className={styles.avatarWrapper}>
+        {props.value ? (
+          <Avatar src={props.value} alt="Аватар пользователя" />
+        ) : (
+          <UserCircleIcon className={styles.userIcon} />
+        )}
+
+        <IconButton ariaLabel="Добавить фото" icon={<AddIcon />} className={styles.addButton} />
+      </div>
+    </div>
+  )
 }
