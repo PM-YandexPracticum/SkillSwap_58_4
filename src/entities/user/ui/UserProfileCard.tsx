@@ -25,7 +25,6 @@ export interface UserProfileCardProps {
  * @see Figma: «Страница навыка» (1:2764), левая колонка
  */
 export function UserProfileCard(_props: UserProfileCardProps) {
-
   const renderSubcategories = (
     subcategories: ReadonlyArray<UserCardTag & { id: string }>,
   ): ReactNode => {
@@ -57,11 +56,11 @@ export function UserProfileCard(_props: UserProfileCardProps) {
     <article className={styles.card}>
       <section className={styles.summary}>
         <UserSummary user={_props.user} cityName={_props.cityName} />
-        <div className={styles.about}> {_props.user.about ?? ''}</div>
+        {_props.user.about.trim() && <div className={styles.about}>{_props.user.about}</div>}
       </section>
       <section className={styles.learnSkills}>
         <h4 className={styles.skillsHeading}>Может научить</h4>
-        <Chip  title={_props.teachSkill.title} categoryId={_props.teachSkill.categoryId} />
+        <Chip title={_props.teachSkill.title} categoryId={_props.teachSkill.categoryId} />
       </section>
       <section className={styles.teachSkills}>
         <h4 className={styles.skillsHeading}>Хочет научиться</h4>

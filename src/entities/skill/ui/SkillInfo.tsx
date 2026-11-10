@@ -40,10 +40,10 @@ export interface SkillInfoProps {
  */
 
 export function SkillInfo(_props: SkillInfoProps) {
-  const [mainApi, setMainApi] = useState<EmblaApi>();
+  const [mainApi, setMainApi] = useState<EmblaApi>()
 
   const scrollTo = (index: number) => {
-    mainApi?.scrollTo(index);
+    mainApi?.scrollTo(index)
   }
 
   // Обертка для слайдов карусели.
@@ -53,21 +53,26 @@ export function SkillInfo(_props: SkillInfoProps) {
       <div key={index} className={styles.carouselSlide}>
         <img src={image} alt="" className={styles.image} />
       </div>
-    ));
+    ))
   }
 
   const getMiniPreview = (images: string[]): ReactNode => {
-    const hasMoreThanThree = images.length > 3;
+    const hasMoreThanThree = images.length > 3
 
     return images.map((image, index) => {
       // Показываем только первые 3 превью
-      if (index > 2) return null;
+      if (index > 2) return null
 
-      const isThirdWithOverlay = index === 2 && hasMoreThanThree;
+      const isThirdWithOverlay = index === 2 && hasMoreThanThree
 
       return (
         <button
           key={index}
+          aria-label={
+            isThirdWithOverlay
+              ? `Показать фото ${index + 1}, ещё ${images.length - 3} фото`
+              : `Показать фото ${index + 1}`
+          }
           className={styles.miniPreviewWrapper}
           onClick={() => scrollTo(index)}
           type="button"
@@ -81,7 +86,7 @@ export function SkillInfo(_props: SkillInfoProps) {
           )}
         </button>
       )
-    });
+    })
   }
 
   return (
@@ -108,9 +113,7 @@ export function SkillInfo(_props: SkillInfoProps) {
           <Carousel onApiReady={setMainApi} className={styles.galleryCarousel}>
             {getSkillImages(_props.skill.images)}
           </Carousel>
-          <div className={styles.miniPreview}>
-            {getMiniPreview(_props.skill.images)}
-          </div>
+          <div className={styles.miniPreview}>{getMiniPreview(_props.skill.images)}</div>
         </div>
       </div>
     </article>

@@ -32,6 +32,18 @@ describe('ExchangeProposedModal', () => {
     expect(onClose).toHaveBeenCalledTimes(1)
   })
 
+  it('«Готово» использует отдельный onConfirm, если он передан', async () => {
+    const user = userEvent.setup()
+    const onClose = vi.fn()
+    const onConfirm = vi.fn()
+    render(<ExchangeProposedModal isOpen onClose={onClose} onConfirm={onConfirm} />)
+
+    await user.click(screen.getByRole('button', { name: 'Готово' }))
+
+    expect(onConfirm).toHaveBeenCalledTimes(1)
+    expect(onClose).not.toHaveBeenCalled()
+  })
+
   it('Esc вызывает onClose', async () => {
     const user = userEvent.setup()
     const onClose = vi.fn()

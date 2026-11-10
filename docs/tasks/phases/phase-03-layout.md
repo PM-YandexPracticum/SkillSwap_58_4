@@ -120,15 +120,15 @@
 - **Где в макете:** 1:2861
 - **Зависит от:** P3-01, P2-02
 
-### P3-09 · Страница навыка (вёрстка) 🟡
+### P3-09 · Страница навыка (вёрстка) ✅ 🟡
 > **Что нужно сделать:** сверстать страницу навыка. Верх — карточка автора, блок навыка, галерея на Carousel, иконки «лайк», «поделиться», «⋯»
 > («поделиться» и «⋯» — заглушки). Ниже — «Похожие предложения» в карусели на 4 карточки.
 > Сверстать и два состояния кнопки: «Предложить обмен» и обведённая «🕓 Обмен предложен», и окно «Вы предложили обмен» (ExchangeProposedModal).
 
-- **Уже готово:** `OfferCard` (P3-08) передаём в `OffersCarousel` через `renderItem`, чтобы виджет не импортировал другой виджет; `UserProfileCard` и `SkillInfo` (P3-02), Carousel (P2-13) готовы. Все зависимости влиты; задача назначена `sosolet` и находится в In Progress. Галерея уже есть в `SkillInfo`, повторно её не пишем. Окно «Вы предложили обмен» — на `Modal` (P2-10): `isOpen`, `onClose`, `children`, обязательный `ariaLabel`; отступы 80/60 px задаёт содержимое окна.
+- **Уже готово:** `OfferCard` (P3-08) передаём в `OffersCarousel` через `renderItem`, чтобы виджет не импортировал другой виджет; `UserProfileCard` и `SkillInfo` (P3-02), Carousel (P2-13) готовы. Все зависимости влиты. Галерея уже есть в `SkillInfo`, повторно её не пишем. Окно «Вы предложили обмен» — на `Modal` (P2-10): `isOpen`, `onClose`, `children`, обязательный `ariaLabel`; отступы 80/60 px задаёт содержимое окна.
 - **Файлы:** `src/widgets/skill-details/`, `src/widgets/offers-carousel/`, `src/pages/skill/`, `src/features/exchange-propose/ui/`
-- **Статус на 10.11.2026:** Review, исполнитель: `sosolet`. Для интеграции: все прямые зависимости закрыты.
-- **Issue:** [#42](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/42)
+- **Статус на 10.11.2026:** Done, влита в `develop`; исполнитель: `sosolet`.
+- **Issue:** [#42](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/42) · PR [#166](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/166), исправление галереи — [PR #172](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/172)
 - **Где в макете:** 1:2764, окно — 1:1977, «Обмен предложен» — 1:1919
 - **Зависит от:** P3-02, P3-08, P2-13, P2-10
 

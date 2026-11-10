@@ -82,11 +82,9 @@ export function Carousel({
 
   return (
     <div
-      className={[
-        styles.carousel,
-        fullHeight ? styles.carouselFullHeight : '',
-        className ?? '',
-      ].filter(Boolean).join(' ')}
+      className={[styles.carousel, fullHeight ? styles.carouselFullHeight : '', className ?? '']
+        .filter(Boolean)
+        .join(' ')}
     >
       <div className={styles.viewport} ref={emblaRef}>
         <div className={styles.container} style={{ gap: `${gap}px` }}>
@@ -114,6 +112,7 @@ export function Carousel({
         <>
           <button
             type="button"
+            aria-label="Предыдущий слайд"
             data-testid="carousel-prev"
             className={`${styles.arrow} ${styles.arrowPrev}`}
             onClick={scrollPrev}
@@ -127,6 +126,7 @@ export function Carousel({
           </button>
           <button
             type="button"
+            aria-label="Следующий слайд"
             data-testid="carousel-next"
             className={`${styles.arrow} ${styles.arrowNext}`}
             onClick={scrollNext}

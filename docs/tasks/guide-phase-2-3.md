@@ -31,7 +31,7 @@
 **Блоки (`src/entities`)**
 
 - `UserCard` — `import { UserCard } from '@/entities/user'`. Карточка каталога: `user`, `cityName`, `teachSkill`, `learnSubcategories`, слоты `topAction` (лайк) и `bottomAction` («Подробнее»). Задача-образец — P3-01 ([PR #133](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/133)).
-- `UserProfileCard` из `@/entities/user` — карточка автора с `user`, `cityName`, `teachSkill`, `learnSubcategories`. `SkillInfo` из `@/entities/skill` — `skill` (название, описание, изображения), `categoryTitle`, `subcategoryTitle`, объект `actions` со слотами `like`, `createOffer`, `share`, `more`. Галерея уже внутри `SkillInfo`; сборка страницы — P3-09. Готовы в [PR #150](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/150).
+- `UserProfileCard` из `@/entities/user` — карточка автора с `user`, `cityName`, `teachSkill`, `learnSubcategories`. `SkillInfo` из `@/entities/skill` — `skill` (название, описание, изображения), `categoryTitle`, `subcategoryTitle`, объект `actions` со слотами `like`, `createOffer`, `share`, `more`. Галерея уже внутри `SkillInfo`; блоки собраны в P3-09, данные страницы подключаются в P7-01. Готовы в [PR #150](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/150).
 - `UserSummary` — блок «аватар + имя + город, возраст» для карточки автора (P3-02); `SkillTag` из `@/entities/skill` — чип навыка в цвете категории.
 - Сессия (P4-05): `selectIsAuth`, `selectSession`, вход `startSession(userId)` и выход `endSession()` из `@/entities/session` — каждое сразу меняет store и localStorage.
 - Защита страниц (P4-08): `RequireAuth` закрывает `/profile/*` и `/favorites`, отправляет гостя на вход с `replace` и полным `state.from`; возврат после входа — P4-09.
@@ -96,14 +96,15 @@
 - P6-03, связь категории и подкатегории — `muntaniolirina`;
 - P4-06, сохранение пользователей и навыков — `Nick-Shvd`;
 - P5-02, панель фильтров в действии — `viceede`;
-- P3-09, страница навыка — `sosolet`, Review, PR #166;
+- P3-09, страница навыка — `sosolet`, Done, PR #166; исправление галереи — PR #172;
+- P7-01, данные страницы навыка — `kirill-ai-dev`, In Progress, локальная ветка `feature/p7-01-skill-page-data`;
 - общая P8-02 — Review с назначением `pwkdmc`, но вклады Дианы (PR #159), Андрея (PR #168), мой (PR #169) и Ирины (PR #170) уже приняты. Для остальных участников задача открыта.
 
 Полный список назначений и оставшихся зависимостей — в [отчёте](report.md#сейчас-в-работе).
 
 ## Можно брать сейчас
 
-В Todo **шесть задач без исполнителей**: **P3-13 (#46), P5-04 (#62), P5-09 (#67), P6-02 (#69), P7-01 (#74), P8-01 (#80)**. Для P3-13 остаётся P3-12 (In Progress), для P5-04 — P3-10 (Done), для P5-09 — P4-09 (In Progress), для P6-02 — P6-01 (In Progress), для P7-01 — P3-09 (Review), для P8-01 — P4-04 (In Progress).
+В Todo **пять задач без исполнителей**: **P3-13 (#46), P5-04 (#62), P5-09 (#67), P6-02 (#69), P8-01 (#80)**. Для P3-13 остаётся P3-12 (In Progress), для P5-04 — P3-10 (Done), для P5-09 — P4-09 (In Progress), для P6-02 — P6-01 (In Progress), для P8-01 — P4-04 (In Progress). P7-01 взята в работу `kirill-ai-dev`.
 
 Из Backlog следующими можно планировать P5-05, P5-06, P5-07, P5-08, P6-04, P6-05, P6-06, P7-02, P7-03, P7-05, P7-06, P8-03, P8-04, P8-05, P8-06 и P8-07; их порядок и зависимости перечислены в [отчёте](report.md#готовность-к-todo). Для остальных участников общую P8-02 можно вернуть из Review в Todo. Незакрытая зависимость не запрещает Todo; совместимость API и общие файлы согласуем перед интеграцией.
 
@@ -125,9 +126,9 @@
 
 **Фаза 2 завершена — 18/18.** DatePicker и MultiSelect уже в `develop`, повторно делать их не нужно.
 
-**Фаза 3 — 12/16:**
+**Фаза 3 — 13/16:**
 
-- P3-09 на ревью; P3-10 в Done: каталог, результаты, лейауты и панель собраны; логика подключается в P5-02/P5-05;
+- P3-09 и P3-10 в Done: страница навыка, каталог, результаты, лейауты и панель собраны; логика подключается в P5-02/P5-05 и P7-01;
 - P3-12 в работе; Input, DatePicker, MultiSelect, Avatar и общая рамка регистрации готовы;
 - P3-13 в Todo, остаётся шаг 2; Carousel, Modal и FileDropzone готовы;
 - P3-14 в работе, остаётся P3-12; вёрстка DatePicker готова;
