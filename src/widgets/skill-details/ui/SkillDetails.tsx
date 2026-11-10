@@ -45,15 +45,12 @@ export function SkillDetails({
 }: SkillDetailsProps) {
   return (
     <section className={styles.skill} aria-label="Навык">
-      <div>
         <UserProfileCard
           user={author}
           cityName={cityName}
           teachSkill={{ title: skill.title, categoryId: skill.categoryId }}
           learnSubcategories={learnSubcategories}
         />
-      </div>
-      <div>
         <SkillInfo
           skill={skill}
           categoryTitle={categoryTitle}
@@ -72,7 +69,6 @@ export function SkillDetails({
             more: <IconButton ariaLabel="Больше опций" icon={<MoreIcon aria-hidden="true" />} />,
           }}
         />
-      </div>
     </section>
   )
 }
