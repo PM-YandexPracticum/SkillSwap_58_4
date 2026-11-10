@@ -9,6 +9,8 @@ export const ROUTES = {
   ABOUT: '/about',
   PROFILE: '/profile',
   LOGIN: '/login',
+  /** Явный адрес страницы 404 для программных переходов из страниц. */
+  NOT_FOUND: '/404',
   /** Регистрация — три отдельных маршрута; `/register` ведёт на первый шаг */
   REGISTER: '/register',
   REGISTER_STEP_1: '/register/step-1',

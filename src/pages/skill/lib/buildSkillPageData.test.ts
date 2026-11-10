@@ -1,4 +1,5 @@
 import type { Category } from '@/entities/category'
+import type { PublicUser, User } from '@/entities/user'
 import { createSkill } from '@/entities/skill/testing'
 import { createUser } from '@/entities/user/testing'
 
@@ -24,23 +25,26 @@ const categories: Category[] = [
   },
 ]
 
-const author = createUser({
+const authorRecord = createUser({
   id: 'u01',
   teachSkillId: 's01',
   cityId: 'spb',
   learnSubcategoryIds: ['english', 'photo'],
 })
+const toPublicUser = ({ password: _password, ...user }: User): PublicUser => user
+const author = toPublicUser(authorRecord)
 const skill = createSkill({
   id: 's01',
   authorId: 'u01',
   categoryId: 'creativity',
   subcategoryId: 'music',
 })
-const sameSubcategory = createUser({ id: 'u02', teachSkillId: 's02' })
-const otherSubcategory = createUser({ id: 'u03', teachSkillId: 's03' })
+const sameSubcategory = toPublicUser(createUser({ id: 'u02', teachSkillId: 's02' }))
+const otherSubcategory = toPublicUser(createUser({ id: 'u03', teachSkillId: 's03' }))
 
 const sources: SkillPageSources = {
-  skillId: 's01',
+  skill,
+  author,
   skills: [
     skill,
     createSkill({ id: 's02', authorId: 'u02', categoryId: 'creativity', subcategoryId: 'music' }),
@@ -52,7 +56,7 @@ const sources: SkillPageSources = {
 }
 
 describe('buildSkillPageData', () => {
-  it('находит автора по authorId навыка, а не по id навыка', () => {
+  it('собирает данные для навыка и его автора из store', () => {
     const data = buildSkillPageData(sources)
 
     expect(data?.skill).toEqual(skill)
@@ -79,7 +83,7 @@ describe('buildSkillPageData', () => {
   it('пропускает подкатегории, которых нет в справочнике', () => {
     const data = buildSkillPageData({
       ...sources,
-      users: [createUser({ ...author, learnSubcategoryIds: ['unknown', 'english'] })],
+      author: toPublicUser(createUser({ ...author, learnSubcategoryIds: ['unknown', 'english'] })),
     })
 
     expect(data?.learnSubcategories.map((item) => item.id)).toEqual(['english'])
@@ -113,10 +117,10 @@ describe('buildSkillPageData', () => {
   })
 
   it('нет такого навыка — null', () => {
-    expect(buildSkillPageData({ ...sources, skillId: 'unknown' })).toBeNull()
+    expect(buildSkillPageData({ ...sources, skill: undefined })).toBeNull()
   })
 
   it('у навыка нет автора — null', () => {
-    expect(buildSkillPageData({ ...sources, users: [sameSubcategory] })).toBeNull()
+    expect(buildSkillPageData({ ...sources, author: undefined })).toBeNull()
   })
 })

@@ -32,10 +32,7 @@ describe('Carousel', () => {
     vi.clearAllMocks()
 
     // Возвращаем кортеж без any
-    vi.mocked(useEmblaCarousel).mockReturnValue([
-      vi.fn(),
-      mockEmblaApi,
-    ])
+    vi.mocked(useEmblaCarousel).mockReturnValue([vi.fn(), mockEmblaApi])
   })
 
   const slides = [
@@ -57,6 +54,8 @@ describe('Carousel', () => {
 
     expect(screen.getByTestId('carousel-prev')).toBeInTheDocument()
     expect(screen.getByTestId('carousel-next')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Предыдущий слайд' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Следующий слайд' })).toBeInTheDocument()
   })
 
   it('вызывает scrollPrev и scrollNext при клике на стрелки', () => {
@@ -105,7 +104,11 @@ describe('Carousel', () => {
   })
 
   it('рассчитывает ширину слайда с учётом slidesToShow и gap', () => {
-    render(<Carousel slidesToShow={2} gap={16}>{slides}</Carousel>)
+    render(
+      <Carousel slidesToShow={2} gap={16}>
+        {slides}
+      </Carousel>,
+    )
     const slide = screen.getByText('Слайд 1').parentElement
     expect(slide).toHaveStyle({
       flex: '0 0 calc((100% - 16px) / 2)',

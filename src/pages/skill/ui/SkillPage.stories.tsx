@@ -5,25 +5,27 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 
 import { categoriesReducer, type Category } from '@/entities/category'
 import { citiesReducer, type City } from '@/entities/city'
+import { exchangesReducer, type ExchangesState } from '@/entities/exchange'
 import { skillsReducer, type Skill } from '@/entities/skill'
+import { sessionReducer } from '@/entities/session'
+import { usersReducer, type User } from '@/entities/user'
 import { loadSeed } from '@/shared/api'
 import { getSkillRoute, ROUTER_FUTURE, ROUTES } from '@/shared/config'
 
 import { SkillPage } from './SkillPage'
-import { exchangesReducer, ExchangesState } from '@/entities/exchange'
-import { sessionReducer } from '@/entities/session'
 
 const FIGMA = 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id='
 
 interface Seeds {
   skills: readonly Skill[]
+  users: readonly User[]
   categories: readonly Category[]
   cities: readonly City[]
 }
 
 /**
- * Страница сама читает данные из `public/db` через `entities/*\/api`. Справочники для `OfferCard`
- * в «Похожих предложениях» он берёт из store, поэтому здесь store заполняется теми же файлами через `loaders`.
+ * Страница читает данные из Redux через селекторы. Storybook заполняет store теми же seed-файлами,
+ * чтобы история проверяла реальный путь страницы без запросов из компонента.
  */
 const meta = {
   title: 'pages/skill/SkillPage',
@@ -34,7 +36,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'P3-09: верстка страницы навыка. «Предложить обмен» открывает окно «Вы предложили обмен» (1:1977), после «Готово» кнопка становится «Обмен предложен» (1:1919) — только вид, ничего не сохраняется.',
+          'P7-01: страница получает навык, автора и справочники из Redux. «Предложить обмен» пока показывает состояния из P3-09; реальная логика обмена остаётся в P7-03.',
       },
     },
   },
@@ -42,6 +44,7 @@ const meta = {
     async () => ({
       seeds: {
         skills: await loadSeed<Skill>('skills')(),
+        users: await loadSeed<User>('users')(),
         categories: await loadSeed<Category>('categories')(),
         cities: await loadSeed<City>('cities')(),
       } satisfies Seeds,
@@ -55,22 +58,30 @@ type Story = StoryObj<typeof meta>
 
 function renderAt(skillId: string): Story['render'] {
   return function Render(_args, { loaded }) {
-    const { skills, categories, cities } = loaded.seeds as Seeds
+    const { skills, users, categories, cities } = loaded.seeds as Seeds
     const store = configureStore({
-      reducer: { cities: citiesReducer, categories: categoriesReducer, skills: skillsReducer, exchanges: exchangesReducer, session: sessionReducer, },
+      reducer: {
+        cities: citiesReducer,
+        categories: categoriesReducer,
+        skills: skillsReducer,
+        users: usersReducer,
+        exchanges: exchangesReducer,
+        session: sessionReducer,
+      },
       preloadedState: {
         cities: { items: [...cities], status: 'succeeded' as const },
         categories: { items: [...categories], status: 'succeeded' as const },
         skills: { items: [...skills], status: 'succeeded' as const, error: null },
+        users: { items: [...users], status: 'succeeded' as const, error: null },
         session: {
           session: {
             userId: 'u01',
-            token: 'fake-token'
+            token: 'fake-token',
           },
         },
         exchanges: {
           items: [],
-          status: 'succeeded',
+          status: 'succeeded' as const,
           pendingRequests: 0,
           error: null,
         } satisfies ExchangesState,

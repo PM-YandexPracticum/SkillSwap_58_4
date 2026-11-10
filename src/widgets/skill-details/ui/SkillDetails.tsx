@@ -23,7 +23,7 @@ export interface SkillDetailsProps {
   learnSubcategories: UserProfileCardProps['learnSubcategories']
   /** Обмен уже предложен: вместо «Предложить обмен» — обведённая «Обмен предложен» */
   isExchangeProposed?: boolean
-  /** Нажатие на «Предложить обмен»; логику (вход, обмен, уведомление) подключит P7-04 */
+  /** Нажатие на «Предложить обмен»; логику (вход, обмен, уведомление) подключит P7-03 */
   onProposeExchange?: () => void
 }
 

@@ -75,6 +75,7 @@ export function AppRouter() {
             </Route>
 
             <Route path={ROUTES.SERVER_ERROR} element={<ServerErrorPage />} />
+            <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
 
