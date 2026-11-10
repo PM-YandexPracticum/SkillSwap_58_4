@@ -10,3 +10,5 @@
 ## Что внутри
 
 - `team.ts` — тип `TeamMember` и массив `TEAM`. Приняты вклады Дианы (`pwkdmc`, PR #159, `/images/team/t0.jpg`) и Андрея (`viceede`, PR #168, `/images/team/t1.jpg`). Я добавил свою карточку тимлида (`kirill-ai-dev`) и фото `/images/team/t2.jpg` в [PR #169](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/169). Остальные участники добавляют себя в P8-02; общая issue остаётся открытой.
+
+Добавлена карточка Ирины (`muntaniolirina`): имя, роль, GitHub, авторский текст и фото `/images/team/t3.jpg` ([PR #170](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/170)). Общая P8-02 остаётся открытой для остальных участников.
