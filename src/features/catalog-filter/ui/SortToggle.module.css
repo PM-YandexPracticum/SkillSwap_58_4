@@ -1,0 +1,26 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-24);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-s);
+  font-size: var(--font-size-base);
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.button:hover {
+  color: var(--color-neutral);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 2px;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
