@@ -10,6 +10,8 @@ import { loadSeed } from '@/shared/api'
 import { getSkillRoute, ROUTER_FUTURE, ROUTES } from '@/shared/config'
 
 import { SkillPage } from './SkillPage'
+import { exchangesReducer, ExchangesState } from '@/entities/exchange'
+import { sessionReducer } from '@/entities/session'
 
 const FIGMA = 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id='
 
@@ -55,11 +57,23 @@ function renderAt(skillId: string): Story['render'] {
   return function Render(_args, { loaded }) {
     const { skills, categories, cities } = loaded.seeds as Seeds
     const store = configureStore({
-      reducer: { cities: citiesReducer, categories: categoriesReducer, skills: skillsReducer },
+      reducer: { cities: citiesReducer, categories: categoriesReducer, skills: skillsReducer, exchanges: exchangesReducer, session: sessionReducer, },
       preloadedState: {
         cities: { items: [...cities], status: 'succeeded' as const },
         categories: { items: [...categories], status: 'succeeded' as const },
         skills: { items: [...skills], status: 'succeeded' as const, error: null },
+        session: {
+          session: {
+            userId: 'u01',
+            token: 'fake-token'
+          },
+        },
+        exchanges: {
+          items: [],
+          status: 'succeeded',
+          pendingRequests: 0,
+          error: null,
+        } satisfies ExchangesState,
       },
     })
     return (
