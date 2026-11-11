@@ -1,5 +1,9 @@
-import { useId, useState } from 'react'
+import { useId } from 'react'
 import { RadioGroup } from '@/shared/ui/RadioGroup'
+import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import { selectCatalogFilter } from '../model/selectors'
+import { setMode } from '../model/catalogFilterSlice'
+import { FilterMode } from '../model/types'
 
 export interface ModeFilterProps {
   /** Дополнительный CSS-класс */
@@ -17,7 +21,9 @@ const OPTIONS = [
  * @see Figma: «Каталог — фильтры применены» (1:2860)
  */
 export function ModeFilter({ className }: ModeFilterProps) {
-  const [mode, setMode] = useState('all')
+  const dispatch = useAppDispatch()
+
+  const mode = useAppSelector(selectCatalogFilter).mode
   const name = useId()
 
   return (
@@ -26,7 +32,7 @@ export function ModeFilter({ className }: ModeFilterProps) {
       aria-label="Режим каталога"
       options={OPTIONS}
       value={mode}
-      onChange={setMode}
+      onChange={(value) => dispatch(setMode(value as FilterMode))}
       className={className}
     />
   )

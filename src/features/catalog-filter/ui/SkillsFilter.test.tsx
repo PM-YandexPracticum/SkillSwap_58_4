@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { act, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
+import { renderWithProviders } from '@/app/test/renderWithProviders'
 import type { Category } from '@/entities/category'
 import { CATALOG } from '@/shared/config'
+import { resetFilters, toggleSubcategory } from '../model/catalogFilterSlice'
 import { SkillsFilter } from './SkillsFilter'
 
 const category: Category = {
@@ -18,15 +19,14 @@ const category: Category = {
 
 describe('SkillsFilter', () => {
   it('обрабатывает пустой справочник', () => {
-    render(<SkillsFilter categories={[]} />)
+    renderWithProviders(<SkillsFilter categories={[]} />)
     expect(screen.getByRole('group', { name: 'Навыки' })).toBeInTheDocument()
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
   it('раскрывает категорию с клавиатуры и связывает кнопку со списком', async () => {
-    const user = userEvent.setup()
-    render(<SkillsFilter categories={[category]} />)
+    const { user } = renderWithProviders(<SkillsFilter categories={[category]} />)
     const button = screen.getByRole('button', { name: `Развернуть категорию «${category.title}»` })
     expect(button).toHaveAttribute('aria-expanded', 'false')
     expect(screen.queryByRole('checkbox', { name: 'Фотография' })).not.toBeInTheDocument()
@@ -38,25 +38,28 @@ describe('SkillsFilter', () => {
   })
 
   it('переходит из частичного выбора в полный и снимает всю категорию', async () => {
-    const user = userEvent.setup()
-    render(<SkillsFilter categories={[category]} />)
+    const { user, store } = renderWithProviders(<SkillsFilter categories={[category]} />)
     await user.click(screen.getByRole('button', { name: /Развернуть категорию/ }))
     const parent = screen.getByRole('checkbox', { name: category.title })
     await user.click(screen.getByRole('checkbox', { name: 'Фотография' }))
     expect(parent).toBePartiallyChecked()
+    expect(store.getState().catalogFilter.subcategoryIds).toEqual(['photo'])
+
     await user.click(parent)
     expect(parent).toBeChecked()
     expect(parent).not.toBePartiallyChecked()
     expect(screen.getByRole('checkbox', { name: 'Рисование' })).toBeChecked()
+    expect([...store.getState().catalogFilter.subcategoryIds].sort()).toEqual(['drawing', 'photo'])
+
     await user.click(parent)
     for (const checkbox of screen.getAllByRole('checkbox')) {
       expect(checkbox).not.toBeChecked()
     }
+    expect(store.getState().catalogFilter.subcategoryIds).toEqual([])
   })
 
   it('пересчитывает родительскую галочку по выбору подкатегорий', async () => {
-    const user = userEvent.setup()
-    render(<SkillsFilter categories={[category]} />)
+    const { user } = renderWithProviders(<SkillsFilter categories={[category]} />)
     await user.click(screen.getByRole('button', { name: /Развернуть категорию/ }))
     await user.click(screen.getByRole('checkbox', { name: 'Фотография' }))
     await user.click(screen.getByRole('checkbox', { name: 'Рисование' }))
@@ -66,25 +69,18 @@ describe('SkillsFilter', () => {
   })
 
   it('сохраняет выбор после сворачивания подкатегорий', async () => {
-    const user = userEvent.setup()
-    render(<SkillsFilter categories={[category]} />)
+    const { user, store } = renderWithProviders(<SkillsFilter categories={[category]} />)
     await user.click(screen.getByRole('button', { name: /Развернуть категорию/ }))
     await user.click(screen.getByRole('checkbox', { name: 'Фотография' }))
     await user.click(screen.getByRole('button', { name: /Свернуть категорию/ }))
     await user.click(screen.getByRole('button', { name: /Развернуть категорию/ }))
     expect(screen.getByRole('checkbox', { name: 'Фотография' })).toBeChecked()
+    expect(store.getState().catalogFilter.subcategoryIds).toEqual(['photo'])
   })
 
   it('раскрывает и сворачивает оставшиеся категории', async () => {
-    const user = userEvent.setup()
-    const categories = Array.from({ length: CATALOG.CATEGORIES_VISIBLE + 1 }, (_, index) => ({
-      ...category,
-      id: `category-${index}`,
-      title: `Категория ${index}`,
-      subcategories: [],
-    }))
-    render(<SkillsFilter categories={categories} />)
-    const lastName = categories.at(-1)!.title
+    const { user } = renderWithProviders(<SkillsFilter categories={categoriesMany} />)
+    const lastName = categoriesMany.at(-1)!.title
     expect(screen.queryByRole('checkbox', { name: lastName })).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Все категории' }))
     expect(screen.getByRole('checkbox', { name: lastName })).toBeInTheDocument()
@@ -92,10 +88,14 @@ describe('SkillsFilter', () => {
     expect(screen.queryByRole('checkbox', { name: lastName })).not.toBeInTheDocument()
   })
 
-  it('пересчитывает выбор при обновлении справочника', async () => {
-    const user = userEvent.setup()
-    const { rerender } = render(<SkillsFilter categories={[category]} />)
-    await user.click(screen.getByRole('checkbox', { name: category.title }))
+  it('отражает subcategoryIds из store после обновления справочника', async () => {
+    const { store, rerender } = renderWithProviders(<SkillsFilter categories={[category]} />)
+
+    act(() => {
+      store.dispatch(toggleSubcategory('photo'))
+    })
+    expect(screen.getByRole('checkbox', { name: category.title })).toBePartiallyChecked()
+
     rerender(
       <SkillsFilter
         categories={[
@@ -109,48 +109,79 @@ describe('SkillsFilter', () => {
         ]}
       />,
     )
+    // photo выбран, music — нет, значит категория остаётся частично выбранной
     expect(screen.getByRole('checkbox', { name: category.title })).toBePartiallyChecked()
+    expect(store.getState().catalogFilter.subcategoryIds).toEqual(['photo'])
   })
 
   it('выбор одной категории не меняет другую', async () => {
-    const user = userEvent.setup()
-    const other: Category = {
-      ...category,
-      id: 'languages',
-      title: 'Языки',
-      subcategories: [{ id: 'english', categoryId: 'languages', title: 'Английский' }],
-    }
-    render(<SkillsFilter categories={[category, other]} />)
-    await user.click(screen.getByRole('checkbox', { name: other.title }))
+    const { user, store } = renderWithProviders(
+      <SkillsFilter categories={[category, otherCategory]} />,
+    )
+    await user.click(screen.getByRole('checkbox', { name: otherCategory.title }))
     await user.click(screen.getByRole('checkbox', { name: category.title }))
     await user.click(screen.getByRole('checkbox', { name: category.title }))
-    expect(screen.getByRole('checkbox', { name: other.title })).toBeChecked()
+    expect(screen.getByRole('checkbox', { name: otherCategory.title })).toBeChecked()
     expect(screen.getByRole('checkbox', { name: category.title })).not.toBeChecked()
+    expect(store.getState().catalogFilter.subcategoryIds).toEqual(['english'])
   })
 
   it('сохраняет выбор и раскрытие скрытой категории после «Свернуть категории»', async () => {
-    const user = userEvent.setup()
-    const categories = [
-      ...Array.from({ length: CATALOG.CATEGORIES_VISIBLE }, (_, index) => ({
-        ...category,
-        id: `empty-${index}`,
-        title: `Пустая ${index}`,
-        subcategories: [],
-      })),
-      category,
-    ]
-    render(<SkillsFilter categories={categories} />)
+    const { user, store } = renderWithProviders(<SkillsFilter categories={hiddenCategorySetup} />)
     await user.click(screen.getByRole('button', { name: 'Все категории' }))
     await user.click(screen.getByRole('button', { name: /Развернуть категорию/ }))
     await user.click(screen.getByRole('checkbox', { name: 'Фотография' }))
     await user.click(screen.getByRole('button', { name: 'Свернуть категории' }))
     await user.click(screen.getByRole('button', { name: 'Все категории' }))
     expect(screen.getByRole('checkbox', { name: 'Фотография' })).toBeChecked()
+    expect(store.getState().catalogFilter.subcategoryIds).toEqual(['photo'])
   })
 
   it('не предлагает выбирать или раскрывать категорию без подкатегорий', () => {
-    render(<SkillsFilter categories={[{ ...category, subcategories: [] }]} />)
+    renderWithProviders(<SkillsFilter categories={[{ ...category, subcategories: [] }]} />)
     expect(screen.getByRole('checkbox', { name: category.title })).toBeDisabled()
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
+
+  it('сбрасывается через resetFilters', async () => {
+    const { user, store } = renderWithProviders(<SkillsFilter categories={[category]} />)
+    await user.click(screen.getByRole('checkbox', { name: category.title }))
+    expect([...store.getState().catalogFilter.subcategoryIds].sort()).toEqual(['drawing', 'photo'])
+
+    act(() => {
+      store.dispatch(resetFilters())
+    })
+    for (const checkbox of screen.getAllByRole('checkbox')) {
+      expect(checkbox).not.toBeChecked()
+    }
+  })
 })
+
+// --- фикстуры для тестов, где нужно много категорий -------------------------
+
+const otherCategory: Category = {
+  ...category,
+  id: 'languages',
+  title: 'Языки',
+  subcategories: [{ id: 'english', categoryId: 'languages', title: 'Английский' }],
+}
+
+const categoriesMany: Category[] = Array.from(
+  { length: CATALOG.CATEGORIES_VISIBLE + 1 },
+  (_, index) => ({
+    ...category,
+    id: `category-${index}`,
+    title: `Категория ${index}`,
+    subcategories: [],
+  }),
+)
+
+const hiddenCategorySetup: Category[] = [
+  ...Array.from({ length: CATALOG.CATEGORIES_VISIBLE }, (_, index) => ({
+    ...category,
+    id: `empty-${index}`,
+    title: `Пустая ${index}`,
+    subcategories: [],
+  })),
+  category,
+]

@@ -1,5 +1,9 @@
-import { useId, useState } from 'react'
+import { useId } from 'react'
 import { RadioGroup } from '@/shared/ui/RadioGroup'
+import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import { setGender } from '../model/catalogFilterSlice'
+import { Gender } from '@/entities/user'
+import { selectCatalogFilter } from '../model/selectors'
 
 export interface GenderFilterProps {
   /** Дополнительный CSS-класс */
@@ -17,7 +21,9 @@ const OPTIONS = [
  * @see Figma: «Каталог — фильтры применены» (1:2860)
  */
 export function GenderFilter({ className }: GenderFilterProps) {
-  const [gender, setGender] = useState('any')
+  const dispatch = useAppDispatch()
+
+  const gender = useAppSelector(selectCatalogFilter).gender
   const name = useId()
 
   return (
@@ -25,8 +31,8 @@ export function GenderFilter({ className }: GenderFilterProps) {
       label="Пол автора"
       name={name}
       options={OPTIONS}
-      value={gender}
-      onChange={setGender}
+      value={gender as Gender}
+      onChange={(value) => {dispatch(setGender(value as Gender | null))}}
       className={className}
     />
   )
