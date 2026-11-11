@@ -5,7 +5,7 @@ import styles from './ResetFiltersButton.module.css'
 export interface ResetFiltersButtonProps {
   /** Дополнительный CSS-класс */
   className?: string
-  /** Подключается контейнером в P5-02; пока кнопка номинальная */
+  /** Обработчик сброса передаёт контейнер; без него кнопка остаётся номинальной */
   onClick?: () => void
 }
 

@@ -17,7 +17,7 @@ const OPTIONS = [
 ]
 
 /**
- * Радио пола автора. До P5-02 выбор только визуальный, без изменения store.
+ * Радио пола автора. Выбор сразу записывается в `catalogFilter`.
  * @see Figma: «Каталог — фильтры применены» (1:2860)
  */
 export function GenderFilter({ className }: GenderFilterProps) {
@@ -32,7 +32,9 @@ export function GenderFilter({ className }: GenderFilterProps) {
       name={name}
       options={OPTIONS}
       value={gender as Gender}
-      onChange={(value) => {dispatch(setGender(value as Gender | null))}}
+      onChange={(value) => {
+        dispatch(setGender(value as Gender | null))
+      }}
       className={className}
     />
   )

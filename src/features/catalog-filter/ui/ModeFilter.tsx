@@ -17,7 +17,7 @@ const OPTIONS = [
 ]
 
 /**
- * Радио режима каталога. До P5-02 выбор только визуальный, без изменения store.
+ * Радио режима каталога. Выбор сразу записывается в `catalogFilter`.
  * @see Figma: «Каталог — фильтры применены» (1:2860)
  */
 export function ModeFilter({ className }: ModeFilterProps) {

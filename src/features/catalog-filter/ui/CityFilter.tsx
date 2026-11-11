@@ -18,7 +18,7 @@ export interface CityFilterProps {
 
 /**
  * Города: первые CATALOG.CITIES_VISIBLE и раскрытие остальных.
- * До P5-02 галочки хранятся локально и не фильтруют каталог.
+ * Выбранные города читаются из `catalogFilter`, а изменения отправляются в store.
  * @see Figma: «Каталог — фильтры применены» (1:2860)
  */
 export function CityFilter({ className, cities }: CityFilterProps) {

@@ -3,10 +3,7 @@ import type { Category } from '@/entities/category'
 import { CATALOG } from '@/shared/config'
 import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react'
 import ChevronUpIcon from '@/shared/assets/icons/chevron-up.svg?react'
-import {
-  toggleCategory,
-  toggleSubcategory,
-} from '../model/catalogFilterSlice'
+import { toggleCategory, toggleSubcategory } from '../model/catalogFilterSlice'
 import styles from './FilterGroup.module.css'
 import { SkillsCategory } from './SkillsCategory'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
@@ -21,8 +18,8 @@ export interface SkillsFilterProps {
 
 /**
  * Дерево навыков с раскрытием категорий и частичным выбором.
- * Локальный reducer переиспользует готовые правила P5-01, но не меняет Redux store.
- * Подключение выбора к каталогу — P5-02.
+ * Выбранные подкатегории читаются из `catalogFilter`, а действия используют общие
+ * reducer и правила P5-01.
  * @see Figma: «Каталог — фильтры применены» (1:2860)
  */
 export function SkillsFilter({ className, categories }: SkillsFilterProps) {
