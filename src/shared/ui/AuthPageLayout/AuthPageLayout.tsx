@@ -7,6 +7,8 @@ export interface AuthPageLayoutProps {
   progress?: ReactNode
   illustration: ReactNode
   children: ReactNode
+  /** Класс левой карточки для геометрии конкретного шага. */
+  formClassName?: string
 }
 
 /**
@@ -14,7 +16,13 @@ export interface AuthPageLayoutProps {
  * Логотип и закрытие предоставляет внешний AuthLayout из app. Переходами компонент не управляет.
  * @see Figma: вход 1:2400, первый шаг регистрации 1:2548
  */
-export function AuthPageLayout({ title, progress, illustration, children }: AuthPageLayoutProps) {
+export function AuthPageLayout({
+  title,
+  progress,
+  illustration,
+  children,
+  formClassName,
+}: AuthPageLayoutProps) {
   return (
     <main className={styles.page}>
       <div className={styles.heading}>
@@ -22,7 +30,9 @@ export function AuthPageLayout({ title, progress, illustration, children }: Auth
         {progress}
       </div>
       <div className={styles.columns}>
-        <div className={styles.formPanel}>{children}</div>
+        <div className={[styles.formPanel, formClassName].filter(Boolean).join(' ')}>
+          {children}
+        </div>
         {illustration}
       </div>
     </main>

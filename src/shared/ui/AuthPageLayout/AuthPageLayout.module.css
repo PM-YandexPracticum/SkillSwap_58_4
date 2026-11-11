@@ -33,7 +33,7 @@
   gap: var(--space-24);
   min-width: 0;
   min-height: var(--auth-panel-height);
-  padding: var(--space-60);
+  padding: var(--auth-panel-padding-block, var(--space-60)) var(--space-60);
   border-radius: var(--radius-s);
   background-color: var(--color-bg-secondary);
 }
