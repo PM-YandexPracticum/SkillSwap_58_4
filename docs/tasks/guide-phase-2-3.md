@@ -17,7 +17,7 @@
 - `DatePicker` из `@/shared/ui/DatePicker` (P2-12, PR #162) — Input и react-datepicker: ручной ввод `дд.мм.гггг`, календарь с выбором месяца/года, русский язык, подтверждение/отмена. `value` — ISO `YYYY-MM-DD` или `null`, возраст проверяет форма; подключение и внешний сброс описаны в README компонента.
 - `MultiSelect` из `@/shared/ui/MultiSelect` (P2-17, PR #163) — управляемый множественный выбор на Checkbox со стилями поля Select; в закрытом поле первое название и «+N». Клавиатура, ошибка и disabled готовы. Отбор подкатегорий остаётся у формы (P6-03).
 - `AuthPageLayout` и `CredentialsForm` — общая область с иллюстрацией и общая вёрстка полей email/пароля (P3-11). Формы передают обработчики и ошибки; правила проверки и сохранение подключаются в своих задачах.
-- `ErrorPage` — иллюстрация, заголовок и описание 404/500 (P3-16); `<main>` и кнопки добавляет страница, ErrorBoundary — P8-01.
+- `ErrorPage` — общая рамка, иллюстрация, заголовок, описание и слот действий 404/500 (P3-16); маршруты передаются страницами, ErrorBoundary — P8-01.
 - `Stepper` — `import { Stepper } from '@/shared/ui/Stepper'`. «Шаг N из 3» над формой регистрации: `current`, `total`.
 - `Tag` — `import { Tag } from '@/shared/ui/Tag'`. Чип навыка: `label`, `color` — id категории (`business`, `creativity`, `languages`, `education`, `health`, `home`) или `more` для «+N»; с `onRemove` появляется крестик — это плашка фильтра. Длинное название обрезается многоточием, полное — в подсказке. `isTagColor(id)` проверяет, есть ли цвет у категории.
 - `Input` и `Textarea` — `import { Input } from '@/shared/ui/Input'`, `import { Textarea } from '@/shared/ui/Textarea'`. Подпись `label`, ошибка `error`, декоративная иконка `rightIcon` (карандаш); кликабельная кнопка справа — `rightAction` («глаз», «×» очистки). Работают с `register` из react-hook-form. Высота Input — 48 px, как в макете.
@@ -58,7 +58,7 @@
 - «База данных» в браузере (P4-01, P4-10) — данные берём только через `entities/*/api` (`getUsers()`, `getSkills()`…): ответ приходит через ~300 мс, изменения сохраняются в localStorage. Напрямую в localStorage и в файлы `public/db` не ходим.
 - Правила полей для форм — `emailField()`, `passwordField()`, `nameField()`, `birthDateField()`, `textField(min, max)`, `cityField(cityIds)` из `@/shared/lib/validation` (yup, тексты ошибок как в `validation.md`).
 - `useInfiniteScroll(items, batch, delayMs)` из `@/shared/lib/hooks` (P2-15, [PR #152](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/152)) — `visibleItems`, `sentinelRef`, `isLoading`, `hasMore`; каждая порция требует прокрутки. Смена ссылки `items` сбрасывает ленту и отменяет таймер: фильтрацию и сортировку мемоизируй через `useMemo`. Размер и задержку передавай из `CATALOG`, маркер ставь в конце списка.
-- `useDebounce`, `useLocalStorage`, `useClickOutside` из `@/shared/lib/hooks`; `formatDate`, `truncate`, `generateId` из `@/shared/lib/helpers`.
+- `useLocalStorage` и `useClickOutside` из `@/shared/lib/hooks`. Неиспользуемые заготовки `useDebounce` и `shared/lib/helpers.ts` удалены; готовую логику поиска и форматирования уведомлений используем из соответствующих слайсов.
 
 **Стили и ресурсы**
 
