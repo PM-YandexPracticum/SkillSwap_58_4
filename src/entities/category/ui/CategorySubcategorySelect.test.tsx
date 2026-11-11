@@ -9,6 +9,19 @@ import {
 } from './CategorySubcategorySelect'
 
 const category = createCategory()
+// P6-03: вторая категория для проверки фильтрации подкатегорий.
+// В props не включается — старые тесты видят только [category].
+const otherCategory = createCategory({
+  id: 'creativity',
+  title: 'Творчество и искусство',
+  icon: 'creativity',
+  color: 'creativity',
+  subcategories: [
+    { id: 'creativity-drawing', categoryId: 'creativity', title: 'Рисование и иллюстрация' },
+    { id: 'creativity-photo', categoryId: 'creativity', title: 'Фотография' },
+  ],
+})
+
 const props: CategorySubcategorySelectProps = {
   mode: 'multiple',
   categories: [category],
@@ -58,5 +71,45 @@ describe('CategorySubcategorySelect', () => {
       'false',
     )
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+  })
+
+  // P6-03 дополнительные тесты - связь категорий и подкатегорий
+  it('показывает все подкатегории, когда категории не выбраны', async () => {
+    const user = userEvent.setup()
+    render(<CategorySubcategorySelect {...props} categories={[category, otherCategory]} />)
+    await user.click(screen.getByRole('button', { name: /^Подкатегории/ }))
+
+    expect(screen.getByRole('checkbox', { name: 'Управление командой' })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: 'Рисование и иллюстрация' })).toBeInTheDocument()
+  })
+
+  it('показывает подкатегории только выбранных категорий', async () => {
+    const user = userEvent.setup()
+    render(
+      <CategorySubcategorySelect
+        {...props}
+        categories={[category, otherCategory]}
+        value={{ categoryIds: [category.id], subcategoryIds: [] }}
+      />,
+    )
+    await user.click(screen.getByRole('button', { name: /^Подкатегории/ }))
+
+    expect(screen.getByRole('checkbox', { name: 'Управление командой' })).toBeInTheDocument()
+    expect(
+      screen.queryByRole('checkbox', { name: 'Рисование и иллюстрация' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('выбор подкатегории отмечает её категорию', async () => {
+    const onChange = vi.fn()
+    const user = userEvent.setup()
+    render(<CategorySubcategorySelect {...props} onChange={onChange} />)
+    await user.click(screen.getByRole('button', { name: /^Подкатегории/ }))
+    await user.click(screen.getByRole('checkbox', { name: 'Управление командой' }))
+
+    expect(onChange).toHaveBeenCalledWith({
+      categoryIds: [category.id],
+      subcategoryIds: [category.subcategories[0].id],
+    })
   })
 })
