@@ -23,8 +23,10 @@ const initialState: UsersState = {
  * Порядок «Рекомендуем» формируется один раз на успешную загрузку.
  * Сохранение регистрации, профиля и лайков — P4-06.
  */
-export const fetchUsers = createAsyncThunk<User[]>('users/fetchUsers', async () =>
-  shuffle(await getUsers()),
+export const fetchUsers = createAsyncThunk<User[], void, { state: { users: UsersState } }>(
+  'users/fetchUsers',
+  async () => shuffle(await getUsers()),
+  { condition: (_, { getState }) => getState().users.status !== 'loading' },
 )
 
 export const usersSlice = createSlice({
