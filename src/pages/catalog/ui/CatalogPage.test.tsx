@@ -1,8 +1,9 @@
 import { StrictMode } from 'react'
-import { screen } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import { renderWithProviders } from '@/app/test/renderWithProviders'
 import * as categories from '@/entities/category'
 import * as cities from '@/entities/city'
+import * as exchanges from '@/entities/exchange'
 import * as skills from '@/entities/skill'
 import * as users from '@/entities/user'
 import { createUser } from '@/entities/user/testing'
@@ -23,6 +24,10 @@ function spyOnLoads() {
     cities: vi.spyOn(cities, 'fetchCities'),
   }
 }
+
+/** Карточки секции по её заголовку: свёрнутая часть скрыта от дерева доступности. */
+const cardsOf = (title: string) =>
+  within(screen.getByRole('region', { name: title })).getAllByRole('article')
 
 afterEach(() => vi.restoreAllMocks())
 
@@ -99,4 +104,106 @@ describe('CatalogPage', () => {
       }
     },
   )
+  describe('секции «Популярное» и «Новое» (P5-04)', () => {
+    // likesCount растёт с номером, дата регистрации — наоборот: Автор 0 самый новый.
+    const items = Array.from({ length: 12 }, (_, i) =>
+      createUser({
+        id: `u${i}`,
+        name: `Автор ${i}`,
+        likesCount: i,
+        createdAt: new Date(Date.UTC(2026, 0, 20 - i)).toISOString(),
+      }),
+    )
+    const withUsers: Partial<RootState> = {
+      ...ready,
+      users: { items, status: 'succeeded', error: null },
+    }
+
+    it('«Популярное» — по лайкам, «Новое» — по дате регистрации, по 3 карточки', () => {
+      renderWithProviders(<CatalogPage />, { preloadedState: withUsers })
+
+      const popular = cardsOf('Популярное')
+      expect(popular).toHaveLength(3)
+      expect(popular[0]).toHaveTextContent('Автор 11')
+      expect(popular[1]).toHaveTextContent('Автор 10')
+      expect(popular[2]).toHaveTextContent('Автор 9')
+
+      const newest = cardsOf('Новое')
+      expect(newest).toHaveLength(3)
+      expect(newest[0]).toHaveTextContent('Автор 0')
+      expect(newest[1]).toHaveTextContent('Автор 1')
+      expect(newest[2]).toHaveTextContent('Автор 2')
+
+      expect(cardsOf('Рекомендуем')[0]).toHaveTextContent('Автор 0')
+    })
+
+    it('«Смотреть все» раскрывает секцию до 9 карточек, повторный клик сворачивает', async () => {
+      const { user } = renderWithProviders(<CatalogPage />, { preloadedState: withUsers })
+      const toggle = within(screen.getByRole('region', { name: 'Популярное' })).getByRole(
+        'button',
+        { name: 'Смотреть все' },
+      )
+
+      await user.click(toggle)
+      expect(cardsOf('Популярное')).toHaveLength(9)
+      expect(cardsOf('Популярное')[8]).toHaveTextContent('Автор 3')
+      expect(cardsOf('Новое')).toHaveLength(3)
+
+      await user.click(toggle)
+      expect(cardsOf('Популярное')).toHaveLength(3)
+    })
+
+    it('карточка может повторяться между секциями', () => {
+      const one = createUser({ id: 'solo', name: 'Единственный' })
+      renderWithProviders(<CatalogPage />, {
+        preloadedState: { ...ready, users: { items: [one], status: 'succeeded', error: null } },
+      })
+
+      expect(cardsOf('Популярное')[0]).toHaveTextContent('Единственный')
+      expect(cardsOf('Новое')[0]).toHaveTextContent('Единственный')
+      expect(cardsOf('Рекомендуем')[0]).toHaveTextContent('Единственный')
+    })
+  })
+
+  describe('загрузка обменов', () => {
+    it('один раз загружает сохранённые обмены, в том числе в StrictMode', async () => {
+      const load = vi.spyOn(exchanges, 'fetchExchanges')
+      const { store } = renderWithProviders(
+        <StrictMode>
+          <CatalogPage />
+        </StrictMode>,
+      )
+      expect(await screen.findByRole('heading', { name: 'Популярное' })).toBeInTheDocument()
+      expect(load).toHaveBeenCalledTimes(1)
+      expect(store.getState().exchanges.status).not.toBe('idle')
+    })
+
+    it('не перезапрашивает обмены, если они уже загружены', () => {
+      const load = vi.spyOn(exchanges, 'fetchExchanges')
+      renderWithProviders(<CatalogPage />, {
+        preloadedState: {
+          ...ready,
+          exchanges: { items: [], status: 'succeeded', pendingRequests: 0, error: null },
+        },
+      })
+      expect(screen.getByRole('heading', { name: 'Популярное' })).toBeInTheDocument()
+      expect(load).not.toHaveBeenCalled()
+    })
+
+    it('ошибка загрузки обменов не прячет каталог', () => {
+      renderWithProviders(<CatalogPage />, {
+        preloadedState: {
+          ...ready,
+          exchanges: {
+            items: [],
+            status: 'failed',
+            pendingRequests: 0,
+            error: 'Не удалось загрузить обмены',
+          },
+        },
+      })
+      expect(screen.getByRole('heading', { name: 'Популярное' })).toBeInTheDocument()
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
+  })
 })

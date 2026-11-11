@@ -82,4 +82,30 @@ describe('CatalogView', () => {
     )
     expect(screen.queryByRole('article')).not.toBeInTheDocument()
   })
+  it('подставляет в секции переданные списки, «Рекомендуем» берет исходные порядок', () => {
+    renderWithProviders(
+      <CatalogView
+        users={users}
+        popularUsers={[...users].reverse()}
+        newUsers={users.slice(2)}
+      />,
+      { preloadedState: state },
+    )
+    const cards = (title: string) =>
+      within(screen.getByRole('region', { name: title })).getAllByRole('article')
+    expect(cards('Популярное')[0]).toHaveTextContent('Автор 9')
+    expect(cards('Популярное')[2]).toHaveTextContent('Автор 7')
+    expect(cards('Новое')[0]).toHaveTextContent('Автор 2')
+    expect(cards('Новое')[2]).toHaveTextContent('Автор 4')
+    expect(cards('Рекомендуем')[0]).toHaveTextContent('Автор 0')
+  })
+  it('раскрывает неполную секцию до числа её карточек', async () => {
+    const { user } = renderWithProviders(
+      <CatalogView users={users} popularUsers={users.slice(0, 5)} />,
+      { preloadedState: state },
+    )
+    const popular = screen.getByRole('region', { name: 'Популярное' })
+    await user.click(within(popular).getByRole('button', { name: 'Смотреть все' }))
+    expect(within(popular).getAllByRole('article')).toHaveLength(5)
+  })
 })

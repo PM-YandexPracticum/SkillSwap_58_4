@@ -1,8 +1,15 @@
 import { useEffect } from 'react'
 import { fetchCategories, selectCategoriesStatus } from '@/entities/category'
 import { fetchCities, selectCitiesStatus } from '@/entities/city'
+import { fetchExchanges } from '@/entities/exchange'
 import { fetchSkills, selectSkillsStatus } from '@/entities/skill'
-import { fetchUsers, selectUsers, selectUsersStatus } from '@/entities/user'
+import {
+  fetchUsers,
+  selectNewUsers,
+  selectPopularUsers,
+  selectUsers,
+  selectUsersStatus
+} from '@/entities/user'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import type { LoadingStatus } from '@/shared/types'
 import { Button } from '@/shared/ui/Button'
@@ -28,6 +35,7 @@ function loadCatalogData(retry = false) {
     if (shouldLoad(state.skills.status)) void dispatch(fetchSkills())
     if (shouldLoad(state.categories.status)) void dispatch(fetchCategories())
     if (shouldLoad(state.cities.status)) void dispatch(fetchCities())
+    if (shouldLoad(state.exchanges.status)) void dispatch(fetchExchanges())
   }
 }
 
@@ -39,12 +47,15 @@ export interface CatalogPageProps {
 /**
  * Главная страница P3-10: готовые карточки и секции, панель фильтров и единая область main.
  * До P4-04 запускает существующие thunks для пустого store; показывает загрузку, ошибку и повтор.
- * Сортировка секций — P5-04, результаты — P5-05, выбор фильтров — P5-02, догрузка — P5-06.
+ * «Популярное» — по лайкам, «Новое» — по дате регистрации (P5-04), «Рекомендуем» — порядок из store.
+ * Результаты — P5-05, выбор фильтров — P5-02, догрузка — P5-06.
  * @see Figma: 1:2861, 1:2860, 1:2819
  */
 export function CatalogPage({ results }: CatalogPageProps) {
   const dispatch = useAppDispatch()
   const users = useAppSelector(selectUsers)
+  const popularUsers = useAppSelector(selectPopularUsers)
+  const newUsers = useAppSelector(selectNewUsers)
   const statuses = [
     useAppSelector(selectUsersStatus),
     useAppSelector(selectSkillsStatus),
@@ -75,7 +86,7 @@ export function CatalogPage({ results }: CatalogPageProps) {
           </Button>
         </div>
       ) : (
-        <CatalogView users={users} results={results} />
+        <CatalogView users={users} popularUsers={popularUsers} newUsers={newUsers} results={results} />
       )}
     </main>
   )

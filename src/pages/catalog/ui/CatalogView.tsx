@@ -16,6 +16,10 @@ import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 
 export interface CatalogViewProps {
   users: ReadonlyArray<PublicUser>
+  /** Для «Популярного»: по убыванию лайков. Без пропса секция берёт `users`. */
+  popularUsers?: ReadonlyArray<PublicUser>
+  /** Для «Нового»: от новых к старым по дате регистрации. Без пропса секция берёт `users`. */
+  newUsers?: ReadonlyArray<PublicUser>
   /** Отдельное состояние вёрстки. Подбор данных и обработчики подключаются в P5-05. */
   results?: {
     filters: ReadonlyArray<ActiveFilterTag>
@@ -32,7 +36,12 @@ const renderCard = (user: PublicUser) => <OfferCard user={user} />
  * Данные передаются готовыми; сортировку, применение фильтров и догрузку добавляет фаза 5.
  * @see Figma: 1:2861, 1:2860, 1:2819
  */
-export function CatalogView({ users, results }: CatalogViewProps) {
+export function CatalogView({
+  users,
+  popularUsers = users,
+  newUsers = users,
+  results
+}: CatalogViewProps) {
   const dispatch = useAppDispatch()
 
   const handleResetFilters = (): void => {
@@ -61,11 +70,11 @@ export function CatalogView({ users, results }: CatalogViewProps) {
           <>
             <OffersSection
               title="Популярное"
-              users={users}
+              users={popularUsers}
               mode="expandable"
               renderItem={renderCard}
             />
-            <OffersSection title="Новое" users={users} mode="expandable" renderItem={renderCard} />
+            <OffersSection title="Новое" users={newUsers} mode="expandable" renderItem={renderCard} />
             <OffersSection
               title="Рекомендуем"
               users={users.slice(0, CATALOG.SCROLL_BATCH)}
