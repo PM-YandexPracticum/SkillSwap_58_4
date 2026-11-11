@@ -32,7 +32,7 @@ function loadCatalogData(retry = false) {
 }
 
 export interface CatalogPageProps {
-  /** Готовый вид результатов. Применение фильтров и поиск подключаются в P5-05. */
+  /** Готовый вид результатов. Плашки, список и сортировку подключает P5-05. */
   results?: CatalogViewProps['results']
 }
 
