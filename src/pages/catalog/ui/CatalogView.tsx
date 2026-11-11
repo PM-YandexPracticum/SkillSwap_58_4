@@ -16,7 +16,7 @@ import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 
 export interface CatalogViewProps {
   users: ReadonlyArray<PublicUser>
-  /** Отдельное состояние вёрстки. Подбор данных и обработчики подключаются в P5-05. */
+  /** Отдельное состояние вёрстки. Список результатов и обработчики подключает P5-05. */
   results?: {
     filters: ReadonlyArray<ActiveFilterTag>
     sort: SortOrder
@@ -29,7 +29,7 @@ const renderCard = (user: PublicUser) => <OfferCard user={user} />
 
 /**
  * Вёрстка каталога: панель слева, три секции либо отдельный вид результатов справа.
- * Данные передаются готовыми; сортировку, применение фильтров и догрузку добавляет фаза 5.
+ * Данные передаются готовыми; результаты, сортировку и догрузку добавляет фаза 5.
  * @see Figma: 1:2861, 1:2860, 1:2819
  */
 export function CatalogView({ users, results }: CatalogViewProps) {
@@ -43,7 +43,10 @@ export function CatalogView({ users, results }: CatalogViewProps) {
   /* Рендер секции Подходящие предложения (с использованием стора) будет реализован в P5-05 */
   return (
     <div className={styles.layout}>
-      <FiltersPanel filtersCount={useAppSelector(selectActiveFiltersCount)} onReset={handleResetFilters}/>
+      <FiltersPanel
+        filtersCount={useAppSelector(selectActiveFiltersCount)}
+        onReset={handleResetFilters}
+      />
       <div className={[styles.content, results && styles.results].filter(Boolean).join(' ')}>
         {results ? (
           <>
