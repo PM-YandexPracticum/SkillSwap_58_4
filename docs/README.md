@@ -18,6 +18,8 @@
 
 [Иллюстрации к документации и PR](assets/README.md).
 
+[Найденные ошибки и повторы в коде](architecture/known-issues.md) — список для последующих исправлений.
+
 ## Ссылки
 
 - 📋 **Канбан-доска задач:** [GitHub Project #133](https://github.com/orgs/PM-YandexPracticum/projects/133/views/1) — кто что делает прямо сейчас

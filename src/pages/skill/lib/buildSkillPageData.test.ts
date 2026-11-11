@@ -39,18 +39,10 @@ const skill = createSkill({
   categoryId: 'creativity',
   subcategoryId: 'music',
 })
-const sameSubcategory = toPublicUser(createUser({ id: 'u02', teachSkillId: 's02' }))
-const otherSubcategory = toPublicUser(createUser({ id: 'u03', teachSkillId: 's03' }))
 
 const sources: SkillPageSources = {
   skill,
   author,
-  skills: [
-    skill,
-    createSkill({ id: 's02', authorId: 'u02', categoryId: 'creativity', subcategoryId: 'music' }),
-    createSkill({ id: 's03', authorId: 'u03', categoryId: 'creativity', subcategoryId: 'photo' }),
-  ],
-  users: [author, sameSubcategory, otherSubcategory],
   categories,
   cities: [{ id: 'spb', name: 'Санкт-Петербург' }],
 }
@@ -89,17 +81,10 @@ describe('buildSkillPageData', () => {
     expect(data?.learnSubcategories.map((item) => item.id)).toEqual(['english'])
   })
 
-  it('похожие — другие пользователи с навыком из той же подкатегории, без автора', () => {
-    const data = buildSkillPageData(sources)
-
-    expect(data?.similarUsers.map((user) => user.id)).toEqual(['u02'])
-  })
-
-  it('не отдаёт пароль ни автора, ни похожих', () => {
+  it('получает автора без пароля', () => {
     const data = buildSkillPageData(sources)
 
     expect(data?.author).not.toHaveProperty('password')
-    expect(data?.similarUsers[0]).not.toHaveProperty('password')
   })
 
   it('если города нет в справочнике — «Город не указан», а не пустая строка', () => {
