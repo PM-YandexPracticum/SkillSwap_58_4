@@ -1,5 +1,9 @@
 export {
   createMockCollection,
+  isRecord,
+  isString,
+  isStringArray,
+  isISODateString,
   loadSeed,
   resetMockDb,
   type MockCollection,
