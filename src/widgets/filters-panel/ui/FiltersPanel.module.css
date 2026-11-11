@@ -1,5 +1,5 @@
 .panel {
-  width: 324px; /* Figma: левая колонка каталога */
+  width: 324px;
   max-width: 100%;
   padding: var(--space-20);
   background-color: var(--color-bg-secondary);
