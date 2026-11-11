@@ -1,12 +1,12 @@
-import { format, isValid, parse, parseISO, startOfDay } from 'date-fns'
+import { format, isValid, parse, startOfDay } from 'date-fns'
+import { parseISODate } from '@/shared/lib/validation'
 
 export const ISO_FORMAT = 'yyyy-MM-dd'
 export const DISPLAY_FORMAT = 'dd.MM.yyyy'
 
 /** Строгая ISO-дата без времени; некорректное значение не нормализуется. */
 export function parseDate(value: string | null | undefined) {
-  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined
-  const date = parseISO(value)
+  const date = parseISODate(value)
   return isValid(date) ? date : undefined
 }
 

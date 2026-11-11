@@ -1,2 +1,2 @@
 export { ProfileForm } from './ui/ProfileForm'
-export { profileSchema, type ProfileFormValues } from './model/schema'
+export { profileSchema, createProfileSchema, type ProfileFormValues } from './model/schema'
