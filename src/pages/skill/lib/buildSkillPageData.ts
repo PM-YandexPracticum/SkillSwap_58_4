@@ -3,7 +3,7 @@ import type { City } from '@/entities/city'
 import type { Skill } from '@/entities/skill'
 import type { PublicUser } from '@/entities/user'
 
-/** Всё, что нужно странице навыка: пропсы для `SkillDetails` и список для «Похожих предложений». */
+/** Данные навыка, автора и справочников для `SkillDetails`. */
 export interface SkillPageData {
   skill: Skill
   author: PublicUser
@@ -12,16 +12,12 @@ export interface SkillPageData {
   subcategoryTitle: string
   /** «Хочет научиться» автора: подкатегории с категорией (от неё цвет чипа) */
   learnSubcategories: Array<{ id: string; title: string; categoryId: string }>
-  /** Другие пользователи, чей навык из той же подкатегории; без автора. */
-  similarUsers: PublicUser[]
 }
 
 export interface SkillPageSources {
   /** Навык и автор уже выбраны из Redux-состояния. */
   skill: Skill | undefined
   author: PublicUser | undefined
-  skills: readonly Skill[]
-  users: readonly PublicUser[]
   categories: readonly Category[]
   cities: readonly City[]
 }
@@ -37,8 +33,6 @@ const UNKNOWN_CITY = 'Город не указан'
 export function buildSkillPageData({
   skill,
   author,
-  skills,
-  users,
   categories,
   cities,
 }: SkillPageSources): SkillPageData | null {
@@ -53,11 +47,6 @@ export function buildSkillPageData({
     return owner && found ? [{ id: found.id, title: found.title, categoryId: owner.id }] : []
   })
 
-  const similarUsers = users.filter(
-    (user) =>
-      user.id !== author.id &&
-      skills.find((item) => item.id === user.teachSkillId)?.subcategoryId === skill.subcategoryId,
-  )
   return {
     skill,
     author,
@@ -65,6 +54,5 @@ export function buildSkillPageData({
     categoryTitle: category?.title ?? '',
     subcategoryTitle: subcategory?.title ?? '',
     learnSubcategories,
-    similarUsers,
   }
 }

@@ -1,5 +1,5 @@
 import { StrictMode } from 'react'
-import { screen, within } from '@testing-library/react'
+import { act, screen, within } from '@testing-library/react'
 import { Route, Routes } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
@@ -83,6 +83,9 @@ function spyOnLoads() {
   }
 }
 
+beforeEach(() => {
+  vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+})
 afterEach(() => vi.restoreAllMocks())
 
 function renderSkillPage(skillId: string) {
@@ -139,6 +142,83 @@ describe('SkillPage', () => {
     await screen.findByRole('heading', { level: 1, name: 'Тайм-менеджмент для фрилансеров' })
 
     expect(screen.queryByRole('region', { name: 'Похожие предложения' })).not.toBeInTheDocument()
+  })
+
+  it('«Подробнее» открывает похожий навык и пересчитывает список без нового автора', async () => {
+    const { user } = renderSkillPage('s01')
+    const section = screen.getByRole('region', { name: 'Похожие предложения' })
+
+    await user.click(within(section).getByRole('link', { name: 'Подробнее' }))
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Игра на гитаре' })).toBeInTheDocument()
+    const nextSection = screen.getByRole('region', { name: 'Похожие предложения' })
+    expect(within(nextSection).getByRole('heading', { name: 'Иван' })).toBeInTheDocument()
+    expect(within(nextSection).queryByRole('heading', { name: 'Наталья' })).not.toBeInTheDocument()
+  })
+
+  it('при переходе на похожий навык возвращает прокрутку и фокус к началу страницы', async () => {
+    const { user } = renderSkillPage('s01')
+    vi.mocked(window.scrollTo).mockClear()
+    const section = screen.getByRole('region', { name: 'Похожие предложения' })
+
+    await user.click(within(section).getByRole('link', { name: 'Подробнее' }))
+
+    expect(screen.getByRole('main', { name: similarSkill.title })).toHaveFocus()
+    expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'instant' })
+  })
+
+  it('обновление данных того же навыка не забирает фокус и не сбрасывает прокрутку', () => {
+    const { store } = renderSkillPage('s01')
+    const detailsLink = within(
+      screen.getByRole('region', { name: 'Похожие предложения' }),
+    ).getByRole('link', { name: 'Подробнее' })
+    detailsLink.focus()
+    vi.mocked(window.scrollTo).mockClear()
+
+    act(() => {
+      store.dispatch(
+        users.fetchUsers.fulfilled([{ ...author, about: 'Новый текст' }, similarUser], 'reload'),
+      )
+    })
+
+    expect(detailsLink).toHaveFocus()
+    expect(window.scrollTo).not.toHaveBeenCalled()
+  })
+
+  it('скрывает блок, если после обновления навыков совпадений больше нет', () => {
+    const { store } = renderSkillPage('s01')
+    expect(screen.getByRole('region', { name: 'Похожие предложения' })).toBeInTheDocument()
+
+    act(() => {
+      store.dispatch(
+        skills.fetchSkills.fulfilled(
+          [skill, { ...similarSkill, subcategoryId: 'time' }, skillWithoutSimilar],
+          'reload',
+        ),
+      )
+    })
+
+    expect(screen.queryByRole('region', { name: 'Похожие предложения' })).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: skill.title })).toBeInTheDocument()
+  })
+
+  it('показывает блок, когда в store появляется подходящий автор', () => {
+    const { store } = renderWithProviders(<SkillPage />, {
+      path: ROUTES.SKILL,
+      route: getSkillRoute('s01'),
+      preloadedState: {
+        ...preloadedState,
+        users: { ...preloadedState.users, items: [author] },
+      },
+    })
+    expect(screen.queryByRole('region', { name: 'Похожие предложения' })).not.toBeInTheDocument()
+
+    act(() => {
+      store.dispatch(users.fetchUsers.fulfilled([author, similarUser], 'reload'))
+    })
+
+    const section = screen.getByRole('region', { name: 'Похожие предложения' })
+    expect(within(section).getByRole('heading', { name: similarUser.name })).toBeInTheDocument()
   })
 
   it('«Предложить обмен» открывает окно «Вы предложили обмен», после «Готово» кнопка — «Обмен предложен»', async () => {
@@ -209,5 +289,6 @@ describe('SkillPage', () => {
     })
 
     expect(screen.getByRole('status', { name: 'Загрузка' })).toBeInTheDocument()
+    expect(window.scrollTo).not.toHaveBeenCalled()
   })
 })

@@ -77,5 +77,8 @@ export const FourCards: Story = { args: { users: users.slice(0, 4) } }
 /** Меньше четырёх: карточки занимают свои колонки слева */
 export const TwoCards: Story = { args: { users: users.slice(0, 2) } }
 
+/** Одно совпадение: одна карточка в первой колонке, стрелок нет */
+export const OneCard: Story = { args: { users: users.slice(0, 1) } }
+
 /** Нет похожих предложений: блок ничего не рисует */
 export const Empty: Story = { args: { users: [] } }
