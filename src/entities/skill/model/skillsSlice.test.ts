@@ -91,3 +91,13 @@ describe('skillsSlice', () => {
     expect(store.getState().skills.items).toEqual([skill])
   })
 })
+
+describe('fetchSkills — параллельный запрос', () => {
+  it('не запускает второй запрос, пока первый не завершился', async () => {
+    const store = configureStore({ reducer: { skills: skillsReducer } })
+    store.dispatch(fetchSkills.pending('first'))
+    const second = await store.dispatch(fetchSkills())
+    expect(second.meta).toMatchObject({ condition: true })
+    expect(store.getState().skills.status).toBe('loading')
+  })
+})

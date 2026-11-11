@@ -17,7 +17,11 @@ const initialState: CitiesState = {
 /**
  * Справочник городов. Нужен фильтру "Город", шагу 2 регистрации и "Личным данным".
  */
-export const fetchCities = createAsyncThunk<City[]>('cities/fetch', async () => getCities())
+export const fetchCities = createAsyncThunk<City[], void, { state: { cities: CitiesState } }>(
+  'cities/fetch',
+  async () => getCities(),
+  { condition: (_, { getState }) => getState().cities.status !== 'loading' },
+)
 
 export const citiesSlice = createSlice({
   name: 'cities',
