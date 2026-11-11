@@ -1,12 +1,24 @@
-import { createMockCollection, loadSeed } from '@/shared/api'
+import { createMockCollection, isISODateString, isRecord, isString, loadSeed } from '@/shared/api'
 import { DATA_ERRORS } from '@/shared/config'
 import type { Exchange } from '../model/types'
+
+const isExchange = (value: unknown): value is Exchange =>
+  isRecord(value) &&
+  isString(value.id) &&
+  isString(value.fromUserId) &&
+  isString(value.toUserId) &&
+  isString(value.skillId) &&
+  isISODateString(value.createdAt)
 
 /**
  * Хранилище предложенных обменов.
  * Единственное место, которое знает, откуда берутся данные. Переход на настоящую БД — меняется только этот файл.
  */
-const exchanges = createMockCollection<Exchange>('exchanges', loadSeed<Exchange>('exchanges'))
+const exchanges = createMockCollection<Exchange>(
+  'exchanges',
+  loadSeed<Exchange>('exchanges', isExchange),
+  { validate: isExchange },
+)
 
 // Проверку пары и запись выполняем вместе: два одновременных вызова не создадут дубль.
 let creationQueue: Promise<unknown> = Promise.resolve()

@@ -244,3 +244,46 @@ describe('resetMockDb', () => {
     expect(await createItems().getAll()).toEqual(SEED)
   })
 })
+
+describe('проверка структуры коллекции', () => {
+  const validate = (value: unknown): value is Item =>
+    typeof value === 'object' &&
+    value !== null &&
+    'title' in value &&
+    typeof value.title === 'string' &&
+    'tags' in value &&
+    Array.isArray(value.tags) &&
+    value.tags.every((tag) => typeof tag === 'string')
+
+  it('сбрасывает запись с id, но без обязательных полей к образцам', async () => {
+    localStorage.setItem(KEY, JSON.stringify([{ id: 'broken' }]))
+    const items = createMockCollection('items', SEED, { delayMs: 0, validate })
+    expect(await items.getAll()).toEqual(SEED)
+    expect(localStorage.getItem(KEY)).toBeNull()
+  })
+
+  it('отклоняет повреждённые seed-данные и не отдаёт их в UI', async () => {
+    const seed = async () => [{ id: 'broken' }] as unknown as Item[]
+    const items = createMockCollection('invalid-seed', seed, { delayMs: 0, validate })
+    await expect(items.getAll()).rejects.toThrow('Не удалось загрузить данные')
+  })
+
+  it('не записывает запись, которая не проходит runtime-проверку', async () => {
+    const items = createMockCollection('validated-create', SEED, { delayMs: 0, validate })
+
+    await expect(items.create({ id: 'broken', title: 'Без тегов' } as Item)).rejects.toThrow(
+      'Неверная структура записи',
+    )
+    expect(localStorage.getItem(`${MOCK_DB.STORAGE_PREFIX}validated-create`)).toBeNull()
+  })
+
+  it('не сохраняет update с некорректным итоговым объектом', async () => {
+    const items = createMockCollection('validated-update', SEED, { delayMs: 0, validate })
+
+    await expect(items.update('a', { tags: ['ok', 42] } as Partial<Item>)).rejects.toThrow(
+      'Неверная структура записи',
+    )
+    expect(await items.getById('a')).toEqual(SEED[0])
+    expect(localStorage.getItem(`${MOCK_DB.STORAGE_PREFIX}validated-update`)).toBeNull()
+  })
+})
