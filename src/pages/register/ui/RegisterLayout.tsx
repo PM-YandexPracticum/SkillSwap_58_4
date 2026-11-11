@@ -7,6 +7,7 @@ import { ROUTES } from '@/shared/config'
 import { AuthPageLayout } from '@/shared/ui/AuthPageLayout'
 import { IllustrationCard } from '@/shared/ui/IllustrationCard'
 import { Stepper } from '@/shared/ui/Stepper'
+import styles from './RegisterLayout.module.css'
 
 const STEPS = [
   {
@@ -45,6 +46,7 @@ export function RegisterLayout() {
     <AuthPageLayout
       title="Регистрация"
       progress={<Stepper current={currentIndex + 1} total={STEPS.length} />}
+      formClassName={currentIndex === 1 ? styles.profilePanel : undefined}
       illustration={<IllustrationCard image={step.image} title={step.title} text={step.text} />}
     >
       <Outlet />

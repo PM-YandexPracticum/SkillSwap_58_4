@@ -1,14 +1,26 @@
 import * as yup from 'yup'
+import { VALIDATION } from '@/shared/config'
+import {
+  birthDateField,
+  cityField,
+  emailField,
+  nameField,
+  textField,
+} from '@/shared/lib/validation'
 
-/** Схема формы «Личные данные» */
-export const profileSchema = yup.object({
-  email: yup.string().email('Введите корректный email').required(),
-  name: yup.string().trim().required('Введите имя'),
-  birthDate: yup.string().required('Укажите дату рождения'),
-  /** null — «Не указан»: в макете это допустимый вариант */
-  gender: yup.mixed<'male' | 'female'>().oneOf(['male', 'female']).nullable().defined(),
-  city: yup.string().required('Выберите город'),
-  about: yup.string().max(500),
-})
+/** Схема личных данных на общих полях. Загруженные id ограничивают выбор города справочником. */
+export function createProfileSchema(cityIds?: readonly string[]) {
+  return yup.object({
+    email: emailField(),
+    name: nameField(),
+    birthDate: birthDateField(),
+    /** null — «Не указан»: в макете это допустимый вариант */
+    gender: yup.mixed<'male' | 'female'>().oneOf(['male', 'female']).nullable().defined(),
+    cityId: cityField(cityIds),
+    about: textField(0, VALIDATION.ABOUT.MAX),
+  })
+}
 
+/** Базовая схема без справочника; в форме используем createProfileSchema с id загруженных городов. */
+export const profileSchema = createProfileSchema()
 export type ProfileFormValues = yup.InferType<typeof profileSchema>

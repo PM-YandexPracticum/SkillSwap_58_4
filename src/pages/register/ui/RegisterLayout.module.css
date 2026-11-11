@@ -1,0 +1,4 @@
+.profilePanel {
+  /* У шага 2 внутренний блок 612 px: по 40 px сверху и снизу в карточке 692 px. */
+  --auth-panel-padding-block: var(--space-40);
+}

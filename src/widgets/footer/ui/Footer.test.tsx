@@ -2,13 +2,13 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 
-import { ROUTER_FUTURE, ROUTES } from '@/shared/config'
+import { ROUTES } from '@/shared/config'
 
 import { Footer } from './Footer'
 
 const renderFooter = () =>
   render(
-    <MemoryRouter future={ROUTER_FUTURE}>
+    <MemoryRouter>
       <Footer />
     </MemoryRouter>,
   )
@@ -42,7 +42,7 @@ describe('Footer', () => {
   it('не добавляет заглушки в порядок перехода по Tab', async () => {
     const user = userEvent.setup()
     render(
-      <MemoryRouter future={ROUTER_FUTURE}>
+      <MemoryRouter>
         <Footer />
         <button>Далее</button>
       </MemoryRouter>,

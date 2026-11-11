@@ -58,6 +58,11 @@ export function SkillInfo(_props: SkillInfoProps) {
 
   const getMiniPreview = (images: string[]): ReactNode => {
     const hasMoreThanThree = images.length > 3
+    const hasOnlyOneImage = images.length === 1
+
+    if (hasOnlyOneImage) {
+      return null
+    }
 
     return images.map((image, index) => {
       // Показываем только первые 3 превью
@@ -110,10 +115,16 @@ export function SkillInfo(_props: SkillInfoProps) {
           )}
         </section>
         <div className={styles.gallery}>
-          <Carousel onApiReady={setMainApi} className={styles.galleryCarousel}>
-            {getSkillImages(_props.skill.images)}
-          </Carousel>
-          <div className={styles.miniPreview}>{getMiniPreview(_props.skill.images)}</div>
+          {_props.skill.images.length !== 1 ? (
+            <Carousel onApiReady={setMainApi} className={styles.galleryCarousel}>
+              {getSkillImages(_props.skill.images)}
+            </Carousel>
+          ) : (
+            getSkillImages(_props.skill.images)
+          )}
+          {_props.skill.images.length !== 1 && (
+            <div className={styles.miniPreview}>{getMiniPreview(_props.skill.images)}</div>
+          )}
         </div>
       </div>
     </article>

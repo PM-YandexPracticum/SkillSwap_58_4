@@ -12,7 +12,7 @@
 
 - **Уже готово:** форма состояния `registerSlice` (шаг, черновик) и `RegisterStepGuard` на маршрутах шагов 2–3 — остаются редьюсеры и логика охраны.
 - **Файлы:** `src/features/register/model/registerSlice.ts`, `src/app/router/RegisterStepGuard.tsx`, `src/pages/register/ui/RegisterLayout.tsx`
-- **Статус на 10.11.2026:** In Progress, исполнитель: `kkiitlin`. Для интеграции: все прямые зависимости закрыты.
+- **Статус на 11.11.2026:** In Progress, исполнитель: `kkiitlin`. Для интеграции: все прямые зависимости закрыты.
 - **Issue:** [#68](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/68)
 - **Зависит от:** P3-11
 
@@ -23,7 +23,7 @@
 > Кнопки Google и Apple остаются заглушками.
 
 - **Файлы:** `src/features/register/ui/StepCredentials.tsx`, `src/features/register/model/schema.ts`
-- **Статус на 10.11.2026:** Todo, исполнитель: не назначен. Для интеграции: P6-01 (In Progress).
+- **Статус на 11.11.2026:** Todo, исполнитель: не назначен. Для интеграции: P6-01 (In Progress).
 - **Issue:** [#69](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/69)
 - **Зависит от:** P6-01, P2-16, P4-03
 
@@ -35,7 +35,7 @@
 
 - **Уже готово:** заготовки `getAvailableSubcategories` и `syncCategorySelection` в `linkCategories.ts`; категории с подкатегориями — `selectCategories` (P4-02).
 - **Файлы:** `src/entities/category/lib/linkCategories.ts` + тесты, `src/entities/category/ui/CategorySubcategorySelect.tsx`
-- **Статус на 10.11.2026:** In Progress, исполнитель: `muntaniolirina`. Для интеграции: P3-12 (In Progress).
+- **Статус на 11.11.2026:** In Progress, исполнитель: `muntaniolirina`. Для интеграции: P3-12 (Done).
 - **Issue:** [#70](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/70)
 - **Зависит от:** P4-02, P3-12
 
@@ -46,7 +46,7 @@
 
 - **Уже готово:** `validateImageFile` из `@/shared/lib/validation` и `fileToDataUrl` из `@/shared/lib/image` (P2-14); лимиты — `VALIDATION.IMAGE` в `@/shared/config`.
 - **Файлы:** `src/features/register/ui/StepProfile.tsx`, `src/features/avatar-upload/`, `src/features/register/model/schema.ts`
-- **Статус на 10.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P6-01 (In Progress), P6-03 (In Progress), P6-02 (Todo).
+- **Статус на 11.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P6-01 (In Progress), P6-03 (In Progress), P6-02 (Todo).
 - **Issue:** [#71](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/71)
 - **Где в макете:** «Регистрация 2 шаг» (1:1497 … 1:1717)
 - **Зависит от:** P6-01, P6-03, P2-16, P6-02 (обе меняют `schema.ts`)
@@ -59,7 +59,7 @@
 
 - **Уже готово:** черновик `skill-create/model/schema.ts` — довести до `validation.md` (описание 20–500, фото 1–4); выбранные в `FileDropzone` файлы проверяет `validateImageFile` (P2-14), текст ошибки уходит в проп `error`.
 - **Файлы:** `src/features/register/ui/StepSkill.tsx`, `src/features/skill-create/` (`SkillForm`, `SkillPreviewModal`, `model/schema.ts`)
-- **Статус на 10.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P6-01 (In Progress), P6-03 (In Progress), P3-13 (Todo).
+- **Статус на 11.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P6-01 (In Progress), P6-03 (In Progress), P3-13 (Todo).
 - **Issue:** [#72](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/72)
 - **Где в макете:** 1:1761, превью 1:1799
 - **Зависит от:** P6-01, P6-03, P2-16, P3-13
@@ -72,7 +72,7 @@
 
 - **Уже готово:** `fileToDataUrl` из `@/shared/lib/image` (P2-14) — уменьшает фото до 800 px перед сохранением; сессию создаёт `dispatch(startSession(user.id))` из `@/entities/session` (P4-05).
 - **Файлы:** `src/features/register/model/`, `src/features/skill-create/model/`, `src/features/skill-create/ui/OfferCreatedModal.tsx`, `src/pages/catalog/` (открыть окно по флагу)
-- **Статус на 10.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P6-02 (Todo), P6-04 (Backlog), P6-05 (Backlog), P4-06 (In Progress).
+- **Статус на 11.11.2026:** Backlog, исполнитель: не назначен. Для интеграции: P6-02 (Todo), P6-04 (Backlog), P6-05 (Backlog), P4-06 (In Progress).
 - **Issue:** [#73](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/73)
 - **Где в макете:** 1:2950, 1:2904
 - **Зависит от:** P6-02, P6-04, P6-05, P4-06

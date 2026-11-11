@@ -3,8 +3,8 @@ import { Navigate, useParams } from 'react-router-dom'
 
 import { fetchCategories, selectCategories, selectCategoriesStatus } from '@/entities/category'
 import { fetchCities, selectCities, selectCitiesStatus } from '@/entities/city'
-import { fetchSkills, selectSkills, selectSkillsStatus, selectSkillById } from '@/entities/skill'
-import { fetchUsers, selectUsers, selectUsersStatus, selectUserById } from '@/entities/user'
+import { fetchSkills, selectSkillsStatus, selectSkillById } from '@/entities/skill'
+import { fetchUsers, selectSimilarUsers, selectUsersStatus, selectUserById } from '@/entities/user'
 import { ExchangeProposedModal } from '@/features/exchange-propose'
 import { ROUTES } from '@/shared/config'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
@@ -33,11 +33,20 @@ function loadSkillPageResources() {
   }
 }
 
+/** Возвращает пользователя к началу нового навыка, в том числе при переходе с клавиатуры. */
+function focusSkillPage(node: HTMLElement | null) {
+  if (!node) return
+
+  node.focus({ preventScroll: true })
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+}
+
 /**
  * Страница навыка `/skill/:id`: SkillDetails (автор, навык, галерея) + «Похожие предложения» (OffersCarousel).
  * Данные и справочники читает из Redux-состояния через селекторы P4-02/P4-03. До P4-04 страница
  * сама запускает недостающие загрузочные thunk-и; после появления общего DataProvider этот effect
  * ничего не запускает, если данные уже загружаются или загружены.
+ * При смене навыка возвращает прокрутку и фокус к началу страницы, сбрасывает галерею и карусель.
  *
  * Кнопка «Предложить обмен» и окно «Вы предложили обмен» здесь только показывают состояния из макета:
  * после «Готово» кнопка становится «Обмен предложен». Ничего не сохраняется и после перезагрузки сбрасывается —
@@ -53,8 +62,7 @@ export function SkillPage() {
   const author = useAppSelector((state) =>
     skill ? selectUserById(state, skill.authorId) : undefined,
   )
-  const skills = useAppSelector(selectSkills)
-  const users = useAppSelector(selectUsers)
+  const similarUsers = useAppSelector((state) => selectSimilarUsers(state, id))
   const categories = useAppSelector(selectCategories)
   const cities = useAppSelector(selectCities)
   const skillsStatus = useAppSelector(selectSkillsStatus)
@@ -76,12 +84,10 @@ export function SkillPage() {
       buildSkillPageData({
         skill,
         author,
-        skills,
-        users,
         categories,
         cities,
       }),
-    [author, categories, cities, skill, skills, users],
+    [author, categories, cities, skill],
   )
 
   const statuses = [skillsStatus, usersStatus, categoriesStatus, citiesStatus]
@@ -98,7 +104,14 @@ export function SkillPage() {
   const { cityName, categoryTitle, subcategoryTitle, learnSubcategories } = data
 
   return (
-    <main className={styles.page}>
+    // Ключ сбрасывает галерею и похожие предложения только при смене навыка.
+    <main
+      key={id}
+      ref={focusSkillPage}
+      className={styles.page}
+      tabIndex={-1}
+      aria-label={data.skill.title}
+    >
       <SkillDetails
         skill={data.skill}
         author={data.author}
@@ -109,7 +122,7 @@ export function SkillPage() {
         isExchangeProposed={isProposed}
         onProposeExchange={() => setIsModalOpen(true)}
       />
-      <OffersCarousel users={data.similarUsers} renderItem={(user) => <OfferCard user={user} />} />
+      <OffersCarousel users={similarUsers} renderItem={(user) => <OfferCard user={user} />} />
       <ExchangeProposedModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

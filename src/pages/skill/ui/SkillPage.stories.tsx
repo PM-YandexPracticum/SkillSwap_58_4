@@ -10,7 +10,7 @@ import { skillsReducer, type Skill } from '@/entities/skill'
 import { sessionReducer } from '@/entities/session'
 import { usersReducer, type User } from '@/entities/user'
 import { loadSeed } from '@/shared/api'
-import { getSkillRoute, ROUTER_FUTURE, ROUTES } from '@/shared/config'
+import { getSkillRoute, ROUTES } from '@/shared/config'
 
 import { SkillPage } from './SkillPage'
 
@@ -36,7 +36,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'P7-01: страница получает навык, автора и справочники из Redux. «Предложить обмен» пока показывает состояния из P3-09; реальная логика обмена остаётся в P7-03.',
+          'Страница получает навык, автора и справочники из Redux. P7-02: selectSimilarUsers подбирает других авторов той же подкатегории; без совпадений блок скрыт. «Предложить обмен» пока показывает состояния из P3-09; реальная логика обмена остаётся в P7-03.',
       },
     },
   },
@@ -89,7 +89,7 @@ function renderAt(skillId: string): Story['render'] {
     })
     return (
       <Provider store={store}>
-        <MemoryRouter initialEntries={[getSkillRoute(skillId)]} future={ROUTER_FUTURE}>
+        <MemoryRouter initialEntries={[getSkillRoute(skillId)]}>
           <Routes>
             <Route path={ROUTES.SKILL} element={<SkillPage />} />
           </Routes>

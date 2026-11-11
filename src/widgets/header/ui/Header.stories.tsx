@@ -5,7 +5,6 @@ import { MemoryRouter } from 'react-router-dom'
 import { expect, userEvent, within } from 'storybook/test'
 
 import { searchReducer } from '@/features/skill-search'
-import { ROUTER_FUTURE } from '@/shared/config'
 
 import { Header } from './Header'
 
@@ -36,7 +35,7 @@ const meta: Meta<typeof Header> = {
   decorators: [
     (Story) => (
       <Provider store={makeStore()}>
-        <MemoryRouter future={ROUTER_FUTURE}>
+        <MemoryRouter>
           <Story />
         </MemoryRouter>
       </Provider>

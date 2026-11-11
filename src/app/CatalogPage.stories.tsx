@@ -8,7 +8,7 @@ import type { Skill } from '@/entities/skill'
 import type { User } from '@/entities/user'
 import { CatalogPage } from '@/pages/catalog'
 import { loadSeed } from '@/shared/api'
-import { CATALOG, ROUTER_FUTURE } from '@/shared/config'
+import { CATALOG } from '@/shared/config'
 import { createAppStore } from './store'
 import { MainLayout } from './layouts/MainLayout'
 
@@ -24,7 +24,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'P3-10: одна CatalogPage в MainLayout для всех состояний. Данные из базы, порядок секций пока общий. Results и SearchResults — статичные виды результатов; обработчики плашек и сортировки записываются в Actions. Их управляемое поведение показано отдельно в stories ActiveFilters/SortToggle. Выбор в панели не применяется к карточкам (P5-02/P5-05), порядок секций — P5-04. Пустые и ошибочные состояния — решения вне Figma.',
+          'P3-10: одна CatalogPage в MainLayout для всех состояний. Данные из базы, порядок секций пока общий. Results и SearchResults — статичные виды результатов; обработчики плашек и сортировки записываются в Actions. Их управляемое поведение показано отдельно в stories ActiveFilters/SortToggle. P5-02 сохраняет выбор панели в store, а применение к списку и результаты — P5-05; порядок секций — P5-04. Пустые и ошибочные состояния — решения вне Figma.',
       },
     },
   },
@@ -58,7 +58,7 @@ const meta = {
       })
       return (
         <Provider store={store}>
-          <MemoryRouter future={ROUTER_FUTURE}>
+          <MemoryRouter>
             <Routes>
               <Route element={<MainLayout />}>
                 <Route path="/" element={<Story />} />
