@@ -1,5 +1,7 @@
-import { forwardRef, useId, type TextareaHTMLAttributes, type ReactNode } from 'react'
-import styles from './Textarea.module.css'
+import { Field } from '../Field'
+import { forwardRef, type TextareaHTMLAttributes, type ReactNode } from 'react'
+import styles from '../Field/Field.module.css'
+import textareaStyles from './Textarea.module.css'
 
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   /** Подпись над полем */
@@ -28,41 +30,30 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
   },
   ref,
 ) {
-  const generatedId = useId()
-  const fieldId = id ?? generatedId
-  const errorId = `${fieldId}-error`
-  const description =
-    [describedBy, error ? errorId : undefined].filter(Boolean).join(' ') || undefined
-
   return (
-    <div className={styles.field}>
-      {label && (
-        <label className={styles.label} htmlFor={fieldId}>
-          {label}
-        </label>
+    <Field id={id} label={label} error={error} describedBy={describedBy} invalid={invalid}>
+      {(control) => (
+        <div className={styles.control}>
+          <textarea
+            {...props}
+            ref={ref}
+            {...control}
+            className={[
+              styles.input,
+              textareaStyles.input,
+              rightIcon ? styles.withIcon : '',
+              className,
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          />
+          {rightIcon && (
+            <span className={styles.icon} aria-hidden="true">
+              {rightIcon}
+            </span>
+          )}
+        </div>
       )}
-      <div className={styles.control}>
-        <textarea
-          {...props}
-          ref={ref}
-          id={fieldId}
-          className={[styles.input, rightIcon ? styles.withIcon : '', className]
-            .filter(Boolean)
-            .join(' ')}
-          aria-describedby={description}
-          aria-invalid={error ? true : invalid}
-        />
-        {rightIcon && (
-          <span className={styles.icon} aria-hidden="true">
-            {rightIcon}
-          </span>
-        )}
-      </div>
-      {error && (
-        <p id={errorId} className={styles.error}>
-          {error}
-        </p>
-      )}
-    </div>
+    </Field>
   )
 })
