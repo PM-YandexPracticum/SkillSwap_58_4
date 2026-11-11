@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { act, screen, within } from '@testing-library/react'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
@@ -24,14 +23,6 @@ describe('CategoriesList', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
-  it('загружает справочник из API при первом открытии', async () => {
-    const { store } = renderWithProviders(<CategoriesList />)
-
-    expect(screen.getByRole('status', { name: 'Загрузка' })).toBeInTheDocument()
-    expect(await screen.findByRole('heading', { name: 'Бизнес и карьера' })).toBeInTheDocument()
-    expect(store.getState().categories.items).toEqual(categories)
-  })
-
   it('использует готовый справочник без повторного запроса', () => {
     const { store } = renderWithProviders(<CategoriesList />, { preloadedState })
 
@@ -39,16 +30,13 @@ describe('CategoriesList', () => {
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
-  it('показывает ошибку и позволяет повторить загрузку', async () => {
-    const { user } = renderWithProviders(<CategoriesList />, {
+  it('показывает ошибку общего загрузчика без отдельного retry', () => {
+    renderWithProviders(<CategoriesList />, {
       preloadedState: { categories: { items: [], status: 'failed' } },
     })
 
     expect(screen.getByRole('alert')).toHaveTextContent('Не удалось загрузить категории')
-    await user.click(screen.getByRole('button', { name: 'Попробовать снова' }))
-
-    expect(await screen.findByRole('heading', { name: 'Бизнес и карьера' })).toBeInTheDocument()
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
   it('сообщает о пустом справочнике без бесконечной загрузки', () => {
@@ -90,15 +78,16 @@ describe('CategoriesList', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Категории пока не добавлены')
   })
 
-  it('загружает один справочник для двух списков и StrictMode', async () => {
+  it('показывает один и тот же справочник в двух списках', () => {
     const { store } = renderWithProviders(
-      <StrictMode>
+      <>
         <CategoriesList />
         <CategoriesList />
-      </StrictMode>,
+      </>,
+      { preloadedState },
     )
 
-    expect(await screen.findAllByRole('heading', { name: 'Бизнес и карьера' })).toHaveLength(2)
+    expect(screen.getAllByRole('heading', { name: 'Бизнес и карьера' })).toHaveLength(2)
     expect(store.getState().categories.status).toBe('succeeded')
   })
 })
