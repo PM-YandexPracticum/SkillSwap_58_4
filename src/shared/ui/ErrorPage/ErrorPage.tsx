@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 import styles from './ErrorPage.module.css'
 
 export interface ErrorPageProps {
@@ -5,6 +7,7 @@ export interface ErrorPageProps {
   title: string
   description: string
   errorType: '500' | '404'
+  actions?: ReactNode
 }
 
 const chooseAlt = (errorType: ErrorPageProps['errorType']): string => {
@@ -16,20 +19,25 @@ const chooseAlt = (errorType: ErrorPageProps['errorType']): string => {
   }
 }
 
-export function ErrorPage(_props: ErrorPageProps) {
+/** Общая рамка страниц ошибки: иллюстрация, заголовок, описание и действия.
+ * @see Figma: страницы 404 и 500; фреймы указаны в README страниц. */
+export function ErrorPage({ errorImage, title, description, errorType, actions }: ErrorPageProps) {
   return (
-    <>
-      <img
-        className={styles.image}
-        src={_props.errorImage}
-        alt={chooseAlt(_props.errorType)}
-        width={460}
-        height={304}
-      />
-      <div className={styles.text}>
-        <h1 className={styles.title}>{_props.title}</h1>
-        <p className={styles.description}>{_props.description}</p>
+    <main className={styles.page}>
+      <div className={styles.content}>
+        <img
+          className={styles.image}
+          src={errorImage}
+          alt={chooseAlt(errorType)}
+          width={460}
+          height={304}
+        />
+        <div className={styles.text}>
+          <h1 className={styles.title}>{title}</h1>
+          <p className={styles.description}>{description}</p>
+        </div>
+        {actions ? <div className={styles.actions}>{actions}</div> : null}
       </div>
-    </>
+    </main>
   )
 }
