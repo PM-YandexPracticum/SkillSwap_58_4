@@ -1,3 +1,4 @@
+import { resolveImageUrl } from '@/shared/lib/image'
 import { useState, type ReactNode } from 'react'
 import { Carousel, type EmblaApi } from '@/shared/ui/Carousel'
 import type { Skill } from '../model/types'
@@ -51,7 +52,11 @@ export function SkillInfo(_props: SkillInfoProps) {
   const getSkillImages = (images: string[]): ReactNode => {
     return images.map((image, index) => (
       <div key={index} className={styles.carouselSlide}>
-        <img src={image} alt="" className={styles.image} />
+        <img
+          src={resolveImageUrl(image, 'SKILL')}
+          alt={`${_props.skill.title} — фото ${index + 1}`}
+          className={styles.image}
+        />
       </div>
     ))
   }
@@ -82,7 +87,7 @@ export function SkillInfo(_props: SkillInfoProps) {
           onClick={() => scrollTo(index)}
           type="button"
         >
-          <img src={image} alt="" className={styles.previewImage} />
+          <img src={resolveImageUrl(image, 'SKILL')} alt="" className={styles.previewImage} />
           {isThirdWithOverlay && (
             <>
               <div className={styles.miniPreviewOverlay} />
