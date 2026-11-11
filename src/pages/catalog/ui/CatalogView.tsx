@@ -40,7 +40,7 @@ export function CatalogView({ users, results }: CatalogViewProps) {
     /* сброс плашек выбранных фильтров будет в P5-05*/
   }
 
-
+  /* Рендер секции Подходящие предложения (с использованием стора) будет реализован в P5-05 */
   return (
     <div className={styles.layout}>
       <FiltersPanel filtersCount={useAppSelector(selectActiveFiltersCount)} onReset={handleResetFilters}/>
