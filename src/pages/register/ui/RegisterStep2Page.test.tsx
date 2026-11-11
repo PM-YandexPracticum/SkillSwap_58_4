@@ -49,13 +49,15 @@ describe('RegisterStep2Page', () => {
     },
   )
 
-  it('показывает загрузку, затем форму со справочниками', async () => {
-    renderWithProviders(<RegistrationRoutes />, { route: ROUTES.REGISTER_STEP_2 })
+  it('показывает Loader, если общий провайдер ещё не завершил загрузку', () => {
+    renderWithProviders(<RegistrationRoutes />, {
+      route: ROUTES.REGISTER_STEP_2,
+      preloadedState: {
+        categories: { items: [], status: 'loading' },
+        cities: { items: [], status: 'loading' },
+      },
+    })
     expect(screen.getByRole('status', { name: 'Загрузка' })).toBeInTheDocument()
-    expect(
-      await screen.findByRole('form', { name: 'Расскажите немного о себе' }),
-    ).toBeInTheDocument()
-    expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
   it.each(['categories', 'cities'] as const)('при ошибке %s открывает страницу ошибки', (slice) => {

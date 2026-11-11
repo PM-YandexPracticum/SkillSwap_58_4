@@ -9,12 +9,20 @@ const fetchFromPublicDb = globalThis.fetch
 async function openApp(path: string) {
   // loadSeed кеширует ответы на уровне модуля. Каждый запуск имитирует новую вкладку.
   vi.resetModules()
-  const [{ createAppStore }, { AppRouter }, users] = await Promise.all([
+  const [{ createAppStore }, { AppRouter }, users, skills, categories, cities] = await Promise.all([
     import('@/app/store'),
     import('./RouterProvider'),
     import('@/entities/user'),
+    import('@/entities/skill'),
+    import('@/entities/category'),
+    import('@/entities/city'),
   ])
-  const loadUsers = vi.spyOn(users, 'fetchUsers')
+  const loads = {
+    users: vi.spyOn(users, 'fetchUsers'),
+    skills: vi.spyOn(skills, 'fetchSkills'),
+    categories: vi.spyOn(categories, 'fetchCategories'),
+    cities: vi.spyOn(cities, 'fetchCities'),
+  }
   window.history.replaceState(null, '', path)
   const store = createAppStore()
   render(
@@ -24,7 +32,7 @@ async function openApp(path: string) {
       </Provider>
     </StrictMode>,
   )
-  return { store, loadUsers }
+  return { store, loads }
 }
 
 afterEach(() => {
@@ -34,7 +42,7 @@ afterEach(() => {
 
 describe('стартовая загрузка', { timeout: 20_000 }, () => {
   it('загружает все четыре коллекции при прямом открытии входа', async () => {
-    const { store, loadUsers } = await openApp(ROUTES.LOGIN)
+    const { store, loads } = await openApp(ROUTES.LOGIN)
 
     expect(screen.getByRole('status', { name: 'Загрузка' })).toBeInTheDocument()
     expect(await screen.findByRole('heading', { name: 'Вход' })).toBeInTheDocument()
@@ -45,40 +53,42 @@ describe('стартовая загрузка', { timeout: 20_000 }, () => {
       'succeeded',
       'succeeded',
     ])
-    expect(loadUsers).toHaveBeenCalledTimes(1)
+    for (const load of Object.values(loads)) expect(load).toHaveBeenCalledTimes(1)
   })
 
-  it('открывает 500 при ошибке users.json и повторяет только упавшую загрузку по кнопке «На главную»', async () => {
-    let usersAvailable = false
-    const fetchSeed = vi
-      .spyOn(globalThis, 'fetch')
-      .mockImplementation((input, init) =>
-        String(input).endsWith('/db/users.json') && !usersAvailable
-          ? Promise.resolve(new Response('Not found', { status: 404 }))
-          : fetchFromPublicDb(input, init),
-      )
-    const { store } = await openApp(ROUTES.LOGIN)
-    const user = userEvent.setup()
+  it.each(['users', 'skills', 'categories', 'cities'] as const)(
+    'открывает 500 при ошибке %s.json и повторяет только упавшую загрузку',
+    async (failedCollection) => {
+      let collectionAvailable = false
+      const fetchSeed = vi
+        .spyOn(globalThis, 'fetch')
+        .mockImplementation((input, init) =>
+          String(input).endsWith(`/db/${failedCollection}.json`) && !collectionAvailable
+            ? Promise.resolve(new Response('Not found', { status: 404 }))
+            : fetchFromPublicDb(input, init),
+        )
+      const { store } = await openApp(ROUTES.LOGIN)
+      const user = userEvent.setup()
 
-    expect(
-      await screen.findByRole('heading', { name: 'На сервере произошла ошибка' }),
-    ).toBeInTheDocument()
-    expect(window.location.pathname).toBe(ROUTES.SERVER_ERROR)
-    expect(store.getState().users.status).toBe('failed')
+      expect(
+        await screen.findByRole('heading', { name: 'На сервере произошла ошибка' }),
+      ).toBeInTheDocument()
+      expect(window.location.pathname).toBe(ROUTES.SERVER_ERROR)
+      expect(store.getState()[failedCollection].status).toBe('failed')
 
-    usersAvailable = true
-    await user.click(screen.getByRole('button', { name: 'На главную' }))
-    expect(await screen.findByRole('heading', { name: 'Каталог предложений' })).toBeInTheDocument()
-    expect(window.location.pathname).toBe(ROUTES.HOME)
-    expect(store.getState().users.status).toBe('succeeded')
-    expect(fetchSeed.mock.calls.map(([input]) => String(input)).sort()).toEqual([
-      '/db/categories.json',
-      '/db/cities.json',
-      '/db/skills.json',
-      '/db/users.json',
-      '/db/users.json',
-    ])
-  })
+      collectionAvailable = true
+      await user.click(screen.getByRole('button', { name: 'На главную' }))
+      expect(
+        await screen.findByRole('heading', { name: 'Каталог предложений' }),
+      ).toBeInTheDocument()
+      expect(window.location.pathname).toBe(ROUTES.HOME)
+      expect(store.getState()[failedCollection].status).toBe('succeeded')
+
+      const urls = fetchSeed.mock.calls.map(([input]) => String(input))
+      expect(urls.filter((url) => url.endsWith(`/db/${failedCollection}.json`))).toHaveLength(2)
+      expect(urls.filter((url) => !url.endsWith(`/db/${failedCollection}.json`))).toHaveLength(3)
+    },
+  )
 
   it('открывает страницу 500 напрямую без стартовой загрузки', async () => {
     const fetchSeed = vi.spyOn(globalThis, 'fetch')
