@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { MemoryRouter } from 'react-router-dom'
 
-import { ROUTER_FUTURE } from '@/shared/config'
-
 import { Logo } from './Logo'
 
 /**
@@ -15,7 +13,7 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter future={ROUTER_FUTURE}>
+      <MemoryRouter>
         <Story />
       </MemoryRouter>
     ),

@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
-import { PROFILE_ROUTES, ROUTER_FUTURE, ROUTES } from '@/shared/config'
+import { PROFILE_ROUTES, ROUTES } from '@/shared/config'
 import { Loader } from '@/shared/ui/Loader'
 import { AuthLayout } from '@/app/layouts/AuthLayout'
 import { MainLayout } from '@/app/layouts/MainLayout'
@@ -39,9 +39,10 @@ const ServerErrorPage = lazy(() =>
   import('@/pages/server-error').then((m) => ({ default: m.ServerErrorPage })),
 )
 
+/** Маршруты приложения, лейауты и границы доступа; страницы загружаются по запросу. */
 export function AppRouter() {
   return (
-    <BrowserRouter future={ROUTER_FUTURE}>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route element={<MainLayout />}>

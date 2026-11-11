@@ -8,7 +8,7 @@ import type { Skill } from '@/entities/skill'
 import type { User } from '@/entities/user'
 import { CatalogPage } from '@/pages/catalog'
 import { loadSeed } from '@/shared/api'
-import { CATALOG, ROUTER_FUTURE } from '@/shared/config'
+import { CATALOG } from '@/shared/config'
 import { createAppStore } from './store'
 import { MainLayout } from './layouts/MainLayout'
 
@@ -58,7 +58,7 @@ const meta = {
       })
       return (
         <Provider store={store}>
-          <MemoryRouter future={ROUTER_FUTURE}>
+          <MemoryRouter>
             <Routes>
               <Route element={<MainLayout />}>
                 <Route path="/" element={<Story />} />
