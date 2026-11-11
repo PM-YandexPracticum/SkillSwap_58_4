@@ -1,14 +1,14 @@
-import { useAppSelector } from '@/shared/lib/store'
 import { MultiSelect } from '@/shared/ui/MultiSelect'
+import { Select } from '@/shared/ui/Select'
 
-import { selectCategories } from '../model/selectors'
+import type { Category } from '../model/types'
 
 export interface CategorySubcategorySelectProps {
   /**
-   * `single` — шаг 3 и форма навыка: одна категория и одна подкатегория (Select);
-   * `multiple` — шаг 2 «Хочу научиться»: списки с чекбоксами (MultiSelect), можно выбрать несколько.
+   * `multiple` — шаг 2 регистрации, списки с чекбоксами; `single` — форма навыка.
    */
   mode: 'single' | 'multiple'
+  categories: readonly Category[]
   value: { categoryIds: readonly string[]; subcategoryIds: readonly string[] }
   onChange: (value: { categoryIds: string[]; subcategoryIds: string[] }) => void
   categoryLabel: string
@@ -17,28 +17,57 @@ export interface CategorySubcategorySelectProps {
 }
 
 /**
- * Два связанных списка «Категория» и «Подкатегория» — правило наставника,
- * логика в `lib/linkCategories.ts`:
- * - выбраны категории → в подкатегориях только их подкатегории; ничего не выбрано → все;
- * - выбрана подкатегория → её категория отмечается сама; несогласованных пар не бывает.
+ * Вёрстка двух списков с чекбоксами. Данные и выбранные значения получает пропсами.
+ * TODO(P6-03): связать списки через getAvailableSubcategories / syncCategorySelection.
+ * Пока каждый список показывает все варианты и меняет только свою часть выбора.
  *
  * @see Figma: «Регистрация 2 шаг» (1:1673, 1:1717) — режим `multiple`;
- * «Регистрация 3 шаг» (1:1761) — режим `single`.
  */
 export function CategorySubcategorySelect(props: CategorySubcategorySelectProps) {
-  const categories = useAppSelector(selectCategories)
-
-  const categoryOptions = categories.map((category) => ({
+  const categoryOptions = props.categories.map((category) => ({
     value: category.id,
     label: category.title,
   }))
 
-  const subcategoryOptions = categories.flatMap((category) =>
+  const subcategoryOptions = props.categories.flatMap((category) =>
     category.subcategories.map((subcategory) => ({
       value: subcategory.id,
       label: subcategory.title,
     })),
   )
+
+  if (props.mode === 'single') {
+    return (
+      <>
+        <Select
+          label={props.categoryLabel}
+          placeholder="Выберите категорию"
+          options={categoryOptions}
+          value={props.value.categoryIds[0] ?? null}
+          onChange={(categoryId) =>
+            props.onChange({
+              categoryIds: categoryId ? [categoryId] : [],
+              subcategoryIds: [...props.value.subcategoryIds],
+            })
+          }
+          error={props.error}
+        />
+        <Select
+          label={props.subcategoryLabel}
+          placeholder="Выберите подкатегорию"
+          options={subcategoryOptions}
+          value={props.value.subcategoryIds[0] ?? null}
+          onChange={(subcategoryId) =>
+            props.onChange({
+              categoryIds: [...props.value.categoryIds],
+              subcategoryIds: subcategoryId ? [subcategoryId] : [],
+            })
+          }
+          error={props.error}
+        />
+      </>
+    )
+  }
 
   return (
     <>

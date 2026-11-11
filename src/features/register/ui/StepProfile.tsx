@@ -1,15 +1,14 @@
-
 import { useState, type ReactNode } from 'react'
 
-import { CategorySubcategorySelect } from '@/entities/category'
+import { CategorySubcategorySelect, selectCategories } from '@/entities/category'
 import { selectCities } from '@/entities/city'
+import { useAppSelector } from '@/shared/lib/store'
 import { Button } from '@/shared/ui/Button'
 import { DatePicker } from '@/shared/ui/DatePicker'
 import { Input } from '@/shared/ui/Input'
 import { Select } from '@/shared/ui/Select'
-import { useAppSelector } from '@/shared/lib/store'
 
-import styles from './SteapProfile.module.css'
+import styles from './StepProfile.module.css'
 
 export interface StepProfileProps {
   onNext: () => void
@@ -24,16 +23,21 @@ export interface StepProfileProps {
  * Кнопки «Назад» и «Продолжить».
  *
  * Поле «О себе» находится только в профиле.
+ * Валидация и сохранение — P6-04, связь категорий — P6-03.
+ * @see Figma: «Регистрация 2 шаг» (1:1497 … 1:1717).
  */
 export function StepProfile(props: StepProfileProps) {
-  // TODO: подключить react-hook-form и profileSchema; данные сохранять через draftUpdated.
+  // TODO(P6-04): подключить react-hook-form и profileSchema, сохранять через draftUpdated.
   const [birthDate, setBirthDate] = useState<string | null>(null)
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([])
+  const [learning, setLearning] = useState({
+    categoryIds: [] as string[],
+    subcategoryIds: [] as string[],
+  })
   const [gender, setGender] = useState<string | null>(null)
   const [cityId, setCityId] = useState<string | null>(null)
 
   const cities = useAppSelector(selectCities)
+  const categories = useAppSelector(selectCategories)
 
   const cityOptions = cities.map((city) => ({
     value: city.id,
@@ -41,7 +45,14 @@ export function StepProfile(props: StepProfileProps) {
   }))
 
   return (
-    <form action="#" className={styles.form}>
+    <form
+      className={styles.form}
+      aria-label="Расскажите немного о себе"
+      onSubmit={(event) => {
+        event.preventDefault()
+        props.onNext()
+      }}
+    >
       {props.avatarUpload}
 
       <div className={styles.containerInput}>
@@ -80,14 +91,9 @@ export function StepProfile(props: StepProfileProps) {
 
         <CategorySubcategorySelect
           mode="multiple"
-          value={{
-            categoryIds: selectedCategories,
-            subcategoryIds: selectedSubcategories,
-          }}
-          onChange={(value) => {
-            setSelectedCategories(value.categoryIds)
-            setSelectedSubcategories(value.subcategoryIds)
-          }}
+          categories={categories}
+          value={learning}
+          onChange={setLearning}
           categoryLabel="Категория навыка, которому хотите научиться"
           subcategoryLabel="Подкатегория навыка, которому хотите научиться"
         />
@@ -98,9 +104,7 @@ export function StepProfile(props: StepProfileProps) {
           Назад
         </Button>
 
-        <Button type="submit" onClick={props.onNext}>
-          Продолжить
-        </Button>
+        <Button type="submit">Продолжить</Button>
       </div>
     </form>
   )

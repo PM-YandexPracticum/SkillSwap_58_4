@@ -2,8 +2,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--color-bg-secondary);
-  max-width: 556px;
   width: 100%;
 }
 
@@ -11,7 +9,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-16);
-  margin-top: var(--space-24);
+  width: 100%;
+  margin-top: var(--space-16);
 }
 
 .row {
@@ -36,4 +35,6 @@
 .containerButton > * {
   flex: 1;
   min-width: 0;
+  height: var(--space-48);
+  box-sizing: border-box;
 }

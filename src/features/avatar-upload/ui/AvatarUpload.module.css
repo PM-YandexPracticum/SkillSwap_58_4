@@ -1,6 +1,9 @@
 .container {
-  width: 72px;
-  height: 72px;
+  /* Геометрия Icon+Add 1:1502; в общей шкале нет размера 72 px. */
+  --avatar-upload-size: 72px;
+
+  width: var(--avatar-upload-size);
+  height: var(--avatar-upload-size);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8,21 +11,30 @@
 
 .avatarWrapper {
   position: relative;
-  width: 54px;
-  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--avatar-upload-size) - var(--space-16));
+  height: calc(var(--avatar-upload-size) - var(--space-16));
 }
 
 .userIcon {
-  width: 54px;
-  height: 54px;
+  /* Внутри 72 px фрейма макета у самой иконки по 8 px свободного места. */
+  width: calc(var(--avatar-upload-size) - var(--space-16));
+  height: calc(var(--avatar-upload-size) - var(--space-16));
+}
+
+.avatarWrapper .photo {
+  width: 100%;
+  height: 100%;
 }
 
 .addButton {
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 16px;
-  height: 16px;
+  width: var(--space-16);
+  height: var(--space-16);
   color: var(--color-text-inverse);
   background-color: var(--color-accent);
   border-radius: var(--radius-l);
