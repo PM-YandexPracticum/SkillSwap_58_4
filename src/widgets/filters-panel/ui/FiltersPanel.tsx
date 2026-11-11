@@ -7,7 +7,6 @@ import {
   ResetFiltersButton,
 } from '@/features/catalog-filter'
 import { selectCategories } from '@/entities/category'
-import { selectCities } from '@/entities/city'
 import { useAppSelector } from '@/shared/lib/store'
 import styles from './FiltersPanel.module.css'
 
@@ -27,7 +26,6 @@ export interface FiltersPanelProps {
  */
 export function FiltersPanel({ className, filtersCount = 0, onReset }: FiltersPanelProps) {
   const categories = useAppSelector(selectCategories)
-  const cities = useAppSelector(selectCities)
   const titleId = useId()
 
   return (
@@ -45,7 +43,7 @@ export function FiltersPanel({ className, filtersCount = 0, onReset }: FiltersPa
         <ModeFilter />
         <SkillsFilter categories={categories} />
         <GenderFilter />
-        <CityFilter cities={cities} />
+        <CityFilter />
       </div>
     </aside>
   )
