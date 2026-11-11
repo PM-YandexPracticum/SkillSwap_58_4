@@ -4,6 +4,7 @@ import { ThemeProvider } from './providers/ThemeProvider'
 import { AppRouter } from './providers/RouterProvider'
 import './styles/global.css'
 
+/** Корень приложения: подключает Redux, тему, уведомления и маршруты. */
 export function App() {
   return (
     <StoreProvider>

@@ -1,3 +1,4 @@
+import { resolveImageUrl } from '@/shared/lib/image'
 import type { TeamMember } from '../config/team'
 import { TEAM } from '../config/team'
 import GithubIcon from '@/shared/assets/icons/brands/github.svg?react'
@@ -36,7 +37,11 @@ function MemberCard({ member }: MemberCardProps) {
     <article className={styles.card}>
       <header className={styles.header}>
         {photoUrl ? (
-          <img className={styles.avatar} src={photoUrl} alt={`Фото: ${name}`} />
+          <img
+            className={styles.avatar}
+            src={resolveImageUrl(photoUrl, 'AVATAR')}
+            alt={`Фото: ${name}`}
+          />
         ) : (
           <span
             className={styles.avatarFallback}
@@ -65,7 +70,7 @@ function MemberCard({ member }: MemberCardProps) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <GithubIcon className={styles.githubIcon} width={24} height={24}/>
+          <GithubIcon className={styles.githubIcon} width={24} height={24} />
           <span className={styles.githubUrl}>{github}</span>
         </a>
       </section>

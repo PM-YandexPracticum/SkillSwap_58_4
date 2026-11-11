@@ -12,6 +12,6 @@
 ## Что внутри
 
 - `NotFoundPage.tsx` — Ошибка 404: заголовок, описание, картинка, «Сообщить об ошибке» (заглушка, ничего не делает) и «На главную». Подключена к неизвестному адресу в RouterProvider; показ при несуществующем навыке реализован в P7-01. Общую иллюстрацию и текст предоставляет shared/ui/ErrorPage.
-- `NotFoundPage.module.css` — стили страницы. Figma (1:2048)
-- `NotFoundPage.stories.tsx` — Storybook: `Default` с `MemoryRouter` и `ROUTER_FUTURE`, ссылка на макет «404» (1:2048)
+- Стили рамки и действий предоставляет `shared/ui/ErrorPage`. Figma (1:2048)
+- `NotFoundPage.stories.tsx` — Storybook: `Default` с `MemoryRouter`, ссылка на макет «404» (1:2048)
 - `NotFoundPage.test.tsx` — Vitest: контракт с макетом (заголовок, описание, картинка, две кнопки), `it.each` по неизвестным адресам → 404, переход по «На главную», заглушка «Сообщить об ошибке»

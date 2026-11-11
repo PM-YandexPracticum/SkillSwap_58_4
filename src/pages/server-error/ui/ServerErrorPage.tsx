@@ -2,9 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { ROUTES } from '@/shared/config'
 import errorImage from '@/shared/assets/images/error-500.svg'
-import { Button } from '@/shared/ui/Button'
-import styles from './ServerErrorPage.module.css'
-import { ErrorPage } from '@/shared/ui/ErrorPage'
+import { ErrorActions, ErrorPage } from '@/shared/ui/ErrorPage'
 
 /** Заголовок по макету «500» (1:2077) */
 const TITLE = 'На сервере произошла ошибка'
@@ -23,18 +21,12 @@ export function ServerErrorPage() {
   const navigate = useNavigate()
 
   return (
-    <main className={styles.page}>
-      <div className={styles.content}>
-        <ErrorPage errorImage={errorImage} title={TITLE} description={DESCRIPTION} errorType='500'/>
-        <div className={styles.actions}>
-          <Button variant="secondary" onClick={() => {}}>
-            Сообщить об ошибке
-          </Button>
-          <Button variant="primary" onClick={() => navigate(ROUTES.HOME)}>
-            На главную
-          </Button>
-        </div>
-      </div>
-    </main>
+    <ErrorPage
+      errorImage={errorImage}
+      title={TITLE}
+      description={DESCRIPTION}
+      errorType="500"
+      actions={<ErrorActions onHome={() => navigate(ROUTES.HOME)} />}
+    />
   )
 }

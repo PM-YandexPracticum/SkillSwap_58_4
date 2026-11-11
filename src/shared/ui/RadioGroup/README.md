@@ -31,3 +31,7 @@ import { RadioGroup } from '@/shared/ui/RadioGroup'
 Stories: три режима, пол автора, disabled группы и пункта, ошибка, hover и focus. Выбор в stories меняется кликом и клавиатурой.
 
 Макет: [обычные фильтры, 1:2861](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2861), [выбранные фильтры, 1:2860](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2860).
+
+Тип `RadioGroupProps<Value>` сохраняет union значений от списка вариантов до `onChange`.
+Обработчик получает значение из типизированного варианта, а не произвольную строку DOM.
+Фильтр пола переводит свой пункт `any` в доменное значение `null`.

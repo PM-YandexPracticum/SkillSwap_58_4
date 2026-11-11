@@ -2,7 +2,7 @@ import { useId } from 'react'
 import { RadioGroup } from '@/shared/ui/RadioGroup'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { setGender } from '../model/catalogFilterSlice'
-import { Gender } from '@/entities/user'
+import type { Gender } from '@/entities/user'
 import { selectCatalogFilter } from '../model/selectors'
 
 export interface GenderFilterProps {
@@ -10,11 +10,13 @@ export interface GenderFilterProps {
   className?: string
 }
 
+type GenderOption = Gender | 'any'
+
 const OPTIONS = [
   { value: 'any', label: 'Не имеет значения' },
   { value: 'male', label: 'Мужской' },
   { value: 'female', label: 'Женский' },
-]
+] satisfies ReadonlyArray<{ value: GenderOption; label: string }>
 
 /**
  * Радио пола автора. Выбор сразу записывается в `catalogFilter`.
@@ -27,13 +29,13 @@ export function GenderFilter({ className }: GenderFilterProps) {
   const name = useId()
 
   return (
-    <RadioGroup
+    <RadioGroup<GenderOption>
       label="Пол автора"
       name={name}
       options={OPTIONS}
-      value={gender as Gender}
+      value={gender ?? 'any'}
       onChange={(value) => {
-        dispatch(setGender(value as Gender | null))
+        dispatch(setGender(value === 'any' ? null : value))
       }}
       className={className}
     />

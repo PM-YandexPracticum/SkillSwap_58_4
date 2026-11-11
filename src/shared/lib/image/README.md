@@ -16,3 +16,7 @@
 - `index.ts` — публичный API — импортировать снаружи только отсюда
 - `resolveImageUrl.ts` — превращает путь из моков в адрес для `<img>`: без фото — заглушка из `IMAGE_PLACEHOLDERS`, к локальному пути добавляется `BASE_URL`. Все картинки проекта выводятся только через неё
 - `resolveImageUrl.test.ts` — тесты: заглушка, `BASE_URL`, адреса `data:`, `blob:` и внешние
+
+`resolveImageUrl` добавляет `BASE_URL` и к локальному фото, и к placeholder.
+Страница команды и галерея навыка используют тот же resolver. Внешние адреса, data URL
+и blob URL сохраняются. Favicon в `index.html` использует `%BASE_URL%`, роутер — такой же basename.
