@@ -1,14 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { MemoryRouter } from 'react-router-dom'
 
-import { ROUTER_FUTURE } from '@/shared/config'
-
 import { ServerErrorPage } from './ServerErrorPage'
 
 /**
  * Страница 500 — внутренняя ошибка сервера.
  * `MemoryRouter` нужен: компонент вызывает `useNavigate()`.
- * `ROUTER_FUTURE` — флаги React Router v7, иначе предупреждения в консоли.
  *
  * @see Figma: «500» (1:2077)
  */
@@ -18,7 +15,7 @@ const meta: Meta<typeof ServerErrorPage> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter future={ROUTER_FUTURE}>
+      <MemoryRouter>
         <Story />
       </MemoryRouter>
     ),

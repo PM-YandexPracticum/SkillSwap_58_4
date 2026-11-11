@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 
-import { ROUTER_FUTURE, ROUTES } from '@/shared/config'
+import { ROUTES } from '@/shared/config'
 
 import { LoginForm, type LoginFormProps } from './LoginForm'
 
@@ -10,7 +10,7 @@ const ERROR = 'Email или пароль введён неверно'
 
 const renderForm = (props: LoginFormProps = {}) =>
   render(
-    <MemoryRouter future={ROUTER_FUTURE}>
+    <MemoryRouter>
       <LoginForm {...props} />
     </MemoryRouter>,
   )

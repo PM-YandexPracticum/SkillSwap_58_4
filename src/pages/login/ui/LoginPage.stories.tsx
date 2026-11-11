@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { MemoryRouter } from 'react-router-dom'
-import { ROUTER_FUTURE } from '@/shared/config'
 import { LoginPage } from './LoginPage'
 
 const meta = {
@@ -16,7 +15,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <MemoryRouter future={ROUTER_FUTURE}>
+      <MemoryRouter>
         <div style={{ maxWidth: 1136, margin: '0 auto' }}>
           <Story />
         </div>
