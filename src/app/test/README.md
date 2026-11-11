@@ -12,3 +12,5 @@
 - `createTestStore.ts` — экспорт `createAppStore` как `createTestStore` для тестов логики без рендера; разрешённый FSD-путь `@/app/test/createTestStore`
 - `renderWithProviders.tsx` — рендер компонента в тесте вместе с Redux store и роутером
 - `renderWithProviders.test.tsx` — проверка помощника и образец теста компонента
+
+`mockDataValidation.test.ts` проверяет шесть API-коллекций на повреждённые записи localStorage и сохранённый пустой список.
