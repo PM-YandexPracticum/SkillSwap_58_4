@@ -16,7 +16,7 @@ const meta: Meta<typeof ProfileSidebar> = {
   decorators: [
     (Story) => (
       <MemoryRouter initialEntries={['/profile']}>
-        <div style={{ width: 280 }}>
+        <div style={{ width: 324 }}>
           <Story />
         </div>
       </MemoryRouter>
