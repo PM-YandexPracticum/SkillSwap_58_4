@@ -8,6 +8,8 @@ import { sessionReducer } from '@/entities/session';
 
 import { ProfilePage } from './ProfilePage';
 import { ProfilePersonal } from './ProfilePersonal';
+import { ProfileStub } from './ProfileStub';
+import { PROFILE_ROUTES } from '@/shared/config';
 
 const mockUser = {
   id: 'user-123',
@@ -71,8 +73,13 @@ const meta: Meta<typeof ProfilePage> = {
         <Provider store={store}>
           <MemoryRouter initialEntries={['/profile']}>
             <Routes>
+              {/* Заглушки страниц профиля */}
               <Route path="/profile" element={<Story />}>
                 <Route index element={<ProfilePersonal />} />
+                <Route path={`/profile/${PROFILE_ROUTES.REQUESTS}`} element={< ProfileStub title={'Заявки'}/>}/>
+                <Route path={`/profile/${PROFILE_ROUTES.EXCHANGES}`} element={< ProfileStub title={'Мои обмены'}/>}/>
+                <Route path={`/profile/${PROFILE_ROUTES.FAVORITES}`} element={< ProfileStub title={'Избранное'}/>}/>
+                <Route path={`/profile/${PROFILE_ROUTES.SKILLS}`} element={< ProfileStub title={'Мои навыки'}/>}/>
               </Route>
             </Routes>
           </MemoryRouter>
