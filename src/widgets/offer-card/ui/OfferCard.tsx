@@ -1,8 +1,12 @@
 import { shallowEqual } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { selectCategoryBySubcategoryId, selectSubcategoryById } from '@/entities/category'
-import { selectCityById } from '@/entities/city'
+import {
+  findSubcategories,
+  selectCategories,
+  selectCategoryBySubcategoryId,
+} from '@/entities/category'
+import { getCityName, selectCities } from '@/entities/city'
 import { ExchangeStatusBadge, selectHasProposed } from '@/entities/exchange'
 import { selectSkills } from '@/entities/skill'
 import { UserCard, type PublicUser } from '@/entities/user'
@@ -26,24 +30,21 @@ export interface OfferCardProps {
  */
 export function OfferCard({ user }: OfferCardProps) {
   const hasProposed = useAppSelector((state) => selectHasProposed(state, user.id))
-  const city = useAppSelector((state) => selectCityById(state, user.cityId))
+  const cityName = useAppSelector((state) => getCityName(selectCities(state), user.cityId))
   const skills = useAppSelector(selectSkills)
   const skill = skills.find((item) => item.id === user.teachSkillId)
   const category = useAppSelector((state) =>
     selectCategoryBySubcategoryId(state, skill?.subcategoryId ?? ''),
   )
-  const subcategories = useAppSelector(
-    (state) => user.learnSubcategoryIds.map((id) => selectSubcategoryById(state, id)),
+  const learnSubcategories = useAppSelector(
+    (state) => findSubcategories(selectCategories(state), user.learnSubcategoryIds),
     shallowEqual,
-  )
-  const learnSubcategories = subcategories.flatMap((subcategory) =>
-    subcategory ? [subcategory] : [],
   )
 
   return (
     <UserCard
       user={user}
-      cityName={city?.name ?? 'Город не указан'}
+      cityName={cityName}
       teachSkill={{
         title: skill?.title ?? 'Навык не найден',
         categoryId: category?.id ?? skill?.categoryId ?? '',
