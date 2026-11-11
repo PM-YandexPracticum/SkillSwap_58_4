@@ -1,16 +1,16 @@
-import { useId, useReducer, useState } from 'react'
+import { useId, useState } from 'react'
 import type { Category } from '@/entities/category'
 import { CATALOG } from '@/shared/config'
 import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react'
 import ChevronUpIcon from '@/shared/assets/icons/chevron-up.svg?react'
 import {
-  catalogFilterSlice,
-  catalogFilterReducer,
   toggleCategory,
   toggleSubcategory,
 } from '../model/catalogFilterSlice'
 import styles from './FilterGroup.module.css'
 import { SkillsCategory } from './SkillsCategory'
+import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import { selectCatalogFilter } from '../model/selectors'
 
 export interface SkillsFilterProps {
   /** Дополнительный CSS-класс */
@@ -26,13 +26,11 @@ export interface SkillsFilterProps {
  * @see Figma: «Каталог — фильтры применены» (1:2860)
  */
 export function SkillsFilter({ className, categories }: SkillsFilterProps) {
+  const dispatch = useAppDispatch()
+
   const [expandedIds, setExpandedIds] = useState<string[]>([])
   const [showAll, setShowAll] = useState(false)
-  const [{ subcategoryIds }, dispatch] = useReducer(
-    catalogFilterReducer,
-    undefined,
-    catalogFilterSlice.getInitialState,
-  )
+  const subcategoryIds = useAppSelector(selectCatalogFilter).subcategoryIds
   const id = useId()
   const visibleCategories = showAll ? categories : categories.slice(0, CATALOG.CATEGORIES_VISIBLE)
   const Icon = showAll ? ChevronUpIcon : ChevronDownIcon
