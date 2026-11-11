@@ -39,3 +39,13 @@ describe('citiesSlice', () => {
     expect(store.getState().cities.items).toEqual(citiesFromDb)
   })
 })
+
+describe('fetchCities — параллельный запрос', () => {
+  it('не запускает второй запрос, пока первый не завершился', async () => {
+    const store = configureStore({ reducer: { cities: citiesReducer } })
+    store.dispatch(fetchCities.pending('first'))
+    const second = await store.dispatch(fetchCities())
+    expect(second.meta).toMatchObject({ condition: true })
+    expect(store.getState().cities.status).toBe('loading')
+  })
+})

@@ -1,11 +1,42 @@
-import { createMockCollection, loadSeed } from '@/shared/api'
+import {
+  createMockCollection,
+  isISODateString,
+  isRecord,
+  isString,
+  isStringArray,
+  loadSeed,
+} from '@/shared/api'
 import type { User } from '../model/types'
+
+const isUser = (value: unknown): value is User => {
+  if (!isRecord(value)) return false
+  return (
+    isString(value.id) &&
+    isString(value.name) &&
+    isString(value.email) &&
+    isString(value.password) &&
+    (value.avatarUrl === null || isString(value.avatarUrl)) &&
+    isISODateString(value.birthDate) &&
+    (value.gender === null || value.gender === 'male' || value.gender === 'female') &&
+    isString(value.cityId) &&
+    isString(value.about) &&
+    isString(value.teachSkillId) &&
+    isStringArray(value.learnSubcategoryIds) &&
+    isStringArray(value.likedUserIds) &&
+    typeof value.likesCount === 'number' &&
+    Number.isFinite(value.likesCount) &&
+    value.likesCount >= 0 &&
+    isISODateString(value.createdAt)
+  )
+}
 
 /**
  * Хранилище пользователей.
  * Единственное место, которое знает, откуда берутся данные. Переход на настоящую БД — меняется только этот файл.
  */
-const users = createMockCollection<User>('users', loadSeed<User>('users'))
+const users = createMockCollection<User>('users', loadSeed<User>('users', isUser), {
+  validate: isUser,
+})
 
 /** Все пользователи */
 export function getUsers(): Promise<User[]> {

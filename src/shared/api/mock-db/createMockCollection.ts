@@ -5,6 +5,9 @@ export interface WithId {
   id: string
 }
 
+/** Runtime-проверка записи, пришедшей из JSON или localStorage. */
+export type ItemGuard<T> = (value: unknown) => value is T
+
 /**
  * Коллекция «базы данных» — то, что потом заменится на запросы к настоящему серверу.
  * Все методы асинхронные, как у настоящего API, чтобы при замене не переписывать код вокруг.
@@ -27,9 +30,11 @@ export interface MockCollection<T extends WithId> {
  */
 export type SeedSource<T> = readonly T[] | (() => Promise<readonly T[]>)
 
-export interface MockCollectionOptions {
+export interface MockCollectionOptions<T extends WithId = WithId> {
   /** Задержка каждого ответа, мс. По умолчанию `MOCK_DB.DELAY_MS`; в тестах коллекций — 0 */
   delayMs?: number
+  /** Проверяет обязательные поля записи после JSON.parse. */
+  validate?: ItemGuard<T>
 }
 
 /** Очередь действий каждой коллекции: следующее начинается, когда закончилось предыдущее */
@@ -46,14 +51,25 @@ const clone = <V>(value: V): V => JSON.parse(JSON.stringify(value)) as V
 const wait = (ms: number) =>
   ms > 0 ? new Promise<void>((resolve) => setTimeout(resolve, ms)) : Promise.resolve()
 
-function isRecordList(value: unknown): value is WithId[] {
+function isRecordList<T extends WithId>(value: unknown, validate?: ItemGuard<T>): value is T[] {
   return (
     Array.isArray(value) &&
     value.every(
       (item) =>
         typeof item === 'object' && item !== null && typeof (item as WithId).id === 'string',
-    )
+    ) &&
+    (!validate || value.every(validate))
   )
+}
+
+function assertValidItem<T extends WithId>(
+  item: T,
+  validate: ItemGuard<T> | undefined,
+  name: string,
+): void {
+  if (!isRecordList([item], validate)) {
+    throw new Error(`Неверная структура записи в коллекции «${name}»`)
+  }
 }
 
 function isQuotaError(error: unknown): boolean {
@@ -82,23 +98,32 @@ function removeSaved(key: string): void {
   }
 }
 
-async function readSeed<T extends WithId>(seed: SeedSource<T>): Promise<T[]> {
+async function readSeed<T extends WithId>(
+  seed: SeedSource<T>,
+  validate?: ItemGuard<T>,
+): Promise<T[]> {
   const list = typeof seed === 'function' ? await seed() : seed
+  if (!isRecordList(list, validate))
+    throw new Error('Не удалось загрузить данные: неверная структура записей')
   return clone([...list])
 }
 
 /** Записи коллекции: сохранённые изменения, а если их нет или они повреждены — копия образцов */
-async function readList<T extends WithId>(key: string, seed: SeedSource<T>): Promise<T[]> {
+async function readList<T extends WithId>(
+  key: string,
+  seed: SeedSource<T>,
+  validate?: ItemGuard<T>,
+): Promise<T[]> {
   const saved = readSaved(key)
-  if (saved === null) return readSeed(seed)
+  if (saved === null) return readSeed(seed, validate)
   try {
     const parsed: unknown = JSON.parse(saved)
-    if (isRecordList(parsed)) return parsed as T[]
+    if (isRecordList(parsed, validate)) return parsed
   } catch {
     // не JSON — ниже сбрасываем к образцам
   }
   removeSaved(key)
-  return readSeed(seed)
+  return readSeed(seed, validate)
 }
 
 /** Ставит действие в очередь коллекции — два изменения подряд не затрут друг друга */
@@ -142,10 +167,10 @@ function writeList<T extends WithId>(key: string, list: readonly T[]): void {
 export function createMockCollection<T extends WithId>(
   name: string,
   seed: SeedSource<T>,
-  { delayMs = MOCK_DB.DELAY_MS }: MockCollectionOptions = {},
+  { delayMs = MOCK_DB.DELAY_MS, validate }: MockCollectionOptions<T> = {},
 ): MockCollection<T> {
   const key = storageKey(name)
-  const read = () => readList(key, seed)
+  const read = () => readList(key, seed, validate)
   const respond = async <R>(action: () => Promise<R>): Promise<R> => {
     await wait(delayMs)
     return enqueue(key, action)
@@ -161,6 +186,7 @@ export function createMockCollection<T extends WithId>(
           throw new Error(`Запись с id «${item.id}» уже есть в коллекции «${name}»`)
         }
         const created = clone(item)
+        assertValidItem(created, validate, name)
         writeList(key, [...list, created])
         return clone(created)
       }),
@@ -170,6 +196,7 @@ export function createMockCollection<T extends WithId>(
         const current = list.find((item) => item.id === id)
         if (!current) throw new Error(`Запись с id «${id}» не найдена в коллекции «${name}»`)
         const updated: T = { ...current, ...clone(changes), id }
+        assertValidItem(updated, validate, name)
         writeList(
           key,
           list.map((item) => (item.id === id ? updated : item)),
