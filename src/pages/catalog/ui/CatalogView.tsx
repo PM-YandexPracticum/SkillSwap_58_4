@@ -1,6 +1,8 @@
 import type { PublicUser } from '@/entities/user'
 import {
   ActiveFilters,
+  resetFilters,
+  selectActiveFiltersCount,
   SortToggle,
   type ActiveFilterTag,
   type SortOrder,
@@ -10,6 +12,7 @@ import { FiltersPanel } from '@/widgets/filters-panel'
 import { OfferCard } from '@/widgets/offer-card'
 import { OffersSection } from '@/widgets/offers-section'
 import styles from './CatalogView.module.css'
+import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 
 export interface CatalogViewProps {
   users: ReadonlyArray<PublicUser>
@@ -30,9 +33,17 @@ const renderCard = (user: PublicUser) => <OfferCard user={user} />
  * @see Figma: 1:2861, 1:2860, 1:2819
  */
 export function CatalogView({ users, results }: CatalogViewProps) {
+  const dispatch = useAppDispatch()
+
+  const handleResetFilters = (): void => {
+    dispatch(resetFilters())
+    /* сброс плашек выбранных фильтров будет в P5-05*/
+  }
+
+
   return (
     <div className={styles.layout}>
-      <FiltersPanel filtersCount={results?.filters.length} />
+      <FiltersPanel filtersCount={useAppSelector(selectActiveFiltersCount)} onReset={handleResetFilters}/>
       <div className={[styles.content, results && styles.results].filter(Boolean).join(' ')}>
         {results ? (
           <>
