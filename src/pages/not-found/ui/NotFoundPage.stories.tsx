@@ -1,14 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { MemoryRouter } from 'react-router-dom'
 
-import { ROUTER_FUTURE } from '@/shared/config'
-
 import { NotFoundPage } from './NotFoundPage'
 
 /**
  * Страница 404 — любой неизвестный адрес.
  * `MemoryRouter` нужен: компонент вызывает `useNavigate()`.
- * `ROUTER_FUTURE` — флаги React Router v7, иначе предупреждения в консоли.
  *
  * @see Figma: «404» (1:2048)
  */
@@ -18,7 +15,7 @@ const meta: Meta<typeof NotFoundPage> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter future={ROUTER_FUTURE}>
+      <MemoryRouter>
         <Story />
       </MemoryRouter>
     ),
