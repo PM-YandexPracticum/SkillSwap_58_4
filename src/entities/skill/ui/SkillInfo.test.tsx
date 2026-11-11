@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, expect, vi } from 'vitest'
+import { afterEach, describe, it, expect, vi } from 'vitest'
 
 import { SkillInfo, type SkillInfoProps } from './SkillInfo'
 
@@ -29,6 +29,34 @@ const defaultProps: SkillInfoProps = {
 }
 
 describe('SkillInfo', () => {
+  afterEach(() => vi.unstubAllEnvs())
+
+  it.each([1, 4])('называет каждое фото навыка, когда снимков %i', (count) => {
+    render(
+      <SkillInfo
+        {...defaultProps}
+        skill={{ ...mockSkill, images: mockSkill.images.slice(0, count) }}
+      />,
+    )
+    const photos = screen.getAllByRole('img')
+    expect(photos).toHaveLength(count)
+    photos.forEach((photo, index) => {
+      expect(photo).toHaveAccessibleName(`${mockSkill.title} — фото ${index + 1}`)
+    })
+  })
+
+  it('учитывает подпуть сайта у главных фотографий и превью', () => {
+    vi.stubEnv('BASE_URL', '/skillswap/')
+    render(<SkillInfo {...defaultProps} />)
+    expect(screen.getByRole('img', { name: `${mockSkill.title} — фото 1` })).toHaveAttribute(
+      'src',
+      '/skillswap/images/skills/s01-1.jpg',
+    )
+    expect(
+      screen.getByRole('button', { name: 'Показать фото 1' }).querySelector('img'),
+    ).toHaveAttribute('src', '/skillswap/images/skills/s01-1.jpg')
+  })
+
   it('отображает название навыка', () => {
     render(<SkillInfo {...defaultProps} />)
     expect(screen.getByRole('heading', { name: mockSkill.title })).toBeInTheDocument()

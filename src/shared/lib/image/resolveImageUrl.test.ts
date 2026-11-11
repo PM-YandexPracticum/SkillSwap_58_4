@@ -32,3 +32,17 @@ describe('resolveImageUrl', () => {
     expect(resolveImageUrl(externalUrl, 'AVATAR')).toBe(externalUrl)
   })
 })
+
+describe('изображения при публикации в подпути', () => {
+  afterEach(() => vi.unstubAllEnvs())
+
+  it('добавляет base и к фото, и к пустому значению', () => {
+    vi.stubEnv('BASE_URL', '/skillswap/')
+    expect(resolveImageUrl('/images/team/t0.jpg', 'AVATAR')).toBe('/skillswap/images/team/t0.jpg')
+    expect(resolveImageUrl(null, 'AVATAR')).toBe('/skillswap/images/avatars/placeholder.jpg')
+    expect(resolveImageUrl('', 'SKILL')).toBe('/skillswap/images/skills/placeholder.jpg')
+    expect(resolveImageUrl('https://example.com/photo.jpg', 'AVATAR')).toBe(
+      'https://example.com/photo.jpg',
+    )
+  })
+})
