@@ -24,6 +24,10 @@
   --color-tag-health: #e9f7e7;
   --color-tag-more: #e8ecf7;
 
+  /* Overlay и тени: одинаковые для компонентов поверх контента. */
+  --color-overlay: rgb(142 142 142 / 60%);
+  --shadow-image-action: 0 1px 3px rgb(0 0 0 / 25%);
+
   /* Spacing */
   --space-4: 4px;
   --space-8: 8px;

@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import { categoriesReducer, getCategories } from '@/entities/category'
 import { citiesReducer, getCities } from '@/entities/city'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { ROUTER_FUTURE, ROUTES } from '@/shared/config'
+import { ROUTES } from '@/shared/config'
 import { RegisterLayout } from './RegisterLayout'
 import { RegisterStep1Page } from './RegisterStep1Page'
 import { RegisterStep2Page } from './RegisterStep2Page'
@@ -35,7 +35,6 @@ const meta = {
         <MemoryRouter
           key={context.id}
           initialEntries={[context.parameters.route ?? ROUTES.REGISTER_STEP_1]}
-          future={ROUTER_FUTURE}
         >
           <div style={{ maxWidth: 1136, margin: '0 auto' }}>
             <Routes>

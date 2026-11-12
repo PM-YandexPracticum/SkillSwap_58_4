@@ -22,7 +22,10 @@ describe('CatalogView', () => {
   it('собирает три секции, независимо раскрывает их и ведёт на навык', async () => {
     const { user } = renderWithProviders(
       <Routes>
-        <Route path="/" element={<CatalogView users={users} />} />
+        <Route
+          path="/"
+          element={<CatalogView users={users} popularUsers={users} newUsers={users} />}
+        />
         <Route path="/skill/:id" element={<h1>Открыт навык</h1>} />
       </Routes>,
       { preloadedState: state },
@@ -47,6 +50,8 @@ describe('CatalogView', () => {
     const { user, store } = renderWithProviders(
       <CatalogView
         users={users.slice(0, 2)}
+        popularUsers={[]}
+        newUsers={[]}
         results={{
           filters: [{ id: 'city:x', label: 'Москва' }],
           sort: 'newest',
@@ -70,6 +75,8 @@ describe('CatalogView', () => {
     renderWithProviders(
       <CatalogView
         users={[]}
+        popularUsers={[]}
+        newUsers={[]}
         results={
           results
             ? { filters: [], sort: 'newest', onRemoveFilter: vi.fn(), onSortChange: vi.fn() }
@@ -84,11 +91,7 @@ describe('CatalogView', () => {
   })
   it('подставляет в секции переданные списки, «Рекомендуем» берет исходные порядок', () => {
     renderWithProviders(
-      <CatalogView
-        users={users}
-        popularUsers={[...users].reverse()}
-        newUsers={users.slice(2)}
-      />,
+      <CatalogView users={users} popularUsers={[...users].reverse()} newUsers={users.slice(2)} />,
       { preloadedState: state },
     )
     const cards = (title: string) =>
@@ -101,7 +104,7 @@ describe('CatalogView', () => {
   })
   it('раскрывает неполную секцию до числа её карточек', async () => {
     const { user } = renderWithProviders(
-      <CatalogView users={users} popularUsers={users.slice(0, 5)} />,
+      <CatalogView users={users} popularUsers={users.slice(0, 5)} newUsers={users} />,
       { preloadedState: state },
     )
     const popular = screen.getByRole('region', { name: 'Популярное' })

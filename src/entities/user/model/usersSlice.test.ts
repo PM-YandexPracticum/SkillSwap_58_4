@@ -102,3 +102,13 @@ describe('usersSlice', () => {
     expect(store.getState().users).toEqual({ items: [], status: 'succeeded', error: null })
   })
 })
+
+describe('fetchUsers — параллельный запрос', () => {
+  it('не запускает второй запрос, пока первый не завершился', async () => {
+    const store = configureStore({ reducer: { users: usersReducer } })
+    store.dispatch(fetchUsers.pending('first'))
+    const second = await store.dispatch(fetchUsers())
+    expect(second.meta).toMatchObject({ condition: true })
+    expect(store.getState().users.status).toBe('loading')
+  })
+})

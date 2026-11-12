@@ -32,12 +32,3 @@ export const PROFILE_ROUTES = {
 export function getSkillRoute(id: string): string {
   return ROUTES.SKILL.replace(':id', id)
 }
-
-/**
- * Поведение React Router v7, включённое заранее. Передаётся в `future` каждого роутера:
- * `BrowserRouter` приложения и `MemoryRouter` в тестах и stories — иначе в консоли предупреждения.
- */
-export const ROUTER_FUTURE = {
-  v7_startTransition: true,
-  v7_relativeSplatPath: true,
-} as const

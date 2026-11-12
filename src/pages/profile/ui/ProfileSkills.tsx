@@ -1,8 +1,5 @@
-/**
- * Раздел «Мои навыки» — по решению команды остаётся МОКОМ: заголовок + текст «Раздел в разработке».
- * Рабочий раздел кабинета только один — «Личные данные».
- */
+import { ProfileStub } from './ProfileStub';
+
 export function ProfileSkills() {
-  // TODO: заглушка «Раздел в разработке» в стиле кабинета
-  return <section>ProfileSkills</section>
+  return <ProfileStub title="Мои навыки" />;
 }

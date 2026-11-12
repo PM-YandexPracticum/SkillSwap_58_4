@@ -90,7 +90,7 @@ const fsdConfigs = FSD_LAYERS.flatMap((layer) => [
 ])
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', 'coverage'] },
+  { ignores: ['dist', 'node_modules', 'coverage', 'storybook-static'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],

@@ -16,10 +16,10 @@ import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 
 export interface CatalogViewProps {
   users: ReadonlyArray<PublicUser>
-  /** Для «Популярного»: по убыванию лайков. Без пропса секция берёт `users`. */
-  popularUsers?: ReadonlyArray<PublicUser>
-  /** Для «Нового»: от новых к старым по дате регистрации. Без пропса секция берёт `users`. */
-  newUsers?: ReadonlyArray<PublicUser>
+  /** Для «Популярного»: по убыванию лайков. */
+  popularUsers: ReadonlyArray<PublicUser>
+  /** Для «Нового»: от новых к старым по дате регистрации. */
+  newUsers: ReadonlyArray<PublicUser>
   /** Отдельное состояние вёрстки. Подбор данных и обработчики подключаются в P5-05. */
   results?: {
     filters: ReadonlyArray<ActiveFilterTag>
@@ -33,15 +33,10 @@ const renderCard = (user: PublicUser) => <OfferCard user={user} />
 
 /**
  * Вёрстка каталога: панель слева, три секции либо отдельный вид результатов справа.
- * Данные передаются готовыми; сортировку, применение фильтров и догрузку добавляет фаза 5.
+ * Порядок списков задаёт контейнер; раскрытие и сетку переиспользуем из OffersSection.
  * @see Figma: 1:2861, 1:2860, 1:2819
  */
-export function CatalogView({
-  users,
-  popularUsers = users,
-  newUsers = users,
-  results
-}: CatalogViewProps) {
+export function CatalogView({ users, popularUsers, newUsers, results }: CatalogViewProps) {
   const dispatch = useAppDispatch()
 
   const handleResetFilters = (): void => {
@@ -52,7 +47,10 @@ export function CatalogView({
   /* Рендер секции Подходящие предложения (с использованием стора) будет реализован в P5-05 */
   return (
     <div className={styles.layout}>
-      <FiltersPanel filtersCount={useAppSelector(selectActiveFiltersCount)} onReset={handleResetFilters}/>
+      <FiltersPanel
+        filtersCount={useAppSelector(selectActiveFiltersCount)}
+        onReset={handleResetFilters}
+      />
       <div className={[styles.content, results && styles.results].filter(Boolean).join(' ')}>
         {results ? (
           <>
@@ -74,7 +72,12 @@ export function CatalogView({
               mode="expandable"
               renderItem={renderCard}
             />
-            <OffersSection title="Новое" users={newUsers} mode="expandable" renderItem={renderCard} />
+            <OffersSection
+              title="Новое"
+              users={newUsers}
+              mode="expandable"
+              renderItem={renderCard}
+            />
             <OffersSection
               title="Рекомендуем"
               users={users.slice(0, CATALOG.SCROLL_BATCH)}

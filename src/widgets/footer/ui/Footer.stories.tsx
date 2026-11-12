@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { MemoryRouter } from 'react-router-dom'
 
-import { ROUTER_FUTURE } from '@/shared/config'
-
 import { Footer } from './Footer'
 
 const FIGMA = 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2903'
@@ -21,7 +19,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <MemoryRouter future={ROUTER_FUTURE}>
+      <MemoryRouter>
         <Story />
       </MemoryRouter>
     ),

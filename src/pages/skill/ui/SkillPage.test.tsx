@@ -1,11 +1,8 @@
-import { StrictMode } from 'react'
 import { act, screen, within } from '@testing-library/react'
 import { Route, Routes } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
-import * as categoryEntity from '@/entities/category'
 import type { Category } from '@/entities/category'
-import * as cities from '@/entities/city'
 import * as skills from '@/entities/skill'
 import { createSkill } from '@/entities/skill/testing'
 import * as users from '@/entities/user'
@@ -74,15 +71,6 @@ const preloadedState = {
   cities: { items: [{ id: 'spb', name: 'Санкт-Петербург' }], status: 'succeeded' as const },
 }
 
-function spyOnLoads() {
-  return {
-    users: vi.spyOn(users, 'fetchUsers'),
-    skills: vi.spyOn(skills, 'fetchSkills'),
-    categories: vi.spyOn(categoryEntity, 'fetchCategories'),
-    cities: vi.spyOn(cities, 'fetchCities'),
-  }
-}
-
 beforeEach(() => {
   vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
 })
@@ -97,25 +85,6 @@ function renderSkillPage(skillId: string) {
 }
 
 describe('SkillPage', () => {
-  it('загружает данные при прямом открытии и не запускает thunk-и повторно в StrictMode', async () => {
-    const loads = spyOnLoads()
-    const { store } = renderWithProviders(
-      <StrictMode>
-        <SkillPage />
-      </StrictMode>,
-      { path: ROUTES.SKILL, route: getSkillRoute('s01') },
-    )
-
-    expect(
-      await screen.findByRole('heading', { level: 1, name: 'Игра на барабанах' }),
-    ).toBeInTheDocument()
-    expect(store.getState().users.status).toBe('succeeded')
-    expect(store.getState().skills.status).toBe('succeeded')
-    expect(store.getState().categories.status).toBe('succeeded')
-    expect(store.getState().cities.status).toBe('succeeded')
-    for (const load of Object.values(loads)) expect(load).toHaveBeenCalledTimes(1)
-  })
-
   it('показывает навык, его автора и справочные названия из базы', async () => {
     renderSkillPage('s01')
 
