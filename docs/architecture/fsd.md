@@ -124,7 +124,7 @@ entities/user/
 | Лента с догрузкой | `shared/lib/hooks/useInfiniteScroll` + `Loader` (номеров страниц нет) |
 | Календарь | `shared/ui/DatePicker` — готовая обёртка над `react-datepicker` (P2-12, PR #162) |
 | Карусель | `shared/ui/Carousel` — готовая обёртка над `embla-carousel-react` (P2-13) |
-| Категория ↔ подкатегория | `CategorySubcategorySelect` готов как UI P3-12; связь списков и `lib/linkCategories` реализует P6-03; целевое поведение: категория ограничивает подкатегории, подкатегория сама подставляет категорию |
+| Категория ↔ подкатегория | `CategorySubcategorySelect` использует общие `lib/linkCategories` в режимах `multiple` и `single` (P6-03): категория ограничивает подкатегории, подкатегория отмечает категорию, снятие категории убирает её подкатегории |
 | Плашка | `shared/ui/Tag` с `onRemove` — выбранные фильтры и «Хочу научиться» на шаге 2 |
 
 `widgets/offers-section` и `widgets/offers-carousel` получают карточку через `renderItem` — страница передаёт туда `OfferCard`,

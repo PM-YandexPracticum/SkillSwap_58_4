@@ -1,6 +1,7 @@
 import { MultiSelect } from '@/shared/ui/MultiSelect'
 import { Select } from '@/shared/ui/Select'
 
+import { getAvailableSubcategories, syncCategorySelection } from '../lib/linkCategories'
 import type { Category } from '../model/types'
 
 export interface CategorySubcategorySelectProps {
@@ -17,11 +18,12 @@ export interface CategorySubcategorySelectProps {
 }
 
 /**
- * Вёрстка двух списков с чекбоксами. Данные и выбранные значения получает пропсами.
- * TODO(P6-03): связать списки через getAvailableSubcategories / syncCategorySelection.
- * Пока каждый список показывает все варианты и меняет только свою часть выбора.
+ * Пара списков категорий и подкатегорий, связанных правилом: подкатегории зависят
+ * от выбранных категорий (`getAvailableSubcategories`), а выбор подкатегории и
+ * снятие категории согласуются через `syncCategorySelection`.
+ * Данные и выбранные значения получает пропсами, Redux не подключает.
  *
- * @see Figma: «Регистрация 2 шаг» (1:1673, 1:1717) — режим `multiple`;
+ * @see Figma: «Регистрация 2 шаг» (1:1673, 1:1717) — `multiple`; «Регистрация 3 шаг» (1:1761) — `single`.
  */
 export function CategorySubcategorySelect(props: CategorySubcategorySelectProps) {
   const categoryOptions = props.categories.map((category) => ({
@@ -29,12 +31,14 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
     label: category.title,
   }))
 
-  const subcategoryOptions = props.categories.flatMap((category) =>
-    category.subcategories.map((subcategory) => ({
-      value: subcategory.id,
-      label: subcategory.title,
-    })),
-  )
+  const subcategoryOptions = getAvailableSubcategories(
+    props.categories,
+    props.value.categoryIds,
+  ).map((subcategory) => ({ value: subcategory.id, label: subcategory.title }))
+
+  const emitSelection = (next: { categoryIds: string[]; subcategoryIds: string[] }) => {
+    props.onChange(syncCategorySelection(props.categories, next, props.value))
+  }
 
   if (props.mode === 'single') {
     return (
@@ -45,7 +49,7 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
           options={categoryOptions}
           value={props.value.categoryIds[0] ?? null}
           onChange={(categoryId) =>
-            props.onChange({
+            emitSelection({
               categoryIds: categoryId ? [categoryId] : [],
               subcategoryIds: [...props.value.subcategoryIds],
             })
@@ -58,7 +62,7 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
           options={subcategoryOptions}
           value={props.value.subcategoryIds[0] ?? null}
           onChange={(subcategoryId) =>
-            props.onChange({
+            emitSelection({
               categoryIds: [...props.value.categoryIds],
               subcategoryIds: subcategoryId ? [subcategoryId] : [],
             })
@@ -77,7 +81,7 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
         options={categoryOptions}
         value={props.value.categoryIds}
         onChange={(categoryIds) =>
-          props.onChange({
+          emitSelection({
             categoryIds,
             subcategoryIds: [...props.value.subcategoryIds],
           })
@@ -91,7 +95,7 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
         options={subcategoryOptions}
         value={props.value.subcategoryIds}
         onChange={(subcategoryIds) =>
-          props.onChange({
+          emitSelection({
             categoryIds: [...props.value.categoryIds],
             subcategoryIds,
           })
