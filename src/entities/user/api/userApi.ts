@@ -6,6 +6,8 @@ import {
   isStringArray,
   loadSeed,
 } from '@/shared/api'
+import { DATA_ERRORS } from '@/shared/config'
+import { normalizeEmail } from '../lib/normalizeEmail'
 import type { User } from '../model/types'
 
 const isUser = (value: unknown): value is User => {
@@ -36,6 +38,15 @@ const isUser = (value: unknown): value is User => {
  */
 const users = createMockCollection<User>('users', loadSeed<User>('users', isUser), {
   validate: isUser,
+  validateWrite: (user, items) => {
+    if (
+      items.some(
+        (item) => item.id !== user.id && normalizeEmail(item.email) === normalizeEmail(user.email),
+      )
+    ) {
+      throw new Error(DATA_ERRORS.DUPLICATE_EMAIL)
+    }
+  },
 })
 
 /** Все пользователи */
@@ -49,9 +60,10 @@ export function getUserById(id: string): Promise<User | undefined> {
 }
 
 /**
- * Регистрация нового пользователя — сохраняет его в «базу» как есть.
- * Email здесь не проверяется: «Email уже используется» показывает форма шага 1 (P6-02) до вызова.
- * @throws {Error} если пользователь с таким id уже есть или в браузере не хватает места
+ * Регистрация нового пользователя. Проверка email и запись выполняются атомарно в очереди коллекции.
+ * Email сравнивается без учёта регистра и краевых пробелов, независимо от актуальности Redux.
+ * Проверка формы (P6-02) нужна для ранней подсказки, а здесь — окончательная защита от дублей.
+ * @throws {Error} при повторе email/id, неверных данных или нехватке места
  */
 export function createUser(user: User): Promise<User> {
   return users.create(user)
@@ -59,6 +71,7 @@ export function createUser(user: User): Promise<User> {
 
 /**
  * Сохраняет изменения пользователя: личные данные, фото, лайки (`likedUserIds`, `likesCount`), пароль.
+ * При изменении email сохраняет то же ограничение уникальности, что и регистрация.
  * @param changes только изменившиеся поля
  */
 export function updateUser(id: string, changes: Partial<Omit<User, 'id'>>): Promise<User> {

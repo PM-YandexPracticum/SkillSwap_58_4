@@ -45,9 +45,23 @@ const meta = {
         ? []
         : (loaded.users as User[]).slice(0, args.results ? CATALOG.SECTION_EXPANDED : undefined)
       const store = createAppStore({
-        users: { items: users, status: 'succeeded', error: null },
+        users: {
+          saveStatus: 'idle' as const,
+          pendingSaves: 0,
+          saveError: null,
+          items: users,
+          status: 'succeeded',
+          error: null,
+        },
         search: { query: parameters.searchQuery ?? '' },
-        skills: { items: loaded.skills, status: 'succeeded', error: null },
+        skills: {
+          saveStatus: 'idle' as const,
+          pendingSaves: 0,
+          saveError: null,
+          items: loaded.skills,
+          status: 'succeeded',
+          error: null,
+        },
         categories: { items: loaded.categories, status: 'succeeded' },
         cities: { items: loaded.cities, status: 'succeeded' },
         exchanges: { items: [], status: 'succeeded', pendingRequests: 0, error: null },

@@ -287,3 +287,33 @@ describe('проверка структуры коллекции', () => {
     expect(localStorage.getItem(`${MOCK_DB.STORAGE_PREFIX}validated-update`)).toBeNull()
   })
 })
+
+describe('ограничения записи внутри очереди коллекции', () => {
+  const constrained = () =>
+    createMockCollection<Item>('items', SEED, {
+      delayMs: 0,
+      validateWrite: (item, items) => {
+        if (items.some((existing) => existing.id !== item.id && existing.title === item.title)) {
+          throw new Error('Такое название уже есть')
+        }
+      },
+    })
+
+  it('проверяет уникальность и запись вместе для параллельных вызовов разных экземпляров', async () => {
+    const results = await Promise.allSettled([
+      constrained().create({ id: 'c', title: 'Уникальное', tags: [] }),
+      constrained().create({ id: 'd', title: 'Уникальное', tags: [] }),
+    ])
+    expect(results.map((result) => result.status)).toEqual(['fulfilled', 'rejected'])
+    expect(await constrained().getAll()).toHaveLength(3)
+  })
+
+  it('проверяет обновления, допускает свою запись и не портит данные при отказе', async () => {
+    const items = constrained()
+    await expect(items.update('a', { title: 'Второй' })).rejects.toThrow('Такое название уже есть')
+    expect(await items.getAll()).toEqual(SEED)
+    await expect(items.update('a', { title: 'Первый', tags: ['новый'] })).resolves.toMatchObject({
+      tags: ['новый'],
+    })
+  })
+})

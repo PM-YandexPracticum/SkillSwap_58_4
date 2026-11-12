@@ -1,8 +1,10 @@
 export type { Skill } from './model/types'
-export { skillsReducer, fetchSkills, type SkillsState } from './model/skillsSlice'
+export { skillsReducer, fetchSkills, createNewSkill, type SkillsState } from './model/skillsSlice'
 export {
   selectSkills,
   selectSkillsStatus,
+  selectSkillsSaveStatus,
+  selectSkillsSaveError,
   selectSkillById,
   selectSkillsByAuthor,
 } from './model/selectors'

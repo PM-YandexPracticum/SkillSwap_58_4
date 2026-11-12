@@ -35,6 +35,8 @@ export interface MockCollectionOptions<T extends WithId = WithId> {
   delayMs?: number
   /** Проверяет обязательные поля записи после JSON.parse. */
   validate?: ItemGuard<T>
+  /** Ограничения сущности перед create/update. Проверка и запись выполняются в одной очереди. */
+  validateWrite?: (item: Readonly<T>, items: readonly T[]) => void
 }
 
 /** Очередь действий каждой коллекции: следующее начинается, когда закончилось предыдущее */
@@ -167,7 +169,7 @@ function writeList<T extends WithId>(key: string, list: readonly T[]): void {
 export function createMockCollection<T extends WithId>(
   name: string,
   seed: SeedSource<T>,
-  { delayMs = MOCK_DB.DELAY_MS, validate }: MockCollectionOptions<T> = {},
+  { delayMs = MOCK_DB.DELAY_MS, validate, validateWrite }: MockCollectionOptions<T> = {},
 ): MockCollection<T> {
   const key = storageKey(name)
   const read = () => readList(key, seed, validate)
@@ -187,6 +189,7 @@ export function createMockCollection<T extends WithId>(
         }
         const created = clone(item)
         assertValidItem(created, validate, name)
+        validateWrite?.(created, list)
         writeList(key, [...list, created])
         return clone(created)
       }),
@@ -197,6 +200,7 @@ export function createMockCollection<T extends WithId>(
         if (!current) throw new Error(`Запись с id «${id}» не найдена в коллекции «${name}»`)
         const updated: T = { ...current, ...clone(changes), id }
         assertValidItem(updated, validate, name)
+        validateWrite?.(updated, list)
         writeList(
           key,
           list.map((item) => (item.id === id ? updated : item)),
