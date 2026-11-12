@@ -10,6 +10,9 @@ const users = Array.from({ length: 10 }, (_, i) =>
 )
 const state: Partial<RootState> = {
   skills: {
+    saveStatus: 'idle' as const,
+    pendingSaves: 0,
+    saveError: null,
     items: users.map((u) => createSkill({ id: u.teachSkillId, authorId: u.id })),
     status: 'succeeded',
     error: null,

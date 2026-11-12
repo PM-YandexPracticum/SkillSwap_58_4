@@ -61,8 +61,18 @@ const categories: Category[] = [
 ]
 
 const preloadedState = {
-  users: { items: [author, similarUser], status: 'succeeded' as const, error: null },
+  users: {
+    saveStatus: 'idle' as const,
+    pendingSaves: 0,
+    saveError: null,
+    items: [author, similarUser],
+    status: 'succeeded' as const,
+    error: null,
+  },
   skills: {
+    saveStatus: 'idle' as const,
+    pendingSaves: 0,
+    saveError: null,
     items: [skill, similarSkill, skillWithoutSimilar],
     status: 'succeeded' as const,
     error: null,
@@ -222,8 +232,22 @@ describe('SkillPage', () => {
       {
         route: getSkillRoute('s01'),
         preloadedState: {
-          users: { items: [], status: 'failed', error: 'Не удалось загрузить пользователей' },
-          skills: { items: [], status: 'succeeded', error: null },
+          users: {
+            saveStatus: 'idle' as const,
+            pendingSaves: 0,
+            saveError: null,
+            items: [],
+            status: 'failed',
+            error: 'Не удалось загрузить пользователей',
+          },
+          skills: {
+            saveStatus: 'idle' as const,
+            pendingSaves: 0,
+            saveError: null,
+            items: [],
+            status: 'succeeded',
+            error: null,
+          },
           categories: { items: [], status: 'succeeded' },
           cities: { items: [], status: 'succeeded' },
         },
@@ -250,8 +274,22 @@ describe('SkillPage', () => {
       path: ROUTES.SKILL,
       route: getSkillRoute('s01'),
       preloadedState: {
-        users: { items: [], status: 'loading', error: null },
-        skills: { items: [], status: 'loading', error: null },
+        users: {
+          saveStatus: 'idle' as const,
+          pendingSaves: 0,
+          saveError: null,
+          items: [],
+          status: 'loading',
+          error: null,
+        },
+        skills: {
+          saveStatus: 'idle' as const,
+          pendingSaves: 0,
+          saveError: null,
+          items: [],
+          status: 'loading',
+          error: null,
+        },
         categories: { items: [], status: 'loading' },
         cities: { items: [], status: 'loading' },
       },

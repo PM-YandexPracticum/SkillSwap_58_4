@@ -12,3 +12,5 @@
 - `getAge.ts` — совместимый экспорт единого расчёта возраста из `shared/lib/validation`
 - `getAge.test.ts` — тест-образец для всей команды ([docs/rules/testing.md](../../../../docs/rules/testing.md))
 - `createUser.ts` — фабрика тестового пользователя для тестов и stories (снаружи — через `testing.ts`)
+
+- `normalizeEmail.ts` — единое сравнение email в селекторе и ограничении записи: без регистра и краевых пробелов

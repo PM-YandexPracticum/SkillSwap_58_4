@@ -71,8 +71,22 @@ function renderAt(skillId: string): Story['render'] {
       preloadedState: {
         cities: { items: [...cities], status: 'succeeded' as const },
         categories: { items: [...categories], status: 'succeeded' as const },
-        skills: { items: [...skills], status: 'succeeded' as const, error: null },
-        users: { items: [...users], status: 'succeeded' as const, error: null },
+        skills: {
+          saveStatus: 'idle' as const,
+          pendingSaves: 0,
+          saveError: null,
+          items: [...skills],
+          status: 'succeeded' as const,
+          error: null,
+        },
+        users: {
+          saveStatus: 'idle' as const,
+          pendingSaves: 0,
+          saveError: null,
+          items: [...users],
+          status: 'succeeded' as const,
+          error: null,
+        },
         session: {
           session: {
             userId: 'u01',

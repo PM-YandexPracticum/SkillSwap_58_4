@@ -32,7 +32,7 @@ describe('ProfilePersonal', () => {
       reducer: { cities: citiesReducer, users: usersReducer, session: sessionReducer },
       preloadedState: {
         cities: { items: [{ id: 'msk', name: 'Москва' }], status: 'succeeded' as const },
-        users: { items: [mockUser], status: 'succeeded' as const, error: null },
+        users: { saveStatus: 'idle' as const, pendingSaves: 0, saveError: null, items: [mockUser], status: 'succeeded' as const, error: null },
         session: { session: { userId: mockUser.id, token: 'mock' } },
       },
     });
