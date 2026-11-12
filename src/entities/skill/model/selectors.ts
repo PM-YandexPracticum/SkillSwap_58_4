@@ -7,6 +7,12 @@ export const selectSkills = (state: RootState) => state.skills.items
 /** Статус загрузки */
 export const selectSkillsStatus = (state: RootState) => state.skills.status
 
+/** Состояние записи; не влияет на стартовую загрузку приложения. */
+export const selectSkillsSaveStatus = (state: RootState) => state.skills.saveStatus
+
+/** Понятная ошибка последней группы записей, сбрасывается новой попыткой. */
+export const selectSkillsSaveError = (state: RootState) => state.skills.saveError
+
 /** Навык по id или undefined, если он не найден. */
 export const selectSkillById = (state: RootState, skillId: ID): Skill | undefined =>
   selectSkills(state).find((skill) => skill.id === skillId)

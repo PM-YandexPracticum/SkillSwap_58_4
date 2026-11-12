@@ -4,6 +4,8 @@ import { createUser } from '../testing'
 import {
   selectUsers,
   selectUsersStatus,
+  selectUsersSaveStatus,
+  selectUsersSaveError,
   selectUserById,
   selectUserByEmail,
   selectPopularUsers,
@@ -15,8 +17,22 @@ import type { User } from './types'
 
 const makeState = (items: User[], skills: ReturnType<typeof createSkill>[] = []): RootState =>
   createTestStore({
-    users: { items, status: 'idle', error: null },
-    skills: { items: skills, status: 'idle', error: null },
+    users: {
+      saveStatus: 'idle' as const,
+      pendingSaves: 0,
+      saveError: null,
+      items,
+      status: 'idle',
+      error: null,
+    },
+    skills: {
+      saveStatus: 'idle' as const,
+      pendingSaves: 0,
+      saveError: null,
+      items: skills,
+      status: 'idle',
+      error: null,
+    },
   }).getState()
 
 describe('selectSimilarUsers', () => {
@@ -382,5 +398,18 @@ describe('Тестирование селекторов пользователе
     expect(selectRecommendedUsers(state).map((user) => user.id)).toEqual(['u1', 'u2', 'u3'])
     expect(selectUsers(state)).toBe(users)
     expect(state.users.items.map((user) => user.id)).toEqual(['u1', 'u2', 'u3'])
+  })
+})
+
+describe('селекторы состояния сохранения', () => {
+  it('возвращают состояние записи независимо от стартовой загрузки', () => {
+    const state = makeState([])
+    const saving = {
+      ...state,
+      users: { ...state.users, saveStatus: 'failed' as const, saveError: 'Не удалось сохранить' },
+    }
+    expect(selectUsersSaveStatus(saving)).toBe('failed')
+    expect(selectUsersSaveError(saving)).toBe('Не удалось сохранить')
+    expect(selectUsersStatus(saving)).toBe('idle')
   })
 })

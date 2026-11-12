@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit'
 import type { ID } from '@/shared/types'
 import type { PublicUser, User } from './types'
+import { normalizeEmail } from '../lib/normalizeEmail'
 
 /** Общая проекция для UI: учебный пароль остаётся только в store и API. */
 function toPublicUser({ password: _password, ...publicUser }: User): PublicUser {
@@ -17,6 +18,12 @@ export const selectUsers = createSelector([selectStoredUsers], (users): PublicUs
 /** Статус загрузки */
 export const selectUsersStatus = (state: RootState) => state.users.status
 
+/** Состояние записи; не влияет на стартовую загрузку приложения. */
+export const selectUsersSaveStatus = (state: RootState) => state.users.saveStatus
+
+/** Понятная ошибка последней группы записей, сбрасывается новой попыткой. */
+export const selectUsersSaveError = (state: RootState) => state.users.saveError
+
 /** Пользователь для компонента по id; undefined, если его нет. */
 export const selectUserById = (state: RootState, userId: ID): PublicUser | undefined =>
   selectUsers(state).find((user) => user.id === userId)
@@ -27,10 +34,8 @@ export const selectUserById = (state: RootState, userId: ID): PublicUser | undef
  * для компонентов используются selectUsers / selectUserById с типом PublicUser.
  */
 export const selectUserByEmail = (state: RootState, email: string): User | undefined => {
-  const normalizedEmail = email.trim().toLowerCase()
-  return selectStoredUsers(state).find(
-    (user) => user.email.trim().toLowerCase() === normalizedEmail,
-  )
+  const normalizedEmail = normalizeEmail(email)
+  return selectStoredUsers(state).find((user) => normalizeEmail(user.email) === normalizedEmail)
 }
 
 /** Все пользователи по убыванию likesCount, без изменения исходного порядка в store. */

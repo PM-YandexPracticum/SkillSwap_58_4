@@ -1,9 +1,25 @@
 import { createTestStore } from '@/app/test/createTestStore'
 import { createSkill } from '../testing'
-import { selectSkillById, selectSkillsByAuthor, selectSkills, selectSkillsStatus } from '..'
+import {
+  selectSkillById,
+  selectSkillsByAuthor,
+  selectSkills,
+  selectSkillsStatus,
+  selectSkillsSaveStatus,
+  selectSkillsSaveError,
+} from '..'
 
 const makeState = (items: ReturnType<typeof createSkill>[]): RootState =>
-  createTestStore({ skills: { items, status: 'idle', error: null } }).getState()
+  createTestStore({
+    skills: {
+      saveStatus: 'idle' as const,
+      pendingSaves: 0,
+      saveError: null,
+      items,
+      status: 'idle',
+      error: null,
+    },
+  }).getState()
 
 describe('Тестирование селекторов для навыков (skills)', () => {
   it('возвращает статус загрузки', () => {
@@ -71,5 +87,18 @@ describe('Тестирование селекторов для навыков (s
 
       expect(selectSkills(state)).toEqual([])
     })
+  })
+})
+
+describe('селекторы состояния сохранения', () => {
+  it('возвращают состояние записи независимо от стартовой загрузки', () => {
+    const state = makeState([])
+    const saving = {
+      ...state,
+      skills: { ...state.skills, saveStatus: 'failed' as const, saveError: 'Не удалось сохранить' },
+    }
+    expect(selectSkillsSaveStatus(saving)).toBe('failed')
+    expect(selectSkillsSaveError(saving)).toBe('Не удалось сохранить')
+    expect(selectSkillsStatus(saving)).toBe('idle')
   })
 })

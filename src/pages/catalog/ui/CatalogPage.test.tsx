@@ -8,8 +8,22 @@ import { createUser } from '@/entities/user/testing'
 import { CatalogPage } from './CatalogPage'
 
 const ready: Partial<RootState> = {
-  users: { items: [createUser()], status: 'succeeded', error: null },
-  skills: { items: [], status: 'succeeded', error: null },
+  users: {
+    saveStatus: 'idle' as const,
+    pendingSaves: 0,
+    saveError: null,
+    items: [createUser()],
+    status: 'succeeded',
+    error: null,
+  },
+  skills: {
+    saveStatus: 'idle' as const,
+    pendingSaves: 0,
+    saveError: null,
+    items: [],
+    status: 'succeeded',
+    error: null,
+  },
   categories: { items: [], status: 'succeeded' },
   cities: { items: [], status: 'succeeded' },
   exchanges: { items: [], status: 'succeeded', pendingRequests: 0, error: null },
@@ -60,8 +74,18 @@ describe('CatalogPage', () => {
     )
     const withUsers: Partial<RootState> = {
       ...ready,
-      users: { items, status: 'succeeded', error: null },
+      users: {
+        saveStatus: 'idle' as const,
+        pendingSaves: 0,
+        saveError: null,
+        items,
+        status: 'succeeded',
+        error: null,
+      },
       skills: {
+        saveStatus: 'idle' as const,
+        pendingSaves: 0,
+        saveError: null,
         items: items.map((u) => createSkill({ id: u.teachSkillId, authorId: u.id })),
         status: 'succeeded',
         error: null,
@@ -120,7 +144,17 @@ describe('CatalogPage', () => {
     it('карточка может повторяться между секциями', () => {
       const one = createUser({ id: 'solo', name: 'Единственный' })
       renderWithProviders(<CatalogPage />, {
-        preloadedState: { ...ready, users: { items: [one], status: 'succeeded', error: null } },
+        preloadedState: {
+          ...ready,
+          users: {
+            saveStatus: 'idle' as const,
+            pendingSaves: 0,
+            saveError: null,
+            items: [one],
+            status: 'succeeded',
+            error: null,
+          },
+        },
       })
 
       expect(cardsOf('Популярное')[0]).toHaveTextContent('Единственный')

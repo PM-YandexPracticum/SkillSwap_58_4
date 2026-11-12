@@ -81,7 +81,14 @@ function CatalogSections({ proposed = false }: { proposed?: boolean }) {
       status: 'succeeded' as const,
     },
     categories: { items: categories, status: 'succeeded' as const },
-    skills: { items: skills, status: 'succeeded' as const, error: null },
+    skills: {
+      saveStatus: 'idle' as const,
+      pendingSaves: 0,
+      saveError: null,
+      items: skills,
+      status: 'succeeded' as const,
+      error: null,
+    },
     session: { session: proposed ? { userId: 'catalog-viewer', token: 'test' } : null },
     exchanges: {
       items: proposed

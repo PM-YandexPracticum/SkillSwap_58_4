@@ -13,5 +13,5 @@
 - [`lib/`](lib/README.md) — чистые функции
 - [`model/`](model/README.md) — типы, слайс, селекторы
 - [`ui/`](ui/README.md) — React-компоненты
-- `index.ts` — публичный API: `fetchUsers`, редьюсер, селекторы и компоненты; UI получает `PublicUser`, полная запись по email предназначена только для логики входа (подробнее в `model/README.md`)
+- `index.ts` — публичный API: `fetchUsers`, `createNewUser`, `updateDataUser`, редьюсер, селекторы загрузки/записи и компоненты; UI получает `PublicUser`, полная запись по email предназначена только для логики входа (подробнее в `model/README.md`)
 - `testing.ts` — публичный API для тестов и stories: фабрика `createUser()`

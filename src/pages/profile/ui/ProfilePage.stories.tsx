@@ -58,7 +58,7 @@ const meta: Meta<typeof ProfilePage> = {
             items: [{ id: 'msk', name: 'Москва' }],
             status: 'succeeded' as const,
           },
-          users: {
+          users: { saveStatus: 'idle' as const, pendingSaves: 0, saveError: null,
             items: [mockUser],
             status: 'succeeded' as const,
             error: null,

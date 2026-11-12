@@ -19,6 +19,9 @@ const skill = createSkill({
 const preloadedState: Partial<RootState> = {
   cities: { items: [{ id: author.cityId, name: 'Казань' }], status: 'succeeded' },
   skills: {
+    saveStatus: 'idle' as const,
+    pendingSaves: 0,
+    saveError: null,
     items: [createSkill({ id: 's-other', title: 'Чужой навык' }), skill],
     status: 'succeeded',
     error: null,

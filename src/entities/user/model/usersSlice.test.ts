@@ -4,7 +4,14 @@ import { createUser } from '../testing'
 import { fetchUsers, usersReducer, type UsersState } from '..'
 import { selectRecommendedUsers } from './selectors'
 
-const initial: UsersState = { items: [], status: 'idle', error: null }
+const initial: UsersState = {
+  saveStatus: 'idle' as const,
+  pendingSaves: 0,
+  saveError: null,
+  items: [],
+  status: 'idle',
+  error: null,
+}
 const user = createUser()
 
 afterEach(() => vi.restoreAllMocks())
@@ -16,29 +23,59 @@ describe('usersSlice', () => {
 
   it('pending сбрасывает ошибку и сохраняет ранее загруженные данные', () => {
     const state = usersReducer(
-      { items: [user], status: 'failed', error: DATA_ERRORS.LOAD_USERS },
+      {
+        ...initial,
+        items: [user],
+        status: 'failed',
+        error: DATA_ERRORS.LOAD_USERS,
+      },
       fetchUsers.pending('req'),
     )
 
-    expect(state).toEqual({ items: [user], status: 'loading', error: null })
+    expect(state).toEqual({
+      ...initial,
+      items: [user],
+      status: 'loading',
+      error: null,
+    })
   })
 
   it('fulfilled заменяет данные и очищает ошибку', () => {
     const state = usersReducer(
-      { items: [], status: 'loading', error: DATA_ERRORS.LOAD_USERS },
+      {
+        ...initial,
+        items: [],
+        status: 'loading',
+        error: DATA_ERRORS.LOAD_USERS,
+      },
       fetchUsers.fulfilled([user], 'req'),
     )
 
-    expect(state).toEqual({ items: [user], status: 'succeeded', error: null })
+    expect(state).toEqual({
+      ...initial,
+      items: [user],
+      status: 'succeeded',
+      error: null,
+    })
   })
 
   it('rejected сохраняет данные и сообщает понятную ошибку', () => {
     const state = usersReducer(
-      { items: [user], status: 'loading', error: null },
+      {
+        ...initial,
+        items: [user],
+        status: 'loading',
+        error: null,
+      },
       fetchUsers.rejected(new Error('technical details'), 'req'),
     )
 
-    expect(state).toEqual({ items: [user], status: 'failed', error: DATA_ERRORS.LOAD_USERS })
+    expect(state).toEqual({
+      ...initial,
+      items: [user],
+      status: 'failed',
+      error: DATA_ERRORS.LOAD_USERS,
+    })
   })
 
   it('повторная загрузка после ошибки проходит полный цикл состояний', () => {
@@ -46,8 +83,18 @@ describe('usersSlice', () => {
     const loading = usersReducer(failed, fetchUsers.pending('retry'))
     const loaded = usersReducer(loading, fetchUsers.fulfilled([], 'retry'))
 
-    expect(loading).toEqual({ items: [], status: 'loading', error: null })
-    expect(loaded).toEqual({ items: [], status: 'succeeded', error: null })
+    expect(loading).toEqual({
+      ...initial,
+      items: [],
+      status: 'loading',
+      error: null,
+    })
+    expect(loaded).toEqual({
+      ...initial,
+      items: [],
+      status: 'succeeded',
+      error: null,
+    })
   })
 
   it('передаёт реальную ошибку загрузки в failed и позволяет повторить запрос', async () => {
@@ -61,6 +108,7 @@ describe('usersSlice', () => {
 
     expect(fetchUsers.rejected.match(failed)).toBe(true)
     expect(store.getState().users).toEqual({
+      ...initial,
       items: [],
       status: 'failed',
       error: DATA_ERRORS.LOAD_USERS,
@@ -99,7 +147,12 @@ describe('usersSlice', () => {
 
     await store.dispatch(fetchUsers()).unwrap()
 
-    expect(store.getState().users).toEqual({ items: [], status: 'succeeded', error: null })
+    expect(store.getState().users).toEqual({
+      ...initial,
+      items: [],
+      status: 'succeeded',
+      error: null,
+    })
   })
 })
 
