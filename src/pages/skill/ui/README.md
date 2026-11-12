@@ -18,5 +18,5 @@
 
 ## Что внутри
 
-- `SkillPage.tsx` — Страница навыка `/skill/:id`: SkillDetails + OffersCarousel + окно «Вы предложили обмен»; данные из Redux-селекторов, недостающие справочники загружаются thunk-ами
+- `SkillPage.tsx` — Страница навыка `/skill/:id`: SkillDetails + OffersCarousel + окно «Вы предложили обмен»; данные и справочники из Redux-селекторов после общей загрузки DataProvider; собственных стартовых запросов у страницы нет
 - `SkillPage.stories.tsx`, `SkillPage.test.tsx` — stories и тесты

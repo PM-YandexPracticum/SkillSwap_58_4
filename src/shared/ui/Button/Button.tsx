@@ -12,7 +12,7 @@ export interface ButtonProps {
   /** Содержимое кнопки */
   children: React.ReactNode
   /** Дополнительный CSS-класс (например, для отступов или ширины) */
-  className?: string // <--- 1. ДОБАВИЛИ В ИНТЕРФЕЙС
+  className?: string
 }
 
 /**
@@ -25,11 +25,10 @@ export function Button({
   disabled,
   onClick,
   children,
-  className, // <--- 2. ДОБАВИЛИ В АРГУМЕНТЫ
+  className,
 }: ButtonProps) {
   return (
     <button
-      // 3. СКЛЕИВАЕМ БАЗОВЫЕ КЛАССЫ, КЛАСС ВАРИАНТА И ВНЕШНИЙ КЛАСС
       className={[styles.button, styles[variant], className].filter(Boolean).join(' ')}
       disabled={disabled}
       type={type}
