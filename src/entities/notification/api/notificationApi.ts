@@ -1,10 +1,20 @@
-import { createMockCollection, loadSeed } from '@/shared/api'
+import { createMockCollection, isISODateString, isRecord, isString, loadSeed } from '@/shared/api'
 import type { Notification } from '../model/types'
+
+const isNotification = (value: unknown): value is Notification =>
+  isRecord(value) &&
+  isString(value.id) &&
+  isString(value.userId) &&
+  isString(value.toUserId) &&
+  isString(value.exchangeId) &&
+  typeof value.isRead === 'boolean' &&
+  isISODateString(value.createdAt)
 
 /** Хранилище уведомлений. Переход на настоящую БД — меняется только этот файл. */
 const notifications = createMockCollection<Notification>(
   'notifications',
-  loadSeed<Notification>('notifications'),
+  loadSeed<Notification>('notifications', isNotification),
+  { validate: isNotification },
 )
 
 // Массовые операции и создание не перемешиваются: очистка не удаляет записи, пришедшие после неё.

@@ -1,30 +1,32 @@
 import type { Category, Subcategory } from '../model/types'
+import { findSubcategories } from './findSubcategories'
 
 /**
  * Подкатегории, доступные для выбора: если категории не выбраны — все,
  * иначе — только подкатегории выбранных категорий.
  * @param categories справочник категорий с подкатегориями
- * @param selectedCategoryIds выбранные категории; пусто — все подкатегории
+ * @param selectedCategoryIds выбранные категории; нет известных id — все подкатегории
  * @returns плоский массив подкатегорий, новый на каждый вызов
  */
 export function getAvailableSubcategories(
   categories: readonly Category[],
   selectedCategoryIds: readonly string[],
 ): Subcategory[] {
-  if (selectedCategoryIds.length === 0) {
-    return categories.flatMap((category) => category.subcategories)
-  }
-
-  return categories
-    .filter((category) => selectedCategoryIds.includes(category.id))
-    .flatMap((category) => category.subcategories)
+  const selectedCategories = categories.filter((category) =>
+    selectedCategoryIds.includes(category.id),
+  )
+  return (selectedCategories.length > 0 ? selectedCategories : categories).flatMap(
+    (category) => category.subcategories,
+  )
 }
 
 /**
  * Приводит выбор категорий и подкатегорий к согласованному виду:
  * - выбранная подкатегория автоматически отмечает свою категорию;
  * - снятая категория убирает и свои подкатегории;
- * - подкатегория без известной категории остаётся как есть.
+ * - отсутствующие в загруженном справочнике id и повторы удаляются.
+ * Пустой справочник может ещё загружаться: до его получения выбор сохраняется.
+ * Функция вызывается при действии пользователя, а не для сброса управляемых props.
  *
  * @param categories справочник категорий с подкатегориями
  * @param selection текущий (новый) выбор пользователя
@@ -38,62 +40,28 @@ export function syncCategorySelection(
   selection: { categoryIds: readonly string[]; subcategoryIds: readonly string[] },
   previous: { categoryIds: readonly string[]; subcategoryIds: readonly string[] },
 ): { categoryIds: string[]; subcategoryIds: string[] } {
-  // Возвращает id категории для подкатегории или undefined, если её нет в справочнике.
-  function getParentCategoryId(subcategoryId: string): string | undefined {
-    for (const category of categories) {
-      for (const subcategory of category.subcategories) {
-        if (subcategory.id === subcategoryId) {
-          return subcategory.categoryId
-        }
-      }
-    }
-
-    return undefined
-  }
-
-  // 1. Категории, которые были выбраны и исчезли из нового выбора.
-  const removedCategoryIds: string[] = []
-
-  for (const categoryId of previous.categoryIds) {
-    if (!selection.categoryIds.includes(categoryId)) {
-      removedCategoryIds.push(categoryId)
+  if (categories.length === 0) {
+    return {
+      categoryIds: [...selection.categoryIds],
+      subcategoryIds: [...selection.subcategoryIds],
     }
   }
 
-  // 2. Подкатегории снятых категорий отбрасываем, остальные сохраняем.
-  const keptSubcategoryIds: string[] = []
+  const knownCategoryIds = new Set(categories.map((category) => category.id))
+  const categoryIds = new Set(selection.categoryIds.filter((id) => knownCategoryIds.has(id)))
+  const removedCategoryIds = new Set(previous.categoryIds.filter((id) => !categoryIds.has(id)))
+  const subcategories = findSubcategories(categories, selection.subcategoryIds).filter(
+    (subcategory) =>
+      knownCategoryIds.has(subcategory.categoryId) &&
+      !removedCategoryIds.has(subcategory.categoryId),
+  )
 
-  for (const subcategoryId of selection.subcategoryIds) {
-    const parentId = getParentCategoryId(subcategoryId)
-
-    // Неизвестная подкатегория: не наш случай, оставляем без изменений.
-    if (parentId === undefined) {
-      keptSubcategoryIds.push(subcategoryId)
-      continue
-    }
-
-    // Категорию сняли — подкатегория не имеет смысла.
-    if (removedCategoryIds.includes(parentId)) {
-      continue
-    }
-
-    keptSubcategoryIds.push(subcategoryId)
+  for (const subcategory of subcategories) {
+    categoryIds.add(subcategory.categoryId)
   }
 
-  // 3. Каждая оставшаяся подкатегория подтягивает свою категорию.
-  const nextCategoryIds: string[] = [...selection.categoryIds]
-
-  for (const subcategoryId of keptSubcategoryIds) {
-    const parentId = getParentCategoryId(subcategoryId)
-
-    if (parentId === undefined) {
-      continue
-    }
-
-    if (!nextCategoryIds.includes(parentId)) {
-      nextCategoryIds.push(parentId)
-    }
+  return {
+    categoryIds: [...categoryIds],
+    subcategoryIds: [...new Set(subcategories.map((subcategory) => subcategory.id))],
   }
-
-  return { categoryIds: nextCategoryIds, subcategoryIds: keptSubcategoryIds }
 }

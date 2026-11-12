@@ -37,8 +37,17 @@ describe('getAvailableSubcategories', () => {
     ])
   })
 
-  it('с неизвестной категорией возвращает пустой список', () => {
-    expect(getAvailableSubcategories(categories, ['unknown'])).toEqual([])
+  it('с неизвестной категорией показывает все подкатегории для нового выбора', () => {
+    expect(getAvailableSubcategories(categories, ['unknown'])).toEqual([
+      ...creative.subcategories,
+      ...business.subcategories,
+    ])
+  })
+
+  it('неизвестная категория не мешает фильтру по выбранной известной', () => {
+    expect(getAvailableSubcategories(categories, ['unknown', 'business'])).toEqual(
+      business.subcategories,
+    )
   })
 
   it('возвращает новый массив и не мутирует справочник', () => {
@@ -121,11 +130,60 @@ describe('syncCategorySelection', () => {
     })
   })
 
-  it('подкатегория без известной категории остаётся как есть', () => {
+  it('после загрузки справочника удаляет неизвестную подкатегорию', () => {
     expect(syncCategorySelection(categories, choice([], ['unknown-sub']), choice([], []))).toEqual({
       categoryIds: [],
-      subcategoryIds: ['unknown-sub'],
+      subcategoryIds: [],
     })
+  })
+
+  it('удаляет неизвестные категории, сохраняя валидную пару', () => {
+    expect(
+      syncCategorySelection(
+        categories,
+        choice(['removed-category', 'business'], ['removed-subcategory', 'business-management']),
+        choice([], []),
+      ),
+    ).toEqual(choice(['business'], ['business-management']))
+  })
+
+  it('не теряет сохранённый выбор, пока справочник пуст', () => {
+    const state = choice(['business'], ['business-management'])
+    const result = syncCategorySelection([], state, state)
+
+    expect(result).toEqual(state)
+    expect(result.categoryIds).not.toBe(state.categoryIds)
+    expect(result.subcategoryIds).not.toBe(state.subcategoryIds)
+  })
+
+  it('снятие одной категории сохраняет подкатегории остальных', () => {
+    expect(
+      syncCategorySelection(
+        categories,
+        choice(['business'], ['creative-photo', 'business-management']),
+        choice(['creative', 'business'], ['creative-photo', 'business-management']),
+      ),
+    ).toEqual(choice(['business'], ['business-management']))
+  })
+
+  it('снятие подкатегории сохраняет выбранную категорию', () => {
+    expect(
+      syncCategorySelection(
+        categories,
+        choice(['business'], []),
+        choice(['business'], ['business-management']),
+      ),
+    ).toEqual(choice(['business'], []))
+  })
+
+  it('не дублирует категории и подкатегории из повторяющихся id', () => {
+    expect(
+      syncCategorySelection(
+        categories,
+        choice(['business', 'business'], ['business-management', 'business-management']),
+        choice([], []),
+      ),
+    ).toEqual(choice(['business'], ['business-management']))
   })
 
   it('возвращает новые массивы и не мутирует вход', () => {

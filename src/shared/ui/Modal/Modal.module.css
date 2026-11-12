@@ -1,4 +1,4 @@
-/* Фон: в макете rgba(142, 142, 142, 0.6) и размытие 2 px; токена для него нет */
+/* Затемнение и размытие из макета; цвет задаёт общий токен. */
 .overlay {
   position: fixed;
   z-index: 10;
@@ -6,7 +6,7 @@
   display: flex;
   overflow-y: auto;
   padding: var(--space-40) var(--space-20);
-  background: rgb(142 142 142 / 60%);
+  background: var(--color-overlay);
   backdrop-filter: blur(2px);
 }
 

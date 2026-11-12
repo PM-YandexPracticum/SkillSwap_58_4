@@ -28,6 +28,7 @@ export interface UserCardProps {
   bottomAction?: ReactNode
 }
 
+/** Общий чип UserCard и UserProfileCard: готовый Tag и безопасный цвет категории. */
 export function Chip({ title, categoryId }: UserCardTag) {
   return <Tag label={title} color={isTagColor(categoryId) ? categoryId : undefined} />
 }

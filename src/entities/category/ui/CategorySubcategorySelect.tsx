@@ -23,7 +23,7 @@ export interface CategorySubcategorySelectProps {
  * снятие категории согласуются через `syncCategorySelection`.
  * Данные и выбранные значения получает пропсами, Redux не подключает.
  *
- * @see Figma: «Регистрация 2 шаг» (1:1673, 1:1717) — режим `multiple`;
+ * @see Figma: «Регистрация 2 шаг» (1:1673, 1:1717) — `multiple`; «Регистрация 3 шаг» (1:1761) — `single`.
  */
 export function CategorySubcategorySelect(props: CategorySubcategorySelectProps) {
   const categoryOptions = props.categories.map((category) => ({
@@ -31,13 +31,11 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
     label: category.title,
   }))
 
-  // P6-03: подкатегории фильтруются по выбранным категориям
   const subcategoryOptions = getAvailableSubcategories(
     props.categories,
     props.value.categoryIds,
   ).map((subcategory) => ({ value: subcategory.id, label: subcategory.title }))
 
-  // P6-03: согласование пары "категория — подкатегория" перед передачей наверх
   const emitSelection = (next: { categoryIds: string[]; subcategoryIds: string[] }) => {
     props.onChange(syncCategorySelection(props.categories, next, props.value))
   }
@@ -50,7 +48,6 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
           placeholder="Выберите категорию"
           options={categoryOptions}
           value={props.value.categoryIds[0] ?? null}
-          // P6-03: снятие категории убирает и её подкатегории
           onChange={(categoryId) =>
             emitSelection({
               categoryIds: categoryId ? [categoryId] : [],
@@ -64,7 +61,6 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
           placeholder="Выберите подкатегорию"
           options={subcategoryOptions}
           value={props.value.subcategoryIds[0] ?? null}
-          // P6-03: выбор подкатегории отмечает её категорию; на шаге 3 массив из одного id
           onChange={(subcategoryId) =>
             emitSelection({
               categoryIds: [...props.value.categoryIds],
@@ -84,7 +80,6 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
         placeholder="Выберите категорию"
         options={categoryOptions}
         value={props.value.categoryIds}
-        // P6-03: снятие категории убирает её подкатегории, выбор — не трогает остальное
         onChange={(categoryIds) =>
           emitSelection({
             categoryIds,
@@ -99,7 +94,6 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
         placeholder="Выберите подкатегорию"
         options={subcategoryOptions}
         value={props.value.subcategoryIds}
-        // P6-03: новая подкатегория вне выбранных категорий подтягивает родителя
         onChange={(subcategoryIds) =>
           emitSelection({
             categoryIds: [...props.value.categoryIds],

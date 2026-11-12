@@ -10,7 +10,6 @@ import { sessionReducer } from '@/entities/session'
 import { skillsReducer } from '@/entities/skill'
 import { createSkill } from '@/entities/skill/testing'
 import { createUser } from '@/entities/user/testing'
-import { ROUTER_FUTURE } from '@/shared/config'
 
 import { OfferCard } from './OfferCard'
 
@@ -121,7 +120,7 @@ const meta = {
       })
       return (
         <Provider store={store}>
-          <MemoryRouter future={ROUTER_FUTURE}>
+          <MemoryRouter>
             <div style={{ width: 324 }}>
               <Story />
             </div>

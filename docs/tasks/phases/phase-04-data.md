@@ -12,7 +12,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** слой `entities/*/api` для всех 6 сущностей и подключение образцов (`SEED`) — остаётся только сама `createMockCollection` и `resetMockDb`.
 - **Файлы:** `src/shared/api/mock-db/createMockCollection.ts` + тесты
-- **Статус на 10.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
+- **Статус на 11.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
 - **Issue:** [#50](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/50) · PR [#124](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/124)
 - **Зависит от:** —
 - **Готово, когда:** после `create` и перезагрузки страницы запись на месте; `resetMockDb()` возвращает всё к образцам; повреждённые данные в localStorage не ломают сайт.
@@ -24,7 +24,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** `categoryApi.ts`, `cityApi.ts`, типы и пустые слайсы в store; «база» (P4-01): методы коллекций асинхронные, отвечают через ~300 мс, ошибки приходят как отклонённый промис; в тестах «база» сбрасывается сама после каждого теста.
 - **Файлы:** `src/entities/category/model/`, `src/entities/city/model/` + тесты селекторов
-- **Статус на 10.11.2026:** Done, влита в `develop`; исполнитель: `pwkdmc`.
+- **Статус на 11.11.2026:** Done, влита в `develop`; исполнитель: `pwkdmc`.
 - **Issue:** [#51](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/51) · PR [#131](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/131)
 - **Зависит от:** P4-01
 - **Готово, когда:** после загрузки в store все категории и города из «базы», при ошибке — статус `failed`.
@@ -37,21 +37,22 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** образец — P4-02 ([PR #131](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/131)): thunk и `extraReducers`, экспорт в `index.ts`, тесты статусов через редьюсер и загрузки из `public/db` (`categoriesSlice.test.ts`); заготовки `shuffle` и список нужных селекторов (TODO в `selectors.ts`); `userApi.ts`, `skillApi.ts`, типы `User` / `PublicUser` / `Skill` и пустые слайсы в store; «база» (P4-01): методы коллекций асинхронные, отвечают через ~300 мс, ошибки приходят как отклонённый промис; в тестах «база» сбрасывается сама после каждого теста; для тестов — `createUser()` и `createSkill()` из `@/entities/*/testing`.
 - **Файлы:** `src/entities/user/model/`, `src/entities/skill/model/`, `src/shared/lib/shuffle.ts` + тесты
-- **Результат:** Готовы загрузочные thunks пользователей и навыков, статусы/ошибки и селекторы по id, пользователю, популярности и новизне. Учтены пустые данные и отсутствующие ссылки, добавлены тесты. Загрузка при старте — P4-04, запись — P4-06.
-- **Статус на 10.11.2026:** Done, влита в `develop`; исполнитель: `Nick-Shvd`.
+- **Результат:** Готовы загрузочные thunks пользователей и навыков, статусы/ошибки и селекторы по id, пользователю, популярности и новизне. Учтены пустые данные и отсутствующие ссылки, добавлены тесты. Загрузка при старте добавлена в P4-04 (PR #181); запись — P4-06.
+- **Статус на 11.11.2026:** Done, влита в `develop`; исполнитель: `Nick-Shvd`.
 - **Issue:** [#52](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/52) · PR [#161](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/161)
 - **Зависит от:** P4-01
 
-### P4-04 · Загрузка при старте 🟢
+### P4-04 · Загрузка при старте ✅ 🟢
 > **Что нужно сделать:** при открытии сайта одним разом загрузить справочники, пользователей и навыки,
 > пока грузится — показать Loader, если упало — страницу 500.
 > После этой задачи остальным не нужно думать, загружены ли данные.
 > Проверить ошибку: временно переименовать `public/db/users.json` — должна открыться страница 500 («база» не скачала образцы).
 
 - **Уже готово:** `Loader` (P2-01); «база» (P4-01) отвечает через ~300 мс — Loader будет виден по-настоящему; справочники грузят `fetchCategories` и `fetchCities` из `@/entities/category` и `@/entities/city` (P4-02), статусы — `selectCategoriesStatus` и `selectCitiesStatus`.
-- **Файлы:** `src/app/providers/DataProvider.tsx` (новый), `src/app/App.tsx`
-- **Статус на 10.11.2026:** In Progress, исполнитель: `Laurovsky`. Для интеграции: все прямые зависимости закрыты.
-- **Issue:** [#53](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/53)
+- **Файлы:** `src/app/providers/DataProvider.tsx`, `src/app/providers/RouterProvider.tsx`, `src/pages/catalog/ui/CatalogPage.tsx`
+- **Результат:** DataProvider загружает пользователей, навыки, категории и города перед открытием страниц. Во время загрузки показан Loader, ошибка ведёт на /500, повтор запрашивает только неуспешные коллекции. Убраны локальные загрузчики страниц; добавлены тесты маршрутизации и защиты от повторных запросов в StrictMode.
+- **Статус на 12.11.2026:** Done, влита в `develop`; исполнитель: `Laurovsky`.
+- **Issue:** [#53](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/53) · PR [#181](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/181)
 - **Зависит от:** P4-02, P4-03, P2-01, P3-16
 
 ### P4-05 · Сессия ✅ 🟡
@@ -61,7 +62,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** `entities/session/lib/sessionStorage.ts` (чтение, запись, очистка) — пишем слайс и тесты; `localStorage` в тестах очищается сам после каждого теста (`setupTests.ts`), сессия тоже.
 - **Файлы:** `src/entities/session/` + тесты
-- **Статус на 10.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
+- **Статус на 11.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
 - **Issue:** [#54](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/54) · PR [#136](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/136)
 - **Зависит от:** —
 
@@ -72,8 +73,9 @@ P4-01 делаем первой — остальные задачи фазы ч�
 > После этой задачи лайки, профиль и регистрация сохраняют данные одной функцией.
 
 - **Уже готово:** «база» (P4-01): `create` и `update` сами сохраняют в localStorage и возвращают новую запись. Если в браузере кончилось место, «база» бросает ошибку «Не хватает места…» — её нужно донести до пользователя (статус `failed` и текст ошибки в слайсе), а не проглотить.
+- **Что дописываем:** API `createUser`, `updateUser` и `createSkill` уже экспортируются сущностями; загрузочные `fetchUsers` / `fetchSkills` тоже готовы. Здесь добавляем операции записи в Redux и обновление store после записи, без повторной реализации коллекций и загрузки. Состояние записи не должно подменять статус стартовой загрузки, который читает DataProvider. Сценарий регистрации двух связанных записей собирает P6-06, лайков — P5-07, профиля — P7-06.
 - **Файлы:** `src/entities/user/model/usersSlice.ts`, `src/entities/skill/model/skillsSlice.ts`, `api/` обеих сущностей
-- **Статус на 10.11.2026:** In Progress, исполнитель: `Nick-Shvd`. Для интеграции: все прямые зависимости закрыты.
+- **Статус на 12.11.2026:** In Progress, исполнитель: `Nick-Shvd`. Для интеграции: все прямые зависимости закрыты.
 - **Issue:** [#55](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/55)
 - **Зависит от:** P4-03, P4-01
 
@@ -86,7 +88,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 - **Файлы:** `model/` и `api/` в `src/entities/exchange/` и `src/entities/notification/` + тесты
 - **Результат:** API и Redux сохраняют обмены и уведомления в «базе», запрещают повторное предложение тому же пользователю, фильтруют данные по текущей сессии и поддерживают прочтение и очистку уведомлений. Тесты покрывают обычные, параллельные и частично неуспешные операции.
 - **Граница задачи:** операции API и Redux. Создание обмена вместе с уведомлением/toast — P7-03, бейдж карточки — P7-04, подключение панели к шапке — P7-05.
-- **Статус на 10.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
+- **Статус на 11.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
 - **Issue:** [#56](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/56) · PR [#147](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/147)
 - **Зависит от:** P4-05, P4-01
 
@@ -101,7 +103,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** `RequireAuth` защищает `/profile/*` и `/favorites` через `selectIsAuth` из `@/entities/session`. Гостя отправляет на `ROUTES.LOGIN` с `replace` и полным `state.from` (включая query и hash); вошедшего пропускает, восстановленная сессия сохраняет доступ. Возврат после успешного входа подключается в P4-09. Добавлены 10 тестов, включая выход на закрытой странице и историю переходов.
 - **Файлы:** `src/app/router/RequireAuth.tsx`
-- **Статус на 10.11.2026:** Done, влита в `develop`; исполнитель: `muntaniolirina`.
+- **Статус на 11.11.2026:** Done, влита в `develop`; исполнитель: `muntaniolirina`.
 - **Issue:** [#57](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/57) · PR [#149](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/149)
 - **Зависит от:** P4-05
 
@@ -112,11 +114,12 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** «база» (P4-01) и `getUsers()` из `@/entities/user`; селекторы пользователя по email и по id готовы в P4-03; сессию создаёт `dispatch(startSession(user.id))` из `@/entities/session` (P4-05) — сразу и в store, и в localStorage.
 - **Готовая зависимость P4-08:** guard уже передаёт исходный `Location` в `location.state.from`; после успешного входа возвращаем туда с сохранением query/hash, без исходного адреса — в каталог. P4-03 и P3-11 завершены, все прямые зависимости готовы; задача выполняется.
+- **Что переиспользуем:** `LoginForm`, общую `CredentialsForm` и схему входа из `auth-by-email/model/schema.ts`. Пользователей уже загружает DataProvider; для проверки пары используем `selectUserByEmail`, без повторного `getUsers()` в форме. Полный `User` с паролем остаётся в логике входа, в UI передаём `PublicUser`. Возврат выполняем по сохранённому внутреннему адресу, а не через `navigate(-1)`.
 - **Здесь же — «текущий пользователь»:** селектор `selectCurrentUser` в `entities/user/model/selectors.ts` + тест: по `userId` из сессии находит пользователя и отдаёт `PublicUser`, гостю — `null`.
   Через `createSelector`, чтобы без входа и выхода он возвращал тот же объект и компоненты не перерисовывались. Сессию читает через общий тип `RootState`, без импорта из `entities/session` — так же, как заготовка `selectFavoriteIds`.
   С этой задачи «кто вошёл» во всём проекте берём только из него — им пользуются шапка (P5-09), лайки (P5-07), избранное (P5-08), обмены (P7-03) и профиль (P7-06).
-- **Файлы:** `src/features/auth-by-email/` + тесты
-- **Статус на 10.11.2026:** In Progress, исполнитель: `Laurovsky`. Для интеграции: все прямые зависимости закрыты.
+- **Файлы:** `src/features/auth-by-email/`, `src/pages/login/ui/LoginPage.tsx`, `src/entities/user/model/selectors.ts`, `src/entities/user/index.ts` + тесты
+- **Статус на 12.11.2026:** In Progress, исполнитель: `Laurovsky`. Для интеграции: все прямые зависимости закрыты.
 - **Issue:** [#58](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/58)
 - **Где в макете:** ошибка 1:2473
 - **Зависит от:** P4-03, P4-05, P3-11, P2-16, P4-08
@@ -128,7 +131,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 
 - **Уже готово:** моки наполнены: 45 пользователей и навыков, 6 категорий, 17 городов (P1-05…P1-08); фото уже в `public/images/`.
 - **Файлы:** `public/db/` (новая), `src/shared/api/mock-db/seed/` (удаляется), `src/shared/api/mock-db/loadSeed.ts` (новый), `createMockCollection.ts`, `src/entities/*/api/`, `src/setupTests.ts`
-- **Статус на 10.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
+- **Статус на 11.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
 - **Issue:** [#107](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/107) · PR [#125](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/125)
 - **Зависит от:** P4-01, P1-05…P1-08 — делаем сразу после P4-01, пока задачи фазы 4 не взяты и `api/` никто не правит
 - **Готово, когда:** JSON лежат в `public/db`, в `src` образцов не осталось; каталог, вход и регистрация работают как раньше; `resetMockDb()` по-прежнему возвращает данные к образцам.

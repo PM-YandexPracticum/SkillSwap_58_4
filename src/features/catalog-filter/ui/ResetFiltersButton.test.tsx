@@ -20,7 +20,7 @@ describe('ResetFiltersButton', () => {
     expect(onSubmit).not.toHaveBeenCalled()
   })
 
-  it('может оставаться номинальной кнопкой до P5-02', async () => {
+  it('без обработчика остаётся номинальной кнопкой и не отправляет форму', async () => {
     const user = userEvent.setup()
     render(<ResetFiltersButton />)
     await user.click(screen.getByRole('button', { name: 'Сбросить' }))

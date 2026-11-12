@@ -1,11 +1,11 @@
-import { nanoid } from 'nanoid'
 import { render, screen } from '@testing-library/react'
+import { afterEach, vi } from 'vitest'
 import type { TeamMember } from '../config/team'
 import { AboutPage } from './AboutPage'
 
 function createMember(overrides: Partial<TeamMember> = {}): TeamMember {
   return {
-    id: nanoid(),
+    id: 'member-test',
     name: 'Тестовый Участник',
     role: 'Разработчик',
     github: 'https://github.com/test-member',
@@ -16,6 +16,14 @@ function createMember(overrides: Partial<TeamMember> = {}): TeamMember {
 }
 
 describe('AboutPage', () => {
+  afterEach(() => vi.unstubAllEnvs())
+
+  it('учитывает подпуть сайта у фото участника', () => {
+    vi.stubEnv('BASE_URL', '/skillswap/')
+    render(<AboutPage members={[createMember()]} />)
+    expect(screen.getByRole('img')).toHaveAttribute('src', '/skillswap/images/team/t0.jpg')
+  })
+
   it('показывает заголовок страницы', () => {
     render(<AboutPage members={[]} />)
     expect(
