@@ -75,11 +75,11 @@ public/db/                    # образцы данных: users, skills, cate
 | `npm run test` | Запуск тестов |
 | `npm run test:watch` | Тесты в watch-режиме |
 | `npm run test:coverage` | Отчёт о покрытии тестами; Vitest проверяет порог 70 % statements |
-| `npm run e2e` | Автотесты сценариев в браузере (Playwright, папка `e2e/`). Перед первым запуском: `npx playwright install chromium` |
+| `npm run e2e` | Запуск Playwright; сценарии добавит P8-05. Перед первым запуском: `npx playwright install chromium` |
 | `npm run storybook` | Storybook — каталог UI-компонентов |
 | `npm run build-storybook` | Сборка Storybook |
 | `npm run commit` | Коммит по шагам в формате Conventional Commits |
-| `npm run verify` | Линтер и тесты — то же, что хук перед push |
+| `npm run verify` | TypeScript, линтер и тесты — то же, что хук перед push |
 
 **Storybook не запускается на Windows** с ошибкой `ERR_DLOPEN_FAILED`: не хватает системной библиотеки Microsoft.
 Установи [Microsoft Visual C++ Redistributable 2015–2022 (x64)](https://aka.ms/vs/17/release/vc_redist.x64.exe) и перезапусти терминал.

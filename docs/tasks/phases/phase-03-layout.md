@@ -3,9 +3,8 @@
 **Цель:** из компонентов UI-кита собрать блоки, а из блоков — все страницы макета. Пока **без логики**:
 кнопки ещё ничего не сохраняют.
 **Откуда данные:** UI сущностей получает данные пропсами. Виджеты собирают их из уже готовых селекторов (например, OfferCard в P3-08) или принимают пропсами (NotificationsPanel в P3-15); бизнес-действия пока не сохраняются. В stories и тестах — фабрики `createUser()`, `createSkill()` и `createNotification()`
-из `@/entities/*/testing`. Если нужного слайса ещё нет, страница берёт данные через `entities/*/api` (`getUsers()`, `getSkills()`, `getCategories()`).
-Напрямую в JSON (`public/db`) и в localStorage не ходим, фабрики в коде страниц не используем — линтер это запрещает.
-В фазах 4–5 этот вызов `api` на странице заменят селекторы из store.
+из `@/entities/*/testing`. Страницы не обращаются напрямую к JSON (`public/db`) и localStorage и не используют фабрики в рабочем коде — линтер это запрещает.
+Сейчас данные для страниц загружает `DataProvider` (P4-04), а виджеты и страницы читают их из store через селекторы.
 **После фазы:** все экраны открываются по своим адресам и похожи на макет.
 
 Наставник: «из маленьких компонентов собираем побольше, потом виджеты, секции и целые страницы».
@@ -85,7 +84,7 @@
 > В шапке он открывается выпадающим меню по «Все навыки ▾», а по ссылке из подвала — отдельной страницей `/skills`.
 > Список один и тот же, поэтому это один компонент `CategoriesList`.
 
-- **Уже готово:** `Dropdown` (P2-08) — меню «Все навыки» в шапке открывается в нём; иконки категорий — `src/shared/assets/icons/categories/`; категории с подкатегориями — `selectCategories` из `@/entities/category` (P4-02). Пока загрузку при старте не сделала P4-04, в тестах и stories store заполняем через `renderWithProviders(…, { preloadedState })` данными из `public/db/categories.json`.
+- **Уже готово:** `Dropdown` (P2-08) — меню «Все навыки» в шапке открывается в нём; иконки категорий — `src/shared/assets/icons/categories/`; категории с подкатегориями — `selectCategories` из `@/entities/category` (P4-02). Общая загрузка при старте готова в P4-04; в изолированных тестах и stories store заполняем через `renderWithProviders(…, { preloadedState })` данными из `public/db/categories.json`.
 - **Файлы:** `src/widgets/categories-menu/`, `src/entities/category/ui/CategoryIcon.tsx`, `src/pages/all-skills/`
 - **Результат:** CategoriesList и CategoriesMenu переиспользуются в слоте Header и на /skills; CategoryIcon использует токены. Предусмотрены загрузка, ошибка и повтор, пустой список, дедупликация запросов; тесты, stories и скриншоты в docs/assets.
 - **Статус на 11.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
@@ -113,7 +112,7 @@
 > эту анимацию раскрытия делаем уже здесь.
 
 - **Уже готово:** `UserCard` (P3-01); город, навык и подкатегории по id — селекторы `selectCityById`, `selectSubcategoryById`, `selectCategoryBySubcategoryId` из `@/entities/city` и `@/entities/category` (P4-02). Виджет передаёт ему `cityName` (город из справочника), `teachSkill` (название и категория навыка автора) и `learnSubcategories` (подкатегории с категорией для цвета) — сама карточка соседние сущности не знает; лайк — в слот `topAction`, «Подробнее» — в `bottomAction`.
-- **Уточнения:** `OfferCard` принимает `PublicUser` (без пароля); навык автора сейчас находится по `teachSkillId` в `selectSkills`; P4-03 также предоставляет готовый `selectSkillById` для новых потребителей. `FavoriteButton` здесь — только вид: сердечко `like` и число `likesCount`, по клику пока ничего; логику подключит P5-07. Числа секции — `CATALOG.SECTION_COLLAPSED` (3) и `CATALOG.SECTION_EXPANDED` (9). Пока нет загрузки при старте (P4-04), в тестах и stories store заполняем через `preloadedState` и фабрики `createUser()` / `createSkill()`.
+- **Уточнения:** `OfferCard` принимает `PublicUser` (без пароля); навык автора сейчас находится по `teachSkillId` в `selectSkills`; P4-03 также предоставляет готовый `selectSkillById` для новых потребителей. `FavoriteButton` здесь — только вид: сердечко `like` и число `likesCount`, по клику пока ничего; логику подключит P5-07. Числа секции — `CATALOG.SECTION_COLLAPSED` (3) и `CATALOG.SECTION_EXPANDED` (9). Загрузка при старте готова в P4-04; в изолированных тестах и stories store заполняем через `preloadedState` и фабрики `createUser()` / `createSkill()`.
 - **Файлы:** `src/widgets/offer-card/`, `src/widgets/offers-section/`, `src/features/favorite-toggle/ui/FavoriteButton.tsx`
 - **Статус на 11.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
 - **Issue:** [#41](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/41) · PR [#142](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/142)
@@ -181,7 +180,7 @@
 > Это вёрстка — сохранение подключат P6-05 и P6-06.
 
 - **Файлы:** `src/pages/register/ui/RegisterStep3Page.tsx`, `src/features/register/ui/StepSkill.tsx`, `src/features/skill-create/ui/`
-- **Статус на 11.11.2026:** Todo, исполнитель: не назначен. Для интеграции: P3-12 (Done).
+- **Статус на 12.11.2026:** In Progress, исполнитель: `sosolet`. Для интеграции: все прямые зависимости закрыты.
 - **Issue:** [#46](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/46)
 - **Уже готово:** поля — `Input` и `Textarea` (P2-05); `FileDropzone` (P2-14) — зона загрузки фото с превью и крестиком; сама файлы не проверяет: отдаёт `File[]` в `onFiles`, ошибку и превью получает пропсами. Окно — `Modal` (P2-10) как обёртка: `isOpen`, `onClose`, `children` и обязательный `ariaLabel`; внутренние отступы задаёт содержимое (у превью 40 px, у «Ваше предложение создано» 80/60 px), высокое превью прокручивается само.
 - **Где в макете:** «Регистрация 3 шаг» 1:1761, превью 1:1799, «Ваше предложение создано» 1:2950
@@ -189,15 +188,16 @@
 
 ## Остальные экраны
 
-### P3-14 · Личный кабинет (вёрстка) 🟡
+### P3-14 · Личный кабинет (вёрстка) ✅ 🟡
 > **Что нужно сделать:** сверстать кабинет: слева меню «Заявки / Мои обмены / Избранное / Мои навыки / Личные данные», справа раздел.
 > «Личные данные»: Почта, «Изменить пароль», Имя, Дата рождения, Пол, Город, «О себе», «Сохранить» и большой аватар.
 > Остальные четыре раздела — заглушки «Раздел в разработке».
 
 - **Уже готово:** большой аватар — `Avatar` размера `lg` (P2-04); поля с карандашом — `Input` и `Textarea` с `rightIcon` (P2-05), как story `WithIcon`; список городов — `selectCities` (P4-02).
 - **Файлы:** `src/widgets/profile-sidebar/`, `src/pages/profile/`, `src/features/profile-edit/ui/ProfileForm.tsx`
-- **Статус на 11.11.2026:** In Progress, исполнитель: `alicevdr`. Для интеграции: P3-12 (Done).
-- **Issue:** [#47](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/47)
+- **Результат:** Собраны ProfilePage с вложенными разделами, ProfileSidebar с активным пунктом и ProfilePersonal с формой и аватаром. Четыре остальных раздела показывают общий ProfileStub. Добавлены CSS Modules, тесты и stories. Поля пока используют демонстрационное локальное состояние; сохранение, смена пароля и аватара остаются в P7-06.
+- **Статус на 12.11.2026:** Done, влита в `develop`; исполнитель: `alicevdr`.
+- **Issue:** [#47](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/47) · PR [#183](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/183)
 - **Где в макете:** 1:2370
 - **Зависит от:** P3-05, P3-12, P2-12
 
@@ -217,10 +217,10 @@
 ### P3-16 · «О проекте», 404 и 500 ✅ 🟢
 > **Что нужно сделать:** сверстать три страницы. «О проекте» — сетка карточек участников команды (фото, имя, роль, GitHub) из `config/team.ts`.
 > 404 и 500 — один компонент с разными картинкой и текстом и кнопками «Сообщить об ошибке» (заглушка) и «На главную».
-> Каждый участник добавляет себя в `team.ts` (P8-02); вклады Дианы (PR #159) и Андрея (PR #168) уже влиты и отображаются на странице.
+> Каждый участник добавляет себя в `team.ts` (P8-02); вклады Дианы (PR #159), Андрея (PR #168), Кирилла (PR #169) и Ирины (PR #170) уже влиты и отображаются на странице.
 
 - **Файлы:** `src/pages/about/`, `src/pages/not-found/`, `src/pages/server-error/`
-- **Результат:** Готовы /about с карточками TEAM, 404 и /500; ErrorPage переиспользует общую рамку, иллюстрацию, заголовок, описание и действия, а страницы передают только свои тексты и навигацию. ErrorBoundary остаётся в P8-01; наполнение всей команды — P8-02.
+- **Результат:** Готовы /about с карточками TEAM, 404 и /500; ErrorPage переиспользует общую рамку, иллюстрацию, заголовок, описание и действия, а страницы передают только свои тексты и навигацию. ErrorBoundary добавлен в P8-01 (PR #189); наполнение всей команды — P8-02.
 - **Статус на 11.11.2026:** Done, влита в `develop`; исполнитель: `muntaniolirina`.
 - **Issue:** [#49](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/49) · PR [#167](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/167)
 - **Где в макете:** 1:3249, 1:2048, 1:2077

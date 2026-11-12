@@ -16,7 +16,7 @@ export interface AvatarUploadProps {
  * Вёрстка аватара второго шага: блок 72 px, внутри user-circle и кнопка «+» 16 px.
  * Фото получает через value; путь обрабатывает общий Avatar.
  * TODO(P6-04): подключить выбор, validateImageFile и fileToDataUrl, отобразить error.
- * Вариант для личных данных (244 px) относится к P3-14.
+ * В кабинете Avatar и кнопка изменения свёрстаны в P3-14; обработка файла — P7-06.
  * @see Figma: «Регистрация 2 шаг» (1:1497, блок `Icon+Add`).
  */
 export function AvatarUpload(props: AvatarUploadProps) {

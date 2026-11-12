@@ -7,8 +7,9 @@ interface RegisterStepGuardProps {
 }
 
 /**
- * Не пускает на шаг 2 или 3 регистрации по прямой ссылке: попасть туда можно только кнопками «Далее» / «Продолжить».
- * Если предыдущий шаг не пройден (`selectCompletedStep` < step − 1) — перенаправляет на `/register/step-1`.
+ * Каркас защиты шагов 2 и 3 регистрации; пока возвращает содержимое без проверки.
+ * В P6-01 нужно проверить `selectCompletedStep` и перенаправить на `/register/step-1`,
+ * если предыдущий шаг не пройден (`selectCompletedStep` < step − 1).
  */
 export function RegisterStepGuard({ children }: RegisterStepGuardProps) {
   // TODO: useAppSelector(selectCompletedStep) → <Navigate to={ROUTES.REGISTER_STEP_1} replace />
