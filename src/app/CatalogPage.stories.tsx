@@ -24,7 +24,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'P3-10: одна CatalogPage в MainLayout для всех состояний. Данные из базы, порядок секций пока общий. Results и SearchResults — статичные виды результатов; обработчики плашек и сортировки записываются в Actions. Их управляемое поведение показано отдельно в stories ActiveFilters/SortToggle. P5-02 сохраняет выбор панели в store, а применение к списку и результаты — P5-05; порядок секций — P5-04. Пустые состояния — решения вне Figma.',
+          'P3-10: одна CatalogPage в MainLayout для всех состояний. Данные из базы: «Популярное» по лайкам, «Новое» по дате регистрации. Results и SearchResults — статичные виды результатов; обработчики плашек и сортировки записываются в Actions. Их управляемое поведение показано отдельно в stories ActiveFilters/SortToggle. P5-02 сохраняет выбор панели в store, а применение к списку и результаты — P5-05. Пустые состояния — решения вне Figma.',
       },
     },
   },
@@ -50,6 +50,7 @@ const meta = {
         skills: { items: loaded.skills, status: 'succeeded', error: null },
         categories: { items: loaded.categories, status: 'succeeded' },
         cities: { items: loaded.cities, status: 'succeeded' },
+        exchanges: { items: [], status: 'succeeded', pendingRequests: 0, error: null },
       })
       return (
         <Provider store={store}>

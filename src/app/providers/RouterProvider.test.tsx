@@ -85,8 +85,12 @@ describe('стартовая загрузка', { timeout: 20_000 }, () => {
       expect(store.getState()[failedCollection].status).toBe('succeeded')
 
       const urls = fetchSeed.mock.calls.map(([input]) => String(input))
-      expect(urls.filter((url) => url.endsWith(`/db/${failedCollection}.json`))).toHaveLength(2)
-      expect(urls.filter((url) => !url.endsWith(`/db/${failedCollection}.json`))).toHaveLength(3)
+      // Каталог отдельно загружает обмены; проверяем только четыре общие коллекции.
+      for (const collection of ['users', 'skills', 'categories', 'cities']) {
+        expect(urls.filter((url) => url.endsWith(`/db/${collection}.json`))).toHaveLength(
+          collection === failedCollection ? 2 : 1,
+        )
+      }
     },
   )
 
