@@ -49,7 +49,7 @@ P4-01 делаем первой — остальные задачи фазы ч�
 > Проверить ошибку: временно переименовать `public/db/users.json` — должна открыться страница 500 («база» не скачала образцы).
 
 - **Уже готово:** `Loader` (P2-01); «база» (P4-01) отвечает через ~300 мс — Loader будет виден по-настоящему; справочники грузят `fetchCategories` и `fetchCities` из `@/entities/category` и `@/entities/city` (P4-02), статусы — `selectCategoriesStatus` и `selectCitiesStatus`.
-- **Файлы:** `src/app/providers/DataProvider.tsx` (новый), `src/app/App.tsx`
+- **Файлы:** `src/app/providers/DataProvider.tsx`, `src/app/providers/RouterProvider.tsx`, `src/pages/catalog/ui/CatalogPage.tsx`
 - **Статус на 11.11.2026:** In Progress, исполнитель: `Laurovsky`. Для интеграции: все прямые зависимости закрыты.
 - **Issue:** [#53](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/53)
 - **Зависит от:** P4-02, P4-03, P2-01, P3-16

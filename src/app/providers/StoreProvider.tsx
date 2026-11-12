@@ -6,6 +6,7 @@ interface StoreProviderProps {
   children: ReactNode
 }
 
+/** Предоставляет общий Redux store дочерним компонентам приложения. */
 export function StoreProvider({ children }: StoreProviderProps) {
   return <Provider store={store}>{children}</Provider>
 }

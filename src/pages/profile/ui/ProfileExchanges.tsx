@@ -1,8 +1,5 @@
-/**
- * Раздел «Мои обмены» — по решению команды остаётся МОКОМ: заголовок + текст «Раздел в разработке».
- * Рабочий раздел кабинета только один — «Личные данные».
- */
+import { ProfileStub } from './ProfileStub';
+
 export function ProfileExchanges() {
-  // TODO: заглушка «Раздел в разработке» в стиле кабинета
-  return <section>ProfileExchanges</section>
+  return <ProfileStub title="Мои обмены" />;
 }

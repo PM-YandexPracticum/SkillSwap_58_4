@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import type { TeamMember } from '../config/team'
 import { AboutPage } from './AboutPage'
@@ -20,7 +19,7 @@ const PLACEHOLDER_PHOTO =
  */
 function createMember(overrides: Partial<TeamMember> = {}): TeamMember {
   return {
-    id: nanoid(),
+    id: 'member-test',
     name: 'Тестовый Участник',
     role: 'Разработчик',
     github: 'https://github.com/test-member',
@@ -31,12 +30,14 @@ function createMember(overrides: Partial<TeamMember> = {}): TeamMember {
 }
 
 const SECOND_MEMBER = createMember({
+  id: 'second-member',
   name: 'Второй Участник',
   role: 'Тимлид',
   github: 'https://github.com/second-member',
 })
 
 const THIRD_MEMBER = createMember({
+  id: 'third-member',
   name: 'Третий Участник',
   role: 'Помощник тимлида',
   github: 'https://github.com/third-member',

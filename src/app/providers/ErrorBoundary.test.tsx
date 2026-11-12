@@ -1,42 +1,76 @@
+import { StrictMode } from 'react'
 import { render, screen } from '@testing-library/react'
-import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest'
-import { MemoryRouter } from 'react-router-dom'
+import userEvent from '@testing-library/user-event'
 import { ErrorBoundary } from './ErrorBoundary'
 
-const Bomb = () => {
-  throw new Error('Test error')
+function BrokenPage(): never {
+  throw new Error('Технические подробности ошибки')
 }
 
+beforeEach(() => {
+  vi.spyOn(console, 'error').mockImplementation(() => {})
+})
+
+afterEach(() => {
+  vi.restoreAllMocks()
+  vi.unstubAllEnvs()
+  vi.unstubAllGlobals()
+})
+
 describe('ErrorBoundary', () => {
-  beforeAll(() => {
-    vi.spyOn(console, 'error').mockImplementation(() => {})
-  })
-
-  afterAll(() => {
-    vi.restoreAllMocks()
-  })
-
-  it('рендерит дочерние компоненты, если ошибки нет', () => {
+  it('показывает содержимое, если ошибки нет', () => {
     render(
-      <MemoryRouter>
-        <ErrorBoundary>
-          <div>Всё хорошо</div>
-        </ErrorBoundary>
-      </MemoryRouter>,
+      <ErrorBoundary>
+        <h1>Рабочая страница</h1>
+      </ErrorBoundary>,
     )
-    expect(screen.getByText('Всё хорошо')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Рабочая страница' })).toBeInTheDocument()
   })
 
- it('показывает страницу 500, если дочерний компонент упал', async () => {
-  render(
-    <MemoryRouter>
-      <ErrorBoundary>
-        <Bomb />
-      </ErrorBoundary>
-    </MemoryRouter>
-  );
+  it('показывает понятную страницу 500 без роутера и store, в том числе в StrictMode', () => {
+    render(
+      <StrictMode>
+        <ErrorBoundary>
+          <BrokenPage />
+        </ErrorBoundary>
+      </StrictMode>,
+    )
+    expect(screen.getByRole('heading', { name: 'На сервере произошла ошибка' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('img', { name: 'Монитор с надписью 500 SERVER ERROR' }),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Технические подробности ошибки')).not.toBeInTheDocument()
+  })
 
-  const heading = await screen.findByRole('heading', { name: /На сервере произошла ошибка/i });
-  expect(heading).toBeInTheDocument();
-});
+  it.each(['/', '/skillswap/'])(
+    'перезапускает приложение с главной с базовым путём %s',
+    async (base) => {
+      vi.stubEnv('BASE_URL', base)
+      const assign = vi.fn()
+      vi.stubGlobal('location', { assign })
+      const user = userEvent.setup()
+      render(
+        <ErrorBoundary>
+          <BrokenPage />
+        </ErrorBoundary>,
+      )
+      await user.click(screen.getByRole('button', { name: 'На главную' }))
+      expect(assign).toHaveBeenCalledTimes(1)
+      expect(assign).toHaveBeenCalledWith(base)
+    },
+  )
+
+  it('оставляет сообщение об ошибке заглушкой', async () => {
+    const assign = vi.fn()
+    vi.stubGlobal('location', { assign })
+    const user = userEvent.setup()
+    render(
+      <ErrorBoundary>
+        <BrokenPage />
+      </ErrorBoundary>,
+    )
+    await user.click(screen.getByRole('button', { name: 'Сообщить об ошибке' }))
+    expect(assign).not.toHaveBeenCalled()
+    expect(screen.getByRole('heading', { name: 'На сервере произошла ошибка' })).toBeInTheDocument()
+  })
 })

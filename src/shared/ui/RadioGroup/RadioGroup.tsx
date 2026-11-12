@@ -3,18 +3,18 @@ import EmptyIcon from '@/shared/assets/icons/radio-empty.svg?react'
 import CheckedIcon from '@/shared/assets/icons/radio-done.svg?react'
 import styles from './RadioGroup.module.css'
 
-export interface RadioGroupProps extends Omit<
+export interface RadioGroupProps<Value extends string = string> extends Omit<
   FieldsetHTMLAttributes<HTMLFieldSetElement>,
   'onChange' | 'children'
 > {
   /** Общее имя HTML-радиокнопок; разные группы должны иметь разные имена */
   name: string
   /** Варианты выбора */
-  options: ReadonlyArray<{ value: string; label: string; disabled?: boolean }>
+  options: ReadonlyArray<{ value: Value; label: string; disabled?: boolean }>
   /** Выбранное значение */
-  value: string
+  value: Value
   /** Новое выбранное значение */
-  onChange: (value: string) => void
+  onChange: (value: Value) => void
   /** Подпись группы, например «Пол автора» */
   label?: string
   /** Сообщение ошибки формы */
@@ -26,7 +26,7 @@ export interface RadioGroupProps extends Omit<
  * Клавиатурное поведение обеспечивают нативные input type="radio".
  * @see Figma: 1:2861, 1:2860
  */
-export function RadioGroup({
+export function RadioGroup<Value extends string>({
   name,
   options,
   value,
@@ -37,7 +37,7 @@ export function RadioGroup({
   'aria-describedby': describedBy,
   'aria-invalid': invalid,
   ...props
-}: RadioGroupProps) {
+}: RadioGroupProps<Value>) {
   const groupId = useId()
   const errorId = `${groupId}-error`
 
@@ -65,7 +65,7 @@ export function RadioGroup({
                 value={option.value}
                 checked={value === option.value}
                 disabled={option.disabled}
-                onChange={(event) => onChange(event.target.value)}
+                onChange={() => onChange(option.value)}
               />
               <span className={styles.icon} aria-hidden="true">
                 <Icon />

@@ -12,3 +12,6 @@
 - [`fonts/`](fonts/README.md) — шрифты проекта (Jost, Open Sans, Roboto) — локальные файлы WOFF2, не Google Fonts
 - `fonts.css` — `@font-face` для шрифтов из `fonts/`; подключён в начале `global.css`
 - `global.css` — глобальные стили и CSS-переменные
+
+`--color-overlay` — цвет затемнения Modal; `--shadow-image-action` — тень кнопки поверх фотографии.
+Компоненты используют семантические переменные вместо собственных числовых цветов.

@@ -66,7 +66,9 @@ describe('SkillDetails', () => {
   it('кладёт картинки навыка в галерею', () => {
     render(<SkillDetails {...props} />)
 
-    const slides = within(screen.getByTestId('carousel')).getAllByRole('presentation')
+    const slides = within(screen.getByTestId('carousel')).getAllByRole('img', {
+      name: /^Игра на барабанах — фото \d+$/,
+    })
     expect(slides).toHaveLength(skill.images.length)
   })
 
