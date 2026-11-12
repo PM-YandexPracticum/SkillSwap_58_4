@@ -15,7 +15,7 @@ const mockUser: User = {
   name: 'Мария',
   email: 'Maria@gmail.com',
   password: 'mock-password',
-  avatarUrl: '/images/avatars/u01.jpg',
+  avatarUrl: '',
   birthDate: '1995-10-28T10:00:00.000Z',
   gender: 'female', // Теперь TS поймет, что это допустимое значение
   cityId: 'msk',
