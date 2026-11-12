@@ -1,9 +1,12 @@
+import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 
+import { registerReset } from '@/features/register'
 import lightBulb from '@/shared/assets/images/light-bulb.svg'
 import userInfo from '@/shared/assets/images/user-info.svg'
 import schoolBoard from '@/shared/assets/images/school-board.svg'
 import { ROUTES } from '@/shared/config'
+import { useAppDispatch } from '@/shared/lib/store'
 import { AuthPageLayout } from '@/shared/ui/AuthPageLayout'
 import { IllustrationCard } from '@/shared/ui/IllustrationCard'
 import { Stepper } from '@/shared/ui/Stepper'
@@ -33,11 +36,22 @@ const STEPS = [
 /**
  * Общая часть трёх шагов регистрации: Stepper «Шаг N из 3» сверху, форма шага слева (Outlet),
  * справа иллюстрация и подпись текущего шага. Логотип и «Закрыть ×» — из AuthLayout.
- * Номер шага и иллюстрация определяются адресом. Проверка и сброс черновика — P6-01.
+ * Номер шага и иллюстрация определяются адресом.
+ * Черновик живёт, пока пользователь внутри регистрации: между шагами рамка остаётся на месте, поэтому «Назад»
+ * ничего не стирает. Ушёл из регистрации (логотип, ссылка на вход, «Назад» браузера) — рамка исчезает
+ * и сбрасывает черновик, чтобы введённые email и пароль не остались в store. «Закрыть ×» сбрасывает его сам (AuthLayout).
  * @see Figma: 1:2548, 1:1497, 1:1761
  */
 export function RegisterLayout() {
   const { pathname } = useLocation()
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    return () => {
+      dispatch(registerReset())
+    }
+  }, [dispatch])
+
   const index = STEPS.findIndex((step) => step.path === pathname.replace(/\/$/, ''))
   const currentIndex = Math.max(0, index)
   const step = STEPS[currentIndex]

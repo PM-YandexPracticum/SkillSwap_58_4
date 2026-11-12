@@ -2,6 +2,7 @@ import { screen, within } from '@testing-library/react'
 import { Link, Route, Routes } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
+import { draftUpdated, stepCompleted } from '@/features/register'
 import { ROUTES } from '@/shared/config'
 import { AuthLayout } from './AuthLayout'
 
@@ -90,5 +91,18 @@ describe('AuthLayout', () => {
     await user.click(screen.getByRole('link', { name: 'SkillSwap' }))
 
     expect(screen.getByRole('heading', { name: 'Каталог' })).toBeInTheDocument()
+  })
+
+  it('«Закрыть» сбрасывает черновик регистрации и пройденные шаги', async () => {
+    const { user, store } = renderLayout(ROUTES.ABOUT)
+    await user.click(screen.getByRole('link', { name: 'Войти' }))
+    store.dispatch(draftUpdated({ email: 'new@mail.ru', password: 'Chernosliv5' }))
+    store.dispatch(stepCompleted(1))
+
+    await user.click(screen.getByRole('button', { name: 'Закрыть' }))
+
+    expect(store.getState().register.completedStep).toBe(0)
+    expect(store.getState().register.draft.email).toBe('')
+    expect(store.getState().register.draft.password).toBe('')
   })
 })
