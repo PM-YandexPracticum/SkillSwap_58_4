@@ -6,6 +6,7 @@ import { AuthLayout } from '@/app/layouts/AuthLayout'
 import { MainLayout } from '@/app/layouts/MainLayout'
 import { RegisterStepGuard } from '@/app/router/RegisterStepGuard'
 import { RequireAuth } from '@/app/router/RequireAuth'
+import { DataProvider } from './DataProvider'
 import {
   ProfileExchanges,
   ProfileFavorites,
@@ -45,63 +46,68 @@ export function AppRouter() {
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Suspense fallback={<Loader />}>
         <Routes>
-          <Route element={<MainLayout />}>
-            <Route path={ROUTES.HOME} element={<CatalogPage />} />
-            <Route path={ROUTES.SKILL} element={<SkillPage />} />
-            <Route
-              path={ROUTES.FAVORITES}
-              element={
-                <RequireAuth>
-                  <FavoritesPage />
-                </RequireAuth>
-              }
-            />
-            <Route path={ROUTES.ABOUT} element={<AboutPage />} />
-            <Route path={ROUTES.ALL_SKILLS} element={<AllSkillsPage />} />
+          <Route element={<DataProvider />}>
+            <Route element={<MainLayout />}>
+              <Route path={ROUTES.HOME} element={<CatalogPage />} />
+              <Route path={ROUTES.SKILL} element={<SkillPage />} />
+              <Route
+                path={ROUTES.FAVORITES}
+                element={
+                  <RequireAuth>
+                    <FavoritesPage />
+                  </RequireAuth>
+                }
+              />
+              <Route path={ROUTES.ABOUT} element={<AboutPage />} />
+              <Route path={ROUTES.ALL_SKILLS} element={<AllSkillsPage />} />
 
-            <Route
-              path={ROUTES.PROFILE}
-              element={
-                <RequireAuth>
-                  <ProfilePage />
-                </RequireAuth>
-              }
-            >
-              <Route index element={<Navigate to={PROFILE_ROUTES.PERSONAL} replace />} />
-              <Route path={PROFILE_ROUTES.REQUESTS} element={<ProfileRequests />} />
-              <Route path={PROFILE_ROUTES.EXCHANGES} element={<ProfileExchanges />} />
-              <Route path={PROFILE_ROUTES.FAVORITES} element={<ProfileFavorites />} />
-              <Route path={PROFILE_ROUTES.SKILLS} element={<ProfileSkills />} />
-              <Route path={PROFILE_ROUTES.PERSONAL} element={<ProfilePersonal />} />
+              <Route
+                path={ROUTES.PROFILE}
+                element={
+                  <RequireAuth>
+                    <ProfilePage />
+                  </RequireAuth>
+                }
+              >
+                <Route index element={<Navigate to={PROFILE_ROUTES.PERSONAL} replace />} />
+                <Route path={PROFILE_ROUTES.REQUESTS} element={<ProfileRequests />} />
+                <Route path={PROFILE_ROUTES.EXCHANGES} element={<ProfileExchanges />} />
+                <Route path={PROFILE_ROUTES.FAVORITES} element={<ProfileFavorites />} />
+                <Route path={PROFILE_ROUTES.SKILLS} element={<ProfileSkills />} />
+                <Route path={PROFILE_ROUTES.PERSONAL} element={<ProfilePersonal />} />
+              </Route>
+
+              <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Route>
 
-            <Route path={ROUTES.SERVER_ERROR} element={<ServerErrorPage />} />
-            <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
-            <Route path="*" element={<NotFoundPage />} />
+            <Route element={<AuthLayout />}>
+              <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+              <Route path={ROUTES.REGISTER} element={<RegisterLayout />}>
+                <Route index element={<Navigate to={ROUTES.REGISTER_STEP_1} replace />} />
+                <Route path={ROUTES.REGISTER_STEP_1} element={<RegisterStep1Page />} />
+                <Route
+                  path={ROUTES.REGISTER_STEP_2}
+                  element={
+                    <RegisterStepGuard step={2}>
+                      <RegisterStep2Page />
+                    </RegisterStepGuard>
+                  }
+                />
+                <Route
+                  path={ROUTES.REGISTER_STEP_3}
+                  element={
+                    <RegisterStepGuard step={3}>
+                      <RegisterStep3Page />
+                    </RegisterStepGuard>
+                  }
+                />
+              </Route>
+            </Route>
           </Route>
 
-          <Route element={<AuthLayout />}>
-            <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-            <Route path={ROUTES.REGISTER} element={<RegisterLayout />}>
-              <Route index element={<Navigate to={ROUTES.REGISTER_STEP_1} replace />} />
-              <Route path={ROUTES.REGISTER_STEP_1} element={<RegisterStep1Page />} />
-              <Route
-                path={ROUTES.REGISTER_STEP_2}
-                element={
-                  <RegisterStepGuard step={2}>
-                    <RegisterStep2Page />
-                  </RegisterStepGuard>
-                }
-              />
-              <Route
-                path={ROUTES.REGISTER_STEP_3}
-                element={
-                  <RegisterStepGuard step={3}>
-                    <RegisterStep3Page />
-                  </RegisterStepGuard>
-                }
-              />
-            </Route>
+          <Route element={<MainLayout />}>
+            <Route path={ROUTES.SERVER_ERROR} element={<ServerErrorPage />} />
           </Route>
         </Routes>
       </Suspense>

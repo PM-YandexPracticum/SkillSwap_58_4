@@ -41,7 +41,7 @@ src/
 │                   # favorite-toggle, exchange-propose, notifications-read,
 │                   # theme-toggle, profile-edit, avatar-upload, skill-create
 ├── entities/       # user, skill, category, city, session, exchange, notification
-└── shared/         # api, config, lib (hooks, store, helpers), types, ui, assets
+└── shared/         # api, config, lib (hooks, store, validation), types, ui, assets
 
 src/shared/api/mock-db/
 ├── createMockCollection.ts   # «база» в браузере: образцы + изменения в localStorage

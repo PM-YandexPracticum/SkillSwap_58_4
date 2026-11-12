@@ -30,9 +30,13 @@ import EditIcon from '@/shared/assets/icons/edit.svg?react'
 ## Файлы
 
 - `Input.tsx`: компонент и тип пропсов.
-- `Input.module.css`: состояния default, hover, focus, disabled и error на токенах проекта.
+- `../Field/Field.module.css`: общие состояния default, hover, focus, disabled и error на токенах проекта.
 - `Input.stories.tsx`: пустое и заполненное поле, карандаш, кнопка справа («×» очистки), ошибка, disabled, hover, focus и пример с react-hook-form.
 - `Input.test.tsx`: ввод, доступность подписи и ошибки, disabled, ref, кнопка справа и интеграция с формой.
 - `index.ts`: публичный API.
 
 Макет: [регистрация](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2548), [ошибка](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2627), [личные данные](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2370).
+
+Подпись и ошибка переиспользуют [Field](../Field/README.md). Общие состояния поля лежат в
+`Field.module.css` и подключаются напрямую; ref, HTML-атрибуты и различия
+однострочного/многострочного ввода остаются в конкретном компоненте.

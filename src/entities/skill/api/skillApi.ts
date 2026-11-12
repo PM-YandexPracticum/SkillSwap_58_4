@@ -1,11 +1,31 @@
-import { createMockCollection, loadSeed } from '@/shared/api'
+import {
+  createMockCollection,
+  isISODateString,
+  isRecord,
+  isString,
+  isStringArray,
+  loadSeed,
+} from '@/shared/api'
 import type { Skill } from '../model/types'
+
+const isSkill = (value: unknown): value is Skill =>
+  isRecord(value) &&
+  isString(value.id) &&
+  isString(value.title) &&
+  isString(value.description) &&
+  isString(value.categoryId) &&
+  isString(value.subcategoryId) &&
+  isStringArray(value.images) &&
+  isString(value.authorId) &&
+  isISODateString(value.createdAt)
 
 /**
  * Хранилище навыков.
  * Единственное место, которое знает, откуда берутся данные. Переход на настоящую БД — меняется только этот файл.
  */
-const skills = createMockCollection<Skill>('skills', loadSeed<Skill>('skills'))
+const skills = createMockCollection<Skill>('skills', loadSeed<Skill>('skills', isSkill), {
+  validate: isSkill,
+})
 
 /** Все навыки */
 export function getSkills(): Promise<Skill[]> {

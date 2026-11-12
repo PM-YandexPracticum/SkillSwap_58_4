@@ -1,3 +1,5 @@
+import type { ItemGuard } from './createMockCollection'
+
 /** Загрузки, которые уже начались: файл каждой коллекции скачивается один раз */
 const loading = new Map<string, Promise<unknown[]>>()
 
@@ -19,15 +21,24 @@ async function fetchSeed(name: string): Promise<unknown[]> {
  * Файл скачивается через `fetch` при первом обращении к коллекции и дальше берётся из памяти.
  * Если загрузка не удалась, следующая попытка скачивает файл заново.
  *
- * Тип записей не проверяется — он описан в сущности (`entities/*\/model/types.ts`).
+ * Валидатор сущности проверяет записи до кеширования результата для вызывающего кода.
+ * Ошибочный seed удаляется из кеша; после исправления файла запрос можно повторить.
  * @param name имя коллекции и файла: `users` → `public/db/users.json`
  * @returns функция, которая отдаёт образцы; @throws {Error} «Не удалось загрузить данные …»
  */
-export function loadSeed<T>(name: string): () => Promise<readonly T[]> {
+export function loadSeed<T>(name: string, validate?: ItemGuard<T>): () => Promise<readonly T[]> {
   return () => {
     const started = loading.get(name) ?? fetchSeed(name)
     loading.set(name, started)
-    started.catch(() => loading.delete(name))
-    return started as Promise<readonly T[]>
+    return started
+      .then((data) => {
+        if (validate && !data.every(validate))
+          throw new Error(`Не удалось загрузить данные «${name}»`)
+        return data as T[]
+      })
+      .catch((error: unknown) => {
+        if (loading.get(name) === started) loading.delete(name)
+        throw error
+      })
   }
 }

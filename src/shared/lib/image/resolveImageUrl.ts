@@ -17,7 +17,7 @@ export function resolveImageUrl(
   kind: keyof typeof IMAGE_PLACEHOLDERS,
 ): string {
   if (path === null || path === undefined || path === '') {
-    return IMAGE_PLACEHOLDERS[kind]
+    path = IMAGE_PLACEHOLDERS[kind]
   }
 
   // Проверяем любой локальный путь, а не только /images/: так же работают файлы из public/db

@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 
-import { fetchCategories, selectCategories, selectCategoriesStatus } from '@/entities/category'
-import { fetchCities, selectCities, selectCitiesStatus } from '@/entities/city'
-import { fetchSkills, selectSkillsStatus, selectSkillById } from '@/entities/skill'
-import { fetchUsers, selectSimilarUsers, selectUsersStatus, selectUserById } from '@/entities/user'
+import { selectCategories, selectCategoriesStatus } from '@/entities/category'
+import { selectCities, selectCitiesStatus } from '@/entities/city'
+import { selectSkillsStatus, selectSkillById } from '@/entities/skill'
+import { selectSimilarUsers, selectUsersStatus, selectUserById } from '@/entities/user'
 import { ExchangeProposedModal } from '@/features/exchange-propose'
 import { ROUTES } from '@/shared/config'
-import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import { useAppSelector } from '@/shared/lib/store'
 import { Loader } from '@/shared/ui/Loader'
 import { OfferCard } from '@/widgets/offer-card'
 import { OffersCarousel } from '@/widgets/offers-carousel'
@@ -15,23 +15,6 @@ import { SkillDetails } from '@/widgets/skill-details'
 
 import { buildSkillPageData } from '../lib/buildSkillPageData'
 import styles from './SkillPage.module.css'
-
-/**
- * Временная загрузка данных для прямого захода до появления P4-04.
- * TODO(P4-04): удалить вместе с `loadCatalogData` из `CatalogPage` после подключения общего DataProvider.
- * Читаем состояние внутри thunk, а не из замыкания эффекта: React StrictMode
- * запускает effect повторно и не должен создавать второй запрос.
- */
-function loadSkillPageResources() {
-  return (dispatch: AppDispatch, getState: () => RootState) => {
-    const state = getState()
-
-    if (state.users.status === 'idle') void dispatch(fetchUsers())
-    if (state.skills.status === 'idle') void dispatch(fetchSkills())
-    if (state.categories.status === 'idle') void dispatch(fetchCategories())
-    if (state.cities.status === 'idle') void dispatch(fetchCities())
-  }
-}
 
 /** Возвращает пользователя к началу нового навыка, в том числе при переходе с клавиатуры. */
 function focusSkillPage(node: HTMLElement | null) {
@@ -43,9 +26,8 @@ function focusSkillPage(node: HTMLElement | null) {
 
 /**
  * Страница навыка `/skill/:id`: SkillDetails (автор, навык, галерея) + «Похожие предложения» (OffersCarousel).
- * Данные и справочники читает из Redux-состояния через селекторы P4-02/P4-03. До P4-04 страница
- * сама запускает недостающие загрузочные thunk-и; после появления общего DataProvider этот effect
- * ничего не запускает, если данные уже загружаются или загружены.
+ * Данные и справочники читает из Redux-состояния через селекторы P4-02/P4-03. Стартовую загрузку
+ * до открытия маршрута выполняет общий DataProvider; страница не запускает собственные запросы.
  * При смене навыка возвращает прокрутку и фокус к началу страницы, сбрасывает галерею и карусель.
  *
  * Кнопка «Предложить обмен» и окно «Вы предложили обмен» здесь только показывают состояния из макета:
@@ -55,7 +37,6 @@ function focusSkillPage(node: HTMLElement | null) {
  */
 export function SkillPage() {
   const { id = '' } = useParams()
-  const dispatch = useAppDispatch()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isProposed, setIsProposed] = useState(false)
   const skill = useAppSelector((state) => selectSkillById(state, id))
@@ -69,10 +50,6 @@ export function SkillPage() {
   const usersStatus = useAppSelector(selectUsersStatus)
   const categoriesStatus = useAppSelector(selectCategoriesStatus)
   const citiesStatus = useAppSelector(selectCitiesStatus)
-
-  useEffect(() => {
-    void dispatch(loadSkillPageResources())
-  }, [dispatch])
 
   useEffect(() => {
     setIsModalOpen(false)
