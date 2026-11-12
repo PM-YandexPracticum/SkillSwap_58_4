@@ -2,6 +2,7 @@ import { StoreProvider } from './providers/StoreProvider'
 import { ToastProvider } from './providers/ToastProvider'
 import { ThemeProvider } from './providers/ThemeProvider'
 import { AppRouter } from './providers/RouterProvider'
+import { ErrorBoundary } from './providers/ErrorBoundary' // <--- Импортируем
 import './styles/global.css'
 
 export function App() {
@@ -9,7 +10,9 @@ export function App() {
     <StoreProvider>
       <ThemeProvider>
         <ToastProvider>
-          <AppRouter />
+          <ErrorBoundary>
+            <AppRouter />
+          </ErrorBoundary>
         </ToastProvider>
       </ThemeProvider>
     </StoreProvider>
