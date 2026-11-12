@@ -1,8 +1,5 @@
-/**
- * Раздел «Заявки» — по решению команды остаётся МОКОМ: заголовок + текст «Раздел в разработке».
- * Рабочий раздел кабинета только один — «Личные данные».
- */
+import { ProfileStub } from './ProfileStub';
+
 export function ProfileRequests() {
-  // TODO: заглушка «Раздел в разработке» в стиле кабинета
-  return <section>ProfileRequests</section>
+  return <ProfileStub title="Заявки" />;
 }

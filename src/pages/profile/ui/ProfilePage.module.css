@@ -1,0 +1,31 @@
+.page {
+  padding: var(--space-32) var(--space-16);
+  background-color: var(--color-bg);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  gap: var(--space-24);
+  width: 100%;
+  max-width: 1368px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+.sidebar {
+  flex-shrink: 0;
+  width: 324px;
+}
+
+.content {
+  width: 1020px;
+  flex-shrink: 0;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-m);
+  padding: 60px;
+  box-sizing: border-box;
+  min-height: 500px;
+}
