@@ -1,5 +1,5 @@
 import { StrictMode } from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { ROUTES } from '@/shared/config'
@@ -83,6 +83,8 @@ describe('стартовая загрузка', { timeout: 20_000 }, () => {
       ).toBeInTheDocument()
       expect(window.location.pathname).toBe(ROUTES.HOME)
       expect(store.getState()[failedCollection].status).toBe('succeeded')
+
+      await waitFor(() => expect(store.getState().exchanges.status).toBe('succeeded'))
 
       const urls = fetchSeed.mock.calls.map(([input]) => String(input))
       // Каталог отдельно загружает обмены; проверяем только четыре общие коллекции.
