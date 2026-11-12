@@ -22,7 +22,10 @@ describe('CatalogView', () => {
   it('собирает три секции, независимо раскрывает их и ведёт на навык', async () => {
     const { user } = renderWithProviders(
       <Routes>
-        <Route path="/" element={<CatalogView users={users} />} />
+        <Route
+          path="/"
+          element={<CatalogView users={users} popularUsers={users} newUsers={users} />}
+        />
         <Route path="/skill/:id" element={<h1>Открыт навык</h1>} />
       </Routes>,
       { preloadedState: state },
@@ -47,6 +50,8 @@ describe('CatalogView', () => {
     const { user, store } = renderWithProviders(
       <CatalogView
         users={users.slice(0, 2)}
+        popularUsers={[]}
+        newUsers={[]}
         results={{
           filters: [{ id: 'city:x', label: 'Москва' }],
           sort: 'newest',
@@ -70,6 +75,8 @@ describe('CatalogView', () => {
     renderWithProviders(
       <CatalogView
         users={[]}
+        popularUsers={[]}
+        newUsers={[]}
         results={
           results
             ? { filters: [], sort: 'newest', onRemoveFilter: vi.fn(), onSortChange: vi.fn() }
@@ -81,5 +88,27 @@ describe('CatalogView', () => {
       results ? 'Ничего не нашлось' : 'Предложения пока не добавлены',
     )
     expect(screen.queryByRole('article')).not.toBeInTheDocument()
+  })
+  it('подставляет в секции переданные списки, «Рекомендуем» берет исходные порядок', () => {
+    renderWithProviders(
+      <CatalogView users={users} popularUsers={[...users].reverse()} newUsers={users.slice(2)} />,
+      { preloadedState: state },
+    )
+    const cards = (title: string) =>
+      within(screen.getByRole('region', { name: title })).getAllByRole('article')
+    expect(cards('Популярное')[0]).toHaveTextContent('Автор 9')
+    expect(cards('Популярное')[2]).toHaveTextContent('Автор 7')
+    expect(cards('Новое')[0]).toHaveTextContent('Автор 2')
+    expect(cards('Новое')[2]).toHaveTextContent('Автор 4')
+    expect(cards('Рекомендуем')[0]).toHaveTextContent('Автор 0')
+  })
+  it('раскрывает неполную секцию до числа её карточек', async () => {
+    const { user } = renderWithProviders(
+      <CatalogView users={users} popularUsers={users.slice(0, 5)} newUsers={users} />,
+      { preloadedState: state },
+    )
+    const popular = screen.getByRole('region', { name: 'Популярное' })
+    await user.click(within(popular).getByRole('button', { name: 'Смотреть все' }))
+    expect(within(popular).getAllByRole('article')).toHaveLength(5)
   })
 })

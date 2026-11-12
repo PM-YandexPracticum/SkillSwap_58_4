@@ -23,9 +23,9 @@ const NOT_FOUND_TITLE = 'Страница не найдена'
 
 /**
  * Тесты страницы «500».
- * Сценария «неизвестный адрес → 500» здесь нет: 500 показывается из ErrorBoundary
- * при падении рендера, а не по маршруту (в отличие от 404). Связка
- * «ErrorBoundary → ServerErrorPage» проверяется в P8, когда обёртка появится.
+ * Маршрут /500 открывается при ошибке загрузки DataProvider. Корневой ErrorBoundary
+ * использует тот же ServerErrorView без роутера; его сценарии проверяются отдельно
+ * в app/providers/ErrorBoundary.test.tsx и app/App.test.tsx.
  *
  * 1. контракт с макетом — заголовок, описание, картинка;
  * 2. ровно две кнопки;
@@ -69,7 +69,7 @@ describe('ServerErrorPage', () => {
   it('по клику «На главную» переходит на ROUTES.HOME', async () => {
     const { user } = renderWithProviders(
       <Routes>
-        {/* /test — техническое место: 500 не живёт на маршруте, но navigate нужен «откуда» */}
+        {/* Отдельный маршрут проверяет переход без загрузки всего приложения. */}
         <Route path="/test" element={<ServerErrorPage />} />
         <Route path={ROUTES.HOME} element={<div>Главная страница</div>} />
       </Routes>,
