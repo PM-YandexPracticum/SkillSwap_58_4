@@ -12,5 +12,7 @@
 а на экране показывается индикатор. `children` — содержимое левой карточки, `illustration` — правой.
 Компонент не зависит от роутера, store и фич.
 
+`formClassName` задаёт класс левой карточки. Для второго шага RegisterLayout через него устанавливает `--auth-panel-padding-block: var(--space-40)` вместо обычных 60 px; на узком экране остаётся общий отступ 24 px.
+
 Figma: [вход 1:2400](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2400),
 [регистрация 1:2548](https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2548).

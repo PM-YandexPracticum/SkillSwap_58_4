@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, expect, vi } from 'vitest'
+import { afterEach, describe, it, expect, vi } from 'vitest'
 
 import { SkillInfo, type SkillInfoProps } from './SkillInfo'
 
 // Мок Carousel: рендерит children как есть и не требует Embla/DOM-измерений
 vi.mock('@/shared/ui/Carousel', () => ({
   Carousel: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='carousel'>{children}</div>
+    <div data-testid="carousel">{children}</div>
   ),
 }))
 
@@ -29,6 +29,34 @@ const defaultProps: SkillInfoProps = {
 }
 
 describe('SkillInfo', () => {
+  afterEach(() => vi.unstubAllEnvs())
+
+  it.each([1, 4])('называет каждое фото навыка, когда снимков %i', (count) => {
+    render(
+      <SkillInfo
+        {...defaultProps}
+        skill={{ ...mockSkill, images: mockSkill.images.slice(0, count) }}
+      />,
+    )
+    const photos = screen.getAllByRole('img')
+    expect(photos).toHaveLength(count)
+    photos.forEach((photo, index) => {
+      expect(photo).toHaveAccessibleName(`${mockSkill.title} — фото ${index + 1}`)
+    })
+  })
+
+  it('учитывает подпуть сайта у главных фотографий и превью', () => {
+    vi.stubEnv('BASE_URL', '/skillswap/')
+    render(<SkillInfo {...defaultProps} />)
+    expect(screen.getByRole('img', { name: `${mockSkill.title} — фото 1` })).toHaveAttribute(
+      'src',
+      '/skillswap/images/skills/s01-1.jpg',
+    )
+    expect(
+      screen.getByRole('button', { name: 'Показать фото 1' }).querySelector('img'),
+    ).toHaveAttribute('src', '/skillswap/images/skills/s01-1.jpg')
+  })
+
   it('отображает название навыка', () => {
     render(<SkillInfo {...defaultProps} />)
     expect(screen.getByRole('heading', { name: mockSkill.title })).toBeInTheDocument()
@@ -49,9 +77,9 @@ describe('SkillInfo', () => {
       <SkillInfo
         {...defaultProps}
         actions={{
-          like: <button aria-label='Добавить в избранное'>like</button>,
-          share: <button aria-label='Поделиться'>share</button>,
-          more: <button aria-label='Больше опций'>more</button>,
+          like: <button aria-label="Добавить в избранное">like</button>,
+          share: <button aria-label="Поделиться">share</button>,
+          more: <button aria-label="Больше опций">more</button>,
         }}
       />,
     )
@@ -63,10 +91,7 @@ describe('SkillInfo', () => {
 
   it('отображает кнопку "Предложить обмен", если она передана в actions', () => {
     render(
-      <SkillInfo
-        {...defaultProps}
-        actions={{ createOffer: <button>Предложить обмен</button> }}
-      />,
+      <SkillInfo {...defaultProps} actions={{ createOffer: <button>Предложить обмен</button> }} />,
     )
 
     expect(screen.getByRole('button', { name: 'Предложить обмен' })).toBeInTheDocument()
@@ -87,7 +112,7 @@ describe('SkillInfo', () => {
         {...defaultProps}
         actions={{
           like: (
-            <button aria-label='Добавить в избранное' onClick={onClick}>
+            <button aria-label="Добавить в избранное" onClick={onClick}>
               like
             </button>
           ),
@@ -115,5 +140,12 @@ describe('SkillInfo', () => {
     render(<SkillInfo {...defaultProps} />)
 
     expect(screen.getByText(`+${mockSkill.images.length - 3}`)).toBeInTheDocument()
+  })
+
+  it('даёт мини-превью доступные имена', () => {
+    render(<SkillInfo {...defaultProps} />)
+
+    expect(screen.getByRole('button', { name: 'Показать фото 1' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Показать фото 3, ещё 1 фото' })).toBeInTheDocument()
   })
 })

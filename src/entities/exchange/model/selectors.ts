@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit'
 import type { ID } from '@/shared/types'
 
 const selectItems = (state: RootState) => state.exchanges.items
-const selectUserId = (state: RootState) => state.session.session?.userId
+const selectUserId = (state: RootState) => state.session?.session?.userId ?? null
 
 /** Входящие и исходящие предложения вошедшего пользователя; гостю — пустой список. */
 export const selectExchanges = createSelector([selectItems, selectUserId], (items, userId) =>

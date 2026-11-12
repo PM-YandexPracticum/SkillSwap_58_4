@@ -71,6 +71,7 @@ describe('UserProfileCard', () => {
 
     // Текст «О себе» отсутствует
     expect(screen.queryByText('Люблю ритм и кофе по утрам')).not.toBeInTheDocument()
+    expect(screen.queryByText('О себе')).not.toBeInTheDocument()
   })
 
   it('рендерит заголовки секций «Может научить» и «Хочет научиться»', () => {
@@ -107,12 +108,7 @@ describe('UserProfileCard', () => {
       categoryId: 'creativity',
     }))
 
-    render(
-      <UserProfileCard
-        {...defaultProps}
-        learnSubcategories={manySubcategories}
-      />,
-    )
+    render(<UserProfileCard {...defaultProps} learnSubcategories={manySubcategories} />)
 
     // Если лимит меньше 10 — должен появиться тег «+N»
     // (при CATALOG.CARD_LEARN_TAGS = 2 ожидаем "+8")

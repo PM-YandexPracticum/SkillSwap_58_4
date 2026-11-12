@@ -231,6 +231,13 @@ describe('birthDateField', () => {
 
     expect(await isValid(schema, value)).toBe(true)
   })
+
+  it.each(['2000-02-30', '2001-02-29', '2000-04-31'])(
+    'отклоняет несуществующий календарный день %s',
+    async (value) => {
+      expect(await isValid(schema, value)).toBe(false)
+    },
+  )
 })
 
 describe('textField', () => {

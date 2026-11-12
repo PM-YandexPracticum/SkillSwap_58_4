@@ -8,6 +8,7 @@ export {
   selectPopularUsers,
   selectNewUsers,
   selectRecommendedUsers,
+  selectSimilarUsers,
 } from './model/selectors'
 export { getUsers, getUserById, createUser, updateUser } from './api/userApi'
 export { getAge } from './lib/getAge'

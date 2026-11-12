@@ -1,7 +1,7 @@
 # Справка по фазам 2–3: что уже готово и что дальше
 
 Коротко: что уже есть в проекте и можно брать в свою задачу, что сейчас в работе и что можно начинать.
-Перед стартом задачи загляни сюда — возможно, половина нужного уже сделана. Актуально на **09.11.2026**.
+Перед стартом задачи загляни сюда — возможно, половина нужного уже сделана. Актуально на **11.11.2026**.
 
 ## Уже готово — используй, не делай заново
 
@@ -17,7 +17,7 @@
 - `DatePicker` из `@/shared/ui/DatePicker` (P2-12, PR #162) — Input и react-datepicker: ручной ввод `дд.мм.гггг`, календарь с выбором месяца/года, русский язык, подтверждение/отмена. `value` — ISO `YYYY-MM-DD` или `null`, возраст проверяет форма; подключение и внешний сброс описаны в README компонента.
 - `MultiSelect` из `@/shared/ui/MultiSelect` (P2-17, PR #163) — управляемый множественный выбор на Checkbox со стилями поля Select; в закрытом поле первое название и «+N». Клавиатура, ошибка и disabled готовы. Отбор подкатегорий остаётся у формы (P6-03).
 - `AuthPageLayout` и `CredentialsForm` — общая область с иллюстрацией и общая вёрстка полей email/пароля (P3-11). Формы передают обработчики и ошибки; правила проверки и сохранение подключаются в своих задачах.
-- `ErrorPage` — иллюстрация, заголовок и описание 404/500 (P3-16); `<main>` и кнопки добавляет страница, ErrorBoundary — P8-01.
+- `ErrorPage` — общая рамка, иллюстрация, заголовок, описание и слот действий 404/500 (P3-16); маршруты передаются страницами, корневой ErrorBoundary готов в P8-01 (PR #189).
 - `Stepper` — `import { Stepper } from '@/shared/ui/Stepper'`. «Шаг N из 3» над формой регистрации: `current`, `total`.
 - `Tag` — `import { Tag } from '@/shared/ui/Tag'`. Чип навыка: `label`, `color` — id категории (`business`, `creativity`, `languages`, `education`, `health`, `home`) или `more` для «+N»; с `onRemove` появляется крестик — это плашка фильтра. Длинное название обрезается многоточием, полное — в подсказке. `isTagColor(id)` проверяет, есть ли цвет у категории.
 - `Input` и `Textarea` — `import { Input } from '@/shared/ui/Input'`, `import { Textarea } from '@/shared/ui/Textarea'`. Подпись `label`, ошибка `error`, декоративная иконка `rightIcon` (карандаш); кликабельная кнопка справа — `rightAction` («глаз», «×» очистки). Работают с `register` из react-hook-form. Высота Input — 48 px, как в макете.
@@ -31,19 +31,19 @@
 **Блоки (`src/entities`)**
 
 - `UserCard` — `import { UserCard } from '@/entities/user'`. Карточка каталога: `user`, `cityName`, `teachSkill`, `learnSubcategories`, слоты `topAction` (лайк) и `bottomAction` («Подробнее»). Задача-образец — P3-01 ([PR #133](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/133)).
-- `UserProfileCard` из `@/entities/user` — карточка автора с `user`, `cityName`, `teachSkill`, `learnSubcategories`. `SkillInfo` из `@/entities/skill` — `skill` (название, описание, изображения), `categoryTitle`, `subcategoryTitle`, объект `actions` со слотами `like`, `createOffer`, `share`, `more`. Галерея уже внутри `SkillInfo`; сборка страницы — P3-09. Готовы в [PR #150](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/150).
+- `UserProfileCard` из `@/entities/user` — карточка автора с `user`, `cityName`, `teachSkill`, `learnSubcategories`. `SkillInfo` из `@/entities/skill` — `skill` (название, описание, изображения), `categoryTitle`, `subcategoryTitle`, объект `actions` со слотами `like`, `createOffer`, `share`, `more`. Галерея уже внутри `SkillInfo`; блоки собраны в P3-09, данные страницы подключаются в P7-01. Готовы в [PR #150](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/150).
 - `UserSummary` — блок «аватар + имя + город, возраст» для карточки автора (P3-02); `SkillTag` из `@/entities/skill` — чип навыка в цвете категории.
 - Сессия (P4-05): `selectIsAuth`, `selectSession`, вход `startSession(userId)` и выход `endSession()` из `@/entities/session` — каждое сразу меняет store и localStorage.
 - Защита страниц (P4-08): `RequireAuth` закрывает `/profile/*` и `/favorites`, отправляет гостя на вход с `replace` и полным `state.from`; возврат после входа — P4-09.
-- Пользователи и навыки (P4-03): `fetchUsers`, `fetchSkills`, селекторы по id, пользователю, популярности и новизне из публичных API сущностей. Полный список и контракты — в README `entities/user/model` и `entities/skill/model`. Запуск общей загрузки — P4-04, запись — P4-06.
+- Пользователи и навыки (P4-03): `fetchUsers`, `fetchSkills`, селекторы по id, пользователю, популярности и новизне из публичных API сущностей. Полный список и контракты — в README `entities/user/model` и `entities/skill/model`. Общую загрузку при старте запускает `DataProvider` из P4-04, запись — P4-06.
 - Справочники в store (P4-02): `fetchCategories`, `selectSubcategoryById`, `selectCategoryBySubcategoryId`, `selectCategoryColor` из `@/entities/category`; `fetchCities`, `selectCityById` из `@/entities/city`.
 
 **Блоки (`src/widgets`)**
 
-- `CategoriesList` и `CategoriesMenu` из `@/widgets/categories-menu` (P3-06, PR #165) — единый справочник шести категорий для Header и `/skills`. До P4-04 загружает категории при `idle`, показывает Loader, ошибку с повтором и пустой список; параллельные запросы не дублируются. Открытием Dropdown управляет Header.
-- `FiltersPanel` из `@/widgets/filters-panel` (P3-07, PR #148) — группы на Checkbox/RadioGroup, данные справочников через селекторы, выбор пока локальный. Все шесть категорий видимы; дополнительные категории раскрываются кнопкой. Счётчик и сброс передаются пропсами; бизнес-связь с Redux — P5-02.
+- `CategoriesList` и `CategoriesMenu` из `@/widgets/categories-menu` (P3-06, PR #165) — единый справочник шести категорий для Header и `/skills`. `DataProvider` загружает справочник до открытия маршрута; список показывает готовые, пустые и ошибочные состояния. Открытием Dropdown управляет Header.
+- `FiltersPanel` из `@/widgets/filters-panel` (P3-07, PR #148; подключение P5-02, PR #175) — группы на Checkbox/RadioGroup, данные справочников через селекторы, выборы и сброс связаны с `catalogFilter` в store. Все шесть категорий видимы; дополнительные категории раскрываются кнопкой. Вывод результатов и сортировка — P5-05.
 - `Header` — `import { Header } from '@/widgets/header'` (P3-04, [PR #153](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/153)). Вид задают `isAuth`, `userName`, `userAvatar`, `hasUnread`, `onLogout`; меню навыков и уведомления — слоты `categoriesMenu` и `notifications`. Одновременно открыто одно меню, пустой слот не открывает окно. Подключён в MainLayout (P3-05); сессия и выход — P5-09, уведомления — P7-05. `SearchInput` из `@/features/skill-search` подключён к store в P5-03: Enter/лупа применяют запрос, крестик очищает его. Внешние `queryApplied` / `queryCleared` синхронизируют черновик поля, в том числе при повторной команде; callbacks `onSearch` / `onClear` остаются необязательными.
-- `OfferCard` — `import { OfferCard } from '@/widgets/offer-card'`: принимает `PublicUser`, читает справочники и уже загруженные обмены из store, собирает `UserCard` со счётчиком лайков и ссылкой на навык. Если текущий пользователь уже предложил обмен этому автору, ссылка заменяется статичным `ExchangeStatusBadge` (P7-04); гость и остальные видят «Подробнее». Сердечко пока без действия — логику добавит P5-07. При подключении данных к каталогу контейнер должен вызвать `fetchExchanges()`; текущая страница ещё заглушка.
+- `OfferCard` — `import { OfferCard } from '@/widgets/offer-card'`: принимает `PublicUser`, читает справочники и уже загруженные обмены из store, собирает `UserCard` со счётчиком лайков и ссылкой на навык. Если текущий пользователь уже предложил обмен этому автору, ссылка заменяется статичным `ExchangeStatusBadge` (P7-04); гость и остальные видят «Подробнее». Сердечко пока без действия — логику добавит P5-07. При подключении данных к каталогу контейнер должен вызвать `fetchExchanges()`; вёрстка страницы собрана в P3-10; подключение данных и обменов остаётся задачам фазы 5/7.
 - `OffersSection` — `import { OffersSection } from '@/widgets/offers-section'`: `title`, `users`, `mode`, `renderItem`; сетка по три, в режиме `expandable` раскрытие 3 ⇄ 9 уже работает, в `infinite` выводятся все переданные карточки (догрузка — P5-06). Страница передаёт `renderItem={(user) => <OfferCard user={user} />}`. Пример — story `app/CatalogSections`, [PR #142](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/142).
 - `Footer` — `import { Footer } from '@/widgets/footer'`: логотип, `/about`, `/skills`, четыре неинтерактивные заглушки и копирайт. Компонент подключён в MainLayout (P3-05). Для stories и тестов нужен роутер.
 - `NotificationsPanel` — `import { NotificationsPanel } from '@/widgets/notifications-panel'`: содержимое окна колокольчика с секциями новых и просмотренных уведомлений, пустым состоянием и callback-пропсами. `NotificationItem` и `MarkAllReadButton` готовы; хранение готово в P4-07, подключение к Header относится к P7-05.
@@ -58,7 +58,7 @@
 - «База данных» в браузере (P4-01, P4-10) — данные берём только через `entities/*/api` (`getUsers()`, `getSkills()`…): ответ приходит через ~300 мс, изменения сохраняются в localStorage. Напрямую в localStorage и в файлы `public/db` не ходим.
 - Правила полей для форм — `emailField()`, `passwordField()`, `nameField()`, `birthDateField()`, `textField(min, max)`, `cityField(cityIds)` из `@/shared/lib/validation` (yup, тексты ошибок как в `validation.md`).
 - `useInfiniteScroll(items, batch, delayMs)` из `@/shared/lib/hooks` (P2-15, [PR #152](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/152)) — `visibleItems`, `sentinelRef`, `isLoading`, `hasMore`; каждая порция требует прокрутки. Смена ссылки `items` сбрасывает ленту и отменяет таймер: фильтрацию и сортировку мемоизируй через `useMemo`. Размер и задержку передавай из `CATALOG`, маркер ставь в конце списка.
-- `useDebounce`, `useLocalStorage`, `useClickOutside` из `@/shared/lib/hooks`; `formatDate`, `truncate`, `generateId` из `@/shared/lib/helpers`.
+- `useLocalStorage` и `useClickOutside` из `@/shared/lib/hooks`. Неиспользуемые заготовки `useDebounce` и `shared/lib/helpers.ts` удалены; готовую логику поиска и форматирования уведомлений используем из соответствующих слайсов.
 
 **Стили и ресурсы**
 
@@ -89,21 +89,24 @@
 
 Не берём повторно — уже назначены:
 
-- P3-12, шаг 2 регистрации — `Al-Du9270-art`;
-- P3-14, личный кабинет — `alicevdr`;
-- P4-04, загрузка при старте, и P4-09, вход — `Laurovsky`;
+- P3-13, шаг 3 регистрации и окна — `sosolet`;
+- P4-06, сохранение пользователей и навыков — `Nick-Shvd`;
+- P4-09, вход, и P5-09, шапка вошедшего — `Laurovsky`;
+- P5-05, результаты и сортировка — `viceede`;
+- P5-07, лайки — `Stanislave0`;
 - P6-01, черновик и охрана шагов — `kkiitlin`;
-- P6-03, связь категории и подкатегории — `muntaniolirina`;
-- P3-09, страница навыка — `sosolet`, Review, PR #166;
-- общая P8-02 — Review с назначением `pwkdmc`, но вклады Дианы (PR #159), Андрея (PR #168), мой (PR #169) и Ирины (PR #170) уже приняты. Для остальных участников задача открыта.
+- P6-02, email и пароль — `Al-Du9270-art`;
+- P7-05, уведомления — `muntaniolirina`;
+- P6-03, связь категории и подкатегории — `muntaniolirina`, Review, PR #186;
+- общая P8-02 — Review с назначением `pwkdmc`; вклады Дианы (PR #159), Андрея (PR #168), мой (PR #169) и Ирины (PR #170) уже приняты. Для остальных участников задача открыта.
 
-Полный список назначений и оставшихся зависимостей — в [отчёте](report.md#сейчас-в-работе).
+P4-04 (PR #181), P3-14 (PR #183), P5-04 (PR #178) и P8-01 (PR #189) завершены. Полный список назначений и оставшихся зависимостей на 12.11.2026 — в [отчёте](report.md#сейчас-в-работе).
 
 ## Можно брать сейчас
 
-В Todo **пять задач без исполнителей**: **P3-10 (#43), P3-13 (#46), P4-06 (#55), P5-02 (#60), P7-01 (#74)**. У P3-10/P4-06/P5-02 все прямые зависимости закрыты; для P3-13 остаётся P3-12 (In Progress), для P7-01 — P3-09 (Review).
+В Todo **восемь задач**: **P5-06 (#64), P5-08 (#66), P6-04 (#71), P6-05 (#72), P6-06 (#73), P7-03 (#76), P7-06 (#79), P8-03 (#82)**. P6-05 уже назначена `alicevdr`, остальные семь без исполнителя. Оставшиеся зависимости перечислены для каждой задачи в [отчёте](report.md#готовность-к-todo).
 
-Из Backlog ближайшими можно планировать **P5-04** (P3-10 — Todo), **P6-02** (P6-01 — In Progress), **P5-09** (P4-09 — In Progress), **P8-01** (P4-04 — In Progress). Для остальных участников общую P8-02 можно вернуть из Review в Todo. Незакрытая зависимость не запрещает Todo; совместимость API и общие файлы согласуем перед интеграцией.
+В Backlog остались P8-04, P8-05, P8-06 и P8-07. Полностью закрытых зависимостей у них пока нет: P8-04/P8-05 завершаем после фаз 5–7, P8-06 — после P8-04, P8-07 — после P8-05/P8-06. P8-04/P8-05 можно планировать следующими и проверять готовые части по мере интеграции; перенос на доске согласуем отдельно. Незакрытая зависимость не запрещает Todo; совместимость API и общие файлы согласуем перед интеграцией.
 
 ## P5-01 — готово для следующих задач
 
@@ -117,18 +120,18 @@
 
 - `@/entities/exchange`: `fetchExchanges()`, `addExchange(exchange)`, `selectExchanges` и `selectHasProposed(state, otherUserId)`. Повторный обмен от того же пользователя тому же получателю запрещён.
 - `@/entities/notification`: `fetchNotifications()`, `addNotification(notification)`, `markAllRead()`, `clearAllNotifications()`, `selectNotifications` и `selectHasUnread`. Селекторы показывают данные только текущего пользователя; чтение и очистка берут владельца из сессии.
-- Бейдж карточки уже подключён в P7-04 ([PR #155](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/155)); загрузку обменов в контейнер каталога добавят P5-04/P5-06. Сценарий создания обмена/toast остаётся в P7-03, панель и колокольчик — в P7-05; их остальные зависимости перечислены в [фазе 7](phases/phase-07-skill-profile.md).
+- Бейдж карточки уже подключён в P7-04 ([PR #155](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/155)); загрузку обменов уже подключили в контейнере каталога в P5-04 (PR #178). Сценарий создания обмена/toast остаётся в P7-03, панель и колокольчик — в P7-05; их остальные зависимости перечислены в [фазе 7](phases/phase-07-skill-profile.md).
 
 ## Что дальше
 
 **Фаза 2 завершена — 18/18.** DatePicker и MultiSelect уже в `develop`, повторно делать их не нужно.
 
-**Фаза 3 — 11/16:**
+**Фаза 3 — 15/16:**
 
-- P3-09 на ревью; P3-10 в Todo и может собирать готовые лейауты, панель и секции;
-- P3-12 в работе; Input, DatePicker, MultiSelect, Avatar и общая рамка регистрации готовы;
-- P3-13 в Todo, остаётся шаг 2; Carousel, Modal и FileDropzone готовы;
-- P3-14 в работе, остаётся P3-12; вёрстка DatePicker готова;
+- P3-09 и P3-10 в Done: страница навыка, каталог, результаты, лейауты и панель собраны; данные страницы подключены в P7-01, панель фильтров — в P5-02, результаты остаются в P5-05;
+- P3-12 в Done; Input, DatePicker, MultiSelect, Avatar и общая рамка регистрации готовы;
+- P3-13 в In Progress у `sosolet`, шаг 2 уже готов; Carousel, Modal и FileDropzone готовы;
+- P3-14 в Done: кабинет, меню и вёрстка личных данных готовы; сохранение — P7-06;
 - `/skills`, `/about`, 404, 500, вход и шаг 1 уже реализованы; бизнес-вход, черновик и сохранение регистрации остаются в фазах 4 и 6.
 
 ## Перед PR — частые замечания ревью

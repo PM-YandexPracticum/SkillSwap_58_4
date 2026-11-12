@@ -11,6 +11,7 @@ const category: Category = {
   color: 'art',
   subcategories: [{ id: 'photo', categoryId: 'art', title: 'Фотография' }],
 }
+
 const preloadedState: Partial<RootState> = {
   categories: { items: [category], status: 'succeeded' },
   cities: { items: [{ id: 'moscow', name: 'Москва' }], status: 'succeeded' },
@@ -28,12 +29,61 @@ describe('FiltersPanel', () => {
     expect(screen.getByRole('checkbox', { name: 'Москва' })).toBeInTheDocument()
   })
 
-  it('принимает счётчик и передаёт нажатие сброса наружу', async () => {
+  it('без filtersCount показывает заголовок «Фильтры»', () => {
+    renderWithProviders(<FiltersPanel />, { preloadedState })
+    expect(screen.getByRole('heading', { name: 'Фильтры' })).toBeInTheDocument()
+  })
+
+  it('с filtersCount = 0 показывает «Фильтры» без числа', () => {
+    renderWithProviders(<FiltersPanel filtersCount={0} />, { preloadedState })
+    expect(screen.getByRole('heading', { name: 'Фильтры' })).toBeInTheDocument()
+  })
+
+  it('рендерит «Фильтры (N)» из пропса filtersCount', () => {
+    const { rerender } = renderWithProviders(<FiltersPanel filtersCount={0} />, {
+      preloadedState,
+    })
+    expect(screen.getByRole('heading', { name: 'Фильтры' })).toBeInTheDocument()
+
+    rerender(<FiltersPanel filtersCount={1} />)
+    expect(screen.getByRole('heading', { name: 'Фильтры (1)' })).toBeInTheDocument()
+
+    rerender(<FiltersPanel filtersCount={3} />)
+    expect(screen.getByRole('heading', { name: 'Фильтры (3)' })).toBeInTheDocument()
+  })
+
+  it('вызывает onReset по кнопке «Сбросить» и не трогает store сам', async () => {
     const onReset = vi.fn()
-    const { user } = renderWithProviders(<FiltersPanel filtersCount={2} onReset={onReset} />)
-    expect(screen.getByRole('heading', { name: 'Фильтры (2)' })).toBeInTheDocument()
+    const { user, store } = renderWithProviders(<FiltersPanel onReset={onReset} />, {
+      preloadedState,
+    })
+
+    // имитируем «родитель выставил фильтры» через store — панель их не считает
+    act(() => {
+      store.dispatch({ type: 'catalogFilter/setMode', payload: 'learn' })
+    })
+    const before = store.getState().catalogFilter
+
     await user.click(screen.getByRole('button', { name: 'Сбросить' }))
     expect(onReset).toHaveBeenCalledTimes(1)
+    // FiltersPanel — «тупой»: сам resetFilters не диспатчит
+    expect(store.getState().catalogFilter).toEqual(before)
+  })
+
+  it('клики по фильтрам меняют store (это делают сами фильтры, не панель)', async () => {
+    const { user, store } = renderWithProviders(<FiltersPanel />, { preloadedState })
+
+    await user.click(screen.getByRole('radio', { name: 'Хочу научиться' }))
+    expect(store.getState().catalogFilter.mode).toBe('learn')
+
+    await user.click(screen.getByRole('radio', { name: 'Женский' }))
+    expect(store.getState().catalogFilter.gender).toBe('female')
+
+    await user.click(screen.getByRole('checkbox', { name: 'Москва' }))
+    expect(store.getState().catalogFilter.cityIds).toEqual(['moscow'])
+
+    await user.click(screen.getByRole('checkbox', { name: category.title }))
+    expect(store.getState().catalogFilter.subcategoryIds).toEqual(['photo'])
   })
 
   it('не падает на пустых справочниках и обновляется после их загрузки', async () => {
@@ -45,29 +95,34 @@ describe('FiltersPanel', () => {
     expect(await screen.findByRole('checkbox', { name: category.title })).toBeInTheDocument()
   })
 
-  it('визуальный выбор не меняет фильтры Redux до P5-02', async () => {
-    const { user, store } = renderWithProviders(<FiltersPanel />, { preloadedState })
-    const before = store.getState().catalogFilter
-    await user.click(screen.getByRole('radio', { name: 'Хочу научиться' }))
-    await user.click(screen.getByRole('radio', { name: 'Женский' }))
-    await user.click(screen.getByRole('checkbox', { name: 'Москва' }))
-    await user.click(screen.getByRole('checkbox', { name: category.title }))
-    expect(store.getState().catalogFilter).toEqual(before)
-    expect(screen.getByRole('radio', { name: 'Хочу научиться' })).toBeChecked()
-    expect(screen.getByRole('radio', { name: 'Женский' })).toBeChecked()
+  it('отражает состояние store, установленное снаружи', () => {
+    const { store } = renderWithProviders(<FiltersPanel />, { preloadedState })
+    act(() => {
+      store.dispatch({ type: 'catalogFilter/setMode', payload: 'teach' })
+      store.dispatch({ type: 'catalogFilter/setGender', payload: 'male' })
+      store.dispatch({ type: 'catalogFilter/toggleCity', payload: 'moscow' })
+    })
+    expect(screen.getByRole('radio', { name: 'Могу научить' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Мужской' })).toBeChecked()
+    expect(screen.getByRole('checkbox', { name: 'Москва' })).toBeChecked()
+    // и НЕ показывает счётчик — это ответственность родителя
+    expect(screen.getByRole('heading', { name: 'Фильтры' })).toBeInTheDocument()
   })
 
-  it('независимые панели не связывают радиокнопки и идентификаторы', async () => {
+  it('две панели в одном store синхронизированы, но их id и radio-группы уникальны', async () => {
     const { user } = renderWithProviders(
       <>
         <FiltersPanel />
         <FiltersPanel />
       </>,
+      { preloadedState },
     )
-    const panels = screen.getAllByRole('complementary')
-    await user.click(within(panels[0]).getByRole('radio', { name: 'Хочу научиться' }))
-    expect(within(panels[1]).getByRole('radio', { name: 'Всё' })).toBeChecked()
-    const ids = [...document.querySelectorAll('[id]')].map((element) => element.id)
+    const [first, second] = screen.getAllByRole('complementary')
+
+    await user.click(within(first).getByRole('radio', { name: 'Хочу научиться' }))
+    expect(within(second).getByRole('radio', { name: 'Хочу научиться' })).toBeChecked()
+
+    const ids = [...document.querySelectorAll('[id]')].map((el) => el.id)
     expect(new Set(ids).size).toBe(ids.length)
   })
 })

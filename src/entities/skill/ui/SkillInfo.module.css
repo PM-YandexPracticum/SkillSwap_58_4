@@ -1,6 +1,7 @@
 .card {
   --mini-preview-image-width: 92px;
   --square-aspect-ratio: 1/1;
+  --gallery-size: 324px;
 
   display: flex;
   flex-direction: column;
@@ -9,6 +10,7 @@
   padding: var(--space-36) var(--space-52);
   gap: var(--space-24);
   max-width: 1020px;
+  min-width: 0;
 }
 
 .action {
@@ -20,10 +22,12 @@
 .container {
   display: flex;
   gap: 77px;
+  flex-wrap: nowrap;
 }
 
 .content {
   min-width: 399px;
+  flex: 1; /* Контент занимает оставшееся место */
 }
 
 .skill {
@@ -50,23 +54,37 @@
   margin-bottom: var(--space-24);
 }
 
+/* Обертка для слайда внутри карусели */
+.carouselSlide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
 .image {
-  width: 324px;
+  width: var(--gallery-size);
+  height: var(--gallery-size); /* Фиксируем высоту, чтобы сохранить квадрат */
+  object-fit: cover; /* Изображение заполняет блок без искажений */
   border-radius: var(--radius-s);
+  display: block; /* Убирает лишние отступы снизу у img */
 }
 
 .gallery {
   display: flex;
   gap: var(--space-24);
+  flex-shrink: 0; /* Запрещаем галерее сжиматься */
 }
 
 .galleryCarousel {
-  min-width: 324px;
+  width: var(--gallery-size); /* Фиксируем ширину */
+  min-width: var(--gallery-size);
+  max-width: var(--gallery-size);
   aspect-ratio: var(--square-aspect-ratio);
+  overflow: hidden; /* Важно для работы карусели */
 }
 
 .miniPreview {
-  min-width: 92px;
+  width: var(--mini-preview-image-width); /* Фиксируем ширину колонки превью */
+  min-width: var(--mini-preview-image-width);
   display: flex;
   flex-direction: column;
   gap: var(--space-24);
@@ -75,6 +93,14 @@
 .miniPreviewWrapper {
   position: relative;
   cursor: pointer;
+  width: var(--mini-preview-image-width);
+  height: var(--mini-preview-image-width);
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: var(--radius-s);
+  overflow: hidden;
+  appearance: none;
 }
 
 .miniPreviewOverlay {
@@ -86,8 +112,9 @@
   opacity: 0.5;
   border-radius: var(--radius-s);
   color: var(--color-neutral);
-  width: 92px;
-  aspect-ratio: 1/1;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Оверлей должен быть поверх картинки */
 }
 
 .miniPreviewLabel {
@@ -100,12 +127,47 @@
   font-size: var(--font-size-base);
   line-height: 24px;
   letter-spacing: -0.011em;
-  width: 92px;
-  aspect-ratio: 1/1;
+  width: 100%;
+  height: 100%;
+  z-index: 2; /* Текст должен быть поверх оверлея */
+  margin: 0; /* Убираем стандартные отступы параграфа */
 }
 
 .previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   border-radius: var(--radius-s);
+  display: block;
+}
+
+@media (width <= 1100px) {
+  .card {
+    padding-inline: var(--space-24);
+  }
+
+  .container {
+    flex-direction: column;
+    gap: var(--space-32);
+  }
+
+  .content {
+    min-width: 0;
+  }
+
+  .gallery {
+    max-width: 100%;
+  }
+
+  .galleryCarousel {
+    width: min(var(--gallery-size), 100%);
+    min-width: 0;
+  }
+
+  .miniPreview {
+    flex-direction: row;
+    width: auto;
+  }
 }
 
 .actionCreateOffer > * {

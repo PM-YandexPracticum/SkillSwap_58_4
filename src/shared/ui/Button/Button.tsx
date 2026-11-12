@@ -11,6 +11,8 @@ export interface ButtonProps {
   onClick?: () => void
   /** Содержимое кнопки */
   children: React.ReactNode
+  /** Дополнительный CSS-класс (например, для отступов или ширины) */
+  className?: string
 }
 
 /**
@@ -23,10 +25,11 @@ export function Button({
   disabled,
   onClick,
   children,
+  className,
 }: ButtonProps) {
   return (
     <button
-      className={`${styles.button} ${styles[variant]}`}
+      className={[styles.button, styles[variant], className].filter(Boolean).join(' ')}
       disabled={disabled}
       type={type}
       onClick={onClick}

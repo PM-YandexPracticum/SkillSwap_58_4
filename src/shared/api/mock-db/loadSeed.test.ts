@@ -54,3 +54,21 @@ describe('loadSeed', () => {
     await expect(loadSeed('offline')()).rejects.toThrow('Не удалось загрузить данные «offline»')
   })
 })
+
+it('после ошибки структуры seed повторяет загрузку исправленного файла', async () => {
+  const validate = (value: unknown): value is { id: string; title: string } =>
+    typeof value === 'object' &&
+    value !== null &&
+    'id' in value &&
+    typeof value.id === 'string' &&
+    'title' in value &&
+    typeof value.title === 'string'
+  const fetchSpy = vi
+    .spyOn(globalThis, 'fetch')
+    .mockResolvedValueOnce(jsonResponse([{ id: 'a' }]))
+    .mockResolvedValueOnce(jsonResponse([{ id: 'a', title: 'Исправлено' }]))
+  const load = loadSeed('invalid-record-shape', validate)
+  await expect(load()).rejects.toThrow('Не удалось загрузить данные')
+  expect(await load()).toEqual([{ id: 'a', title: 'Исправлено' }])
+  expect(fetchSpy).toHaveBeenCalledTimes(2)
+})

@@ -11,3 +11,5 @@ export { getCategories } from './api/categoryApi'
 export { CategoryIcon, type CategoryIconProps } from './ui/CategoryIcon'
 export { CategorySubcategorySelect } from './ui/CategorySubcategorySelect'
 export { getAvailableSubcategories, syncCategorySelection } from './lib/linkCategories'
+
+export { findSubcategories } from './lib/findSubcategories'

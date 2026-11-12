@@ -5,6 +5,9 @@ import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react'
 import ChevronUpIcon from '@/shared/assets/icons/chevron-up.svg?react'
 import { Checkbox } from '@/shared/ui/Checkbox'
 import styles from './FilterGroup.module.css'
+import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import { selectCatalogFilter } from '../model/selectors'
+import { toggleCity } from '../model/catalogFilterSlice'
 
 export interface CityFilterProps {
   /** Дополнительный CSS-класс */
@@ -15,12 +18,14 @@ export interface CityFilterProps {
 
 /**
  * Города: первые CATALOG.CITIES_VISIBLE и раскрытие остальных.
- * До P5-02 галочки хранятся локально и не фильтруют каталог.
+ * Выбранные города читаются из `catalogFilter`, а изменения отправляются в store.
  * @see Figma: «Каталог — фильтры применены» (1:2860)
  */
 export function CityFilter({ className, cities }: CityFilterProps) {
+  const dispatch = useAppDispatch()
+
   const [isExpanded, setIsExpanded] = useState(false)
-  const [selectedCities, setSelectedCities] = useState<string[]>([])
+  const selectedCities = useAppSelector(selectCatalogFilter).cityIds
   const id = useId()
   const visibleCities = isExpanded ? cities : cities.slice(0, CATALOG.CITIES_VISIBLE)
   const hasMore = cities.length > CATALOG.CITIES_VISIBLE
@@ -35,11 +40,7 @@ export function CityFilter({ className, cities }: CityFilterProps) {
             key={city.id}
             label={city.name}
             checked={selectedCities.includes(city.id)}
-            onChange={(checked) =>
-              setSelectedCities((current) =>
-                checked ? [...current, city.id] : current.filter((item) => item !== city.id),
-              )
-            }
+            onChange={() => dispatch(toggleCity(city.id))}
             className={styles.item}
           />
         ))}

@@ -2,8 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { MemoryRouter } from 'react-router-dom'
 import { userEvent, within } from 'storybook/test'
 
-import { ROUTER_FUTURE } from '@/shared/config'
-
 import { LoginForm } from './LoginForm'
 
 const FIGMA_LOGIN =
@@ -21,7 +19,7 @@ const meta: Meta<typeof LoginForm> = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter future={ROUTER_FUTURE}>
+      <MemoryRouter>
         <div style={{ width: 436 }}>
           <Story />
         </div>

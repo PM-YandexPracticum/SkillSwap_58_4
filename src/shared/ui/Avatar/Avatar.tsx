@@ -8,6 +8,8 @@ export interface AvatarProps {
   alt: string
   /** Размер: `sm` — шапка (48px), `md` — карточка (100px), `lg` — профиль (244px) */
   size?: 'sm' | 'md' | 'lg'
+  /** Класс для размещения аватара внутри составного компонента. */
+  className?: string
 }
 
 /**
@@ -23,7 +25,7 @@ export interface AvatarProps {
  * @see Figma: «Шапка» (1:2996) — `sm`, «Карточка пользователя» (1:2861) — `md`,
  * «Профиль — личные данные» (1:2370) — `lg`
  */
-export function Avatar({ src, alt, size = 'md' }: AvatarProps) {
+export function Avatar({ src, alt, size = 'md', className }: AvatarProps) {
   const resolvedSrc = resolveImageUrl(src, 'AVATAR')
 
   return (
@@ -31,7 +33,7 @@ export function Avatar({ src, alt, size = 'md' }: AvatarProps) {
       src={resolvedSrc}
       alt={alt}
       loading="lazy"
-      className={`${styles.avatar} ${styles[size]}`}
+      className={[styles.avatar, styles[size], className].filter(Boolean).join(' ')}
     />
   )
 }

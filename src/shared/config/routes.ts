@@ -9,6 +9,8 @@ export const ROUTES = {
   ABOUT: '/about',
   PROFILE: '/profile',
   LOGIN: '/login',
+  /** Явный адрес страницы 404 для программных переходов из страниц. */
+  NOT_FOUND: '/404',
   /** Регистрация — три отдельных маршрута; `/register` ведёт на первый шаг */
   REGISTER: '/register',
   REGISTER_STEP_1: '/register/step-1',
@@ -30,12 +32,3 @@ export const PROFILE_ROUTES = {
 export function getSkillRoute(id: string): string {
   return ROUTES.SKILL.replace(':id', id)
 }
-
-/**
- * Поведение React Router v7, включённое заранее. Передаётся в `future` каждого роутера:
- * `BrowserRouter` приложения и `MemoryRouter` в тестах и stories — иначе в консоли предупреждения.
- */
-export const ROUTER_FUTURE = {
-  v7_startTransition: true,
-  v7_relativeSplatPath: true,
-} as const

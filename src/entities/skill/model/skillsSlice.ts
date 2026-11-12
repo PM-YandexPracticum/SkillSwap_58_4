@@ -20,7 +20,11 @@ const initialState: SkillsState = {
  * Все навыки из «базы» (`entities/skill/api`): образцы + созданные при регистрации.
  * Сохранение нового навыка при регистрации — P4-06.
  */
-export const fetchSkills = createAsyncThunk<Skill[]>('skills/fetchSkills', async () => getSkills())
+export const fetchSkills = createAsyncThunk<Skill[], void, { state: { skills: SkillsState } }>(
+  'skills/fetchSkills',
+  async () => getSkills(),
+  { condition: (_, { getState }) => getState().skills.status !== 'loading' },
+)
 
 export const createNewSkill = createAsyncThunk<Skill, Skill, { rejectValue: string }>(
   'skill/createSkill',

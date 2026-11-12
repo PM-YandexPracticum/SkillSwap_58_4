@@ -6,7 +6,7 @@ import type { Category } from '@/entities/category'
 import { createSkill } from '@/entities/skill/testing'
 import type { PublicUser } from '@/entities/user'
 import { createUser } from '@/entities/user/testing'
-import { ROUTES, ROUTER_FUTURE } from '@/shared/config'
+import { ROUTES } from '@/shared/config'
 import { OfferCard } from '@/widgets/offer-card'
 import { OffersSection } from '@/widgets/offers-section'
 
@@ -102,7 +102,7 @@ function CatalogSections({ proposed = false }: { proposed?: boolean }) {
   })
   return (
     <Provider store={store}>
-      <MemoryRouter future={ROUTER_FUTURE}>
+      <MemoryRouter>
         <Routes>
           <Route
             path={ROUTES.HOME}

@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { MemoryRouter } from 'react-router-dom'
 import { userEvent, within } from 'storybook/test'
-import { ROUTER_FUTURE } from '@/shared/config'
 import { StepCredentials } from './StepCredentials'
 
 const meta = {
@@ -17,7 +16,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <MemoryRouter future={ROUTER_FUTURE}>
+      <MemoryRouter>
         <div style={{ width: 436 }}>
           <Story />
         </div>

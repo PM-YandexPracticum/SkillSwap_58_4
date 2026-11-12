@@ -1,5 +1,6 @@
 import * as yup from 'yup'
 import { VALIDATION } from '@/shared/config/validation'
+import { getAge, parseISODateTime } from './date'
 
 /**
  * Готовые yup-поля для форм. Каждая форма собирает схему из них, а не пишет правила заново -
@@ -16,21 +17,10 @@ const HAS_DIGIT = /\d/
 /** Пробелы внутри пароля запрещены (любые пробельные символы) */
 const HAS_WHITESPACE = /\s/
 
-/** Проверяет, что строка - корректная дата (ISO или иной формат, понятный Date) */
+/** Проверяет, что строка — корректная ISO-дата с существующим календарным днём. */
 function parseBirthDate(value: string): Date | null {
   if (!value) return null
-  const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? null : date
-}
-
-/** Считает полный возраст на текущий момент (день рождения ещё не наступил -> на год меньше) */
-function getAge(birth: Date, now: Date = new Date()): number {
-  let age = now.getFullYear() - birth.getFullYear()
-  const beforeBirthday =
-    now.getMonth() < birth.getMonth() ||
-    (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate())
-  if (beforeBirthday) age -= 1
-  return age < 0 ? 0 : age
+  return parseISODateTime(value) ?? null
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -65,6 +55,11 @@ export function passwordField(): yup.StringSchema<string> {
     )
 }
 
+/** Пароль при входе: принимаем любой сохранённый пароль, но не пустое значение. */
+export function requiredPasswordField(): yup.StringSchema<string> {
+  return yup.string().required('Введите пароль')
+}
+
 /** Имя: 2–40, только буквы, пробел и дефис */
 export function nameField(): yup.StringSchema<string> {
   return yup
@@ -95,7 +90,7 @@ export function birthDateField(): yup.StringSchema<string> {
     .test('birth-date-age-range', 'Возраст от 14 до 100 лет', (value) => {
       const date = parseBirthDate(value ?? '')
       if (!date) return true
-      const age = getAge(date)
+      const age = getAge(value ?? '')
       return age >= AGE.MIN && age <= AGE.MAX
     })
 }
@@ -117,10 +112,15 @@ export function textField(min: number, max: number): yup.StringSchema<string | u
 }
 
 /** Город — только id из справочника городов. */
-export function cityField(cityIds: readonly string[]): yup.StringSchema<string> {
-  return yup
-    .string()
-    .trim()
-    .required('Выберите город из списка')
-    .oneOf([...cityIds], 'Выберите город из списка')
+export function cityField(cityIds?: readonly string[]): yup.StringSchema<string> {
+  const schema = yup.string().trim().required('Выберите город из списка')
+
+  return cityIds === undefined ? schema : schema.oneOf([...cityIds], 'Выберите город из списка')
+}
+
+/** Обязательное название навыка: те же общие ограничения длины, с текстом из validation.md. */
+export function skillTitleField(): yup.StringSchema<string> {
+  const { MIN, MAX } = VALIDATION.SKILL_TITLE
+  const message = `От ${MIN} до ${MAX} символов`
+  return yup.string().trim().required('Введите название навыка').min(MIN, message).max(MAX, message)
 }
