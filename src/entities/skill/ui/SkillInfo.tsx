@@ -36,7 +36,7 @@ export interface SkillInfoProps {
 /**
  * Блок описания навыка: своё название, «Категория / Подкатегория», описание. Кнопки действий передаются через слот `actions`.
  * Названия категории и подкатегории приходят пропсами — их соберёт страница навыка (P3-09, P7-01) селекторами P4-02.
- * Галерея — общий SkillGallery, который также используется в превью регистрации.
+ * Галерея — общий SkillGallery; без фото показываем заглушку навыка.
  * Образец устройства, stories и тестов — UserCard (P3-01).
  * @see Figma: «Страница навыка» (1:2764)
  */
@@ -62,7 +62,10 @@ export function SkillInfo(_props: SkillInfoProps) {
             <div className={styles.actionCreateOffer}>{_props.actions?.createOffer}</div>
           )}
         </section>
-        <SkillGallery title={_props.skill.title} images={_props.skill.images} />
+        <SkillGallery
+          title={_props.skill.title}
+          images={_props.skill.images.length > 0 ? _props.skill.images : ['']}
+        />
       </div>
     </article>
   )

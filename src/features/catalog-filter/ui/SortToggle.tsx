@@ -10,7 +10,7 @@ export interface SortToggleProps {
 
 /**
  * Управляемая кнопка «Сначала новые / Сначала старые»; сообщает следующий порядок родителю.
- * Данные не сортирует и store не меняет (подключение — P5-05).
+ * Данные не сортирует и store не меняет: обработчик CatalogPage вызывает setSort (P5-05).
  * @see Figma: каталог с фильтрами (1:2860), поиск (1:2819)
  */
 export function SortToggle({ value, onChange, className }: SortToggleProps) {

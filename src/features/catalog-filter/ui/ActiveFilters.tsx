@@ -1,7 +1,7 @@
 import { Tag, type TagColor } from '@/shared/ui/Tag'
 import styles from './ActiveFilters.module.css'
 
-/** Готовая подпись фильтра; преобразование id из store в подпись относится к P5-05. */
+/** Готовая подпись фильтра; id и подписи собирает buildActiveFilters на уровне страницы (P5-05). */
 export interface ActiveFilterTag {
   id: string
   label: string

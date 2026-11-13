@@ -15,10 +15,11 @@
   gap: var(--space-16);
 }
 
+/* Перенос зависит от места внутри карточки, а не только от ширины окна. */
 .container {
   display: flex;
-  gap: 77px;
-  flex-wrap: nowrap;
+  gap: var(--space-32) 77px;
+  flex-wrap: wrap;
 }
 
 .content {

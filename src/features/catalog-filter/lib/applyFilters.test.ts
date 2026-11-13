@@ -242,3 +242,29 @@ describe('applyFilters', () => {
     ).toEqual(['no-wishes'])
   })
 })
+
+it('ищет по несортированным id и учитывает изменение выбора при следующем вызове', () => {
+  const filter: CatalogFilterState = {
+    ...baseFilter,
+    mode: 'teach',
+    subcategoryIds: ['time-management', 'music', 'english'],
+    cityIds: ['spb', 'kzn'],
+  }
+  const inputSkills = [...skills].reverse()
+  expect(applyFilters(users, inputSkills, filter, '').map((user) => user.id)).toEqual([
+    'u1',
+    'u2',
+    'u3',
+  ])
+  expect(
+    applyFilters(
+      users,
+      inputSkills,
+      { ...filter, subcategoryIds: ['english'], cityIds: ['kzn'] },
+      '',
+    ).map((user) => user.id),
+  ).toEqual(['u2'])
+  expect(filter.subcategoryIds).toEqual(['time-management', 'music', 'english'])
+  expect(filter.cityIds).toEqual(['spb', 'kzn'])
+  expect(inputSkills).toEqual([...skills].reverse())
+})

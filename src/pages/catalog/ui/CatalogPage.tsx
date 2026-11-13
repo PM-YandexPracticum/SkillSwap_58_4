@@ -29,7 +29,8 @@ function loadCatalogExchanges(dispatch: AppDispatch, getState: () => RootState) 
  * Главная страница P3-10: готовые карточки и секции, панель фильтров и единая область main.
  * Готовые селекторы задают порядок «Популярного» по лайкам и «Нового» по дате регистрации.
  * DataProvider загружает общие данные; страница отдельно запрашивает обмены для бейджей карточек.
- * Результаты — P5-05, выбор фильтров — P5-02, догрузка — P5-06.
+ * Плашки, результаты и сортировка подключены к общему store в P5-05 через applyFilters.
+ * Догрузка списков остаётся в P5-06.
  * @see Figma: 1:2861, 1:2860, 1:2819
  */
 export function CatalogPage() {
@@ -44,7 +45,6 @@ export function CatalogPage() {
   const cities = useAppSelector(selectCities)
   const skills = useAppSelector(selectSkills)
   const searchQuery = useAppSelector(selectSearchQuery)
-  const sort = useAppSelector(selectCatalogFilter).sort
 
   useEffect(() => {
     dispatch(loadCatalogExchanges)
@@ -70,12 +70,14 @@ export function CatalogPage() {
   const hasSearch = searchQuery.trim().length > 0
   const isFiltered = hasSearch || filtersCounter > 0
 
-  const results = isFiltered ? {
-    filters: tags,
-    sort,
-    onRemoveFilter: handleRemoveFilter,
-    onSortChange: handleSortChange,
-  } : undefined
+  const results = isFiltered
+    ? {
+        filters: tags,
+        sort: filters.sort,
+        onRemoveFilter: handleRemoveFilter,
+        onSortChange: handleSortChange,
+      }
+    : undefined
 
   return (
     <main className={styles.page} aria-labelledby="catalog-title">

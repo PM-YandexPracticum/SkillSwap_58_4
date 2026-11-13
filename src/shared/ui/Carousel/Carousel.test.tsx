@@ -1,5 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
+import { useState } from 'react'
+import userEvent from '@testing-library/user-event'
 import { Carousel } from './Carousel'
 import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react'
 
@@ -113,5 +115,60 @@ describe('Carousel', () => {
     expect(slide).toHaveStyle({
       flex: '0 0 calc((100% - 16px) / 2)',
     })
+  })
+
+  it('сохраняет состояние карточки при перестановке слайдов с ключами', async () => {
+    function Slide({ id }: { id: string }) {
+      const [count, setCount] = useState(0)
+      return (
+        <button onClick={() => setCount((value) => value + 1)}>
+          {id}: {count}
+        </button>
+      )
+    }
+    const renderSlides = (ids: string[]) => (
+      <Carousel showArrows={false}>
+        {ids.map((id) => (
+          <Slide key={id} id={id} />
+        ))}
+      </Carousel>
+    )
+    const user = userEvent.setup()
+    const { rerender } = render(renderSlides(['А', 'Б']))
+    await user.click(screen.getByRole('button', { name: 'Б: 0' }))
+    rerender(renderSlides(['Б', 'А']))
+    expect(screen.getByRole('button', { name: 'Б: 1' })).toBeInTheDocument()
+  })
+
+  it('новые callbacks не вызываются до события и не переподключают подписки', () => {
+    const first = vi.fn()
+    const latest = vi.fn()
+    const ready = vi.fn()
+    const { rerender } = render(<Carousel onSelect={first}>{slides}</Carousel>)
+    const select = on.mock.calls.find(([event]) => event === 'select')?.[1] as () => void
+    const subscriptionCount = on.mock.calls.length
+    rerender(
+      <Carousel onSelect={latest} onApiReady={ready}>
+        {slides}
+      </Carousel>,
+    )
+    expect(latest).not.toHaveBeenCalled()
+    expect(ready).not.toHaveBeenCalled()
+    expect(on).toHaveBeenCalledTimes(subscriptionCount)
+    expect(off).not.toHaveBeenCalled()
+    select()
+    expect(latest).toHaveBeenCalledWith(0)
+  })
+
+  it('сообщает о переинициализации API последнему обработчику', () => {
+    const first = vi.fn()
+    const latest = vi.fn()
+    const { rerender } = render(<Carousel onApiReady={first}>{slides}</Carousel>)
+    const reInit = on.mock.calls.find(([event]) => event === 'reInit')?.[1] as () => void
+    rerender(<Carousel onApiReady={latest}>{slides}</Carousel>)
+    expect(latest).not.toHaveBeenCalled()
+    reInit()
+    expect(latest).toHaveBeenCalledWith(mockEmblaApi)
+    expect(first).toHaveBeenCalledTimes(1)
   })
 })

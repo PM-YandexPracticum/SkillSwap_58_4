@@ -1,7 +1,7 @@
 /* Затемнение и размытие из макета; цвет задаёт общий токен. */
 .overlay {
   position: fixed;
-  z-index: 10;
+  z-index: var(--z-modal);
   inset: 0;
   display: flex;
   overflow-y: auto;
@@ -19,5 +19,6 @@
 }
 
 .window:focus-visible {
-  outline: none;
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 4px;
 }

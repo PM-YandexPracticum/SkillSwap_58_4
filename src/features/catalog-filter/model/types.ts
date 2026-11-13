@@ -18,10 +18,9 @@ export interface CatalogFilterState {
   sort: SortOrder
 }
 
-/** Фильтр для снятия отдельной плашки; sort возвращает порядок по умолчанию. */
+/** Фильтр для снятия отдельной плашки; сортировка меняется только через setSort. */
 export type FilterRemoval =
   | { type: 'mode' }
   | { type: 'subcategory'; id: string }
   | { type: 'gender' }
   | { type: 'city'; id: string }
-  | { type: 'sort' }

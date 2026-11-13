@@ -23,7 +23,7 @@ const OPTIONS = [
 export function ModeFilter({ className }: ModeFilterProps) {
   const dispatch = useAppDispatch()
 
-  const mode = useAppSelector(selectCatalogFilter).mode
+  const mode = useAppSelector((state) => selectCatalogFilter(state).mode)
   const name = useId()
 
   return (
