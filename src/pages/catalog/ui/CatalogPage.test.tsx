@@ -44,23 +44,25 @@ describe('CatalogPage', () => {
     expect(screen.queryByRole('status', { name: 'Загрузка' })).not.toBeInTheDocument()
   })
   it('использует ту же оболочку страницы для результатов', () => {
-    renderWithProviders(
-      <CatalogPage
-        results={{
-          filters: [],
-          sort: 'newest',
-          onRemoveFilter: vi.fn(),
-          onSortChange: vi.fn(),
-        }}
-      />,
-      { preloadedState: ready },
-    )
-    expect(screen.getByRole('heading', { name: 'Подходящие предложения: 1' })).toBeInTheDocument()
-    expect(screen.getAllByRole('main')).toHaveLength(1)
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'Каталог предложений' }),
-    ).toBeInTheDocument()
+  renderWithProviders(<CatalogPage />, {
+    preloadedState: {
+      ...ready,
+      catalogFilter: {
+        mode: 'learn',
+        subcategoryIds: [],
+        gender: null,
+        cityIds: [],
+        sort: 'newest',
+      },
+    },
   })
+
+  expect(screen.getByRole('heading', { name: 'Подходящие предложения: 1' })).toBeInTheDocument()
+  expect(screen.getAllByRole('main')).toHaveLength(1)
+  expect(
+    screen.getByRole('heading', { level: 1, name: 'Каталог предложений' }),
+  ).toBeInTheDocument()
+})
   describe('секции «Популярное» и «Новое» (P5-04)', () => {
     // likesCount растёт с номером, дата регистрации — наоборот: Автор 0 самый новый.
     const items = Array.from({ length: 12 }, (_, i) =>
