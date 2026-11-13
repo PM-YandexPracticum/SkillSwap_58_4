@@ -1,6 +1,6 @@
 import type { FilterRemoval } from '@/features/catalog-filter'
 
-/*  "Переводчик" с языка UI-плашек на язык Redux-экшенов. */
+/** Переводит поддержанный id плашки в FilterRemoval; неизвестный формат вызывает ошибку. */
 export function parseFilterRemoval(id: string): FilterRemoval {
   if (id === 'mode') return { type: 'mode' }
   if (id === 'gender') return { type: 'gender' }

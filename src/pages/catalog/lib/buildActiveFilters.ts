@@ -2,7 +2,7 @@ import type { Category } from '@/entities/category'
 import type { City } from '@/entities/city'
 import type { ActiveFilterTag, CatalogFilterState } from '@/features/catalog-filter'
 
-/* Собирает выбранные фильтры в ActiveFilterTag для передачи значения items в <ActiveTags /> */
+/** Строит подписи плашек ActiveFilters; неизвестные id пропускает, поиск хранится отдельно. */
 export function buildActiveFilters(
   filters: CatalogFilterState,
   categories: ReadonlyArray<Category>,

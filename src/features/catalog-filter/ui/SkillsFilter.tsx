@@ -12,7 +12,7 @@ import { selectCatalogFilter } from '../model/selectors'
 export interface SkillsFilterProps {
   /** Дополнительный CSS-класс */
   className?: string
-  /** Справочник из selectCategories; загрузку выполняет страница */
+  /** Справочник из selectCategories; загрузку выполняет общий DataProvider */
   categories: readonly Category[]
 }
 

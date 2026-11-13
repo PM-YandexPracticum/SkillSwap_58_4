@@ -12,7 +12,7 @@ import { toggleCity } from '../model/catalogFilterSlice'
 export interface CityFilterProps {
   /** Дополнительный CSS-класс */
   className?: string
-  /** Справочник из selectCities; загрузку выполняет страница */
+  /** Справочник из selectCities; загрузку выполняет общий DataProvider */
   cities: readonly City[]
 }
 

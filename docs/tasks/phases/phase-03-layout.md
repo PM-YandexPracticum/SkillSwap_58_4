@@ -112,7 +112,7 @@
 > эту анимацию раскрытия делаем уже здесь.
 
 - **Уже готово:** `UserCard` (P3-01); город, навык и подкатегории по id — селекторы `selectCityById`, `selectSubcategoryById`, `selectCategoryBySubcategoryId` из `@/entities/city` и `@/entities/category` (P4-02). Виджет передаёт ему `cityName` (город из справочника), `teachSkill` (название и категория навыка автора) и `learnSubcategories` (подкатегории с категорией для цвета) — сама карточка соседние сущности не знает; лайк — в слот `topAction`, «Подробнее» — в `bottomAction`.
-- **Уточнения:** `OfferCard` принимает `PublicUser` (без пароля); навык автора сейчас находится по `teachSkillId` в `selectSkills`; P4-03 также предоставляет готовый `selectSkillById` для новых потребителей. `FavoriteButton` здесь — только вид: сердечко `like` и число `likesCount`, по клику пока ничего; логику подключит P5-07. Числа секции — `CATALOG.SECTION_COLLAPSED` (3) и `CATALOG.SECTION_EXPANDED` (9). Загрузка при старте готова в P4-04; в изолированных тестах и stories store заполняем через `preloadedState` и фабрики `createUser()` / `createSkill()`.
+- **Уточнения:** `OfferCard` принимает `PublicUser` (без пароля); навык автора находится через `selectSkillById` по `teachSkillId`; селектор использует общий мемоизированный индекс без повторного перебора массива для каждой карточки. `FavoriteButton` здесь — только вид: сердечко `like` и число `likesCount`, по клику пока ничего; логику подключит P5-07. Числа секции — `CATALOG.SECTION_COLLAPSED` (3) и `CATALOG.SECTION_EXPANDED` (9). Загрузка при старте готова в P4-04; в изолированных тестах и stories store заполняем через `preloadedState` и фабрики `createUser()` / `createSkill()`.
 - **Файлы:** `src/widgets/offer-card/`, `src/widgets/offers-section/`, `src/features/favorite-toggle/ui/FavoriteButton.tsx`
 - **Статус на 11.11.2026:** Done, влита в `develop`; исполнитель: `kirill-ai-dev`.
 - **Issue:** [#41](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/41) · PR [#142](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/142)
@@ -180,7 +180,7 @@
 > Это вёрстка — сохранение подключат P6-05 и P6-06.
 
 - **Файлы:** `src/pages/register/ui/RegisterStep3Page.tsx`, `src/features/register/ui/StepSkill.tsx`, `src/features/skill-create/ui/`
-- **Статус на 12.11.2026:** In Progress, исполнитель: `sosolet`. Для интеграции: все прямые зависимости закрыты.
+- **Статус на 13.11.2026:** In Progress, исполнитель: `sosolet`. Для интеграции: все прямые зависимости закрыты.
 - **Issue:** [#46](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/46)
 - **Уже готово:** поля — `Input` и `Textarea` (P2-05); `FileDropzone` (P2-14) — зона загрузки фото с превью и крестиком; сама файлы не проверяет: отдаёт `File[]` в `onFiles`, ошибку и превью получает пропсами. Окно — `Modal` (P2-10) как обёртка: `isOpen`, `onClose`, `children` и обязательный `ariaLabel`; внутренние отступы задаёт содержимое (у превью 40 px, у «Ваше предложение создано» 80/60 px), высокое превью прокручивается само.
 - **Где в макете:** «Регистрация 3 шаг» 1:1761, превью 1:1799, «Ваше предложение создано» 1:2950
