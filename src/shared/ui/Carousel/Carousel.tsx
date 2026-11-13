@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react'
+import {
+  Children,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react'
 
 import styles from './Carousel.module.css'
@@ -22,7 +30,7 @@ export interface CarouselProps {
   loop?: boolean
   /** Колбэк, вызываемый при инициализации/переинициализации API embla */
   onApiReady?: (api: EmblaApi) => void
-  /** Колбэк, вызываемый при смене активного слайда. Получает индекс */
+  /** Индекс активного слайда: при инициализации, смене слайда и reInit */
   onSelect?: (index: number) => void
 }
 
@@ -61,24 +69,31 @@ export function Carousel({
   const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi])
   const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi])
 
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return
-    setPrevBtnEnabled(emblaApi.canScrollPrev())
-    setNextBtnEnabled(emblaApi.canScrollNext())
-    onSelectProp?.(emblaApi.selectedScrollSnap())
-  }, [emblaApi, onSelectProp])
+  // Смена callback не должна переинициализировать подписки и повторно сообщать о выборе.
+  const callbacks = useRef({ onApiReady, onSelect: onSelectProp })
+  useLayoutEffect(() => {
+    callbacks.current = { onApiReady, onSelect: onSelectProp }
+  }, [onApiReady, onSelectProp])
 
   useEffect(() => {
     if (!emblaApi) return
-    onApiReady?.(emblaApi)
-    onSelect()
-    emblaApi.on('select', onSelect)
-    emblaApi.on('reInit', onSelect)
-    return () => {
-      emblaApi.off('select', onSelect)
-      emblaApi.off('reInit', onSelect)
+    const select = () => {
+      setPrevBtnEnabled(emblaApi.canScrollPrev())
+      setNextBtnEnabled(emblaApi.canScrollNext())
+      callbacks.current.onSelect?.(emblaApi.selectedScrollSnap())
     }
-  }, [emblaApi, onSelect, onApiReady])
+    const ready = () => {
+      callbacks.current.onApiReady?.(emblaApi)
+      select()
+    }
+    ready()
+    emblaApi.on('select', select)
+    emblaApi.on('reInit', ready)
+    return () => {
+      emblaApi.off('select', select)
+      emblaApi.off('reInit', ready)
+    }
+  }, [emblaApi])
 
   return (
     <div
@@ -88,23 +103,16 @@ export function Carousel({
     >
       <div className={styles.viewport} ref={emblaRef}>
         <div className={styles.container} style={{ gap: `${gap}px` }}>
-          {Array.isArray(children) ? (
-            children.map((child, index) => (
-              <div
-                key={index}
-                className={styles.slide}
-                style={{
-                  flex: `0 0 calc((100% - ${gap * (slidesToShow - 1)}px) / ${slidesToShow})`,
-                }}
-              >
-                {child}
-              </div>
-            ))
-          ) : (
-            <div className={styles.slide} style={{ flex: `0 0 100%` }}>
-              {children}
+          {Children.map(children, (child) => (
+            <div
+              className={styles.slide}
+              style={{
+                flex: `0 0 calc((100% - ${gap * (slidesToShow - 1)}px) / ${slidesToShow})`,
+              }}
+            >
+              {child}
             </div>
-          )}
+          ))}
         </div>
       </div>
 

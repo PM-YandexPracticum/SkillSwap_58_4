@@ -27,7 +27,7 @@ export function SkillsFilter({ className, categories }: SkillsFilterProps) {
 
   const [expandedIds, setExpandedIds] = useState<string[]>([])
   const [showAll, setShowAll] = useState(false)
-  const subcategoryIds = useAppSelector(selectCatalogFilter).subcategoryIds
+  const subcategoryIds = useAppSelector((state) => selectCatalogFilter(state).subcategoryIds)
   const id = useId()
   const visibleCategories = showAll ? categories : categories.slice(0, CATALOG.CATEGORIES_VISIBLE)
   const Icon = showAll ? ChevronUpIcon : ChevronDownIcon

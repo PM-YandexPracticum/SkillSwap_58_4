@@ -148,4 +148,14 @@ describe('SkillInfo', () => {
     expect(screen.getByRole('button', { name: 'Показать фото 1' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Показать фото 3, ещё 1 фото' })).toBeInTheDocument()
   })
+
+  it('показывает заглушку вместо пустой карусели, если фотографий нет', () => {
+    render(<SkillInfo {...defaultProps} skill={{ ...mockSkill, images: [] }} />)
+    expect(screen.getByRole('img', { name: `${mockSkill.title} — фото 1` })).toHaveAttribute(
+      'src',
+      '/images/skills/placeholder.jpg',
+    )
+    expect(screen.queryByTestId('carousel')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Показать фото/ })).not.toBeInTheDocument()
+  })
 })

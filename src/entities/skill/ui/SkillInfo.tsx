@@ -36,12 +36,14 @@ export interface SkillInfoProps {
 /**
  * Блок описания навыка: своё название, «Категория / Подкатегория», описание. Кнопки действий передаются через слот `actions`.
  * Названия категории и подкатегории приходят пропсами — их соберёт страница навыка (P3-09, P7-01) селекторами P4-02.
+ * Без изображений используется общая заглушка навыка; одно фото не требует Carousel.
  * Образец устройства, stories и тестов — UserCard (P3-01).
  * @see Figma: «Страница навыка» (1:2764)
  */
 
 export function SkillInfo(_props: SkillInfoProps) {
   const [mainApi, setMainApi] = useState<EmblaApi>()
+  const images = _props.skill.images.length > 0 ? _props.skill.images : [null]
 
   const scrollTo = (index: number) => {
     mainApi?.scrollTo(index)
@@ -49,7 +51,7 @@ export function SkillInfo(_props: SkillInfoProps) {
 
   // Обертка для слайдов карусели.
   // Важно: Carousel должен получать слайды как отдельные элементы.
-  const getSkillImages = (images: string[]): ReactNode => {
+  const getSkillImages = (images: ReadonlyArray<string | null>): ReactNode => {
     return images.map((image, index) => (
       <div key={index} className={styles.carouselSlide}>
         <img
@@ -120,14 +122,14 @@ export function SkillInfo(_props: SkillInfoProps) {
           )}
         </section>
         <div className={styles.gallery}>
-          {_props.skill.images.length !== 1 ? (
+          {images.length > 1 ? (
             <Carousel onApiReady={setMainApi} className={styles.galleryCarousel}>
-              {getSkillImages(_props.skill.images)}
+              {getSkillImages(images)}
             </Carousel>
           ) : (
-            getSkillImages(_props.skill.images)
+            getSkillImages(images)
           )}
-          {_props.skill.images.length !== 1 && (
+          {images.length > 1 && (
             <div className={styles.miniPreview}>{getMiniPreview(_props.skill.images)}</div>
           )}
         </div>

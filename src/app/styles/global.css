@@ -63,6 +63,11 @@
   --radius-m: 20px;
   --radius-l: 50%;
 
+  /* Слои: элементы страницы < поповеры < модальные окна < уведомления. */
+  --z-popover: 100;
+  --z-modal: 200;
+  --z-toast: 300;
+
   /* Layout */
   --container-width: 1368px;
   --container-width-narrow: 1136px;
