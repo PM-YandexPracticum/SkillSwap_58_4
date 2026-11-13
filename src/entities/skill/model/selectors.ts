@@ -1,3 +1,5 @@
+import { createSelector } from '@reduxjs/toolkit'
+import { createLookup } from '@/shared/lib/createLookup'
 import type { ID } from '@/shared/types'
 import type { Skill } from './types'
 
@@ -13,9 +15,13 @@ export const selectSkillsSaveStatus = (state: RootState) => state.skills.saveSta
 /** Понятная ошибка последней группы записей, сбрасывается новой попыткой. */
 export const selectSkillsSaveError = (state: RootState) => state.skills.saveError
 
-/** Навык по id или undefined, если он не найден. */
+const selectSkillsLookup = createSelector([selectSkills], (skills) =>
+  createLookup(skills, (skill) => skill.id),
+)
+
+/** Навык по id через общий индекс; undefined, если он не найден. */
 export const selectSkillById = (state: RootState, skillId: ID): Skill | undefined =>
-  selectSkills(state).find((skill) => skill.id === skillId)
+  selectSkillsLookup(state)(skillId)
 
 /** Предлагаемый навык автора: по модели у пользователя ровно одно предложение. */
 export const selectSkillsByAuthor = (state: RootState, userId: ID): Skill | undefined =>
