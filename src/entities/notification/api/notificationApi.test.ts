@@ -1,6 +1,7 @@
 import { createNotification } from '../testing'
 import {
   createNotification as saveNotification,
+  ensureExchangeNotification,
   getNotifications,
   markAllNotificationsRead,
   clearNotifications,
@@ -65,5 +66,42 @@ describe('notificationApi', () => {
     const items = await afterClear.getNotifications()
     expect(items.some((item) => item.userId === own.userId)).toBe(false)
     expect(items).toContainEqual(other)
+  })
+})
+
+describe('ensureExchangeNotification', () => {
+  it('возвращает прочитанную запись с другим id без повторной записи и не меняет дату', async () => {
+    const read = createNotification({
+      id: 'existing-read',
+      userId: 'ensure-owner',
+      exchangeId: 'ensure-exchange',
+      isRead: true,
+    })
+    await saveNotification(read)
+    const write = vi.spyOn(Storage.prototype, 'setItem')
+    try {
+      expect(await ensureExchangeNotification({ ...read, id: 'new', isRead: false })).toEqual(read)
+      expect(write).not.toHaveBeenCalled()
+    } finally {
+      write.mockRestore()
+    }
+  })
+
+  it('параллельный повтор возвращает одну запись и не объединяет разных владельцев', async () => {
+    const notification = createNotification({
+      id: 'ensure-one',
+      userId: 'ensure-owner',
+      exchangeId: 'ensure-exchange',
+    })
+    const result = await Promise.all([
+      ensureExchangeNotification(notification),
+      ensureExchangeNotification({ ...notification, id: 'ensure-two' }),
+    ])
+    expect(result).toEqual([notification, notification])
+    const other = { ...notification, id: 'ensure-other', userId: 'another-owner' }
+    expect(await ensureExchangeNotification(other)).toEqual(other)
+    expect(
+      (await getNotifications()).filter((item) => item.exchangeId === notification.exchangeId),
+    ).toEqual([notification, other])
   })
 })

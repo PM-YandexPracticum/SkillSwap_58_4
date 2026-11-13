@@ -36,6 +36,17 @@ export function createNotification(notification: Notification): Promise<Notifica
   return enqueue(() => notifications.create(input))
 }
 
+/**
+ * Сохранить уведомление обмена или вернуть существующее (в том числе прочитанное).
+ * Проверка и создание выполняются одним действием коллекции; список не передаётся в feature.
+ */
+export function ensureExchangeNotification(notification: Notification): Promise<Notification> {
+  const input = { ...notification }
+  return enqueue(() =>
+    notifications.createIfAbsent(input, (item) => JSON.stringify([item.userId, item.exchangeId])),
+  )
+}
+
 /** Отметить одно уведомление прочитанным; для кнопки «Прочитать все» — markAllRead в model. */
 export function markNotificationRead(id: string): Promise<Notification> {
   return enqueue(() => notifications.update(id, { isRead: true }))

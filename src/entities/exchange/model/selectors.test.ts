@@ -1,4 +1,4 @@
-import { selectExchanges, selectHasProposed } from './selectors'
+import { selectExchanges, selectHasProposed, selectOutgoingExchange } from './selectors'
 import type { Exchange } from './types'
 
 const items: Exchange[] = [
@@ -46,6 +46,15 @@ describe('exchange selectors', () => {
     expect(selectHasProposed(state, 'sender')).toBe(false)
     expect(selectHasProposed(state, 'unknown')).toBe(false)
   })
+  it('возвращает исходящую запись для повтора незавершённого уведомления', () => {
+    const pending = { ...items[0], notificationPending: true }
+    const state = setup()
+    state.exchanges.items = [pending, items[1]]
+    expect(selectOutgoingExchange(state, 'recipient')).toBe(pending)
+    expect(selectOutgoingExchange(state, 'sender')).toBeUndefined()
+    expect(selectHasProposed(state, 'recipient')).toBe(true)
+  })
+
   it('после выхода не показывает обмены и бейдж предложенного обмена', () => {
     const state = { ...setup(), session: { session: null } } as RootState
     expect(selectExchanges(state)).toEqual([])

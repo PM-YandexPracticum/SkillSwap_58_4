@@ -4,6 +4,7 @@ import type { ReactElement, ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { createAppStore, type AppStore } from '@/app/store'
+import { ToastProvider } from '@/app/providers/ToastProvider'
 
 export interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper'> {
   /** Начальное состояние store: `{ session: { session: { userId: 'u01', token: 't' } } }` */
@@ -20,7 +21,8 @@ export interface RenderWithProvidersOptions extends Omit<RenderOptions, 'wrapper
 }
 
 /**
- * Рендер компонента в тесте вместе с Redux store и роутером — иначе `useAppSelector` и `<Link>` падают.
+ * Рендер компонента в тесте вместе с Redux store, ToastProvider и роутером — иначе
+ * `useAppSelector`, `useToast` и `<Link>` падают.
  * Каждый вызов создаёт новый store, поэтому тесты не влияют друг на друга.
  *
  * @example
@@ -47,7 +49,9 @@ export function renderWithProviders(
   function Wrapper({ children }: { children: ReactNode }) {
     return (
       <Provider store={store}>
-        <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+        <ToastProvider>
+          <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+        </ToastProvider>
       </Provider>
     )
   }

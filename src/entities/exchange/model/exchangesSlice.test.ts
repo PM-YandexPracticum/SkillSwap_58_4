@@ -1,7 +1,12 @@
 import { createTestStore } from '@/app/test/createTestStore'
 import { createExchange, getExchanges } from '../api/exchangeApi'
 import * as exchangeApi from '../api/exchangeApi'
-import { addExchange, fetchExchanges, exchangesReducer } from './exchangesSlice'
+import {
+  addExchange,
+  completeExchangeProposal,
+  fetchExchanges,
+  exchangesReducer,
+} from './exchangesSlice'
 import { selectHasProposed, selectExchangesStatus, selectExchangesError } from './selectors'
 import type { Exchange } from './types'
 
@@ -60,6 +65,30 @@ describe('exchangesSlice', () => {
       expect((await getExchanges()).some((item) => item.id === exchange.id)).toBe(false)
     },
   )
+
+  it('завершает запись уведомления в базе и store', async () => {
+    const store = signedInStore()
+    await store.dispatch(addExchange({ ...exchange, notificationPending: true })).unwrap()
+    await store.dispatch(completeExchangeProposal(exchange.id)).unwrap()
+    expect(store.getState().exchanges.items[0].notificationPending).toBe(false)
+    expect(
+      (await getExchanges()).find((item) => item.id === exchange.id)?.notificationPending,
+    ).toBe(false)
+    expect(selectExchangesStatus(store.getState())).toBe('succeeded')
+  })
+
+  it.each([null, 'other-owner'])('не завершает чужой обмен при сессии %s', async (userId) => {
+    await createExchange({ ...exchange, notificationPending: true })
+    const store = createTestStore({
+      session: { session: userId ? { userId, token: 'test' } : null },
+    })
+    await expect(
+      store.dispatch(completeExchangeProposal(exchange.id)).unwrap(),
+    ).rejects.toBeTruthy()
+    expect(
+      (await getExchanges()).find((item) => item.id === exchange.id)?.notificationPending,
+    ).toBe(true)
+  })
 
   it('после ошибки загрузки сохраняет прежний список и статус failed', () => {
     const initial = {
