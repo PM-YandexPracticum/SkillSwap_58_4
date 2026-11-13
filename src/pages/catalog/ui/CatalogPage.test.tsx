@@ -8,8 +8,22 @@ import { createUser } from '@/entities/user/testing'
 import { CatalogPage } from './CatalogPage'
 
 const ready: Partial<RootState> = {
-  users: { items: [createUser()], status: 'succeeded', error: null },
-  skills: { items: [], status: 'succeeded', error: null },
+  users: {
+    saveStatus: 'idle' as const,
+    pendingSaves: 0,
+    saveError: null,
+    items: [createUser()],
+    status: 'succeeded',
+    error: null,
+  },
+  skills: {
+    saveStatus: 'idle' as const,
+    pendingSaves: 0,
+    saveError: null,
+    items: [],
+    status: 'succeeded',
+    error: null,
+  },
   categories: { items: [], status: 'succeeded' },
   cities: { items: [], status: 'succeeded' },
   exchanges: { items: [], status: 'succeeded', pendingRequests: 0, error: null },
@@ -30,23 +44,25 @@ describe('CatalogPage', () => {
     expect(screen.queryByRole('status', { name: 'Загрузка' })).not.toBeInTheDocument()
   })
   it('использует ту же оболочку страницы для результатов', () => {
-    renderWithProviders(
-      <CatalogPage
-        results={{
-          filters: [],
-          sort: 'newest',
-          onRemoveFilter: vi.fn(),
-          onSortChange: vi.fn(),
-        }}
-      />,
-      { preloadedState: ready },
-    )
-    expect(screen.getByRole('heading', { name: 'Подходящие предложения: 1' })).toBeInTheDocument()
-    expect(screen.getAllByRole('main')).toHaveLength(1)
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'Каталог предложений' }),
-    ).toBeInTheDocument()
+  renderWithProviders(<CatalogPage />, {
+    preloadedState: {
+      ...ready,
+      catalogFilter: {
+        mode: 'learn',
+        subcategoryIds: [],
+        gender: null,
+        cityIds: [],
+        sort: 'newest',
+      },
+    },
   })
+
+  expect(screen.getByRole('heading', { name: 'Подходящие предложения: 1' })).toBeInTheDocument()
+  expect(screen.getAllByRole('main')).toHaveLength(1)
+  expect(
+    screen.getByRole('heading', { level: 1, name: 'Каталог предложений' }),
+  ).toBeInTheDocument()
+})
   describe('секции «Популярное» и «Новое» (P5-04)', () => {
     // likesCount растёт с номером, дата регистрации — наоборот: Автор 0 самый новый.
     const items = Array.from({ length: 12 }, (_, i) =>
@@ -60,8 +76,18 @@ describe('CatalogPage', () => {
     )
     const withUsers: Partial<RootState> = {
       ...ready,
-      users: { items, status: 'succeeded', error: null },
+      users: {
+        saveStatus: 'idle' as const,
+        pendingSaves: 0,
+        saveError: null,
+        items,
+        status: 'succeeded',
+        error: null,
+      },
       skills: {
+        saveStatus: 'idle' as const,
+        pendingSaves: 0,
+        saveError: null,
         items: items.map((u) => createSkill({ id: u.teachSkillId, authorId: u.id })),
         status: 'succeeded',
         error: null,
@@ -120,7 +146,17 @@ describe('CatalogPage', () => {
     it('карточка может повторяться между секциями', () => {
       const one = createUser({ id: 'solo', name: 'Единственный' })
       renderWithProviders(<CatalogPage />, {
-        preloadedState: { ...ready, users: { items: [one], status: 'succeeded', error: null } },
+        preloadedState: {
+          ...ready,
+          users: {
+            saveStatus: 'idle' as const,
+            pendingSaves: 0,
+            saveError: null,
+            items: [one],
+            status: 'succeeded',
+            error: null,
+          },
+        },
       })
 
       expect(cardsOf('Популярное')[0]).toHaveTextContent('Единственный')

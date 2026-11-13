@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 
 import { selectCategories, selectCategoriesStatus } from '@/entities/category'
 import { selectCities, selectCitiesStatus } from '@/entities/city'
 import { selectSkillsStatus, selectSkillById } from '@/entities/skill'
-import { selectSimilarUsers, selectUsersStatus, selectUserById } from '@/entities/user'
-import { ExchangeProposedModal } from '@/features/exchange-propose'
+import { selectUsersStatus, selectUserById } from '@/entities/user'
+import { ExchangeProposedModal, useProposeExchange } from '@/features/exchange-propose'
 import { ROUTES } from '@/shared/config'
 import { useAppSelector } from '@/shared/lib/store'
 import { Loader } from '@/shared/ui/Loader'
@@ -14,6 +14,7 @@ import { OffersCarousel } from '@/widgets/offers-carousel'
 import { SkillDetails } from '@/widgets/skill-details'
 
 import { buildSkillPageData } from '../lib/buildSkillPageData'
+import { selectSimilarUsers } from '../model/selectSimilarUsers'
 import styles from './SkillPage.module.css'
 
 /** Возвращает пользователя к началу нового навыка, в том числе при переходе с клавиатуры. */
@@ -25,20 +26,20 @@ function focusSkillPage(node: HTMLElement | null) {
 }
 
 /**
+ * Подбор похожих соединяет публичные данные user/skill в model страницы, без связи сущностей друг с другом.
  * Страница навыка `/skill/:id`: SkillDetails (автор, навык, галерея) + «Похожие предложения» (OffersCarousel).
  * Данные и справочники читает из Redux-состояния через селекторы P4-02/P4-03. Стартовую загрузку
- * до открытия маршрута выполняет общий DataProvider; страница не запускает собственные запросы.
- * При смене навыка возвращает прокрутку и фокус к началу страницы, сбрасывает галерею и карусель.
+ * до открытия маршрута выполняет общий DataProvider; предложения обмена страница загружает отдельно,
+ * потому что они нужны только авторизованному пользователю. При смене навыка возвращает прокрутку
+ * и фокус к началу страницы, сбрасывает галерею и состояние операции.
  *
- * Кнопка «Предложить обмен» и окно «Вы предложили обмен» здесь только показывают состояния из макета:
- * после «Готово» кнопка становится «Обмен предложен». Ничего не сохраняется и после перезагрузки сбрасывается —
- * настоящий обмен, уведомление и вход для гостя подключит P7-03.
+ * Гость переходит на вход с сохранённым адресом страницы. Вошедший пользователь создаёт одну
+ * пару «обмен + уведомление» через готовые операции сущностей; повторная попытка после частичного
+ * сбоя восстанавливается по сохранённому признаку notificationPending даже после перезагрузки.
  * @see Figma: «Страница навыка» (1:2764, 1:2709, 1:3110, 1:3052), окно 1:1977, «Обмен предложен» 1:1919
  */
 export function SkillPage() {
   const { id = '' } = useParams()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isProposed, setIsProposed] = useState(false)
   const skill = useAppSelector((state) => selectSkillById(state, id))
   const author = useAppSelector((state) =>
     skill ? selectUserById(state, skill.authorId) : undefined,
@@ -50,11 +51,12 @@ export function SkillPage() {
   const usersStatus = useAppSelector(selectUsersStatus)
   const categoriesStatus = useAppSelector(selectCategoriesStatus)
   const citiesStatus = useAppSelector(selectCitiesStatus)
-
-  useEffect(() => {
-    setIsModalOpen(false)
-    setIsProposed(false)
-  }, [id])
+  const exchange = useProposeExchange({
+    toUserId: author?.id ?? '',
+    skillId: id,
+    toUserName: author?.name ?? '',
+    toUserGender: author?.gender,
+  })
 
   const data = useMemo(
     () =>
@@ -96,17 +98,20 @@ export function SkillPage() {
         categoryTitle={categoryTitle}
         subcategoryTitle={subcategoryTitle}
         learnSubcategories={learnSubcategories}
-        isExchangeProposed={isProposed}
-        onProposeExchange={() => setIsModalOpen(true)}
+        isExchangeProposed={exchange.isProposed}
+        isExchangePending={exchange.isPending}
+        onProposeExchange={exchange.handlePropose}
       />
+      {exchange.error && (
+        <p className={styles.exchangeError} role="alert">
+          {exchange.error}
+        </p>
+      )}
       <OffersCarousel users={similarUsers} renderItem={(user) => <OfferCard user={user} />} />
       <ExchangeProposedModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onConfirm={() => {
-          setIsModalOpen(false)
-          setIsProposed(true)
-        }}
+        isOpen={exchange.isModalOpen}
+        onClose={exchange.closeModal}
+        onConfirm={exchange.closeModal}
       />
     </main>
   )

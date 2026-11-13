@@ -8,8 +8,9 @@ import GalleryEditIcon from '@/shared/assets/icons/gallery-edit.svg?react';
 import styles from './ProfilePersonal.module.css';
 
 /**
- * Раздел «Личные данные» — единственный рабочий раздел кабинета.
- * ProfileForm + AvatarUpload; по «Сохранить» данные сохраняются через `updateUser`.
+ * Вёрстка «Личных данных»: ProfileForm и Avatar пользователя из store.
+ * Форма пока редактирует демонстрационные значения локально.
+ * Сохранение, смену пароля и обработку аватара подключает P7-06.
  * @see Figma: «Профиль_личные данные» (1:2370)
  */
 export function ProfilePersonal() {

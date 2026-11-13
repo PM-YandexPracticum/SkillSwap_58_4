@@ -6,3 +6,8 @@
   margin: 0 auto;
   padding: var(--space-32) 0;
 }
+
+.exchangeError {
+  margin: calc(var(--space-60) * -1) 0 0;
+  color: var(--color-error);
+}

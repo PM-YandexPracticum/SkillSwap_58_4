@@ -17,7 +17,7 @@
 - [`favorites/`](favorites/README.md) — Избранное (`/favorites`, только для вошедших): люди из `likedUserIds` текущего пользователя
 - [`login/`](login/README.md) — Вход (`/login`)
 - [`not-found/`](not-found/README.md) — Ошибка 404 — любой неизвестный URL
-- [`profile/`](profile/README.md) — Личный кабинет (`/profile/*`): рабочий раздел — «Личные данные»; «Заявки», «Мои обмены», «Избранное», «Мои навыки» — заглушки
+- [`profile/`](profile/README.md) — Личный кабинет (`/profile/*`): раздел с формой — «Личные данные»; «Заявки», «Мои обмены», «Избранное», «Мои навыки» — заглушки
 - [`register/`](register/README.md) — Регистрация — три маршрута `/register/step-1…3` с общей рамкой (Stepper + иллюстрация)
 - [`server-error/`](server-error/README.md) — Ошибка 500 (`/500`)
 - [`skill/`](skill/README.md) — Страница навыка (`/skill/:id`)

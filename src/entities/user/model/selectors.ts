@@ -1,6 +1,8 @@
+import { createLookup } from '@/shared/lib/createLookup'
 import { createSelector } from '@reduxjs/toolkit'
 import type { ID } from '@/shared/types'
 import type { PublicUser, User } from './types'
+import { normalizeEmail } from '../lib/normalizeEmail'
 
 /** Общая проекция для UI: учебный пароль остаётся только в store и API. */
 function toPublicUser({ password: _password, ...publicUser }: User): PublicUser {
@@ -17,9 +19,19 @@ export const selectUsers = createSelector([selectStoredUsers], (users): PublicUs
 /** Статус загрузки */
 export const selectUsersStatus = (state: RootState) => state.users.status
 
+/** Состояние записи; не влияет на стартовую загрузку приложения. */
+export const selectUsersSaveStatus = (state: RootState) => state.users.saveStatus
+
+/** Понятная ошибка последней группы записей, сбрасывается новой попыткой. */
+export const selectUsersSaveError = (state: RootState) => state.users.saveError
+
+const selectUsersLookup = createSelector([selectUsers], (users) =>
+  createLookup(users, (user) => user.id),
+)
+
 /** Пользователь для компонента по id; undefined, если его нет. */
 export const selectUserById = (state: RootState, userId: ID): PublicUser | undefined =>
-  selectUsers(state).find((user) => user.id === userId)
+  selectUsersLookup(state)(userId)
 
 /**
  * Полная запись только для логики входа (P4-09) и проверки уникальности email (P4-06).
@@ -27,10 +39,8 @@ export const selectUserById = (state: RootState, userId: ID): PublicUser | undef
  * для компонентов используются selectUsers / selectUserById с типом PublicUser.
  */
 export const selectUserByEmail = (state: RootState, email: string): User | undefined => {
-  const normalizedEmail = email.trim().toLowerCase()
-  return selectStoredUsers(state).find(
-    (user) => user.email.trim().toLowerCase() === normalizedEmail,
-  )
+  const normalizedEmail = normalizeEmail(email)
+  return selectStoredUsers(state).find((user) => normalizeEmail(user.email) === normalizedEmail)
 }
 
 /** Все пользователи по убыванию likesCount, без изменения исходного порядка в store. */
@@ -45,31 +55,3 @@ export const selectNewUsers = createSelector([selectUsers], (users): PublicUser[
 
 /** Порядок один раз перемешан в fetchUsers; лайки и чтение селектора его не меняют. */
 export const selectRecommendedUsers = selectUsers
-
-/**
- * Похожие предложения для `/skill/:id`: другие авторы с предлагаемым навыком той же подкатегории.
- * Порядок пользователей сохраняется; отсутствующие навыки и ссылки на чужой навык пропускаются.
- * Читает skills из RootState без импорта соседней сущности (правило FSD).
- * Возвращает PublicUser[] без паролей и сохраняет ссылку при неизменных пользователях, навыках и id.
- */
-export const selectSimilarUsers = createSelector(
-  [
-    selectUsers,
-    (state: RootState) => state.skills.items,
-    (_state: RootState, skillId: ID) => skillId,
-  ],
-  (users, skills, skillId): PublicUser[] => {
-    const skillsById = new Map(skills.map((skill) => [skill.id, skill]))
-    const currentSkill = skillsById.get(skillId)
-    if (!currentSkill?.subcategoryId) return []
-
-    return users.filter((user) => {
-      const teachSkill = skillsById.get(user.teachSkillId)
-      return (
-        user.id !== currentSkill.authorId &&
-        teachSkill?.authorId === user.id &&
-        teachSkill.subcategoryId === currentSkill.subcategoryId
-      )
-    })
-  },
-)

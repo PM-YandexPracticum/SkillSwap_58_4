@@ -1,4 +1,4 @@
-import { createExchange, getExchanges } from './exchangeApi'
+import { completeExchangeProposal, createExchange, getExchanges } from './exchangeApi'
 import type { Exchange } from '../model/types'
 
 const exchange: Exchange = {
@@ -46,6 +46,27 @@ describe('exchangeApi', () => {
       }),
     ).resolves.toMatchObject({ id: 'reverse' })
   })
+  it('сохраняет завершение уведомления и повторяет его без изменения записи', async () => {
+    await createExchange({ ...exchange, notificationPending: true })
+    const completed = await completeExchangeProposal(exchange.id, exchange.fromUserId)
+    expect(completed.notificationPending).toBe(false)
+    expect(await getExchanges()).toContainEqual(completed)
+    expect(await completeExchangeProposal(exchange.id, exchange.fromUserId)).toEqual(completed)
+  })
+
+  it('не разрешает завершить предложение другого владельца', async () => {
+    await createExchange({ ...exchange, notificationPending: true })
+    await expect(completeExchangeProposal(exchange.id, 'foreign')).rejects.toThrow()
+    expect(
+      (await getExchanges()).find((item) => item.id === exchange.id)?.notificationPending,
+    ).toBe(true)
+  })
+
+  it('старые записи без признака незавершённости остаются завершёнными', async () => {
+    await createExchange(exchange)
+    expect(await completeExchangeProposal(exchange.id, exchange.fromUserId)).toEqual(exchange)
+  })
+
   it('после перезагрузки модулей читает сохранённый обмен и запрещает повтор', async () => {
     await createExchange(exchange)
     vi.resetModules()
@@ -55,4 +76,14 @@ describe('exchangeApi', () => {
       'Вы уже предложили обмен этому пользователю',
     )
   })
+})
+
+it('создаёт обмен за одно чтение коллекции вместо предварительного getAll', async () => {
+  const read = vi.spyOn(Storage.prototype, 'getItem')
+  try {
+    await createExchange(exchange)
+    expect(read.mock.calls.filter(([key]) => key === 'skillswap_db_exchanges')).toHaveLength(1)
+  } finally {
+    read.mockRestore()
+  }
 })

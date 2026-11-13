@@ -3,6 +3,7 @@ export {
   notificationsReducer,
   fetchNotifications,
   addNotification,
+  ensureExchangeNotification,
   markAllRead,
   clearAllNotifications,
   type NotificationsState,

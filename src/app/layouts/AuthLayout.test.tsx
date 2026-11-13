@@ -2,7 +2,9 @@ import { screen, within } from '@testing-library/react'
 import { Link, Route, Routes } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
+import { draftUpdated } from '@/features/register'
 import { ROUTES } from '@/shared/config'
+
 import { AuthLayout } from './AuthLayout'
 
 function renderLayout(route: string) {
@@ -65,7 +67,6 @@ describe('AuthLayout', () => {
   it('закрытие возвращает именно на предыдущую страницу', async () => {
     const { user } = renderLayout(ROUTES.ABOUT)
     await user.click(screen.getByRole('link', { name: 'Войти' }))
-
     await user.click(screen.getByRole('button', { name: 'Закрыть' }))
 
     expect(screen.getByRole('heading', { name: 'О проекте' })).toBeInTheDocument()
@@ -86,9 +87,18 @@ describe('AuthLayout', () => {
 
   it('логотип ведёт на главную независимо от предыдущей страницы', async () => {
     const { user } = renderLayout(ROUTES.LOGIN)
-
     await user.click(screen.getByRole('link', { name: 'SkillSwap' }))
 
     expect(screen.getByRole('heading', { name: 'Каталог' })).toBeInTheDocument()
+  })
+
+  it('закрытие входа не меняет черновик регистрации', async () => {
+    const { user, store } = renderLayout(ROUTES.ABOUT)
+    await user.click(screen.getByRole('link', { name: 'Войти' }))
+    store.dispatch(draftUpdated({ email: 'new@mail.ru' }))
+    await user.click(screen.getByRole('button', { name: 'Закрыть' }))
+
+    expect(screen.getByRole('heading', { name: 'О проекте' })).toBeInTheDocument()
+    expect(store.getState().register.draft.email).toBe('new@mail.ru')
   })
 })

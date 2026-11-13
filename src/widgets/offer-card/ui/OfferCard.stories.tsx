@@ -84,6 +84,9 @@ const meta = {
           },
           categories: { items: categories, status: 'succeeded' as const },
           skills: {
+            saveStatus: 'idle' as const,
+            pendingSaves: 0,
+            saveError: null,
             items: [
               createSkill({
                 id: args.user.teachSkillId,

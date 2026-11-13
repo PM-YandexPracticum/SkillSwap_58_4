@@ -53,7 +53,7 @@ const meta: Meta<typeof ProfilePersonal> = {
             status: 'succeeded' as const,
           },
           // Мокаем список пользователей, чтобы сработал selectUserById
-          users: {
+          users: { saveStatus: 'idle' as const, pendingSaves: 0, saveError: null,
             items: [mockUser],
             status: 'succeeded' as const,
             error: null,
