@@ -12,7 +12,7 @@ import { toggleCity } from '../model/catalogFilterSlice'
 export interface CityFilterProps {
   /** Дополнительный CSS-класс */
   className?: string
-  /** Справочник из selectCities; загрузку выполняет страница */
+  /** Справочник из selectCities; загрузку выполняет общий DataProvider */
   cities: readonly City[]
 }
 
@@ -25,7 +25,7 @@ export function CityFilter({ className, cities }: CityFilterProps) {
   const dispatch = useAppDispatch()
 
   const [isExpanded, setIsExpanded] = useState(false)
-  const selectedCities = useAppSelector(selectCatalogFilter).cityIds
+  const selectedCities = useAppSelector((state) => selectCatalogFilter(state).cityIds)
   const id = useId()
   const visibleCities = isExpanded ? cities : cities.slice(0, CATALOG.CITIES_VISIBLE)
   const hasMore = cities.length > CATALOG.CITIES_VISIBLE

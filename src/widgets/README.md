@@ -7,7 +7,7 @@
 
 Слой **widgets** — крупные самостоятельные блоки интерфейса, собранные из features и entities (шапка, панель фильтров, карточка предложения).
 
-Готовы Header, Footer, CategoriesList/CategoriesMenu, FiltersPanel, OfferCard, OffersSection и NotificationsPanel; OffersCarousel, ProfileSidebar и SkillDetails пока заготовки. Подключение сессии, данных каталога и действий остаётся в задачах фаз 4–7.
+Готовы Header, Footer, CategoriesList/CategoriesMenu, FiltersPanel, OfferCard, OffersSection, NotificationsPanel, OffersCarousel, ProfileSidebar и SkillDetails. Каталог и страница навыка уже получают данные; создание обмена подключено в P7-03. Сессия шапки, лайки, колокольчик и сохранение профиля остаются в P5-09/P5-07/P7-05/P7-06.
 
 ## Что внутри
 

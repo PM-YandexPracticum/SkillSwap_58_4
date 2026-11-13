@@ -131,5 +131,30 @@ describe('Dropdown', () => {
 
       expect(screen.getByText('Меню 3').parentElement).toHaveStyle({ translate: '-196px 0' })
     })
+
+    it('пересчитывает позицию при resize и снимает подписку при закрытии', () => {
+      const { rerender } = render(renderMenu('Меню'))
+      const measure = vi.mocked(HTMLElement.prototype.getBoundingClientRect)
+      measure.mockClear()
+      fireEvent(window, new Event('resize'))
+      expect(measure).toHaveBeenCalledTimes(1)
+      rerender(
+        <Dropdown trigger={trigger} isOpen={false} onClose={vi.fn()}>
+          Меню
+        </Dropdown>,
+      )
+      measure.mockClear()
+      fireEvent(window, new Event('resize'))
+      expect(measure).not.toHaveBeenCalled()
+    })
+
+    it('не измеряет поповер после размонтирования', () => {
+      const { unmount } = render(renderMenu('Меню'))
+      unmount()
+      const measure = vi.mocked(HTMLElement.prototype.getBoundingClientRect)
+      measure.mockClear()
+      fireEvent(window, new Event('resize'))
+      expect(measure).not.toHaveBeenCalled()
+    })
   })
 })

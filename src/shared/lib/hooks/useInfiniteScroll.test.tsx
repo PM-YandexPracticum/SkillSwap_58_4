@@ -418,4 +418,16 @@ describe('useInfiniteScroll', () => {
     finishLoading()
     expect(screen.getAllByRole('listitem')).toHaveLength(12)
   })
+
+  it('сохраняет действующее наблюдение при рендере с тем же маркером', () => {
+    const { rerender } = render(<Feed items={items} />)
+    const initial = observer()
+    initial.intersect()
+    rerender(<Feed items={items} />)
+    expect(observer()).toBe(initial)
+    expect(initial.disconnect).not.toHaveBeenCalled()
+    scroll()
+    finishLoading()
+    expect(screen.getAllByRole('listitem')).toHaveLength(12)
+  })
 })

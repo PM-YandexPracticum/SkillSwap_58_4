@@ -88,6 +88,7 @@ function observeScroll(sentinel: HTMLDivElement, scrollIntent: ScrollIntent, onL
  * Бесконечная лента: сначала batch элементов, при прокрутке к концу — спиннер
  * на delayMs и ещё batch элементов. Каждая порция требует новой прокрутки.
  * При смене items или batch лента начинается сначала, текущая догрузка отменяется.
+ * Наблюдение сохраняется для прежнего DOM-маркера, при замене/удалении снимается.
  * items сравнивается по ссылке: производные списки нужно мемоизировать через useMemo.
  * @param items полный (уже отфильтрованный и отсортированный) список
  * @param batch положительный целый размер порции — CATALOG.SCROLL_BATCH (6)
@@ -111,12 +112,26 @@ export function useInfiniteScroll<T>(
     setIsLoading(false)
   }, [items, batch])
 
-  // RefObject может получить другой DOM-узел без смены items/hasMore.
-  // Переподключаем наблюдение после каждого commit, сохраняя публичный тип ref.
+  const observation = useRef<{ node: HTMLDivElement; stop: () => void } | null>(null)
+
+  // Проверяем ref после commit: маркер может появиться или замениться без смены items.
+  // Подписку сохраняем, пока DOM-узел и разрешение на догрузку не изменились.
   useEffect(() => {
-    if (!hasMore || isLoading || !sentinelRef.current) return
-    return observeScroll(sentinelRef.current, scrollIntent, () => setIsLoading(true))
+    const node = hasMore && !isLoading ? sentinelRef.current : null
+    if (observation.current?.node === node) return
+    observation.current?.stop()
+    observation.current = node
+      ? { node, stop: observeScroll(node, scrollIntent, () => setIsLoading(true)) }
+      : null
   })
+
+  useEffect(
+    () => () => {
+      observation.current?.stop()
+      observation.current = null
+    },
+    [],
+  )
 
   useEffect(() => {
     if (!isLoading) return

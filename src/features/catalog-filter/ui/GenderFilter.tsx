@@ -25,7 +25,7 @@ const OPTIONS = [
 export function GenderFilter({ className }: GenderFilterProps) {
   const dispatch = useAppDispatch()
 
-  const gender = useAppSelector(selectCatalogFilter).gender
+  const gender = useAppSelector((state) => selectCatalogFilter(state).gender)
   const name = useId()
 
   return (

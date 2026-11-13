@@ -16,3 +16,7 @@
 - `UserSummary.tsx` — блок «аватар + имя + город, возраст» со слотом лайка; общий для UserCard и UserProfileCard (P3-02). Длинные имя и город обрезаются многоточием
 - `UserSummary.module.css` — стили блока; место под лайк — только у строки с именем, как в макете
 - `UserProfileCard.tsx` — Расширенная карточка автора на странице навыка: `UserSummary`, «О себе» (если заполнено) и чипы. Пропсы как у UserCard: `PublicUser`, `cityName`, `teachSkill`, `learnSubcategories` (P3-02)
+
+`UserProfileCard` использует `CATALOG.CARD_LEARN_TAGS` и для числа видимых чипов,
+и для счётчика «+N», как `UserCard`. Стили списка ограничены классом компонента
+и не меняют маркеры списков на других страницах.
