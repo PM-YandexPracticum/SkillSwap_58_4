@@ -20,7 +20,7 @@ export interface CatalogViewProps {
   popularUsers: ReadonlyArray<PublicUser>
   /** Для «Нового»: от новых к старым по дате регистрации. */
   newUsers: ReadonlyArray<PublicUser>
-  /** Отдельное состояние вёрстки. Подбор данных и обработчики подключаются в P5-05. */
+  /** Отдельное состояние вёрстки. Вывод результатов фильтрации и поиска. */
   results?: {
     filters: ReadonlyArray<ActiveFilterTag>
     sort: SortOrder
@@ -41,10 +41,8 @@ export function CatalogView({ users, popularUsers, newUsers, results }: CatalogV
 
   const handleResetFilters = (): void => {
     dispatch(resetFilters())
-    /* сброс плашек выбранных фильтров будет в P5-05*/
   }
 
-  /* Рендер секции Подходящие предложения (с использованием стора) будет реализован в P5-05 */
   return (
     <div className={styles.layout}>
       <FiltersPanel
