@@ -5,6 +5,7 @@ import { Button } from '@/shared/ui/Button'
 import styles from './NotificationsPanel.module.css'
 
 import type { Notification } from '@/entities/notification'
+import { EmptyState } from '@/shared/ui/EmptyState'
 
 /** Заголовок раздела новых уведомлений */
 const TITLE_NEW = 'Новые уведомления'
@@ -60,7 +61,7 @@ export function NotificationsPanel({
   return (
     <div className={styles.panel}>
       {isEmpty ? (
-        <p className={styles.empty}>{EMPTY_TEXT}</p>
+        <EmptyState compact title={EMPTY_TEXT}></EmptyState>
       ) : (
         <>
           {unread.length > 0 && (
