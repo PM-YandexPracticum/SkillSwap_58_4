@@ -1,4 +1,4 @@
-import { fireEvent, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
@@ -64,7 +64,9 @@ describe('RegisterStep3Page', () => {
   it('показывает форму шага с «Назад» и «Продолжить», окон пока нет', () => {
     renderStep()
 
-    expect(screen.getByRole('form', { name: 'Укажите, чем вы готовы поделиться' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('form', { name: 'Укажите, чем вы готовы поделиться' }),
+    ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Назад' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Продолжить' })).toBeInTheDocument()
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
@@ -96,9 +98,10 @@ describe('RegisterStep3Page', () => {
   it('выбранное фото попадает в превью', async () => {
     const { user } = renderStep()
 
-    fireEvent.change(screen.getByTestId('filedropzone-input'), {
-      target: { files: [new File(['x'], 'drums.png', { type: 'image/png' })] },
-    })
+    await user.upload(
+      screen.getByTestId('filedropzone-input') as HTMLInputElement,
+      new File(['x'], 'drums.png', { type: 'image/png' }),
+    )
     await screen.findByAltText('Фото 1')
     await user.click(screen.getByRole('button', { name: 'Продолжить' }))
 

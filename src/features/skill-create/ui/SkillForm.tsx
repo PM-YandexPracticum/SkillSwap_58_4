@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 
 import { CategorySubcategorySelect, selectCategories } from '@/entities/category'
-import { VALIDATION } from '@/shared/config'
+import { DATA_ERRORS, VALIDATION } from '@/shared/config'
 import { fileToDataUrl } from '@/shared/lib/image'
 import { useAppSelector } from '@/shared/lib/store'
 import { Button } from '@/shared/ui/Button'
@@ -33,7 +33,9 @@ interface Selection {
  * Выбранные файлы превращаются в data URL через `fileToDataUrl` — в таком виде фото показываются в превью и позже сохраняются.
  *
  * Сейчас это вёрстка: значения хранятся в локальном состоянии, проверок нет.
- * TODO(P6-05): react-hook-form + skillSchema, validateImageFile до fileToDataUrl и вывод ошибки фото, связь категорий (P6-03).
+ * Пока фото читаются и сжимаются, повторный выбор и отправка формы недоступны.
+ * При лимите запрещено только добавление: существующие фото можно удалить и заменить.
+ * TODO(P6-05): react-hook-form + skillSchema и validateImageFile до fileToDataUrl.
  * @see Figma: «Регистрация 3 шаг» (1:1761)
  */
 export function SkillForm({ defaultValues, onSubmit, onBack }: SkillFormProps) {
@@ -45,6 +47,8 @@ export function SkillForm({ defaultValues, onSubmit, onBack }: SkillFormProps) {
   })
   const [description, setDescription] = useState(defaultValues?.description ?? '')
   const [images, setImages] = useState<string[]>([])
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [imageError, setImageError] = useState<string>()
 
   const isFull = images.length >= VALIDATION.SKILL_IMAGES.MAX
   const previews = images.map((url, index) => ({
@@ -53,14 +57,32 @@ export function SkillForm({ defaultValues, onSubmit, onBack }: SkillFormProps) {
   }))
 
   const addImages = async (files: File[]) => {
-    // Файлы, которые не удалось прочитать, пропускаем: проверку и ошибку добавит P6-05
-    const results = await Promise.allSettled(files.map(fileToDataUrl))
-    const urls = results.flatMap((result) => (result.status === 'fulfilled' ? [result.value] : []))
-    setImages((current) => [...new Set([...current, ...urls])].slice(0, VALIDATION.SKILL_IMAGES.MAX))
+    const availableFiles = files.slice(0, VALIDATION.SKILL_IMAGES.MAX - images.length)
+    if (isProcessing || availableFiles.length === 0) return
+
+    setIsProcessing(true)
+    setImageError(undefined)
+    try {
+      const results = await Promise.allSettled(availableFiles.map(fileToDataUrl))
+      const urls = results.flatMap((result) =>
+        result.status === 'fulfilled' ? [result.value] : [],
+      )
+      setImages((current) =>
+        [...new Set([...current, ...urls])].slice(0, VALIDATION.SKILL_IMAGES.MAX),
+      )
+      if (results.some((result) => result.status === 'rejected')) {
+        setImageError(DATA_ERRORS.PROCESS_IMAGES)
+      }
+    } catch {
+      setImageError(DATA_ERRORS.PROCESS_IMAGES)
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (isProcessing) return
     onSubmit(
       {
         title,
@@ -77,6 +99,7 @@ export function SkillForm({ defaultValues, onSubmit, onBack }: SkillFormProps) {
       className={styles.form}
       aria-label="Укажите, чем вы готовы поделиться"
       noValidate
+      aria-busy={isProcessing}
       onSubmit={handleSubmit}
     >
       <div className={styles.fields}>
@@ -98,7 +121,7 @@ export function SkillForm({ defaultValues, onSubmit, onBack }: SkillFormProps) {
         <Textarea
           label="Описание"
           name="description"
-          placeholder="Коротко опишите, чем можете научить"
+          placeholder="Коротко опишите, чему можете научить"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
         />
@@ -106,16 +129,20 @@ export function SkillForm({ defaultValues, onSubmit, onBack }: SkillFormProps) {
           hint="Перетащите или выберите изображения навыка"
           buttonLabel="Выбрать изображения"
           multiple
-          disabled={isFull}
+          uploadDisabled={isFull || isProcessing}
+          error={imageError}
           previews={previews.length ? previews : undefined}
           onFiles={(files) => void addImages(files)}
         />
+        {isProcessing && <p role="status">Обрабатываем изображения…</p>}
       </div>
       <div className={styles.buttons}>
         <Button variant="secondary" onClick={onBack}>
           Назад
         </Button>
-        <Button type="submit">Продолжить</Button>
+        <Button type="submit" disabled={isProcessing}>
+          Продолжить
+        </Button>
       </div>
     </form>
   )

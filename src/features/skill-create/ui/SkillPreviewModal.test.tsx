@@ -1,13 +1,23 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useEffect } from 'react'
+
+const carouselScrollTo = vi.hoisted(() => vi.fn())
 
 import { SkillPreviewModal, type SkillPreviewModalProps } from './SkillPreviewModal'
 
 // Мок Carousel: рендерит слайды как есть
 vi.mock('@/shared/ui/Carousel', () => ({
-  Carousel: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="carousel">{children}</div>
-  ),
+  Carousel: ({
+    children,
+    onApiReady,
+  }: {
+    children: React.ReactNode
+    onApiReady?: (api: { scrollTo: (index: number) => void }) => void
+  }) => {
+    useEffect(() => onApiReady?.({ scrollTo: carouselScrollTo }), [onApiReady])
+    return <div data-testid="carousel">{children}</div>
+  },
 }))
 
 const props: SkillPreviewModalProps = {
@@ -24,6 +34,10 @@ const props: SkillPreviewModalProps = {
 }
 
 describe('SkillPreviewModal', () => {
+  beforeEach(() => {
+    carouselScrollTo.mockClear()
+  })
+
   it('показывает заголовок, подсказку, данные навыка и обе кнопки', () => {
     render(<SkillPreviewModal {...props} />)
 
@@ -57,7 +71,9 @@ describe('SkillPreviewModal', () => {
     render(<SkillPreviewModal {...props} images={['blob:1', 'blob:2', 'blob:3', 'blob:4']} />)
 
     expect(screen.getAllByRole('button', { name: /^Показать фото/ })).toHaveLength(3)
-    expect(screen.getByRole('button', { name: 'Показать фото 3, ещё 1' })).toHaveTextContent('+1')
+    expect(screen.getByRole('button', { name: 'Показать фото 3, ещё 1 фото' })).toHaveTextContent(
+      '+1',
+    )
     expect(within(screen.getByTestId('carousel')).getAllByRole('img')).toHaveLength(4)
   })
 
@@ -109,12 +125,12 @@ describe('SkillPreviewModal', () => {
     expect(onConfirm).toHaveBeenCalledOnce()
   })
 
-  it('мини-превью кликабельны и не ломаются без готовой карусели', async () => {
+  it('переключает карусель по клику на мини-превью', async () => {
     const user = userEvent.setup()
     render(<SkillPreviewModal {...props} />)
 
     await user.click(screen.getByRole('button', { name: 'Показать фото 2' }))
 
-    expect(screen.getByRole('dialog', { name: 'Ваше предложение' })).toBeInTheDocument()
+    expect(carouselScrollTo).toHaveBeenCalledWith(1)
   })
 })

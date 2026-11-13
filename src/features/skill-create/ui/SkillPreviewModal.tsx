@@ -1,9 +1,6 @@
-import { useState } from 'react'
-
+import { SkillGallery } from '@/entities/skill'
 import EditIcon from '@/shared/assets/icons/edit.svg?react'
-import { resolveImageUrl } from '@/shared/lib/image'
 import { Button } from '@/shared/ui/Button'
-import { Carousel, type EmblaApi } from '@/shared/ui/Carousel'
 import { Modal } from '@/shared/ui/Modal'
 
 import styles from './SkillPreviewModal.module.css'
@@ -27,14 +24,12 @@ export interface SkillPreviewModalProps {
   onConfirm: () => void
 }
 
-/** Сколько мини-превью показывается справа от главного фото; на последнем — «+N» с остатком */
-const MINI_PREVIEWS = 3
-
 /**
  * Превью созданного навыка на шаге 3: по центру «Ваше предложение» и «Пожалуйста, проверьте и подтвердите
  * правильность данных»; слева название, «Категория / Подкатегория», описание и кнопки «Редактировать ✎» / «Готово»;
- * справа галерея: главное фото (Carousel) и колонка мини-превью, как на странице навыка. При одном фото — просто картинка.
- * «Редактировать» (а также Esc и клик по фону) закрывает окно и возвращает к форме, «Готово» завершает регистрацию.
+ * справа галерея: общий SkillGallery с главным фото и колонкой мини-превью, как на странице навыка. При одном фото — просто картинка.
+ * «Редактировать», Esc и клик по фону возвращают к форме; «Готово» вызывает onConfirm.
+ * Сохранение и завершение регистрации подключит P6-06.
  * Построено на `shared/ui/Modal`; внутренние отступы задаёт содержимое, высокое окно прокручивается само.
  * @see Figma: «Регистрация 3 шаг - модальное окно ваше предложение» (1:1799)
  */
@@ -45,20 +40,7 @@ export function SkillPreviewModal({
   onEdit,
   onConfirm,
 }: SkillPreviewModalProps) {
-  const [mainApi, setMainApi] = useState<EmblaApi>()
   const categories = [skill.categoryTitle, skill.subcategoryTitle].filter(Boolean).join(' / ')
-  const hiddenCount = images.length - MINI_PREVIEWS
-
-  // Карусель получает слайды отдельными элементами, а не одним вложенным массивом
-  const slides = images.map((image, index) => (
-    <img
-      key={`${index}-${image}`}
-      className={styles.image}
-      src={resolveImageUrl(image, 'SKILL')}
-      alt={`${skill.title || 'Навык'} — фото ${index + 1}`}
-    />
-  ))
-
   return (
     <Modal isOpen={isOpen} onClose={onEdit} ariaLabel="Ваше предложение">
       <div className={styles.content}>
@@ -83,49 +65,7 @@ export function SkillPreviewModal({
               <Button onClick={onConfirm}>Готово</Button>
             </div>
           </div>
-          {images.length > 0 && (
-            <div className={styles.gallery}>
-              <div className={styles.main}>
-                {images.length > 1 ? (
-                  <Carousel onApiReady={setMainApi}>{slides}</Carousel>
-                ) : (
-                  slides
-                )}
-              </div>
-              {images.length > 1 && (
-                <div className={styles.minis}>
-                  {images.slice(0, MINI_PREVIEWS).map((image, index) => {
-                    const hasRest = index === MINI_PREVIEWS - 1 && hiddenCount > 0
-                    return (
-                      <button
-                        key={`${index}-${image}`}
-                        type="button"
-                        className={styles.mini}
-                        aria-label={
-                          hasRest
-                            ? `Показать фото ${index + 1}, ещё ${hiddenCount}`
-                            : `Показать фото ${index + 1}`
-                        }
-                        onClick={() => mainApi?.scrollTo(index)}
-                      >
-                        <img
-                          className={styles.miniImage}
-                          src={resolveImageUrl(image, 'SKILL')}
-                          alt=""
-                        />
-                        {hasRest && (
-                          <>
-                            <span className={styles.miniOverlay} />
-                            <span className={styles.miniLabel}>{`+${hiddenCount}`}</span>
-                          </>
-                        )}
-                      </button>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          )}
+          <SkillGallery title={skill.title} images={images} />
         </div>
       </div>
     </Modal>

@@ -18,8 +18,8 @@ Tab → Enter / Space открывают диалог.
 - `FileDropzone.tsx` — сам компонент + типы пропсов
 - `FileDropzone.module.css` — стили: пунктирная рамка, состояния hover / drag / disabled
 - `FileDropzone.stories.tsx` — Stories: `Default`, `Hover`, `Focus`, `Dragging`,
-  `WithPreview`, `WithMultiplePreviews`, `WithError`, `Disabled`, `SingleFile`
-- `FileDropzone.test.tsx` — unit-тесты (9 сценариев)
+  `WithPreview`, `WithMultiplePreviews`, `WithError`, `Disabled`, `UploadDisabled`, `SingleFile`
+- `FileDropzone.test.tsx` — тесты выбора, drag & drop, удаления и блокировок
 - `index.ts` — публичный API, импорт снаружи только отсюда
 
 ## Props
@@ -33,7 +33,11 @@ Tab → Enter / Space открывают диалог.
 | `onFiles` | `(files: File[]) => void` | — | Отдаёт выбранные / перетащенные файлы |
 | `previews` | `{ url, onRemove }[]` | `undefined` | Превью уже выбранных файлов |
 | `error` | `string` | `undefined` | Текст ошибки под зоной |
-| `disabled` | `boolean` | `undefined` | Блокирует выбор и drop |
+| `disabled` | `boolean` | `undefined` | Блокирует весь компонент, включая удаление |
+| `uploadDisabled` | `boolean` | `undefined` | Блокирует выбор и drop, сохраняя удаление превью |
+
+При заполненном лимите родитель передаёт `uploadDisabled`, а не `disabled`: фотографии можно удалить и заменить.
+Полная блокировка `disabled` сохраняет прежнее поведение. Компонент сам не считает файлы и не обрабатывает их.
 
 ## UX-детали
 
@@ -43,7 +47,7 @@ Tab → Enter / Space открывают диалог.
 - `input.value` сбрасывается после выбора, чтобы повторный выбор того же файла срабатывал;
 - drag & drop: `dragenter`/`dragleave` считаются через `useRef`, `drop` сбрасывает счётчик;
 - крестик удаления — обычная `<button>` с собственными стилями, не `IconButton`
-  (у `IconButton` нет `className` — нельзя задать размер и позицию поверх фото);
+  (сохраняет собственные стили и компактный размер исходного FileDropzone; IconButton применяется для отдельных действий интерфейса);
 - у каждой кнопки удаления уникальная подпись «Удалить фото N» — скринридер
   понимает, какое именно фото удалит пользователь;
 
@@ -51,3 +55,8 @@ Tab → Enter / Space открывают диалог.
 
 Фрейм 1:1761 «Регистрация 3 шаг» — блок под «Описание».
 Состояния hover и focus в макете не нарисованы — креативные значения.
+
+Согласованное уточнение P3-13: прозрачность 80% применяется только к рамке,
+а не ко всей зоне. Текст использует непрозрачный токен `--color-neutral`, кнопка — смесь
+90% `--color-accent-strong` и 10% `--color-text`: исходный акцент на белом
+давал только 4,29:1, поэтому слегка затемнён локально. Глобальные цвета не менялись.

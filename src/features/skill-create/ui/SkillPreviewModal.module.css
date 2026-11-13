@@ -1,7 +1,4 @@
 .content {
-  --gallery-size: 324px;
-  --mini-size: 92px;
-
   display: flex;
   flex-direction: column;
   gap: var(--space-40);
@@ -20,11 +17,13 @@
 .title {
   font-family: var(--font-title);
   font-size: var(--font-size-xl);
+  line-height: 28px;
   font-weight: var(--font-weight-medium);
 }
 
 .subtitle {
   font-size: var(--font-size-xs);
+  line-height: 16px;
 }
 
 .body {
@@ -57,12 +56,14 @@
 .skillTitle {
   font-family: var(--font-title);
   font-size: var(--font-size-2xl);
+  line-height: 40px;
   font-weight: var(--font-weight-medium);
   overflow-wrap: anywhere;
 }
 
 .categories {
   font-size: var(--font-size-xs);
+  line-height: 16px;
   color: var(--color-neutral);
 }
 
@@ -79,78 +80,10 @@
 .actions > * {
   flex: 1;
   min-width: 204px;
+  height: var(--space-48);
 }
 
 .icon {
   width: var(--space-24);
   height: var(--space-24);
-}
-
-.gallery {
-  display: flex;
-  gap: var(--space-24);
-}
-
-.main {
-  width: var(--gallery-size);
-  height: var(--gallery-size);
-  overflow: hidden;
-  border-radius: var(--radius-s);
-}
-
-.image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: var(--radius-s);
-}
-
-.minis {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-24);
-  width: var(--mini-size);
-  min-width: var(--mini-size);
-}
-
-.mini {
-  position: relative;
-  width: var(--mini-size);
-  height: var(--mini-size);
-  padding: 0;
-  border: none;
-  background: none;
-  border-radius: var(--radius-s);
-  overflow: hidden;
-  cursor: pointer;
-  appearance: none;
-}
-
-.miniImage {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: var(--radius-s);
-}
-
-.miniOverlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background-color: var(--color-bg-secondary);
-  border-radius: var(--radius-s);
-  opacity: 0.5;
-}
-
-.miniLabel {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-neutral);
 }
