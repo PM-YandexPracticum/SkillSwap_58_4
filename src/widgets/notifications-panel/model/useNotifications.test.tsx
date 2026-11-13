@@ -69,4 +69,15 @@ describe('useNotifications', () => {
 
     expect(result.current.isLoading).toBe(true)
   })
+
+  it('после ошибки отдаёт текст и функцию retry', () => {
+    const wrapper = createWrapper({
+      session: { session: { userId: 'u01', token: 't' } },
+      notifications: { items: [], status: 'rejected', error: 'Не удалось загрузить уведомления' },
+    })
+    const { result } = renderHook(() => useNotifications(), { wrapper })
+
+    expect(result.current.error).toBe('Не удалось загрузить уведомления')
+    expect(typeof result.current.retry).toBe('function')
+  })
 })

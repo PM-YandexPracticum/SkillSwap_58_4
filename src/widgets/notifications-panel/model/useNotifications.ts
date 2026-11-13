@@ -1,4 +1,7 @@
+import { useCallback, useEffect, useRef } from 'react'
+
 import {
+  fetchNotifications,
   selectHasUnread,
   selectNotifications,
   selectNotificationsError,
@@ -6,7 +9,7 @@ import {
 } from '@/entities/notification'
 import { selectSession } from '@/entities/session'
 import { selectUsers } from '@/entities/user'
-import { useAppSelector } from '@/shared/lib/store'
+import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 
 import { buildNotificationsWithNames } from '../lib/buildNotificationsWithNames'
 import type { NotificationWithName } from './types'
@@ -21,21 +24,24 @@ export interface UseNotificationsResult {
   isLoading: boolean
   /** Понятная ошибка операции или `null`. При ошибке не показываем ложный успех. */
   error: string | null
+  /** Ручной повтор загрузки после ошибки. Пока идёт загрузка — ничего не делает. */
+  retry: () => void
 }
 
 /**
- * Хук. Готовит данные для панели уведомлений: `NotificationWithName[]` и флаг
- * непрочитанных. Действия («Прочитать все», «Очистить», «Перейти») остаются
- * снаружи — в `MainLayout`, где нужны `dispatch`/`navigate`.
+ * Хук. Готовит данные для панели уведомлений и сам загружает их при входе.
+ * Действия («Прочитать все», «Очистить», «Перейти») остаются снаружи — в
+ * `MainLayout`, где нужны `dispatch`/`navigate`.
  *
- * Почему не отдаём `selectNotifications` напрямую: селектор возвращает
- * `Notification[]` без `userName`, а панель по P3-15 «глупая» и склонять
- * имя сама не умеет — склонение делает `buildNotificationsWithNames`.
+ * Загрузка не входит в DataProvider: она своя, у неё своя ошибка и повтор.
+ * Повторного запроса нет, если статус уже loading/succeeded; после ошибки
+ * доступен один явный повтор — `retry()`.
  *
  * @see Figma: 1:2148
  * @see docs/requirements/tz.md — P7-05
  */
 export function useNotifications(): UseNotificationsResult {
+  const dispatch = useAppDispatch()
   const session = useAppSelector(selectSession)
   const notifications = useAppSelector(selectNotifications)
   const users = useAppSelector(selectUsers)
@@ -43,7 +49,32 @@ export function useNotifications(): UseNotificationsResult {
   const status = useAppSelector(selectNotificationsStatus)
   const error = useAppSelector(selectNotificationsError)
 
+  /** Отметка «запрос уже запускали» — без ререндера, чтобы не зациклить эффект. */
+  const requestedRef = useRef(false)
+
   const currentUserId = session?.userId
+
+  useEffect(() => {
+    // Гость — ничего не грузим и сбрасываем отметку для следующего входа.
+    if (!currentUserId) {
+      requestedRef.current = false
+      return
+    }
+    // Уже грузили при этом пользователе — второй запрос не нужен.
+    if (requestedRef.current) return
+    requestedRef.current = true
+    // Статус читаем в момент dispatch: StrictMode не даст второй запрос.
+    void dispatch((_, getState) => {
+      const { status: currentStatus } = getState().notifications
+      if (currentStatus === 'loading' || currentStatus === 'succeeded') return
+      return dispatch(fetchNotifications())
+    })
+  }, [dispatch, currentUserId])
+
+  const retry = useCallback(() => {
+    if (status === 'loading') return
+    void dispatch(fetchNotifications())
+  }, [dispatch, status])
 
   return {
     notifications: currentUserId
@@ -52,5 +83,6 @@ export function useNotifications(): UseNotificationsResult {
     hasUnread,
     isLoading: status === 'loading',
     error,
+    retry,
   }
 }
