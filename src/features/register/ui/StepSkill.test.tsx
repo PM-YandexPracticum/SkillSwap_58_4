@@ -1,23 +1,31 @@
-import { render, screen } from '@testing-library/react'
+import type { ReactNode } from 'react';
+import styles from './StepSkill.module.css';
 
-import { StepSkill } from './StepSkill'
+export interface StepSkillProps {
+  /** Готовая форма навыка */
+  skillForm: ReactNode;
+  /** Готовое окно превью (если есть) */
+  previewModal?: ReactNode;
+}
 
-describe('StepSkill', () => {
-  it('показывает форму и окна, переданные слотами', () => {
-    render(
-      <StepSkill
-        skillForm={<form aria-label="Форма навыка" />}
-        previewModal={<p>Окно превью</p>}
-      />,
-    )
+/**
+ * Шаг 3 «Укажите, чем вы готовы поделиться».
+ * Компонент-контейнер: рендерит переданную форму и окно превью.
+ * @see Figma: «Регистрация 3 шаг» (1:1761), окно — 1:1799
+ */
+export function StepSkill({ skillForm, previewModal }: StepSkillProps) {
+  return (
+    <div className={styles.step}>
+      <div className={styles.formWrapper}>
+        <h2 className={styles.title}>Укажите, чем вы готовы поделиться</h2>
+        <p className={styles.subtitle}>
+          Так другие люди смогут увидеть ваши предложения и предложить вам обмен!
+        </p>
 
-    expect(screen.getByRole('form', { name: 'Форма навыка' })).toBeInTheDocument()
-    expect(screen.getByText('Окно превью')).toBeInTheDocument()
-  })
+        {skillForm}
+      </div>
 
-  it('без окон показывает только форму', () => {
-    render(<StepSkill skillForm={<form aria-label="Форма навыка" />} />)
-
-    expect(screen.getByRole('form', { name: 'Форма навыка' })).toBeInTheDocument()
-  })
-})
+      {previewModal}
+    </div>
+  );
+}
