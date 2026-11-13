@@ -142,7 +142,6 @@ describe('catalogFilterSlice', () => {
     [{ type: 'subcategory', id: 'unknown' }, { subcategoryIds: ['music', 'photo'] }],
     [{ type: 'city', id: 'kzn' }, { cityIds: ['spb'] }],
     [{ type: 'city', id: 'unknown' }, { cityIds: ['kzn', 'spb'] }],
-    [{ type: 'sort' }, { sort: 'newest' }],
   ] as const)('удаляет отдельный фильтр %j', (removal, expected) => {
     const result = catalogFilterReducer(
       selectedFilters,
@@ -161,4 +160,29 @@ describe('catalogFilterSlice', () => {
     expect(reset.mode).toBe('all')
     expect(state.mode).toBe('learn')
   })
+})
+
+it('переключает несортированную категорию с дублями, сохраняя порядок остальных фильтров', () => {
+  const state = { ...selectedFilters, subcategoryIds: ['z', 'music', 'a'] }
+  const selected = catalogFilterReducer(
+    state,
+    catalogFilterSlice.actions.toggleCategory(['photo', 'music', 'photo']),
+  )
+  expect(selected.subcategoryIds).toEqual(['z', 'music', 'a', 'photo'])
+  const cleared = catalogFilterReducer(
+    selected,
+    catalogFilterSlice.actions.toggleCategory(['music', 'photo']),
+  )
+  expect(cleared.subcategoryIds).toEqual(['z', 'a'])
+  expect(cleared.sort).toBe('oldest')
+  expect(state.subcategoryIds).toEqual(['z', 'music', 'a'])
+})
+
+it.each(['subcategory', 'city'] as const)('снятие %s сохраняет выбранную сортировку', (type) => {
+  expect(
+    catalogFilterReducer(
+      selectedFilters,
+      catalogFilterSlice.actions.removeFilter({ type, id: 'music' }),
+    ).sort,
+  ).toBe('oldest')
 })

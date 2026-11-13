@@ -45,7 +45,6 @@ export function CatalogPage() {
   const cities = useAppSelector(selectCities)
   const skills = useAppSelector(selectSkills)
   const searchQuery = useAppSelector(selectSearchQuery)
-  const sort = useAppSelector(selectCatalogFilter).sort
 
   useEffect(() => {
     dispatch(loadCatalogExchanges)
@@ -71,12 +70,14 @@ export function CatalogPage() {
   const hasSearch = searchQuery.trim().length > 0
   const isFiltered = hasSearch || filtersCounter > 0
 
-  const results = isFiltered ? {
-    filters: tags,
-    sort,
-    onRemoveFilter: handleRemoveFilter,
-    onSortChange: handleSortChange,
-  } : undefined
+  const results = isFiltered
+    ? {
+        filters: tags,
+        sort: filters.sort,
+        onRemoveFilter: handleRemoveFilter,
+        onSortChange: handleSortChange,
+      }
+    : undefined
 
   return (
     <main className={styles.page} aria-labelledby="catalog-title">

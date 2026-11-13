@@ -112,6 +112,44 @@ describe('FileDropzone', () => {
     expect(onRemove).toHaveBeenCalledTimes(1)
   })
 
+  it('при отключённом выборе оставляет удаление превью доступным', async () => {
+    const onRemove = vi.fn()
+    const onFiles = vi.fn()
+    render(
+      <FileDropzone
+        hint={hint}
+        buttonLabel={buttonLabel}
+        onFiles={onFiles}
+        uploadDisabled
+        previews={[{ url: '/img/1.jpg', onRemove }]}
+      />,
+    )
+
+    expect(screen.getByRole('button', { name: buttonLabel })).toBeDisabled()
+    expect(screen.getByTestId('filedropzone-zone')).toHaveAttribute('aria-disabled', 'true')
+    fireEvent.drop(screen.getByTestId('filedropzone-zone'), {
+      dataTransfer: { files: [new File(['x'], 'a.png', { type: 'image/png' })] },
+    })
+    expect(onFiles).not.toHaveBeenCalled()
+    await userEvent.click(screen.getByRole('button', { name: 'Удалить фото 1' }))
+    expect(onRemove).toHaveBeenCalledOnce()
+  })
+
+  it('полная блокировка запрещает также удаление превью', async () => {
+    const onRemove = vi.fn()
+    render(
+      <FileDropzone
+        hint={hint}
+        buttonLabel={buttonLabel}
+        onFiles={() => {}}
+        disabled
+        previews={[{ url: '/img/1.jpg', onRemove }]}
+      />,
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Удалить фото 1' }))
+    expect(onRemove).not.toHaveBeenCalled()
+  })
+
   it('показывает текст ошибки', () => {
     render(
       <FileDropzone

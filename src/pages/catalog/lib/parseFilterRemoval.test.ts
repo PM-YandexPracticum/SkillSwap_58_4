@@ -10,8 +10,8 @@ describe('parseFilterRemoval', () => {
     expect(parseFilterRemoval('gender')).toEqual({ type: 'gender' })
   })
 
-  it('sort -> { type: "sort" }', () => {
-    expect(parseFilterRemoval('sort')).toEqual({ type: 'sort' })
+  it('не принимает сортировку как снимаемую плашку', () => {
+    expect(() => parseFilterRemoval('sort')).toThrow()
   })
 
   it('skill:photo -> subcategory с id photo', () => {
