@@ -106,3 +106,24 @@ describe('стартовая загрузка', { timeout: 20_000 }, () => {
     expect(fetchSeed).not.toHaveBeenCalled()
   })
 })
+
+describe('маршруты регистрации P6-01', { timeout: 20_000 }, () => {
+  it.each([ROUTES.REGISTER_STEP_2, ROUTES.REGISTER_STEP_3])(
+    'после открытия %s с новым store возвращает на шаг 1 и позволяет закрыть регистрацию',
+    async (route) => {
+      const { store } = await openApp(route)
+      const user = userEvent.setup()
+      expect(
+        await screen.findByRole('heading', { name: 'Регистрация', level: 1 }),
+      ).toBeInTheDocument()
+      await waitFor(() => expect(window.location.pathname).toBe(ROUTES.REGISTER_STEP_1))
+      await user.click(screen.getByRole('button', { name: 'Закрыть' }))
+      expect(
+        await screen.findByRole('heading', { name: 'Каталог предложений' }),
+      ).toBeInTheDocument()
+      expect(window.location.pathname).toBe(ROUTES.HOME)
+      expect(store.getState().register.completedStep).toBe(0)
+      await waitFor(() => expect(store.getState().exchanges.status).toBe('succeeded'))
+    },
+  )
+})

@@ -5,4 +5,14 @@ export {
 } from './ui/StepCredentials'
 export { StepProfile } from './ui/StepProfile'
 export { StepSkill } from './ui/StepSkill'
-export { registerReducer, selectCompletedStep, type RegisterState } from './model/registerSlice'
+export {
+  registerReducer,
+  draftUpdated,
+  stepCompleted,
+  registerReset,
+  selectCompletedStep,
+  selectRegisterDraft,
+  type RegisterState,
+  type RegisterStep,
+} from './model/registerSlice'
+export type { RegisterDraft } from './model/types'

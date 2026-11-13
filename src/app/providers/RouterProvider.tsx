@@ -4,6 +4,7 @@ import { PROFILE_ROUTES, ROUTES } from '@/shared/config'
 import { Loader } from '@/shared/ui/Loader'
 import { AuthLayout } from '@/app/layouts/AuthLayout'
 import { MainLayout } from '@/app/layouts/MainLayout'
+import { RegisterDraftLifecycle } from '@/app/router/RegisterDraftLifecycle'
 import { RegisterStepGuard } from '@/app/router/RegisterStepGuard'
 import { RequireAuth } from '@/app/router/RequireAuth'
 import { DataProvider } from './DataProvider'
@@ -44,6 +45,7 @@ const ServerErrorPage = lazy(() =>
 export function AppRouter() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <RegisterDraftLifecycle />
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route element={<DataProvider />}>
