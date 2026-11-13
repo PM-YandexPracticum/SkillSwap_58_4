@@ -19,9 +19,12 @@ export interface FileDropzoneProps {
   multiple?: boolean
   /** Выбранные или перетащенные файлы. Проверка — у родителя (`validateImageFile`) */
   onFiles: (files: File[]) => void
-  /** Превью уже выбранных файлов (`blob:`) с крестиком удаления */
+  /** Превью уже выбранных файлов (`blob:`, `data:` или готовый URL) с крестиком удаления */
   previews?: ReadonlyArray<{ url: string; onRemove: () => void }>
   error?: string
+  /** Блокирует только выбор и drop, оставляя удаление превью доступным (например, при лимите фото). */
+  uploadDisabled?: boolean
+  /** Блокирует весь компонент, включая удаление превью. */
   disabled?: boolean
 }
 
@@ -47,8 +50,10 @@ export function FileDropzone({
   onFiles,
   previews,
   error,
+  uploadDisabled,
   disabled,
 }: FileDropzoneProps) {
+  const isUploadDisabled = disabled || uploadDisabled
   /** Счётчик вложенности: dragenter +1, dragleave −1. Пока > 0 — мы внутри зоны */
   const dragDepth = useRef(0)
 
@@ -60,7 +65,7 @@ export function FileDropzone({
 
   /** Открывает системный диалог выбора файла. Вызывается из клика по зоне и по кнопке */
   const openFileDialog = () => {
-    if (disabled) return
+    if (isUploadDisabled) return
     if (inputRef.current) inputRef.current.click()
   }
 
@@ -72,6 +77,7 @@ export function FileDropzone({
 
   /** Пользователь выбрал файл в диалоге (или закрыл его) */
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (isUploadDisabled) return
     const files = e.target.files // берём FileList
     if (!files) return
     if (files.length === 0) return
@@ -83,7 +89,7 @@ export function FileDropzone({
 
   /** Вход в зону или во вложенный элемент */
   const handleDragEnter = () => {
-    if (disabled) return
+    if (isUploadDisabled) return
     dragDepth.current += 1
     setIsDragging(true)
   }
@@ -98,7 +104,7 @@ export function FileDropzone({
   /** Над зоной — разрешаем drop и страхуемся, если dragleave потерялся */
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault() // иначе браузер откроет файл вместо drop
-    if (disabled) return
+    if (isUploadDisabled) return
     if (!isDragging) setIsDragging(true) // страховка от «потерянного» enter
   }
 
@@ -108,7 +114,7 @@ export function FileDropzone({
     dragDepth.current = 0 // полный сброс, НЕ «−1»
     setIsDragging(false) // подсветку гасим всегда, до проверки disabled
 
-    if (disabled) return // зона недоступна — файл не принимаем
+    if (isUploadDisabled) return // зона недоступна — файл не принимаем
 
     const files = e.dataTransfer.files // файлы, отпущенные над зоной
     if (files.length === 0) return // drop без файлов (текст, ссылка) — игнор
@@ -117,7 +123,11 @@ export function FileDropzone({
     onFiles(filesArray) // проверка типа и размера — у родителя
   }
 
-  const zoneClassName = [styles.zone, isDragging && styles.dragging, disabled && styles.disabled]
+  const zoneClassName = [
+    styles.zone,
+    isDragging && styles.dragging,
+    isUploadDisabled && styles.disabled,
+  ]
     .filter(Boolean)
     .join(' ')
 
@@ -126,6 +136,7 @@ export function FileDropzone({
       <div
         className={zoneClassName}
         data-testid="filedropzone-zone"
+        aria-disabled={isUploadDisabled || undefined}
         onClick={openFileDialog}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
@@ -137,7 +148,7 @@ export function FileDropzone({
           type="button"
           className={styles.link}
           onClick={handleButtonClick}
-          disabled={disabled}
+          disabled={isUploadDisabled}
         >
           <GalleryAddIcon className={styles.linkIcon} />
           {buttonLabel}
@@ -151,7 +162,7 @@ export function FileDropzone({
           accept={accept.join(',')}
           onChange={handleInputChange}
           onClick={(e) => e.stopPropagation()} // иначе клик всплывёт до зоны и диалог откроется дважды
-          disabled={disabled}
+          disabled={isUploadDisabled}
         />
       </div>
       {previews && (
