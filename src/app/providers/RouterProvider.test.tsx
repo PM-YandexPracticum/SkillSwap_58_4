@@ -1,5 +1,5 @@
 import { StrictMode } from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
 import { ROUTES } from '@/shared/config'
@@ -84,6 +84,8 @@ describe('стартовая загрузка', { timeout: 20_000 }, () => {
       expect(window.location.pathname).toBe(ROUTES.HOME)
       expect(store.getState()[failedCollection].status).toBe('succeeded')
 
+      await waitFor(() => expect(store.getState().exchanges.status).toBe('succeeded'))
+
       const urls = fetchSeed.mock.calls.map(([input]) => String(input))
       // Каталог отдельно загружает обмены; проверяем только четыре общие коллекции.
       for (const collection of ['users', 'skills', 'categories', 'cities']) {
@@ -103,4 +105,25 @@ describe('стартовая загрузка', { timeout: 20_000 }, () => {
     ).toBeInTheDocument()
     expect(fetchSeed).not.toHaveBeenCalled()
   })
+})
+
+describe('маршруты регистрации P6-01', { timeout: 20_000 }, () => {
+  it.each([ROUTES.REGISTER_STEP_2, ROUTES.REGISTER_STEP_3])(
+    'после открытия %s с новым store возвращает на шаг 1 и позволяет закрыть регистрацию',
+    async (route) => {
+      const { store } = await openApp(route)
+      const user = userEvent.setup()
+      expect(
+        await screen.findByRole('heading', { name: 'Регистрация', level: 1 }),
+      ).toBeInTheDocument()
+      await waitFor(() => expect(window.location.pathname).toBe(ROUTES.REGISTER_STEP_1))
+      await user.click(screen.getByRole('button', { name: 'Закрыть' }))
+      expect(
+        await screen.findByRole('heading', { name: 'Каталог предложений' }),
+      ).toBeInTheDocument()
+      expect(window.location.pathname).toBe(ROUTES.HOME)
+      expect(store.getState().register.completedStep).toBe(0)
+      await waitFor(() => expect(store.getState().exchanges.status).toBe('succeeded'))
+    },
+  )
 })

@@ -3,11 +3,13 @@ export {
   exchangesReducer,
   fetchExchanges,
   addExchange,
+  completeExchangeProposal,
   type ExchangesState,
 } from './model/exchangesSlice'
 export {
   selectExchanges,
   selectHasProposed,
+  selectOutgoingExchange,
   selectExchangesStatus,
   selectExchangesError,
 } from './model/selectors'

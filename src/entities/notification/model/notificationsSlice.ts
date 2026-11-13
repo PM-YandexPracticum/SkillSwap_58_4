@@ -5,6 +5,7 @@ import type { LoadingStatus } from '@/shared/types'
 import {
   clearNotifications,
   createNotification,
+  ensureExchangeNotification as ensureSaved,
   getNotifications,
   markAllNotificationsRead,
 } from '../api/notificationApi'
@@ -55,6 +56,21 @@ export const addNotification = createAsyncThunk<Notification, Notification, Thun
   },
 )
 
+/** Одна атомарная операция для повтора предложения без повторной загрузки всех уведомлений. */
+export const ensureExchangeNotification = createAsyncThunk<Notification, Notification, ThunkConfig>(
+  'notifications/ensureExchange',
+  async (notification, { getState, rejectWithValue }) => {
+    const userId = getState().session.session?.userId
+    if (!userId) return rejectWithValue(DATA_ERRORS.SIGN_IN)
+    if (notification.userId !== userId) return rejectWithValue(DATA_ERRORS.OWNER)
+    try {
+      return await ensureSaved(notification)
+    } catch (error) {
+      return rejectWithValue(saveError(error, DATA_ERRORS.SAVE_NOTIFICATION))
+    }
+  },
+)
+
 /** Прочитать новые уведомления текущего пользователя. Чужие записи не затрагиваются. */
 export const markAllRead = createAsyncThunk<Notification[], void, ThunkConfig>(
   'notifications/markAllRead',
@@ -96,12 +112,6 @@ export const notificationsSlice = createSlice({
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.items = action.payload
       })
-      .addCase(addNotification.fulfilled, (state, action) => {
-        state.items = [
-          ...state.items.filter((item) => item.id !== action.payload.id),
-          action.payload,
-        ]
-      })
       .addCase(markAllRead.fulfilled, (state, action) => {
         // Обновлённые записи могут ещё отсутствовать в store, если загрузка при старте не закончилась.
         const ids = new Set(action.payload.map((item) => item.id))
@@ -111,9 +121,19 @@ export const notificationsSlice = createSlice({
         state.items = state.items.filter((item) => !action.payload.includes(item.id))
       })
       .addMatcher(
+        isAnyOf(addNotification.fulfilled, ensureExchangeNotification.fulfilled),
+        (state, action) => {
+          state.items = [
+            ...state.items.filter((item) => item.id !== action.payload.id),
+            action.payload,
+          ]
+        },
+      )
+      .addMatcher(
         isAnyOf(
           fetchNotifications.pending,
           addNotification.pending,
+          ensureExchangeNotification.pending,
           markAllRead.pending,
           clearAllNotifications.pending,
         ),
@@ -127,6 +147,7 @@ export const notificationsSlice = createSlice({
         isAnyOf(
           fetchNotifications.fulfilled,
           addNotification.fulfilled,
+          ensureExchangeNotification.fulfilled,
           markAllRead.fulfilled,
           clearAllNotifications.fulfilled,
         ),
@@ -140,6 +161,7 @@ export const notificationsSlice = createSlice({
         isAnyOf(
           fetchNotifications.rejected,
           addNotification.rejected,
+          ensureExchangeNotification.rejected,
           markAllRead.rejected,
           clearAllNotifications.rejected,
         ),

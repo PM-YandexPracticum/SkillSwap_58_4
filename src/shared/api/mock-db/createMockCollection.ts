@@ -19,6 +19,8 @@ export interface MockCollection<T extends WithId> {
   getById(id: string): Promise<T | undefined>
   /** Добавить запись. @throws {Error} если запись с таким id уже есть */
   create(item: T): Promise<T>
+  /** Атомарно вернуть существующую запись по ключу либо создать новую, не меняя существующую. */
+  createIfAbsent(item: T, keyOf: (item: T) => string): Promise<T>
   /** Изменить поля записи — возвращает новую запись. @throws {Error} если id не найден */
   update(id: string, changes: Partial<Omit<T, 'id'>>): Promise<T>
   /** Удалить запись. Если её нет — ничего не происходит */
@@ -36,7 +38,7 @@ export interface MockCollectionOptions<T extends WithId = WithId> {
   /** Проверяет обязательные поля записи после JSON.parse. */
   validate?: ItemGuard<T>
   /** Ограничения сущности перед create/update. Проверка и запись выполняются в одной очереди. */
-  validateWrite?: (item: Readonly<T>, items: readonly T[]) => void
+  validateWrite?: (item: Readonly<T>, items: readonly T[], operation: 'create' | 'update') => void
 }
 
 /** Очередь действий каждой коллекции: следующее начинается, когда закончилось предыдущее */
@@ -178,21 +180,31 @@ export function createMockCollection<T extends WithId>(
     return enqueue(key, action)
   }
 
+  function insert(list: T[], item: T): T {
+    const created = clone(item)
+    assertValidItem(created, validate, name)
+    validateWrite?.(created, list, 'create')
+    if (list.some((existing) => existing.id === item.id)) {
+      throw new Error(`Запись с id «${item.id}» уже есть в коллекции «${name}»`)
+    }
+    writeList(key, [...list, created])
+    return clone(created)
+  }
+
   return {
     getAll: () => respond(read),
     getById: (id) => respond(async () => (await read()).find((item) => item.id === id)),
-    create: (item) =>
-      respond(async () => {
+    create: (item) => respond(async () => insert(await read(), item)),
+    createIfAbsent: (item, keyOf) => {
+      const input = clone(item)
+      return respond(async () => {
+        assertValidItem(input, validate, name)
         const list = await read()
-        if (list.some((existing) => existing.id === item.id)) {
-          throw new Error(`Запись с id «${item.id}» уже есть в коллекции «${name}»`)
-        }
-        const created = clone(item)
-        assertValidItem(created, validate, name)
-        validateWrite?.(created, list)
-        writeList(key, [...list, created])
-        return clone(created)
-      }),
+        const key = keyOf(input)
+        const existing = list.find((saved) => keyOf(saved) === key)
+        return existing ? clone(existing) : insert(list, input)
+      })
+    },
     update: (id, changes) =>
       respond(async () => {
         const list = await read()
@@ -200,7 +212,7 @@ export function createMockCollection<T extends WithId>(
         if (!current) throw new Error(`Запись с id «${id}» не найдена в коллекции «${name}»`)
         const updated: T = { ...current, ...clone(changes), id }
         assertValidItem(updated, validate, name)
-        validateWrite?.(updated, list)
+        validateWrite?.(updated, list, 'update')
         writeList(
           key,
           list.map((item) => (item.id === id ? updated : item)),

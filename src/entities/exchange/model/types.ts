@@ -12,5 +12,8 @@ export interface Exchange {
   toUserId: ID
   /** Навык получателя */
   skillId: ID
+  /** Технический признак: предложение записано, но уведомление ещё нужно завершить.
+   * Отсутствие поля у старых записей означает завершённую операцию. Это не статус обмена. */
+  notificationPending?: boolean
   createdAt: ISODateString
 }

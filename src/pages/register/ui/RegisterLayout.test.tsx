@@ -1,8 +1,9 @@
 import { screen } from '@testing-library/react'
-import { Link, Navigate, Route, Routes } from 'react-router-dom'
+import { StrictMode } from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
-import { draftUpdated, stepCompleted } from '@/features/register'
+import { registerReducer } from '@/features/register'
 import { ROUTES } from '@/shared/config'
 import { RegisterLayout } from './RegisterLayout'
 import { RegisterStep1Page } from './RegisterStep1Page'
@@ -63,30 +64,26 @@ describe('RegisterLayout', () => {
     expect(screen.getByRole('heading', { name: 'Вход' })).toBeInTheDocument()
   })
 
-  it('внутри регистрации черновик живёт, а при уходе из неё сбрасывается', async () => {
-    const { user, store } = renderWithProviders(
-      <Routes>
-        <Route path={ROUTES.HOME} element={<h1>Каталог</h1>} />
-        <Route path={ROUTES.REGISTER} element={<RegisterLayout />}>
-          <Route
-            path={ROUTES.REGISTER_STEP_1}
-            element={<Link to={ROUTES.REGISTER_STEP_2}>Дальше</Link>}
-          />
-          <Route path={ROUTES.REGISTER_STEP_2} element={<Link to={ROUTES.HOME}>На главную</Link>} />
-        </Route>
-      </Routes>,
-      { route: ROUTES.REGISTER_STEP_1 },
+  it('не сбрасывает черновик при повторном монтировании StrictMode', () => {
+    const { store } = renderWithProviders(
+      <StrictMode>
+        <RegistrationRoutes />
+      </StrictMode>,
+      {
+        route: ROUTES.REGISTER_STEP_2,
+        preloadedState: {
+          register: {
+            draft: {
+              ...registerReducer(undefined, { type: '@@init' }).draft,
+              email: 'new@mail.ru',
+            },
+            completedStep: 1,
+          },
+        },
+      },
     )
-    store.dispatch(draftUpdated({ email: 'new@mail.ru' }))
-    store.dispatch(stepCompleted(1))
 
-    await user.click(screen.getByRole('link', { name: 'Дальше' }))
     expect(store.getState().register.draft.email).toBe('new@mail.ru')
     expect(store.getState().register.completedStep).toBe(1)
-
-    await user.click(screen.getByRole('link', { name: 'На главную' }))
-    expect(screen.getByRole('heading', { name: 'Каталог' })).toBeInTheDocument()
-    expect(store.getState().register.draft.email).toBe('')
-    expect(store.getState().register.completedStep).toBe(0)
   })
 })

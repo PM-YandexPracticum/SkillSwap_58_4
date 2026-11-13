@@ -9,7 +9,7 @@
 
 ## Что внутри
 
-- `buildSkillPageData.ts` — чисто собирает из уже выбранных данных Redux пропсы `SkillDetails`: навык, автора, названия города и категорий, «Хочет научиться». Похожие предложения отдельно выбирает `selectSimilarUsers` из `@/entities/user`
+- `buildSkillPageData.ts` — чисто собирает из уже выбранных данных Redux пропсы `SkillDetails`: навык, автора, названия города и категорий, «Хочет научиться». Похожие предложения отдельно выбирает `selectSimilarUsers` из `pages/skill/model`
 - `buildSkillPageData.test.ts` — тесты
 
 Названия города и интересы автора берутся через `getCityName` и `findSubcategories` из публичных API

@@ -8,7 +8,7 @@ import {
 } from '@/entities/category'
 import { getCityName, selectCities } from '@/entities/city'
 import { ExchangeStatusBadge, selectHasProposed } from '@/entities/exchange'
-import { selectSkills } from '@/entities/skill'
+import { selectSkillById } from '@/entities/skill'
 import { UserCard, type PublicUser } from '@/entities/user'
 import { FavoriteButton } from '@/features/favorite-toggle'
 import { getSkillRoute } from '@/shared/config'
@@ -31,8 +31,7 @@ export interface OfferCardProps {
 export function OfferCard({ user }: OfferCardProps) {
   const hasProposed = useAppSelector((state) => selectHasProposed(state, user.id))
   const cityName = useAppSelector((state) => getCityName(selectCities(state), user.cityId))
-  const skills = useAppSelector(selectSkills)
-  const skill = skills.find((item) => item.id === user.teachSkillId)
+  const skill = useAppSelector((state) => selectSkillById(state, user.teachSkillId))
   const category = useAppSelector((state) =>
     selectCategoryBySubcategoryId(state, skill?.subcategoryId ?? ''),
   )

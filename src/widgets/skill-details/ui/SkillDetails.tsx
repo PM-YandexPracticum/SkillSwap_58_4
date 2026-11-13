@@ -23,8 +23,10 @@ export interface SkillDetailsProps {
   learnSubcategories: UserProfileCardProps['learnSubcategories']
   /** Обмен уже предложен: вместо «Предложить обмен» — обведённая «Обмен предложен» */
   isExchangeProposed?: boolean
-  /** Нажатие на «Предложить обмен»; логику (вход, обмен, уведомление) подключит P7-03 */
+  /** Сохранение обмена или переход на страницу входа (P7-03). */
   onProposeExchange?: () => void
+  /** Временная блокировка кнопки на время сохранения обмена. */
+  isExchangePending?: boolean
 }
 
 /**
@@ -42,33 +44,35 @@ export function SkillDetails({
   learnSubcategories,
   isExchangeProposed = false,
   onProposeExchange,
+  isExchangePending = false,
 }: SkillDetailsProps) {
   return (
     <section className={styles.skill} aria-label="Навык">
-        <UserProfileCard
-          user={author}
-          cityName={cityName}
-          teachSkill={{ title: skill.title, categoryId: skill.categoryId }}
-          learnSubcategories={learnSubcategories}
-        />
-        <SkillInfo
-          skill={skill}
-          categoryTitle={categoryTitle}
-          subcategoryTitle={subcategoryTitle}
-          actions={{
-            like: <FavoriteButton userId={author.id} likesCount={author.likesCount} />,
-            createOffer: (
-              <ProposeExchangeButton
-                toUserId={author.id}
-                skillId={skill.id}
-                isProposed={isExchangeProposed}
-                onClick={onProposeExchange}
-              />
-            ),
-            share: <IconButton ariaLabel="Поделиться" icon={<ShareIcon aria-hidden="true" />} />,
-            more: <IconButton ariaLabel="Больше опций" icon={<MoreIcon aria-hidden="true" />} />,
-          }}
-        />
+      <UserProfileCard
+        user={author}
+        cityName={cityName}
+        teachSkill={{ title: skill.title, categoryId: skill.categoryId }}
+        learnSubcategories={learnSubcategories}
+      />
+      <SkillInfo
+        skill={skill}
+        categoryTitle={categoryTitle}
+        subcategoryTitle={subcategoryTitle}
+        actions={{
+          like: <FavoriteButton userId={author.id} likesCount={author.likesCount} />,
+          createOffer: (
+            <ProposeExchangeButton
+              toUserId={author.id}
+              skillId={skill.id}
+              isProposed={isExchangeProposed}
+              disabled={isExchangePending}
+              onClick={onProposeExchange}
+            />
+          ),
+          share: <IconButton ariaLabel="Поделиться" icon={<ShareIcon aria-hidden="true" />} />,
+          more: <IconButton ariaLabel="Больше опций" icon={<MoreIcon aria-hidden="true" />} />,
+        }}
+      />
     </section>
   )
 }

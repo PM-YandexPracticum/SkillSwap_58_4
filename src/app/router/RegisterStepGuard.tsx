@@ -5,7 +5,7 @@ import { selectCompletedStep } from '@/features/register'
 import { ROUTES } from '@/shared/config'
 import { useAppSelector } from '@/shared/lib/store'
 
-interface RegisterStepGuardProps {
+export interface RegisterStepGuardProps {
   /** Какой это шаг: 2 или 3 */
   step: 2 | 3
   children: ReactNode
