@@ -11,3 +11,4 @@ export {
 export { getSkills, getSkillById, createSkill } from './api/skillApi'
 export { SkillTag } from './ui/SkillTag'
 export { SkillInfo, type SkillInfoProps } from './ui/SkillInfo'
+export { SkillGallery, type SkillGalleryProps } from './ui/SkillGallery'
