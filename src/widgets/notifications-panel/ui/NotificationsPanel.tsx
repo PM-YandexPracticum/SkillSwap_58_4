@@ -4,7 +4,7 @@ import { Button } from '@/shared/ui/Button'
 
 import styles from './NotificationsPanel.module.css'
 
-import type { Notification } from '@/entities/notification'
+import type { NotificationWithName } from '../model/types'
 
 /** Заголовок раздела новых уведомлений */
 const TITLE_NEW = 'Новые уведомления'
@@ -18,11 +18,8 @@ const BUTTON_CLEAR = 'Очистить'
 /** Пустое состояние */
 const EMPTY_TEXT = 'Уведомлений пока нет'
 
-/**
- * Строка панели: `Notification` + имя в дательном падеже для фразы
- * «Вы предложили обмен Ивану». Склонение — на вызывающей стороне.
- */
-export type NotificationWithName = Notification & { userName: string }
+// NotificationWithName — см. ../model/types.ts
+export type { NotificationWithName } from '../model/types'
 
 export interface NotificationsPanelProps {
   /** Все уведомления: разделяются по isRead на новые и просмотренные */
