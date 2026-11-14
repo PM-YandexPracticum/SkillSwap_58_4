@@ -7,7 +7,7 @@
 
 Сегмент **model** слайса `register` — данные и логика: типы, Redux-слайс, селекторы, схемы валидации.
 
-**Текущее состояние:** черновик и прогресс шагов работают (P6-01): `draftUpdated`, `stepCompleted`, `registerReset`, селекторы `selectCompletedStep` и `selectRegisterDraft`. Схема первого шага использует общие emailField/passwordField; остальные схемы — P6-02/P6-04/P6-05. Описания ниже — целевой сценарий.
+**Текущее состояние:** черновик и прогресс шагов работают (P6-01): `draftUpdated`, `stepCompleted`, `registerReset`, селекторы `selectCompletedStep` и `selectRegisterDraft`. Схема первого шага использует общие emailField/passwordField; форма подключает её через yupResolver, а уникальность email проверяет по загруженным пользователям. Остальные схемы — P6-04/P6-05. Описания ниже — целевой сценарий.
 
 ## Что внутри
 
