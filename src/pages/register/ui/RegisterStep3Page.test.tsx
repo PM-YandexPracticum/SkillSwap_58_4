@@ -60,6 +60,14 @@ async function fillForm(user: ReturnType<typeof renderStep>['user']) {
   await user.type(screen.getByLabelText('Описание'), 'Научу основам техники')
 }
 
+async function uploadImage(user: ReturnType<typeof renderStep>['user']) {
+  await user.upload(
+    screen.getByTestId('filedropzone-input') as HTMLInputElement,
+    new File(['x'], 'drums.png', { type: 'image/png' }),
+  )
+  await screen.findByAltText('Фото 1')
+}
+
 describe('RegisterStep3Page', () => {
   it('показывает форму шага с «Назад» и «Продолжить», окон пока нет', () => {
     renderStep()
@@ -87,6 +95,7 @@ describe('RegisterStep3Page', () => {
     const { user } = renderStep()
 
     await fillForm(user)
+    await uploadImage(user)
     await user.click(screen.getByRole('button', { name: 'Продолжить' }))
 
     const dialog = screen.getByRole('dialog', { name: 'Ваше предложение' })
@@ -98,11 +107,8 @@ describe('RegisterStep3Page', () => {
   it('выбранное фото попадает в превью', async () => {
     const { user } = renderStep()
 
-    await user.upload(
-      screen.getByTestId('filedropzone-input') as HTMLInputElement,
-      new File(['x'], 'drums.png', { type: 'image/png' }),
-    )
-    await screen.findByAltText('Фото 1')
+    await fillForm(user)
+    await uploadImage(user)
     await user.click(screen.getByRole('button', { name: 'Продолжить' }))
 
     const dialog = screen.getByRole('dialog', { name: 'Ваше предложение' })
@@ -116,6 +122,7 @@ describe('RegisterStep3Page', () => {
     const { user } = renderStep()
 
     await fillForm(user)
+    await uploadImage(user)
     await user.click(screen.getByRole('button', { name: 'Продолжить' }))
     await user.click(screen.getByRole('button', { name: 'Редактировать' }))
 
@@ -129,6 +136,7 @@ describe('RegisterStep3Page', () => {
     const before = store.getState().register
 
     await fillForm(user)
+    await uploadImage(user)
     await user.click(screen.getByRole('button', { name: 'Продолжить' }))
     await user.click(screen.getByRole('button', { name: 'Готово' }))
 

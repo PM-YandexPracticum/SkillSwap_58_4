@@ -42,6 +42,62 @@ describe('SkillForm', () => {
     fileToDataUrlMock.mockClear()
   })
 
+  it('не отправляет пустую форму и показывает ошибки обязательных полей', async () => {
+    const onSubmit = vi.fn()
+    const { user } = renderForm({ onSubmit })
+
+    await user.click(screen.getByRole('button', { name: 'Продолжить' }))
+
+    expect(onSubmit).not.toHaveBeenCalled()
+    expect(screen.getByText('Введите название навыка')).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: 'Категория навыка' })).toHaveAttribute(
+      'aria-invalid',
+      'true',
+    )
+    expect(screen.getByText('Опишите навык')).toBeInTheDocument()
+  })
+
+  it('проверяет обязательное фото после проверки остальных полей', async () => {
+    const { user } = renderForm()
+
+    await user.type(screen.getByLabelText('Название навыка'), 'Игра на барабанах')
+    await user.click(screen.getByLabelText('Категория навыка'))
+    await user.click(screen.getByText('Бизнес и карьера'))
+    await user.click(screen.getByLabelText('Подкатегория навыка'))
+    await user.click(screen.getByText('Управление командой'))
+    await user.type(screen.getByLabelText('Описание'), 'Научу основам техники')
+    await user.click(screen.getByRole('button', { name: 'Продолжить' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Добавьте от 1 до 4 фото')
+  })
+
+  it('не принимает подкатегорию, которой нет в выбранной категории', async () => {
+    const { user } = renderForm({
+      defaultValues: {
+        title: 'Игра на барабанах',
+        categoryId: 'business',
+        subcategoryId: 'unknown-subcategory',
+        description: 'Научу основам техники',
+      },
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Продолжить' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Выберите подкатегорию')
+  })
+
+  it('не передаёт неподдерживаемый файл в обработку', async () => {
+    renderForm()
+
+    fireEvent.change(getInput(), {
+      target: { files: [new File(['x'], 'photo.gif', { type: 'image/gif' })] },
+    })
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Только JPG, PNG или WEBP')
+    expect(screen.queryByAltText('Фото 1')).not.toBeInTheDocument()
+    expect(fileToDataUrlMock).not.toHaveBeenCalled()
+  })
+
   it('показывает все поля шага, зону фото и обе кнопки', () => {
     renderForm()
 
@@ -213,6 +269,12 @@ describe('SkillForm', () => {
       }),
     )
     const { user } = renderForm({ onSubmit })
+    await user.type(screen.getByLabelText('Название навыка'), 'Игра на барабанах')
+    await user.click(screen.getByLabelText('Категория навыка'))
+    await user.click(screen.getByText('Бизнес и карьера'))
+    await user.click(screen.getByLabelText('Подкатегория навыка'))
+    await user.click(screen.getByText('Управление командой'))
+    await user.type(screen.getByLabelText('Описание'), 'Научу основам техники')
     await user.upload(getInput(), image('pending.png'))
 
     fireEvent.submit(screen.getByRole('form', { name: 'Укажите, чем вы готовы поделиться' }))

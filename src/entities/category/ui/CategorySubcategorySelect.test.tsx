@@ -52,6 +52,21 @@ afterAll(() => {
 })
 
 describe('CategorySubcategorySelect', () => {
+  it('показывает отдельные ошибки у категории и подкатегории', () => {
+    render(
+      <CategorySubcategorySelect
+        {...props}
+        categoryError="Выберите категорию"
+        subcategoryError="Выберите подкатегорию"
+      />,
+    )
+
+    expect(screen.getAllByRole('alert').map((alert) => alert.textContent)).toEqual([
+      'Выберите категорию',
+      'Выберите подкатегорию',
+    ])
+  })
+
   it('рендерится без Redux-провайдера и не меняет чужую часть выбора', async () => {
     const onChange = vi.fn()
     const value = { categoryIds: [], subcategoryIds: [category.subcategories[0].id] }
