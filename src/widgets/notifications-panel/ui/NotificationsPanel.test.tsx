@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { createNotification } from '@/entities/notification/testing'
+import { DATA_ERRORS } from '@/shared/config'
 
 import { NotificationsPanel } from './NotificationsPanel'
 
@@ -37,6 +38,34 @@ const setup = (notifications: NotificationWithName[]) => {
   )
 
   return { onMarkAllRead, onClear, onGo }
+}
+
+/** Рендер с расширенными пропсами P7-05: статус, ошибки и повтор. */
+const setupWithStatus = (
+  notifications: NotificationWithName[],
+  props: {
+    status?: 'idle' | 'loading' | 'succeeded' | 'failed'
+    loadError?: string | null
+    actionError?: string | null
+  } = {},
+) => {
+  const onRetry = vi.fn()
+  const onMarkAllRead = vi.fn()
+  const onClear = vi.fn()
+  const onGo = vi.fn()
+
+  const view = render(
+    <NotificationsPanel
+      notifications={notifications}
+      onRetry={onRetry}
+      onMarkAllRead={onMarkAllRead}
+      onClear={onClear}
+      onGo={onGo}
+      {...props}
+    />,
+  )
+
+  return { ...view, onRetry, onMarkAllRead, onClear, onGo }
 }
 
 describe('NotificationsPanel', () => {
@@ -96,5 +125,60 @@ describe('NotificationsPanel', () => {
     setup([createItem({ id: 'n1', isRead: true })])
 
     expect(screen.queryByRole('button', { name: /Перейти/ })).not.toBeInTheDocument()
+  })
+
+  // --- новые P7-05 --- //
+  it('при ошибке загрузки показывает текст из DATA_ERRORS и кнопку «Повторить»', () => {
+    setupWithStatus([], { status: 'failed', loadError: DATA_ERRORS.LOAD_NOTIFICATIONS })
+
+    expect(screen.getByRole('alert')).toHaveTextContent(DATA_ERRORS.LOAD_NOTIFICATIONS)
+    expect(screen.getByRole('button', { name: 'Повторить' })).toBeInTheDocument()
+    // «Уведомлений пока нет» при ошибке — ложный успех, её быть не должно.
+    expect(screen.queryByText('Уведомлений пока нет')).not.toBeInTheDocument()
+  })
+
+  it('по «Повторить» вызывает onRetry и блокирует кнопку, пока идёт загрузка', async () => {
+    const { rerender, onRetry, onMarkAllRead, onClear, onGo } = setupWithStatus([], {
+      status: 'failed',
+      loadError: DATA_ERRORS.LOAD_NOTIFICATIONS,
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Повторить' }))
+    expect(onRetry).toHaveBeenCalledTimes(1)
+
+    // Пока идёт повтор — статус loading, ошибка ещё не сброшена редьюсером.
+    rerender(
+      <NotificationsPanel
+        notifications={[]}
+        status="loading"
+        loadError={DATA_ERRORS.LOAD_NOTIFICATIONS}
+        onRetry={onRetry}
+        onMarkAllRead={onMarkAllRead}
+        onClear={onClear}
+        onGo={onGo}
+      />,
+    )
+
+    expect(screen.getByRole('button', { name: 'Повторить' })).toBeDisabled()
+  })
+
+  it('во время первой загрузки не показывает «Уведомлений пока нет»', () => {
+    setupWithStatus([], { status: 'loading' })
+
+    expect(screen.queryByText('Уведомлений пока нет')).not.toBeInTheDocument()
+    expect(screen.getByRole('status', { name: 'Загрузка' })).toBeInTheDocument()
+  })
+
+  it('ошибку операции показывает баннером и не скрывает список', () => {
+    setupWithStatus([createItem({ id: 'n1', isRead: true })], {
+      status: 'failed',
+      actionError: DATA_ERRORS.CLEAR_NOTIFICATIONS,
+    })
+
+    expect(screen.getByRole('alert')).toHaveTextContent(DATA_ERRORS.CLEAR_NOTIFICATIONS)
+    // Список на месте — ложного «успеха очистки» нет.
+    expect(screen.getByText('Просмотренные')).toBeInTheDocument()
+    // «Повторить» относится только к загрузке — для операции её нет.
+    expect(screen.queryByRole('button', { name: 'Повторить' })).not.toBeInTheDocument()
   })
 })

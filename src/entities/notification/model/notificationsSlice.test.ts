@@ -16,6 +16,8 @@ import {
   selectNotificationsError,
 } from './selectors'
 
+import { DATA_ERRORS } from '@/shared/config'
+
 const own = createNotification({ id: 'test-own', userId: 'test-owner' })
 const other = createNotification({ id: 'test-other', userId: 'test-other-owner' })
 const signedInStore = () => {
@@ -131,14 +133,23 @@ describe('notificationsSlice', () => {
   })
 
   it('ошибка загрузки не удаляет прежние записи', () => {
-    const initial = { items: [own], status: 'loading' as const, pendingRequests: 1, error: null }
+    const initial = {
+      items: [own],
+      status: 'loading' as const,
+      pendingRequests: 1,
+      error: null,
+      loadError: null, // ← новое поле из P7-05: у загрузки ещё не было ошибки
+    }
     const next = notificationsReducer(
       initial,
-      fetchNotifications.rejected(new Error('offline'), 'request'),
+      // payload — текст ошибки из rejectWithValue; без него reducer подставит общий LOAD_NOTIFICATIONS
+      fetchNotifications.rejected(null, 'request', undefined, DATA_ERRORS.LOAD_NOTIFICATIONS),
     )
     expect(next.items).toEqual([own])
     expect(next.status).toBe('failed')
-    expect(next.error).toBeTruthy()
+    expect(next.error).toBe(DATA_ERRORS.LOAD_NOTIFICATIONS)
+    // Ошибка загрузки дублируется в loadError — по ней панель покажет «Повторить»
+    expect(next.loadError).toBe(DATA_ERRORS.LOAD_NOTIFICATIONS)
   })
   it.each(bulkActions)(
     'после частичной ошибки «$name» синхронизирует store с базой и позволяет повторить операцию',
@@ -242,5 +253,44 @@ describe('notificationsSlice', () => {
       write.mockRestore()
       read.mockRestore()
     }
+  })
+
+  // --- новые P7-05 --- //
+  it('записывает ошибку загрузки в loadError', () => {
+    const state = notificationsReducer(
+      undefined, // ← undefined: берём initialState из слайса
+      fetchNotifications.rejected(null, 'req', undefined, DATA_ERRORS.LOAD_NOTIFICATIONS),
+    )
+
+    expect(state.error).toBe(DATA_ERRORS.LOAD_NOTIFICATIONS)
+    expect(state.loadError).toBe(DATA_ERRORS.LOAD_NOTIFICATIONS)
+    expect(state.status).toBe('failed')
+  })
+
+  it('не пишет в loadError ошибку операции «Прочитать все»', () => {
+    const state = notificationsReducer(
+      undefined,
+      markAllRead.rejected(null, 'req', undefined, DATA_ERRORS.READ_NOTIFICATIONS),
+    )
+
+    expect(state.error).toBe(DATA_ERRORS.READ_NOTIFICATIONS)
+    // Ошибка операции — не ошибка загрузки, кнопка «Повторить» не появится.
+    expect(state.loadError).toBeNull()
+  })
+
+  it('сбрасывает loadError при повторной загрузке', () => {
+    const withError = {
+      items: [],
+      status: 'failed' as const,
+      pendingRequests: 0,
+      error: DATA_ERRORS.LOAD_NOTIFICATIONS,
+      loadError: DATA_ERRORS.LOAD_NOTIFICATIONS,
+    }
+
+    const state = notificationsReducer(withError, fetchNotifications.pending('req'))
+
+    expect(state.loadError).toBeNull()
+    expect(state.error).toBeNull()
+    expect(state.status).toBe('loading')
   })
 })

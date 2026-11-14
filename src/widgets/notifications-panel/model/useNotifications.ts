@@ -5,6 +5,7 @@ import {
   selectHasUnread,
   selectNotifications,
   selectNotificationsError,
+  selectNotificationsLoadError,
   selectNotificationsStatus,
 } from '@/entities/notification'
 import { selectSession } from '@/entities/session'
@@ -24,6 +25,11 @@ export interface UseNotificationsResult {
   isLoading: boolean
   /** Понятная ошибка операции или `null`. При ошибке не показываем ложный успех. */
   error: string | null
+  /**
+   * Ошибка именно первоначальной загрузки — по ней окно показывает «Повторить».
+   * `null`, когда загрузка ещё не падала или уже успешно повторилась.
+   */
+  loadError: string | null
   /** Ручной повтор загрузки после ошибки. Пока идёт загрузка — ничего не делает. */
   retry: () => void
 }
@@ -35,7 +41,9 @@ export interface UseNotificationsResult {
  *
  * Загрузка не входит в DataProvider: она своя, у неё своя ошибка и повтор.
  * Повторного запроса нет, если статус уже loading/succeeded; после ошибки
- * доступен один явный повтор — `retry()`.
+ * доступен один явный повтор — `retry()`. Ошибка загрузки возвращается
+ * отдельно (`loadError`), чтобы панель показала «Повторить» только для неё,
+ * а ошибки «Прочитать все» / «Очистить» — баннером без повтора.
  *
  * @see Figma: 1:2148
  * @see docs/requirements/tz.md — P7-05
@@ -48,6 +56,7 @@ export function useNotifications(): UseNotificationsResult {
   const hasUnread = useAppSelector(selectHasUnread)
   const status = useAppSelector(selectNotificationsStatus)
   const error = useAppSelector(selectNotificationsError)
+  const loadError = useAppSelector(selectNotificationsLoadError)
 
   /** Отметка «запрос уже запускали» — без ререндера, чтобы не зациклить эффект. */
   const requestedRef = useRef(false)
@@ -83,6 +92,7 @@ export function useNotifications(): UseNotificationsResult {
     hasUnread,
     isLoading: status === 'loading',
     error,
+    loadError,
     retry,
   }
 }
