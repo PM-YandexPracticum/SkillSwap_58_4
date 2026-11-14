@@ -75,7 +75,7 @@ public/db/                    # образцы данных: users, skills, cate
 | `npm run test` | Запуск тестов |
 | `npm run test:watch` | Тесты в watch-режиме |
 | `npm run test:coverage` | Отчёт о покрытии тестами; Vitest проверяет порог 70 % statements |
-| `npm run e2e` | Запуск Playwright; сценарии добавит P8-05. Перед первым запуском: `npx playwright install chromium` |
+| `npm run e2e` | Запуск Playwright-сценариев из [`e2e/`](e2e/README.md). Перед первым запуском: `npx playwright install chromium` |
 | `npm run storybook` | Storybook — каталог UI-компонентов |
 | `npm run build-storybook` | Сборка Storybook |
 | `npm run commit` | Коммит по шагам в формате Conventional Commits |
