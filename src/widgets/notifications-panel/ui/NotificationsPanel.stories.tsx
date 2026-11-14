@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { createNotification } from '@/entities/notification/testing'
+import { DATA_ERRORS } from '@/shared/config'
 
 import { NotificationsPanel } from './NotificationsPanel'
 
@@ -25,7 +26,9 @@ const createItem = (overrides: Partial<NotificationWithName> = {}): Notification
  * «Новые уведомления» с «Прочитать все», ниже «Просмотренные» с «Очистить».
  * Записи распределяются по isRead; пусто — «Уведомлений пока нет».
  *
- * По P3-15 обработчики — заглушки: сохранение прочтения — P4-07, подключение к шапке — P7-05.
+ * LoadError — ошибка загрузки, MarkAllReadError, ClearError — ошибки операции;
+ * добавлено по аудиту P7-05 13.11.2026 (comit b43f928).
+ * Обработчики — заглушки: сохранение прочтения — P4-07 (влито), подключение к шапке — P5-09/P7-05.
  */
 const meta: Meta<typeof NotificationsPanel> = {
   title: 'widgets/notifications-panel/NotificationsPanel',
@@ -47,6 +50,9 @@ const meta: Meta<typeof NotificationsPanel> = {
   ],
   args: {
     notifications: [],
+    status: 'succeeded',
+    loadError: null,
+    actionError: null,
     onMarkAllRead: () => {},
     onClear: () => {},
     onGo: () => {},
@@ -88,3 +94,44 @@ export const OnlyRead: Story = {
 
 /** Пустая панель: «Уведомлений пока нет», секций и кнопок нет */
 export const Empty: Story = {}
+
+/**
+ * Ошибка загрузки: вместо списка — сообщение и «Повторить», данных нет.
+ * Текст — из `DATA_ERRORS.LOAD_NOTIFICATIONS`, как в приложении.
+ * Состояния нет в макете 1:2148 — добавлено по аудиту P7-05.
+ */
+export const LoadError: Story = {
+  args: {
+    status: 'failed',
+    loadError: DATA_ERRORS.LOAD_NOTIFICATIONS,
+    onRetry: () => {},
+  },
+}
+
+/**
+ * Ошибка «Прочитать все»: текст над секцией «Новые уведомления», список не скрыт.
+ * Не из макета 1:2148 — добавлено в P7-05 (аудит 13.11.2026).
+ */
+export const MarkAllReadError: Story = {
+  args: {
+    notifications: [
+      createItem({ id: 'n1', isRead: false }),
+      createItem({ id: 'n2', isRead: true }),
+    ],
+    actionError: DATA_ERRORS.READ_NOTIFICATIONS,
+  },
+}
+
+/**
+ * Ошибка «Очистить»: тот же вид, но текст про очистку.
+ * Не из макета 1:2148 — добавлено в P7-05 (аудит 13.11.2026).
+ */
+export const ClearError: Story = {
+  args: {
+    notifications: [
+      createItem({ id: 'n1', isRead: false }),
+      createItem({ id: 'n2', isRead: true }),
+    ],
+    actionError: DATA_ERRORS.CLEAR_NOTIFICATIONS,
+  },
+}
