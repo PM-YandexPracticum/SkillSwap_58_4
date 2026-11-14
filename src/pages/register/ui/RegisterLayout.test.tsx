@@ -37,7 +37,7 @@ describe('RegisterLayout', () => {
     expect(screen.getByRole('heading', { level: 2, name: title })).toBeInTheDocument()
   })
 
-  it('«Далее» открывает второй шаг и обновляет индикатор без сохранения данных', async () => {
+  it('«Далее» открывает второй шаг, сохраняет данные и обновляет индикатор', async () => {
     const { user, store } = renderWithProviders(<RegistrationRoutes />, {
       route: ROUTES.REGISTER_STEP_1,
     })
@@ -48,8 +48,8 @@ describe('RegisterLayout', () => {
 
     expect(screen.getByText('Шаг 2 из 3')).toBeInTheDocument()
     expect(screen.getByText('Содержимое шага 2')).toBeInTheDocument()
-    expect(store.getState().register.draft.email).toBe('')
-    expect(store.getState().register.completedStep).toBe(0)
+    expect(store.getState().register.draft.email).toBe('user@example.com')
+    expect(store.getState().register.completedStep).toBe(1)
   })
 
   it('на шаге 1 ссылка входа открывает /login', async () => {

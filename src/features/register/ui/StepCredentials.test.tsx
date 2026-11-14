@@ -50,4 +50,45 @@ describe('StepCredentials', () => {
     expect(screen.getByLabelText('Пароль')).toHaveValue('password123')
     expect(onNext).not.toHaveBeenCalled()
   })
+
+  it('показывает ошибку, если email уже используется', async () => {
+    const onNext = vi.fn()
+
+    const { user } = renderWithProviders(<StepCredentials onNext={onNext} />, {
+      preloadedState: {
+        users: {
+          items: [
+            {
+              id: 'u01',
+              name: 'Ivan',
+              email: 'ivan@example.com',
+              password: 'Password123',
+              avatarUrl: null,
+              birthDate: '1990-01-01',
+              gender: null,
+              cityId: 'c01',
+              about: '',
+              teachSkillId: 's01',
+              learnSubcategoryIds: [],
+              likedUserIds: [],
+              likesCount: 0,
+              createdAt: '2025-01-01',
+            },
+          ],
+          status: 'succeeded',
+          error: null,
+          saveStatus: 'idle',
+          pendingSaves: 0,
+          saveError: null,
+        },
+      },
+    })
+
+    await user.type(screen.getByLabelText('Email'), 'ivan@example.com')
+    await user.type(screen.getByLabelText('Пароль'), 'Password123')
+    await user.click(screen.getByRole('button', { name: 'Далее' }))
+
+    expect(screen.getByText('Email уже используется')).toBeInTheDocument()
+    expect(onNext).not.toHaveBeenCalled()
+  })
 })
