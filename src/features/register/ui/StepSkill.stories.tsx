@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { MemoryRouter } from 'react-router-dom'
 import { StepSkill } from './StepSkill'
 
 const MockSkillForm = () => (
@@ -37,14 +36,16 @@ const meta: Meta<typeof StepSkill> = {
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-1761',
+    },
   },
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <div style={{ width: 500 }}>
-          <Story />
-        </div>
-      </MemoryRouter>
+      <div style={{ width: 500 }}>
+        <Story />
+      </div>
     ),
   ],
 }

@@ -56,7 +56,7 @@ describe('стартовая загрузка', { timeout: 20_000 }, () => {
     for (const load of Object.values(loads)) expect(load).toHaveBeenCalledTimes(1)
   })
 
-  it.skip.each(['users', 'skills', 'categories', 'cities'] as const)(
+  it.each(['users', 'skills', 'categories', 'cities'] as const)(
     'открывает 500 при ошибке %s.json и повторяет только упавшую загрузку',
     async (failedCollection) => {
       let collectionAvailable = false
@@ -108,7 +108,7 @@ describe('стартовая загрузка', { timeout: 20_000 }, () => {
 })
 
 describe('маршруты регистрации P6-01', { timeout: 20_000 }, () => {
-  it.skip.each([ROUTES.REGISTER_STEP_2, ROUTES.REGISTER_STEP_3])(
+  it.each([ROUTES.REGISTER_STEP_2, ROUTES.REGISTER_STEP_3])(
     'после открытия %s с новым store возвращает на шаг 1 и позволяет закрыть регистрацию',
     async (route) => {
       const { store } = await openApp(route)

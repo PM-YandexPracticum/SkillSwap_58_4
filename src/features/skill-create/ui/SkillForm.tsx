@@ -1,35 +1,50 @@
+import { yupResolver } from '@hookform/resolvers/yup'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-//  import { yupResolver } from '@hookform/resolvers/yup'
-import type { SkillFormValues } from '../model/schema'
-import { Input } from '@/shared/ui/Input'
-import { Textarea } from '@/shared/ui/Textarea'
-import { Select } from '@/shared/ui/Select'
+
+import { CategorySubcategorySelect, findSubcategories, selectCategories } from '@/entities/category'
+import { DATA_ERRORS, VALIDATION } from '@/shared/config'
+import { fileToDataUrl } from '@/shared/lib/image'
+import { useAppSelector } from '@/shared/lib/store'
+import { validateImageFile } from '@/shared/lib/validation'
 import { Button } from '@/shared/ui/Button'
 import { FileDropzone } from '@/shared/ui/FileDropzone'
-import { useAppSelector } from '@/shared/lib/store'
-import { selectCategories } from '@/entities/category'
-import { validateImageFile } from '@/shared/lib/validation'
-import { fileToDataUrl } from '@/shared/lib/image'
+import { Input } from '@/shared/ui/Input'
+import { Textarea } from '@/shared/ui/Textarea'
+
+import { skillSchema, type SkillFormValues } from '../model/schema'
 import styles from './SkillForm.module.css'
+
+const IMAGE_COUNT_ERROR = 'Добавьте от 1 до 4 фото'
 
 export interface SkillFormProps {
   defaultValues?: Partial<SkillFormValues>
+  /** Фото навыка передаются как data URL в порядке выбора. */
   onSubmit: (values: SkillFormValues, images: string[]) => void
+  /** Возвращает пользователя на шаг 2. */
   onBack: () => void
 }
 
+/**
+ * Форма навыка, которому пользователь может научить: один навык со своим названием,
+ * связанной категорией и подкатегорией, описанием и 1–4 фото.
+ * Справочник категорий читает из store; связь списков переиспользует сущность категории.
+ * Значения проверяются `skillSchema`, файлы — `validateImageFile` до `fileToDataUrl`.
+ * Пока фото читаются и сжимаются, повторный выбор и отправка формы недоступны.
+ * @see Figma: «Регистрация 3 шаг» (1:1761)
+ */
 export function SkillForm({ defaultValues, onSubmit, onBack }: SkillFormProps) {
   const categories = useAppSelector(selectCategories)
-
   const {
     register,
     handleSubmit,
+    clearErrors,
+    setError,
     setValue,
     watch,
     formState: { errors },
   } = useForm<SkillFormValues>({
-    // resolver: yupResolver(skillSchema),
+    resolver: yupResolver(skillSchema),
     mode: 'onBlur',
     defaultValues: {
       title: '',
@@ -46,46 +61,79 @@ export function SkillForm({ defaultValues, onSubmit, onBack }: SkillFormProps) {
 
   const categoryId = watch('categoryId')
   const subcategoryId = watch('subcategoryId')
-
-  const currentCategory = categories.find((c) => c.id === categoryId)
-  const subcategoryOptions = currentCategory
-    ? currentCategory.subcategories.map((sub) => ({ value: sub.id, label: sub.title }))
-    : []
-
-  const isFull = images.length >= 4
+  const selection = {
+    categoryIds: categoryId ? [categoryId] : [],
+    subcategoryIds: subcategoryId ? [subcategoryId] : [],
+  }
+  const isFull = images.length >= VALIDATION.SKILL_IMAGES.MAX
   const previews = images.map((url, index) => ({
     url,
-    onRemove: () => setImages((current) => current.filter((_, i) => i !== index)),
+    onRemove: () => {
+      setImages((current) => current.filter((_, imageIndex) => imageIndex !== index))
+      setImageError(undefined)
+    },
   }))
 
   const addImages = async (files: File[]) => {
-    const availableFiles = files.slice(0, 4 - images.length)
+    const availableFiles = files.slice(0, VALIDATION.SKILL_IMAGES.MAX - images.length)
     if (isProcessing || availableFiles.length === 0) return
 
     setIsProcessing(true)
     setImageError(undefined)
     try {
       const validFiles: File[] = []
+      let validationError: string | undefined
       for (const file of availableFiles) {
         const error = validateImageFile(file)
         if (error) {
-          setImageError(error)
-          return
+          validationError ??= error
+          continue
         }
         validFiles.push(file)
       }
 
-      const urls = await Promise.all(validFiles.map(fileToDataUrl))
-      setImages((current) => [...new Set([...current, ...urls])].slice(0, 4))
+      const results = await Promise.allSettled(validFiles.map(fileToDataUrl))
+      const urls = results.flatMap((result) =>
+        result.status === 'fulfilled' ? [result.value] : [],
+      )
+      setImages((current) =>
+        [...new Set([...current, ...urls])].slice(0, VALIDATION.SKILL_IMAGES.MAX),
+      )
+      if (validationError || results.some((result) => result.status === 'rejected')) {
+        setImageError(validationError ?? DATA_ERRORS.PROCESS_IMAGES)
+      }
     } catch {
-      setImageError('Ошибка обработки изображений')
+      setImageError(DATA_ERRORS.PROCESS_IMAGES)
     } finally {
       setIsProcessing(false)
     }
   }
 
+  const handleSelectionChange = (next: { categoryIds: string[]; subcategoryIds: string[] }) => {
+    setValue('categoryId', next.categoryIds[0] ?? '', {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    })
+    setValue('subcategoryId', next.subcategoryIds[0] ?? '', {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    })
+    clearErrors(['categoryId', 'subcategoryId'])
+  }
+
   const onFormSubmit = (values: SkillFormValues) => {
     if (isProcessing) return
+    const selectedSubcategory = findSubcategories(categories, [values.subcategoryId])[0]
+    if (selectedSubcategory?.categoryId !== values.categoryId) {
+      setError('subcategoryId', { type: 'validate', message: 'Выберите подкатегорию' })
+      return
+    }
+    if (images.length < VALIDATION.SKILL_IMAGES.MIN) {
+      setImageError(IMAGE_COUNT_ERROR)
+      return
+    }
     onSubmit(values, images)
   }
 
@@ -105,24 +153,15 @@ export function SkillForm({ defaultValues, onSubmit, onBack }: SkillFormProps) {
           error={errors.title?.message}
         />
 
-        <Select
-          label="Категория навыка"
-          options={categories.map((c) => ({ value: c.id, label: c.title }))}
-          value={categoryId}
-          onChange={(value) => {
-            setValue('categoryId', value || '', { shouldValidate: true })
-            setValue('subcategoryId', '', { shouldValidate: false })
-          }}
-          error={errors.categoryId?.message}
-        />
-
-        <Select
-          label="Подкатегория навыка"
-          options={subcategoryOptions}
-          value={subcategoryId}
-          onChange={(value) => setValue('subcategoryId', value || '', { shouldValidate: true })}
-          disabled={!categoryId}
-          error={errors.subcategoryId?.message}
+        <CategorySubcategorySelect
+          mode="single"
+          categories={categories}
+          value={selection}
+          onChange={handleSelectionChange}
+          categoryLabel="Категория навыка"
+          subcategoryLabel="Подкатегория навыка"
+          categoryError={errors.categoryId?.message}
+          subcategoryError={errors.subcategoryId?.message}
         />
 
         <Textarea
