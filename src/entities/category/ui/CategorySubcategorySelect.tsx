@@ -14,6 +14,10 @@ export interface CategorySubcategorySelectProps {
   onChange: (value: { categoryIds: string[]; subcategoryIds: string[] }) => void
   categoryLabel: string
   subcategoryLabel: string
+  /** Ошибка поля категории; `error` сохраняет обратную совместимость. */
+  categoryError?: string
+  /** Ошибка поля подкатегории; `error` сохраняет обратную совместимость. */
+  subcategoryError?: string
   error?: string
 }
 
@@ -54,7 +58,7 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
               subcategoryIds: [...props.value.subcategoryIds],
             })
           }
-          error={props.error}
+          error={props.categoryError ?? props.error}
         />
         <Select
           label={props.subcategoryLabel}
@@ -67,7 +71,7 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
               subcategoryIds: subcategoryId ? [subcategoryId] : [],
             })
           }
-          error={props.error}
+          error={props.subcategoryError ?? props.error}
         />
       </>
     )
@@ -86,7 +90,7 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
             subcategoryIds: [...props.value.subcategoryIds],
           })
         }
-        error={props.error}
+        error={props.categoryError ?? props.error}
       />
 
       <MultiSelect
@@ -100,7 +104,7 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
             subcategoryIds,
           })
         }
-        error={props.error}
+        error={props.subcategoryError ?? props.error}
       />
     </>
   )
