@@ -25,6 +25,7 @@
     "typecheck": "tsc -b"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.10.0",
     "@reduxjs/toolkit": "^2.3.0",
     "date-fns": "^4.4.0",
     "embla-carousel-react": "^8.6.0",

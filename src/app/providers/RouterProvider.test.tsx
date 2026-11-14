@@ -127,3 +127,34 @@ describe('маршруты регистрации P6-01', { timeout: 20_000 }, (
     },
   )
 })
+
+describe('первый шаг регистрации P6-02', { timeout: 20_000 }, () => {
+  it('сохраняет проверенные данные, открывает защищённый шаг 2, восстанавливает форму и очищает при выходе', async () => {
+    const { store, loads } = await openApp(ROUTES.REGISTER_STEP_1)
+    const user = userEvent.setup()
+    await screen.findByRole('form', { name: 'Учётные данные' })
+    const initialDraft = store.getState().register.draft
+
+    expect(screen.getByRole('button', { name: 'Далее' })).toBeDisabled()
+    await user.type(screen.getByLabelText('Email'), ' TEAMLEAD@example.com ')
+    await user.type(screen.getByLabelText('Пароль'), 'Password123')
+    await user.click(screen.getByRole('button', { name: 'Далее' }))
+
+    expect(await screen.findByText('Шаг 2 из 3')).toBeInTheDocument()
+    expect(window.location.pathname).toBe(ROUTES.REGISTER_STEP_2)
+    expect(store.getState().register).toEqual({
+      draft: { ...initialDraft, email: 'teamlead@example.com', password: 'Password123' },
+      completedStep: 1,
+    })
+    for (const load of Object.values(loads)) expect(load).toHaveBeenCalledTimes(1)
+
+    await user.click(screen.getByRole('button', { name: 'Назад' }))
+    expect(await screen.findByLabelText('Email')).toHaveValue('teamlead@example.com')
+    expect(screen.getByLabelText('Пароль')).toHaveValue('Password123')
+
+    await user.click(screen.getByRole('button', { name: 'Закрыть' }))
+    await screen.findByRole('heading', { name: 'Каталог предложений' })
+    expect(store.getState().register).toEqual({ draft: initialDraft, completedStep: 0 })
+    await waitFor(() => expect(store.getState().exchanges.status).toBe('succeeded'))
+  })
+})
