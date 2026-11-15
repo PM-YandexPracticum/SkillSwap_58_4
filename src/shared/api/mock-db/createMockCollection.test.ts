@@ -317,3 +317,238 @@ describe('ограничения записи внутри очереди кол
     })
   })
 })
+
+// ────────────────────────────────────────────────────────────────────────
+// Пакетные методы updateMany / removeMany (P7-05, аудит от 13.11.2026)
+// Моделируют «20 уведомлений за 20 запросов», которые надо уложить в один.
+// ────────────────────────────────────────────────────────────────────────
+
+/** Запись с «владельцем» — моделирует уведомления одного пользователя */
+interface OwnedItem {
+  id: string
+  ownerId: string
+  isRead: boolean
+}
+
+const OWNED_SEED: readonly OwnedItem[] = [
+  { id: 'n1', ownerId: 'u1', isRead: false },
+  { id: 'n2', ownerId: 'u1', isRead: false },
+  { id: 'n3', ownerId: 'u2', isRead: false },
+]
+
+const OWNED_KEY = `${MOCK_DB.STORAGE_PREFIX}notifications-many`
+
+/** Коллекция без задержки — как и остальные тесты файла */
+const createOwned = () =>
+  createMockCollection<OwnedItem>('notifications-many', OWNED_SEED, { delayMs: 0 })
+
+/** Предикат владельца — тот же, что использует notificationApi */
+const isOwner = (ownerId: string) => (item: Readonly<OwnedItem>) => item.ownerId === ownerId
+
+describe('updateMany', () => {
+  it('меняет все записи владельца и не трогает чужие', async () => {
+    const items = createOwned()
+
+    const result = await items.updateMany(isOwner('u1'), () => ({ isRead: true }))
+
+    expect(result).toEqual([
+      { id: 'n1', ownerId: 'u1', isRead: true },
+      { id: 'n2', ownerId: 'u1', isRead: true },
+      { id: 'n3', ownerId: 'u2', isRead: false }, // чужая — как была
+    ])
+    // повторное чтение через новый экземпляр — изменения сохранены
+    expect(await createOwned().getAll()).toEqual(result)
+  })
+
+  it('возвращает полный список с сохранённым порядком записей', async () => {
+    const items = createOwned()
+
+    const result = await items.updateMany(
+      () => true,
+      () => ({ isRead: true }),
+    )
+
+    expect(result.map((item) => item.id)).toEqual(['n1', 'n2', 'n3'])
+  })
+
+  it('не пишет в localStorage, если патч ничего не изменил', async () => {
+    const items = createOwned()
+    const setItem = vi.spyOn(Storage.prototype, 'setItem')
+
+    await items.updateMany(isOwner('u1'), (item) => ({ isRead: item.isRead }))
+
+    expect(setItem).not.toHaveBeenCalled()
+    expect(localStorage.getItem(OWNED_KEY)).toBeNull()
+  })
+
+  it('не пишет в localStorage, если match не выбрал ни одной записи', async () => {
+    const items = createOwned()
+    const setItem = vi.spyOn(Storage.prototype, 'setItem')
+
+    const result = await items.updateMany(
+      () => false,
+      () => ({ isRead: true }),
+    )
+
+    expect(setItem).not.toHaveBeenCalled()
+    expect(result).toEqual(OWNED_SEED)
+  })
+
+  it('патч не может подменить id — id всегда остаётся исходным', async () => {
+    const items = createOwned()
+
+    // as — типы библиотеки не дают вернуть id через Omit, runtime-страховка проверяется здесь
+    const result = await items.updateMany(
+      isOwner('u1'),
+      () => ({ id: 'чужой' }) as Partial<OwnedItem>,
+    )
+
+    expect(result[0].id).toBe('n1')
+    expect(result[1].id).toBe('n2')
+  })
+
+  it('переполнение хранилища — ошибка наружу, данные не меняются', async () => {
+    const items = createOwned()
+    await items.getAll() // читаем образцы, сначала локально данных нет
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('quota', 'QuotaExceededError')
+    })
+
+    await expect(items.updateMany(isOwner('u1'), () => ({ isRead: true }))).rejects.toThrow(
+      'Не хватает места',
+    )
+    expect(await createOwned().getAll()).toEqual(OWNED_SEED)
+  })
+
+  it('валидация записи — некорректный патч отклоняется и не сохраняется', async () => {
+    const validate = (value: unknown): value is OwnedItem =>
+      typeof value === 'object' &&
+      value !== null &&
+      'ownerId' in value &&
+      typeof value.ownerId === 'string' &&
+      'isRead' in value &&
+      typeof value.isRead === 'boolean'
+
+    const items = createMockCollection<OwnedItem>('notifications-many', OWNED_SEED, {
+      delayMs: 0,
+      validate,
+    })
+
+    await expect(
+      items.updateMany(isOwner('u1'), () => ({ isRead: 'да' }) as unknown as Partial<OwnedItem>),
+    ).rejects.toThrow('Неверная структура записи')
+    expect(await createOwned().getAll()).toEqual(OWNED_SEED)
+  })
+
+  it('наружу отдаёт копии: мутация результата не меняет «базу»', async () => {
+    const items = createOwned()
+    const result = await items.updateMany(isOwner('u1'), () => ({ isRead: true }))
+    result[0].isRead = false
+
+    expect((await createOwned().getById('n1'))?.isRead).toBe(true)
+  })
+
+  it('validateWrite вызывается с operation=update и исходным списком', async () => {
+    const validateWrite = vi.fn()
+    const items = createMockCollection<OwnedItem>('notifications-many', OWNED_SEED, {
+      delayMs: 0,
+      validateWrite,
+    })
+
+    await items.updateMany(isOwner('u1'), () => ({ isRead: true }))
+
+    // по разу на каждую подходящую запись: u1 — две записи (n1, n2)
+    expect(validateWrite).toHaveBeenCalledTimes(2)
+    expect(validateWrite).toHaveBeenCalledWith(
+      expect.objectContaining({ ownerId: 'u1', isRead: true }),
+      expect.any(Array),
+      'update',
+    )
+  })
+
+  it('одна задержка на весь пакет, а не на каждую запись', async () => {
+    vi.useFakeTimers()
+    const items = createMockCollection<OwnedItem>('notifications-many', OWNED_SEED)
+    const onDone = vi.fn()
+
+    void items.updateMany(isOwner('u1'), () => ({ isRead: true })).then(onDone)
+    await vi.advanceTimersByTimeAsync(MOCK_DB.DELAY_MS - 1)
+    expect(onDone).not.toHaveBeenCalled()
+
+    await vi.advanceTimersByTimeAsync(1)
+    expect(onDone).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('removeMany', () => {
+  it('удаляет все записи владельца и не трогает чужие', async () => {
+    const items = createOwned()
+
+    const removed = await items.removeMany(isOwner('u1'))
+
+    expect(removed).toEqual(['n1', 'n2'])
+    expect(await createOwned().getAll()).toEqual([{ id: 'n3', ownerId: 'u2', isRead: false }])
+  })
+
+  it('пустой match ничего не пишет и не падает', async () => {
+    const items = createOwned()
+    const setItem = vi.spyOn(Storage.prototype, 'setItem')
+
+    const removed = await items.removeMany(() => false)
+
+    expect(removed).toEqual([])
+    expect(setItem).not.toHaveBeenCalled()
+    expect(localStorage.getItem(OWNED_KEY)).toBeNull()
+  })
+
+  it('пустой список в коллекции — возвращает пустой массив', async () => {
+    const items = createMockCollection<OwnedItem>('empty-owned', [], { delayMs: 0 })
+
+    expect(await items.removeMany(() => true)).toEqual([])
+  })
+
+  it('после удаления getAll не возвращает удалённые', async () => {
+    const items = createOwned()
+    await items.removeMany(isOwner('u1'))
+
+    const afterReload = createOwned()
+    expect(await afterReload.getById('n1')).toBeUndefined()
+    expect(await afterReload.getById('n2')).toBeUndefined()
+    expect(await afterReload.getAll()).toHaveLength(1)
+  })
+
+  it('переполнение хранилища — ошибка наружу, данные не меняются', async () => {
+    const items = createOwned()
+    await items.getAll() // читаем образцы до мока, чтобы потом сравнить
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('quota', 'QuotaExceededError')
+    })
+
+    await expect(items.removeMany(isOwner('u1'))).rejects.toThrow('Не хватает места')
+    expect(await createOwned().getAll()).toEqual(OWNED_SEED)
+  })
+
+  it('новые записи после завершения очистки не удаляются', async () => {
+    const items = createOwned()
+
+    await items.removeMany(isOwner('u1'))
+    await items.create({ id: 'n4', ownerId: 'u1', isRead: false })
+
+    expect(await createOwned().getAll()).toEqual([
+      { id: 'n3', ownerId: 'u2', isRead: false },
+      { id: 'n4', ownerId: 'u1', isRead: false },
+    ])
+  })
+
+  it('create и removeMany в Promise.all не теряют записи (очередь коллекции)', async () => {
+    const items = createOwned()
+
+    await Promise.all([
+      items.create({ id: 'n4', ownerId: 'u1', isRead: false }),
+      items.removeMany(isOwner('u1')),
+    ])
+
+    // create выполнился в своей ячейке очереди, removeMany — следом и видит n4
+    expect(await createOwned().getAll()).toEqual([{ id: 'n3', ownerId: 'u2', isRead: false }])
+  })
+})
