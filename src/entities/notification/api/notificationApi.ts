@@ -52,22 +52,27 @@ export function markNotificationRead(id: string): Promise<Notification> {
   return enqueue(() => notifications.update(id, { isRead: true }))
 }
 
-/** Прочитать новые уведомления владельца. Возвращает полный список владельца, включая уже просмотренные. */
+/**
+ * Прочитать новые уведомления владельца одним обращением к «базе».
+ * Фильтр `userId` уходит в updateMany — чужие уведомления не затрагиваются.
+ * У уже прочитанных `isRead` не меняется: updateMany не делает лишний setItem.
+ * Возвращает полный список владельца, включая уже просмотренные (как и раньше).
+ */
 export function markAllNotificationsRead(userId: string): Promise<Notification[]> {
   return enqueue(async () => {
-    const items = (await notifications.getAll()).filter((item) => item.userId === userId)
-    for (const item of items.filter((item) => !item.isRead)) {
-      await notifications.update(item.id, { isRead: true })
-    }
-    return items.map((item) => ({ ...item, isRead: true }))
+    const all = await notifications.updateMany(
+      (item) => item.userId === userId, // (1) match
+      () => ({ isRead: true }), // (2) patch
+    )
+    return all.filter((item) => item.userId === userId)
   })
 }
 
-/** Удалить новые и просмотренные уведомления владельца. Возвращает удалённые id. */
+/**
+ * Удалить новые и просмотренные уведомления владельца одним обращением к «базе».
+ * Чужие записи не удаляются: фильтр по владельцу уходит в removeMany.
+ * Возвращает id удалённых уведомлений.
+ */
 export function clearNotifications(userId: string): Promise<string[]> {
-  return enqueue(async () => {
-    const items = (await notifications.getAll()).filter((item) => item.userId === userId)
-    for (const item of items) await notifications.remove(item.id)
-    return items.map((item) => item.id)
-  })
+  return enqueue(() => notifications.removeMany((item) => item.userId === userId))
 }

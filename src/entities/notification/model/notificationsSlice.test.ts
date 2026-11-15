@@ -152,7 +152,7 @@ describe('notificationsSlice', () => {
     expect(next.loadError).toBe(DATA_ERRORS.LOAD_NOTIFICATIONS)
   })
   it.each(bulkActions)(
-    'после частичной ошибки «$name» синхронизирует store с базой и позволяет повторить операцию',
+    'после ошибки записи «$name» синхронизирует store с базой и позволяет повторить операцию',
     async ({ run }) => {
       const second = createNotification({ id: 'test-second', userId: own.userId })
       await saveNotification(own)
@@ -168,14 +168,17 @@ describe('notificationsSlice', () => {
         value,
       ) {
         writes += 1
-        if (writes === 2) throw new DOMException('Quota', 'QuotaExceededError')
+        // p7-05 Fix - тест падал. Одна запись на операцию -> мокаем первую, а не вторую
+        if (writes === 1) throw new DOMException('Quota', 'QuotaExceededError')
         realSetItem.call(this, key, value)
       })
       try {
+        // 1ая попытка - падает
         await expect(run(store)).rejects.toContain('Не хватает места')
         expect(store.getState().notifications.items).toEqual(await getNotifications())
         expect(selectNotificationsStatus(store.getState())).toBe('failed')
         expect(await getNotifications()).toContainEqual(other)
+        // 2ая попытка - успех
         await run(store)
         expect(selectNotificationsStatus(store.getState())).toBe('succeeded')
         expect(selectNotificationsError(store.getState())).toBeNull()

@@ -49,6 +49,38 @@ describe('notificationApi', () => {
     await Promise.all([clearNotifications(own.userId), saveNotification(fresh)])
     expect((await getNotifications()).filter((item) => item.userId === own.userId)).toEqual([fresh])
   })
+  // --- P7-05 новые тесты ---
+  it('новое уведомление после «прочитать все» остаётся непрочитанным', async () => {
+    const fresh = createNotification({ id: 'fresh-unread', userId: own.userId })
+
+    await Promise.all([markAllNotificationsRead(own.userId), saveNotification(fresh)])
+
+    const items = await getNotifications()
+    expect(items).toContainEqual({ ...own, isRead: true }) // старое прочитано
+    expect(items).toContainEqual(fresh) // новое — нет
+  })
+  it.each([
+    { name: 'прочитать все', run: (userId: string) => markAllNotificationsRead(userId) },
+    { name: 'очистить', run: (userId: string) => clearNotifications(userId) },
+  ])('ошибка «$name» из-за переполнения хранилища не меняет записи', async ({ run }) => {
+    // своё уведомление непрочитанным — не зависим от beforeEach
+    await saveNotification(createNotification({ id: `q-${run.name}`, userId: 'owner-test' }))
+
+    const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('quota', 'QuotaExceededError')
+    })
+
+    try {
+      await expect(run('owner-test')).rejects.toThrow('Не хватает места')
+    } finally {
+      setItem.mockRestore()
+    }
+
+    const items = await getNotifications()
+    expect(items.some((item) => item.id === `q-${run.name}`)).toBe(true)
+    expect(items).toContainEqual(other)
+  })
+  // ---
   it('одиночное чтение сохраняется и не меняет чужую запись', async () => {
     await markNotificationRead(own.id)
     expect(await getNotifications()).toContainEqual({ ...own, isRead: true })
