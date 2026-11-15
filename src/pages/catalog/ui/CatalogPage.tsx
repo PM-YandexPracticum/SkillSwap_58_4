@@ -1,6 +1,11 @@
 import { useEffect, useMemo } from 'react'
 import { fetchExchanges } from '@/entities/exchange'
-import { selectUsers, selectPopularUsers, selectNewUsers } from '@/entities/user'
+import {
+  selectUsers,
+  selectPopularUsers,
+  selectNewUsers,
+  selectRecommendedUsers,
+} from '@/entities/user'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { CatalogView } from './CatalogView'
 import styles from './CatalogPage.module.css'
@@ -30,12 +35,16 @@ function loadCatalogExchanges(dispatch: AppDispatch, getState: () => RootState) 
  * Готовые селекторы задают порядок «Популярного» по лайкам и «Нового» по дате регистрации.
  * DataProvider загружает общие данные; страница отдельно запрашивает обмены для бейджей карточек.
  * Плашки, результаты и сортировка подключены к общему store в P5-05 через applyFilters.
- * Догрузка списков остаётся в P5-06.
+ * P5-06: «Рекомендуем» и результаты догружаются лентой; смена фильтров, поиска
+ * или сортировки даёт новый мемоизированный список, и лента начинается сначала.
  * @see Figma: 1:2861, 1:2860, 1:2819
  */
 export function CatalogPage() {
   const dispatch = useAppDispatch()
   const users = useAppSelector(selectUsers)
+  // fetchUsers один раз перемешивает store: это и есть случайный порядок «Рекомендуем».
+  // applyFilters всегда сортирует по дате, поэтому без фильтров его результат не подходит.
+  const recommendedUsers = useAppSelector(selectRecommendedUsers)
   const popularUsers = useAppSelector(selectPopularUsers)
   const newUsers = useAppSelector(selectNewUsers)
 
@@ -85,7 +94,7 @@ export function CatalogPage() {
         Каталог предложений
       </h1>
       <CatalogView
-        users={filteredUsers}
+        users={isFiltered ? filteredUsers : recommendedUsers}
         popularUsers={popularUsers}
         newUsers={newUsers}
         results={results}

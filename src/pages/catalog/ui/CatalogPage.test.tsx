@@ -44,25 +44,25 @@ describe('CatalogPage', () => {
     expect(screen.queryByRole('status', { name: 'Загрузка' })).not.toBeInTheDocument()
   })
   it('использует ту же оболочку страницы для результатов', () => {
-  renderWithProviders(<CatalogPage />, {
-    preloadedState: {
-      ...ready,
-      catalogFilter: {
-        mode: 'learn',
-        subcategoryIds: [],
-        gender: null,
-        cityIds: [],
-        sort: 'newest',
+    renderWithProviders(<CatalogPage />, {
+      preloadedState: {
+        ...ready,
+        catalogFilter: {
+          mode: 'learn',
+          subcategoryIds: [],
+          gender: null,
+          cityIds: [],
+          sort: 'newest',
+        },
       },
-    },
-  })
+    })
 
-  expect(screen.getByRole('heading', { name: 'Подходящие предложения: 1' })).toBeInTheDocument()
-  expect(screen.getAllByRole('main')).toHaveLength(1)
-  expect(
-    screen.getByRole('heading', { level: 1, name: 'Каталог предложений' }),
-  ).toBeInTheDocument()
-})
+    expect(screen.getByRole('heading', { name: 'Подходящие предложения: 1' })).toBeInTheDocument()
+    expect(screen.getAllByRole('main')).toHaveLength(1)
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Каталог предложений' }),
+    ).toBeInTheDocument()
+  })
   describe('секции «Популярное» и «Новое» (P5-04)', () => {
     // likesCount растёт с номером, дата регистрации — наоборот: Автор 0 самый новый.
     const items = Array.from({ length: 12 }, (_, i) =>
@@ -162,6 +162,67 @@ describe('CatalogPage', () => {
       expect(cardsOf('Популярное')[0]).toHaveTextContent('Единственный')
       expect(cardsOf('Новое')[0]).toHaveTextContent('Единственный')
       expect(cardsOf('Рекомендуем')[0]).toHaveTextContent('Единственный')
+    })
+  })
+
+  describe('лента «Рекомендуем» (P5-06)', () => {
+    // Store уже перемешан fetchUsers; даты специально идут в обратном порядке.
+    const items = Array.from({ length: 8 }, (_, i) =>
+      createUser({
+        id: `r${i}`,
+        name: `Автор ${i}`,
+        teachSkillId: `rs${i}`,
+        createdAt: new Date(Date.UTC(2026, 0, 1 + i)).toISOString(),
+      }),
+    )
+    const shuffled: Partial<RootState> = {
+      ...ready,
+      users: {
+        saveStatus: 'idle' as const,
+        pendingSaves: 0,
+        saveError: null,
+        items,
+        status: 'succeeded',
+        error: null,
+      },
+      skills: {
+        saveStatus: 'idle' as const,
+        pendingSaves: 0,
+        saveError: null,
+        items: items.map((u) => createSkill({ id: u.teachSkillId, authorId: u.id })),
+        status: 'succeeded',
+        error: null,
+      },
+    }
+
+    it('сохраняет случайный порядок store, а не сортирует по дате, и показывает первую порцию', () => {
+      renderWithProviders(<CatalogPage />, { preloadedState: shuffled })
+
+      const recommended = cardsOf('Рекомендуем')
+      expect(recommended).toHaveLength(6)
+      expect(recommended[0]).toHaveTextContent('Автор 0')
+      expect(recommended[5]).toHaveTextContent('Автор 5')
+      // «Новое» по-прежнему сортирует по дате: самый новый — последний в store.
+      expect(cardsOf('Новое')[0]).toHaveTextContent('Автор 7')
+    })
+
+    it('результаты фильтра по-прежнему идут в порядке сортировки', () => {
+      renderWithProviders(<CatalogPage />, {
+        preloadedState: {
+          ...shuffled,
+          catalogFilter: {
+            mode: 'learn',
+            subcategoryIds: [],
+            gender: null,
+            cityIds: [],
+            sort: 'newest',
+          },
+        },
+      })
+
+      const found = cardsOf('Подходящие предложения: 8')
+      expect(found).toHaveLength(6)
+      expect(found[0]).toHaveTextContent('Автор 7')
     })
   })
 
