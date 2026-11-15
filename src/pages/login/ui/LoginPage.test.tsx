@@ -1,4 +1,5 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
+import type { UserEvent } from '@testing-library/user-event'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
@@ -28,10 +29,10 @@ function openLogin(from?: unknown) {
   )
 }
 
-function submit(email: string, password: string) {
-  fireEvent.change(screen.getByLabelText('Email'), { target: { value: email } })
-  fireEvent.change(screen.getByLabelText('Пароль'), { target: { value: password } })
-  fireEvent.submit(screen.getByRole('form', { name: 'Вход' }))
+async function submit(user: UserEvent, email: string, password: string) {
+  await user.type(screen.getByLabelText('Email'), email)
+  await user.type(screen.getByLabelText('Пароль'), password)
+  await user.click(screen.getByRole('button', { name: 'Войти' }))
 }
 
 describe('LoginPage', () => {
@@ -60,8 +61,8 @@ describe('LoginPage', () => {
   })
 
   it('входит без учёта регистра email и сохраняет сессию перед переходом в каталог', async () => {
-    const { store } = openLogin()
-    submit('USER@EXAMPLE.COM', account.password)
+    const { store, user } = openLogin()
+    await submit(user, 'USER@EXAMPLE.COM', account.password)
 
     expect(await screen.findByRole('heading', { name: '/' })).toBeInTheDocument()
     expect(store.getState().session.session?.userId).toBe(account.id)
@@ -71,8 +72,12 @@ describe('LoginPage', () => {
   })
 
   it('после входа возвращает на сохранённый путь с query и hash', async () => {
-    openLogin({ pathname: '/skill/s01', search: '?from=catalog', hash: '#details' })
-    submit(account.email, account.password)
+    const { user } = openLogin({
+      pathname: '/skill/s01',
+      search: '?from=catalog',
+      hash: '#details',
+    })
+    await submit(user, account.email, account.password)
 
     expect(
       await screen.findByRole('heading', { name: '/skill/s01?from=catalog#details' }),
@@ -82,8 +87,8 @@ describe('LoginPage', () => {
   it.each(['//example.com', '/\\example.com', 'https://example.com'])(
     'при внешнем адресе %s открывает каталог',
     async (pathname) => {
-      openLogin({ pathname })
-      submit(account.email, account.password)
+      const { user } = openLogin({ pathname })
+      await submit(user, account.email, account.password)
 
       expect(await screen.findByRole('heading', { name: '/' })).toBeInTheDocument()
     },
@@ -93,13 +98,36 @@ describe('LoginPage', () => {
     ['unknown@example.com', account.password],
     [account.email, 'pass1234'],
   ])('показывает общую ошибку неверных данных и оставляет гостем', async (email, password) => {
-    const { store } = openLogin()
-    submit(email, password)
+    const { store, user } = openLogin()
+    await submit(user, email, password)
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Email или пароль введён неверно')
     expect(screen.getByLabelText('Email')).toHaveAttribute('aria-invalid', 'true')
     expect(screen.getByLabelText('Пароль')).toHaveAttribute('aria-invalid', 'true')
     expect(store.getState().session.session).toBeNull()
     expect(localStorage.getItem(STORAGE_KEYS.SESSION)).toBeNull()
+  })
+
+  it('снимает общую ошибку при исправлении пароля и позволяет повторить вход', async () => {
+    const { store, user } = openLogin()
+    await submit(user, account.email, 'wrong-password')
+    await screen.findByRole('alert')
+
+    await user.clear(screen.getByLabelText('Пароль'))
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Email')).not.toHaveAttribute('aria-invalid')
+    expect(screen.getByLabelText('Email')).toHaveValue(account.email)
+    expect(store.getState().session.session).toBeNull()
+    expect(localStorage.getItem(STORAGE_KEYS.SESSION)).toBeNull()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Войти' })).toBeDisabled())
+
+    await user.type(screen.getByLabelText('Пароль'), account.password)
+    await user.click(screen.getByRole('button', { name: 'Войти' }))
+
+    expect(await screen.findByRole('heading', { name: '/' })).toBeInTheDocument()
+    expect(store.getState().session.session?.userId).toBe(account.id)
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION)!)).toEqual(
+      store.getState().session.session,
+    )
   })
 })

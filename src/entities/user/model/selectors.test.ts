@@ -56,6 +56,28 @@ describe('Тестирование селекторов пользователе
     ).toBeNull()
   })
 
+  it('обновляет текущего пользователя при смене сессии, изменении профиля и выходе', () => {
+    const current = createUser({ id: 'current', name: 'Иван' })
+    const other = createUser({ id: 'other', name: 'Анна' })
+    const state = {
+      ...makeState([current, other]),
+      session: { session: { userId: current.id, token: 'mock' } },
+    }
+    const initial = selectCurrentUser(state)
+    const updated = selectCurrentUser({
+      ...state,
+      users: { ...state.users, items: [{ ...current, name: 'Пётр' }, other] },
+    })
+
+    expect(updated?.name).toBe('Пётр')
+    expect(updated).not.toBe(initial)
+    expect(updated).not.toHaveProperty('password')
+    expect(
+      selectCurrentUser({ ...state, session: { session: { userId: other.id, token: 'other' } } }),
+    ).toMatchObject({ id: other.id, name: other.name })
+    expect(selectCurrentUser({ ...state, session: { session: null } })).toBeNull()
+  })
+
   it('возвращает статус загрузки', () => {
     const state = makeState([])
     expect(selectUsersStatus({ ...state, users: { ...state.users, status: 'failed' } })).toBe(

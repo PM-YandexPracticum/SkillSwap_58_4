@@ -71,6 +71,29 @@ describe('восстановление сессии при старте', { time
     expect(store.getState().session.session).toEqual(session)
     expect(localStorage.getItem(STORAGE_KEYS.SESSION)).toBe(JSON.stringify(session))
   })
+
+  it('ошибка загрузки пользователей не завершает сохранённую сессию', async () => {
+    const session = { userId: 'u01', token: 'mock' }
+    localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(session))
+    vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) =>
+      String(input).endsWith('/db/users.json')
+        ? Promise.resolve(new Response('Unavailable', { status: 503 }))
+        : fetchFromPublicDb(input, init),
+    )
+    const { store } = await openApp(origin)
+
+    expect(
+      await screen.findByRole('heading', { name: 'На сервере произошла ошибка' }),
+    ).toBeInTheDocument()
+    await waitFor(() => {
+      const { users, skills, categories, cities } = store.getState()
+      expect([users.status, skills.status, categories.status, cities.status]).not.toContain(
+        'loading',
+      )
+    })
+    expect(store.getState().session.session).toEqual(session)
+    expect(localStorage.getItem(STORAGE_KEYS.SESSION)).toBe(JSON.stringify(session))
+  })
 })
 
 describe('стартовая загрузка', { timeout: 20_000 }, () => {

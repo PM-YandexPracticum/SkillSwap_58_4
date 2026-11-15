@@ -9,6 +9,7 @@ import { loginSchema, type LoginFormValues } from '../model/schema'
 export interface LoginFormProps {
   /** Получает email и пароль после проверки формата. */
   onSubmit?: (values: LoginFormValues) => void
+  /** Очищает общую ошибку после изменения любого поля. */
   onEdit?: () => void
   /**
    * Общая ошибка входа «Email или пароль введён неверно» (фрейм 1:2473).
@@ -26,15 +27,18 @@ export function LoginForm({ onSubmit, onEdit, error }: LoginFormProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: yupResolver(loginSchema),
+    // Как у первого шага регистрации: валидность обновляется при вводе, ошибки — после blur.
+    mode: 'onTouched',
     defaultValues: { email: '', password: '' },
   })
   return (
     <CredentialsForm
       label="Вход"
       submitLabel="Войти"
+      submitDisabled={!isValid || isSubmitting}
       onSubmit={handleSubmit((values) => onSubmit?.(values))}
       emailInput={{ ...register('email', { onChange: onEdit }), error: errors.email?.message }}
       passwordInput={{
