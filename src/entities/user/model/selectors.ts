@@ -11,6 +11,19 @@ function toPublicUser({ password: _password, ...publicUser }: User): PublicUser 
 
 const selectStoredUsers = (state: RootState) => state.users.items
 
+/**
+ * Общий источник данных текущего пользователя для шапки и других потребителей.
+ * Возвращает PublicUser без пароля или null; изменения других записей не меняют результат.
+ * Наличие сессии определяет selectIsAuth, её проверка и очистка находятся в app/router.
+ */
+export const selectCurrentUser = createSelector(
+  (state: RootState) => {
+    const userId = state.session.session?.userId
+    return userId ? selectStoredUsers(state).find((user) => user.id === userId) : undefined
+  },
+  (user): PublicUser | null => (user ? toPublicUser(user) : null),
+)
+
 /** Все пользователи без паролей; ссылка стабильна, пока список в store не изменился. */
 export const selectUsers = createSelector([selectStoredUsers], (users): PublicUser[] =>
   users.map(toPublicUser),
