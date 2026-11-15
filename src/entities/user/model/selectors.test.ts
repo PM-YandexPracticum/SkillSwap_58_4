@@ -7,6 +7,7 @@ import {
   selectUsersSaveError,
   selectUserById,
   selectUserByEmail,
+  selectCurrentUser,
   selectPopularUsers,
   selectNewUsers,
   selectRecommendedUsers,
@@ -26,6 +27,35 @@ const makeState = (items: User[]): RootState =>
   }).getState()
 
 describe('Тестирование селекторов пользователей', () => {
+  it('отдаёт текущего пользователя без пароля, сохраняя ссылку при обновлении другого пользователя', () => {
+    const current = createUser({ id: 'current' })
+    const other = createUser({ id: 'other' })
+    const state = {
+      ...makeState([current, other]),
+      session: { session: { userId: current.id, token: 'mock' } },
+    }
+    const result = selectCurrentUser(state)
+    expect(result?.id).toBe(current.id)
+    expect(result).not.toHaveProperty('password')
+    expect(
+      selectCurrentUser({
+        ...state,
+        users: { ...state.users, items: [current, { ...other, name: 'Новое имя' }] },
+      }),
+    ).toBe(result)
+  })
+
+  it('возвращает null для гостя и для неизвестного пользователя в сессии', () => {
+    const state = makeState([createUser({ id: 'current' })])
+    expect(selectCurrentUser({ ...state, session: { session: null } })).toBeNull()
+    expect(
+      selectCurrentUser({
+        ...state,
+        session: { session: { userId: 'missing', token: 'mock' } },
+      }),
+    ).toBeNull()
+  })
+
   it('возвращает статус загрузки', () => {
     const state = makeState([])
     expect(selectUsersStatus({ ...state, users: { ...state.users, status: 'failed' } })).toBe(

@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
-import { ROUTES } from '@/shared/config'
+import { ROUTES, STORAGE_KEYS } from '@/shared/config'
 
 const fetchFromPublicDb = globalThis.fetch
 
@@ -38,6 +38,39 @@ async function openApp(path: string) {
 afterEach(() => {
   vi.restoreAllMocks()
   window.history.replaceState(null, '', '/')
+})
+
+describe('восстановление сессии при старте', { timeout: 20_000 }, () => {
+  const origin = `${ROUTES.FAVORITES}?from=catalog#saved`
+
+  it('сбрасывает сессию неизвестного пользователя и передаёт исходный адрес на вход', async () => {
+    localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify({ userId: 'missing', token: 'mock' }))
+    const { store } = await openApp(origin)
+
+    expect(await screen.findByRole('heading', { name: 'Вход' })).toBeInTheDocument()
+    expect(window.location.pathname).toBe(ROUTES.LOGIN)
+    expect(window.history.state.usr.from).toMatchObject({
+      pathname: ROUTES.FAVORITES,
+      search: '?from=catalog',
+      hash: '#saved',
+    })
+    expect(store.getState().session.session).toBeNull()
+    expect(localStorage.getItem(STORAGE_KEYS.SESSION)).toBeNull()
+  })
+
+  it('сохраняет известную сессию во время загрузки и после неё', async () => {
+    const session = { userId: 'u01', token: 'mock' }
+    localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(session))
+    const { store } = await openApp(origin)
+
+    expect(screen.getByRole('status', { name: 'Загрузка' })).toBeInTheDocument()
+    expect(store.getState().session.session).toEqual(session)
+    await waitFor(() => expect(store.getState().users.status).toBe('succeeded'))
+    expect(await screen.findByRole('heading', { name: 'FavoritesPage' })).toBeInTheDocument()
+    expect(window.location.pathname).toBe(ROUTES.FAVORITES)
+    expect(store.getState().session.session).toEqual(session)
+    expect(localStorage.getItem(STORAGE_KEYS.SESSION)).toBe(JSON.stringify(session))
+  })
 })
 
 describe('стартовая загрузка', { timeout: 20_000 }, () => {

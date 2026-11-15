@@ -11,7 +11,7 @@ const FIGMA_ERROR =
 
 /**
  * Форма входа: Email, Пароль с «глазом», «Войти» и ссылка «Зарегистрироваться».
- * Ссылка — `Link`, поэтому stories обёрнуты в `MemoryRouter`. Проверку входа подключит P4-09.
+ * Ссылка — `Link`, поэтому stories обёрнуты в `MemoryRouter`.
  */
 const meta: Meta<typeof LoginForm> = {
   title: 'features/auth-by-email/LoginForm',
@@ -50,7 +50,7 @@ export const Filled: Story = {
 export const WrongCredentials: Story = {
   play: Filled.play,
   args: {
-    error: 'Email или пароль введён неверно. Пожалуйста проверьте правильность введённых данных',
+    error: 'Email или пароль введён неверно',
   },
   parameters: { design: { type: 'figma', url: FIGMA_ERROR } },
 }
