@@ -2,7 +2,7 @@
 
 **Цель:** можно зарегистрироваться за 3 шага и сразу попасть в каталог, где уже есть своя карточка.
 **После фазы:** новый пользователь сохраняется в «базе», появляется в каталоге и может войти.
-Защита закрытых страниц уже готова (P4-08); вход реализуется отдельно в P4-09.
+Защита закрытых страниц уже готова (P4-08); вход реализован отдельно в P4-09.
 Все поля проверяются по [validation.md](../../rules/validation.md). Вёрстка форм — из фазы 3.
 
 ## Архитектурная роль фазы
@@ -25,7 +25,7 @@
 - **Issue:** [#68](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/68) · PR [#193](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/193) · влито 13.11.2026
 - **Зависит от:** P3-11
 
-### P6-02 · Шаг 1: email и пароль 🟡
+### P6-02 · Шаг 1: email и пароль ✅ 🟡
 > **Что нужно сделать:** проверить формат email и пароль по `validation.md` (8–64 символа, хотя бы одна буква и одна цифра, без пробелов) и что такого email ещё нет среди пользователей (без учёта регистра) —
 > иначе ошибка «Email уже используется».
 > Всё верно — шаг отмечается пройденным и открывается шаг 2.
@@ -33,8 +33,9 @@
 
 - **Уже готово:** `StepCredentials` на `CredentialsForm` и react-hook-form; `credentialsSchema` уже собирается из общих `emailField` / `passwordField`. Подключаем схему, восстановление значений из черновика, проверку email через готовый `selectUserByEmail`, сохранение шага и переход. Пользователи загружены DataProvider; повторный запрос и вторую регулярку для email не добавляем. Окончательная проверка уникальности перед записью использует готовый контракт P4-06; сценарий регистрации собирает P6-06.
 - **Файлы:** `src/features/register/ui/StepCredentials.tsx`, `src/features/register/model/schema.ts`, `src/pages/register/ui/RegisterStep1Page.tsx`
-- **Статус на 13.11.2026:** In Progress, исполнитель: `Al-Du9270-art`. Для интеграции: все прямые зависимости закрыты; используем готовые `draftUpdated`, `stepCompleted` и `selectRegisterDraft` из P6-01.
-- **Issue:** [#69](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/69)
+- **Результат:** форма восстанавливает черновик, валидирует email и пароль общей схемой, проверяет уникальность email через store, отмечает шаг завершённым и переходит к шагу 2. Добавлены тесты, stories, README и JSDoc.
+- **Статус:** Done, влита в `develop`; исполнитель: `Al-Du9270-art`.
+- **Issue:** [#69](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/69) · PR [#201](https://github.com/PM-YandexPracticum/SkillSwap_58_4/pull/201) · влито 15.11.2026
 - **Зависит от:** P6-01, P2-16, P4-03
 
 ### P6-03 · Связь «категория ↔ подкатегория» ✅ 🟡
@@ -59,7 +60,7 @@
 - **Уже готово:** `validateImageFile` из `@/shared/lib/validation` и `fileToDataUrl` из `@/shared/lib/image` (P2-14); лимиты — `VALIDATION.IMAGE` в `@/shared/config`.
 - **Что подключаем:** готовую вёрстку `StepProfile` с DatePicker, Select и `CategorySubcategorySelect` в режиме `multiple`, а также слот `avatarUpload` на странице шага 2. Общие правила имени, даты и города берём из `shared/lib/validation`; схему шага 2 держим в регистрации, не импортируем схему соседней фичи profile-edit. `AvatarUpload` готов визуально; выбор, ошибка и обработка файла здесь должны быть пригодны и для P7-06. Используем `avatarPreviewUrl` из готового `RegisterDraft` P6-01; владение исходным файлом и его очистку согласуем с P6-06; `File` в Redux не передаём и уже готовый data URL повторно не сжимаем.
 - **Файлы:** `src/features/register/ui/StepProfile.tsx`, `src/features/avatar-upload/`, `src/features/register/model/schema.ts`, `src/pages/register/ui/RegisterStep2Page.tsx`
-- **Статус на 13.11.2026:** Todo, исполнитель: `sosolet`. Для интеграции: P6-01 (Done), P6-02 (In Progress).
+- **Статус на 15.11.2026:** In Progress, исполнитель: `sosolet`. Для интеграции: P6-01 и P6-02 (Done).
 - **Issue:** [#71](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/71)
 - **Где в макете:** «Регистрация 2 шаг» (1:1497 … 1:1717)
 - **Зависит от:** P6-01, P6-03, P2-16, P6-02 (обе меняют `schema.ts`)
@@ -87,7 +88,7 @@
 - **Уже готово:** `fileToDataUrl` из `@/shared/lib/image` (P2-14) — уменьшает фото до 800 px перед сохранением; сессию создаёт `dispatch(startSession(user.id))` из `@/entities/session` (P4-05).
 - **Граница завершения:** один сценарий координирует операции записи P4-06 и обновляет store — без повторной загрузки всех коллекций и без прямого localStorage из формы. Получаем исходные файлы по согласованному с шагами контракту; готовый data URL повторно не преобразуем. Проверяем повторный клик «Готово» и ошибку после первой успешной записи: повтор не должен создавать дубликаты или оставлять пользователя со ссылкой на отсутствующий навык. Черновик сбрасываем только после успешного завершения. Готовое окно из P3-13 показываем в каталоге один раз по флагу перехода, без `returnTo` после регистрации.
 - **Файлы:** `src/features/register/model/`, `src/features/skill-create/model/`, `src/features/skill-create/ui/OfferCreatedModal.tsx`, `src/pages/catalog/` (открыть окно по флагу)
-- **Статус на 14.11.2026:** Todo, исполнитель: `Stanislave0`. Для интеграции: P6-02 (In Progress), P6-04 (Todo), P6-05 (Done).
+- **Статус на 15.11.2026:** Todo, исполнитель: `Stanislave0`. Для интеграции: P6-02 (Done), P6-04 (In Progress), P6-05 (Done).
 - **Issue:** [#73](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/73)
 - **Где в макете:** 1:2950, 1:2904
 - **Зависит от:** P6-02, P6-04, P6-05, P4-06

@@ -2,8 +2,8 @@
 
 Отчёт показывает состояние проекта на одну дату. Он нужен команде, наставникам и тимлиду: здесь видны готовность фаз, текущая очередь, исполнители и последние принятые результаты.
 
-**Снимок:** 14.11.2026.
-**Проверено по:** **origin/develop**, commit **884f12d** после PR #200.
+**Снимок:** 15.11.2026.
+**Проверено по:** **origin/develop**, commit **3697825** после PR #203.
 **Правило:** задача считается завершённой только после влития PR в develop и закрытия issue.
 
 ## 1. Общий статус
@@ -11,14 +11,14 @@
 | Показатель | Значение |
 |---|---:|
 | MVP-задач в фазах 1–8 | 86 |
-| Завершено MVP | 71 |
+| Завершено MVP | 74 |
 | Задач фундамента фазы 0 | 9 |
 | Карточек на доске | 87 |
-| Done на доске | 72 |
+| Done на доске | 75 |
 | Review | 0 |
 | Need fix | 0 |
 
-Done содержит 71 завершённую MVP-задачу и одну общую карточку фундамента. Личные вклады участников в P8-02 входят в одну общую задачу и отдельно не увеличивают число MVP-задач.
+Done содержит 74 завершённые MVP-задачи и одну общую карточку фундамента. Личные вклады участников в P8-02 входят в одну общую задачу и отдельно не увеличивают число MVP-задач.
 
 ## 2. Готовность фаз
 
@@ -42,33 +42,25 @@ Done содержит 71 завершённую MVP-задачу и одну о�
 
 | Задача | Исполнитель | Что остаётся |
 |---|---|---|
-| [P4-09 Вход](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/58) | Laurovsky | связать форму с сессией и возвратом после входа |
-| [P5-06 Лента «Рекомендуем» и результатов](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/64) | kkiitlin | подключить догрузку к каталогу |
 | [P5-07 Лайки со счётчиком](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/65) | Stanislave0 | сохранить лайки и учесть сессию |
+| [P5-08 Страница избранного](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/66) | Al-Du9270-art | собрать страницу на готовых фильтрах, лайках и догрузке |
 | [P5-09 Шапка вошедшего и выход](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/67) | Laurovsky | показать состояние вошедшего пользователя |
-| [P6-02 Шаг 1: email и пароль](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/69) | Al-Du9270-art | подключить форму регистрации |
+| [P6-04 Шаг 2: о себе и «Хочу научиться»](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/71) | sosolet | подключить форму к черновику регистрации |
 | [P7-05 Уведомления в действии](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/78) | muntaniolirina | подключить панель и повтор загрузки |
 | [P8-03 Пустые списки](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/82) | Nick-Shvd | собрать общий EmptyState и подключить экраны |
 | [P8-05 Автотесты главных сценариев](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/84) | kirill-ai-dev | проверить интегрированные сценарии фаз 5–7 |
 
-### Готовность к Todo
+### Todo
 
 | Задача | Исполнитель | Оставшиеся зависимости |
 |---|---|---|
-| [P5-08 Страница избранного](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/66) | не назначен | P5-07 и P4-09 в работе |
-| [P6-04 Шаг 2: о себе и «Хочу научиться»](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/71) | sosolet | P6-02 в работе |
-| [P6-06 Завершение регистрации](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/73) | Stanislave0 | P6-02 в работе, затем P6-04 |
-| [P7-06 «Личные данные»: сохранение](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/79) | Nick-Shvd | P4-09 и P6-04 |
-
-### Backlog
-
-| Задача | Исполнитель | Когда возвращаемся |
-|---|---|---|
+| [P6-06 Завершение регистрации](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/73) | Stanislave0 | P6-04 в работе |
+| [P7-06 «Личные данные»: сохранение](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/79) | Nick-Shvd | P6-04 в работе |
 | [P8-04 Доступность](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/83) | viceede | после стабилизации сценариев фаз 5–7 |
-| [P8-06 Сверка с макетом и демо](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/85) | viceede | после P8-04 |
-| [P8-07 Проверка критериев приёмки](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/86) | kirill-ai-dev | после P8-05 и P8-06 |
+| [P8-06 Сверка с макетом и демо](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/85) | viceede | P8-04 в Todo |
+| [P8-07 Проверка критериев приёмки](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/86) | kirill-ai-dev | P8-05 в работе, затем P8-06 |
 
-Backlog не означает ошибку или блокировку. Это задачи финальной очереди, которые начнутся после освобождения исполнителей и готовности интеграции.
+Сейчас Backlog пуст. Todo — ближайшая очередь из уже назначенных задач; зависимости в таблице показывают порядок интеграции, но не блокируют сам перенос карточки.
 
 ## 4. Исполнители
 
@@ -76,19 +68,19 @@ Backlog не означает ошибку или блокировку. Это �
 
 | Участник | Завершено MVP | Сейчас назначено |
 |---|---:|---|
-| kirill-ai-dev | 14 | P8-05 — In Progress; P8-07 — Backlog |
-| viceede | 7 | P8-04 и P8-06 — Backlog |
+| kirill-ai-dev | 14 | P8-05 — In Progress; P8-07 — Todo |
+| viceede | 7 | P8-04 и P8-06 — Todo |
 | muntaniolirina | 8 | P7-05 — In Progress |
 | pwkdmc | 8 | — |
-| Laurovsky | 6 | P4-09 и P5-09 — In Progress |
-| Al-Du9270-art | 5 | P6-02 — In Progress |
+| Laurovsky | 7 | P5-09 — In Progress |
+| Al-Du9270-art | 6 | P5-08 — In Progress |
 | alicevdr | 7 | — |
-| sosolet | 5 | P6-04 — Todo |
+| sosolet | 5 | P6-04 — In Progress |
 | Stanislave0 | 2 | P5-07 — In Progress; P6-06 — Todo |
 | Nick-Shvd | 3 | P8-03 — In Progress; P7-06 — Todo |
-| kkiitlin | 6 | P5-06 — In Progress |
+| kkiitlin | 7 | — |
 
-По текущему реестру участники закрыли 71 MVP-задачу. Общую карточку P8-02 засчитываем Диане, как договорились; остальные участники учитываются только по задачам, в которых они участвовали. Кирилл дополнительно закрыл 9 задач фундамента.
+По текущему реестру участники закрыли 74 MVP-задачи. Общую карточку P8-02 засчитываем Диане, как договорились; остальные участники учитываются только по задачам, в которых они участвовали. Кирилл дополнительно закрыл 9 задач фундамента.
 
 
 ## 5. Как обновлять отчёт
