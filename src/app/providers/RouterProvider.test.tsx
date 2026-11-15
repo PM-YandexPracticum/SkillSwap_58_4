@@ -210,7 +210,9 @@ describe('первый шаг регистрации P6-02', { timeout: 20_000 }
 
     await user.click(screen.getByRole('button', { name: 'Закрыть' }))
     await screen.findByRole('heading', { name: 'Каталог предложений' })
-    expect(store.getState().register).toEqual({ draft: initialDraft, completedStep: 0 })
+    await waitFor(() =>
+      expect(store.getState().register).toEqual({ draft: initialDraft, completedStep: 0 }),
+    )
     await waitFor(() => expect(store.getState().exchanges.status).toBe('succeeded'))
   })
 })
