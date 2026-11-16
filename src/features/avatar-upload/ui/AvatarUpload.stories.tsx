@@ -15,12 +15,20 @@ const meta = {
     },
     docs: {
       description: {
-        component: 'Вёрстка P3-12. Выбор, проверка и сохранение файла подключаются в P6-04.',
+        component:
+          'Аватар второго шага регистрации. Кнопка «+» открывает выбор файла (jpg, png, webp до 1 МБ): проверку делает `validateImageFile`, уменьшение до 800 px — `fileToDataUrl`, в `onChange` приходит готовый data URL. Ошибка файла показывается под аватаром. Фото хранит тот, кто использует компонент: черновик регистрации (P6-04) или личные данные (P7-06).',
       },
     },
   },
 } satisfies Meta<typeof AvatarUpload>
 export default meta
 type Story = StoryObj<typeof meta>
+
+/** Без фото, как в макете 1:1497; выбрать файл можно кнопкой «+» */
 export const Default: Story = {}
+
+/** С выбранным фото */
 export const WithPhoto: Story = { args: { value: IMAGE_PLACEHOLDERS.AVATAR } }
+
+/** Ошибка поля под аватаром */
+export const WithError: Story = { args: { error: 'Файл больше 1 МБ' } }
