@@ -1,3 +1,4 @@
+import { createRef } from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
@@ -300,4 +301,35 @@ describe('Select', () => {
     rerender(<Select {...props} value="spb" />)
     expect(screen.getByRole('combobox')).toHaveValue('Санкт-Петербург')
   })
+  it.each([false, true])(
+    'сообщает о blur при уходе из всего поля; ref фокусирует поле (searchable=%s)',
+    async (searchable) => {
+      const ref = createRef<HTMLInputElement | HTMLButtonElement>()
+      const onBlur = vi.fn()
+      const user = userEvent.setup()
+      render(
+        <>
+          <Select
+            ref={ref}
+            label="Город"
+            options={cities}
+            value="samara"
+            onChange={vi.fn()}
+            onBlur={onBlur}
+            searchable={searchable}
+          />
+          <button onClick={() => ref.current?.focus()}>Вернуться к полю</button>
+        </>,
+      )
+      await user.click(screen.getByRole('combobox'))
+      if (searchable) {
+        await user.type(screen.getByRole('combobox'), 'са')
+        await user.click(screen.getByRole('button', { name: 'Очистить' }))
+        expect(onBlur).not.toHaveBeenCalled()
+      }
+      await user.click(screen.getByRole('button', { name: 'Вернуться к полю' }))
+      expect(onBlur).toHaveBeenCalledOnce()
+      expect(screen.getByRole('combobox')).toHaveFocus()
+    },
+  )
 })

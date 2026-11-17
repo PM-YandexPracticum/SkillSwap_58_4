@@ -1,4 +1,13 @@
-import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useId,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from 'react'
 
 import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react'
 import ChevronUpIcon from '@/shared/assets/icons/chevron-up.svg?react'
@@ -15,6 +24,8 @@ export interface MultiSelectProps {
   value: readonly string[]
   /** Новый массив выбранных значений (без мутации старого) */
   onChange: (value: string[]) => void
+  /** Вызывается один раз при уходе фокуса за пределы всего поля и списка. */
+  onBlur?: () => void
   error?: string
   disabled?: boolean
   /** Первоначально раскрытый список, например для Storybook. Игнорируется при disabled или пустых options. */
@@ -26,21 +37,26 @@ export interface MultiSelectProps {
  * показывает выбранные значения (лишние — «+N»). При удалении активного пункта возвращает фокус на поле.
  * @see Figma: «Регистрация 2 шаг» — «Категория…» (1:1673) и «Подкатегория навыка, которому хотите научиться» (1:1717)
  */
-export function MultiSelect({
-  label,
-  placeholder = 'Выберите значения',
-  options,
-  value,
-  onChange,
-  error,
-  disabled = false,
-  defaultOpen = false,
-}: MultiSelectProps) {
+export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(function MultiSelect(
+  {
+    label,
+    placeholder = 'Выберите значения',
+    options,
+    value,
+    onChange,
+    onBlur,
+    error,
+    disabled = false,
+    defaultOpen = false,
+  },
+  ref,
+) {
   const canOpen = !disabled && options.length > 0
   const [isOpen, setIsOpen] = useState(defaultOpen && canOpen)
   const expanded = canOpen && isOpen
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
+  useImperativeHandle(ref, () => triggerRef.current!, [])
   const listRef = useRef<HTMLUListElement>(null)
   const focusedOptionRef = useRef<HTMLInputElement | null>(null)
   const focusOnOpen = useRef<'first' | 'last' | null>(null)
@@ -124,7 +140,10 @@ export function MultiSelect({
         focusedOptionRef.current = event.target instanceof HTMLInputElement ? event.target : null
       }}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) close()
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          close()
+          onBlur?.()
+        }
       }}
     >
       {label && (
@@ -197,4 +216,4 @@ export function MultiSelect({
       )}
     </div>
   )
-}
+})

@@ -26,6 +26,28 @@ async function fetchFromPublicDb(input: RequestInfo | URL, init?: RequestInit): 
 
 globalThis.fetch = fetchFromPublicDb
 
+/**
+ * В jsdom нет IntersectionObserver, а ленты каталога (P5-06) создают его, когда карточек больше порции.
+ * Заглушка никогда не сообщает о видимости: лента остаётся на первой порции.
+ * Чтобы проверить догрузку, подмените класс в самом тесте: `vi.stubGlobal('IntersectionObserver', ...)`.
+ */
+class IntersectionObserverStub {
+  readonly root = null
+  readonly rootMargin = ''
+  readonly thresholds: ReadonlyArray<number> = []
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords(): IntersectionObserverEntry[] {
+    return []
+  }
+}
+
+if (!('IntersectionObserver' in globalThis)) {
+  globalThis.IntersectionObserver =
+    IntersectionObserverStub as unknown as typeof IntersectionObserver
+}
+
 // После каждого теста — чистый браузер: изменения «базы», сессия и тема не переходят в следующий тест
 afterEach(() => {
   localStorage.clear()

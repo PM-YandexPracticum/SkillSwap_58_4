@@ -74,6 +74,70 @@ describe('OffersSection', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
+  it('в ленте показывает спиннер под карточками, пока идёт догрузка', () => {
+    render(
+      <OffersSection
+        title="Рекомендуем"
+        users={users.slice(0, 6)}
+        mode="infinite"
+        renderItem={renderItem}
+        isLoading
+        hasMore
+      />,
+    )
+    const section = screen.getByRole('region', { name: 'Рекомендуем' })
+
+    expect(within(section).getByRole('status', { name: 'Загрузка' })).toBeInTheDocument()
+    expect(within(section).getAllByRole('link')).toHaveLength(6)
+  })
+
+  it('выводит маркер конца ленты, только пока есть ещё карточки', () => {
+    const sentinelRef = { current: null as HTMLDivElement | null }
+    const { rerender } = render(
+      <OffersSection
+        title="Рекомендуем"
+        users={users.slice(0, 6)}
+        mode="infinite"
+        renderItem={renderItem}
+        hasMore
+        sentinelRef={sentinelRef}
+      />,
+    )
+    expect(sentinelRef.current).toBeInstanceOf(HTMLDivElement)
+    expect(sentinelRef.current).toHaveAttribute('aria-hidden', 'true')
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+
+    rerender(
+      <OffersSection
+        title="Рекомендуем"
+        users={users}
+        mode="infinite"
+        renderItem={renderItem}
+        hasMore={false}
+        sentinelRef={sentinelRef}
+      />,
+    )
+    expect(sentinelRef.current).toBeNull()
+  })
+
+  it('в режиме раскрытия не показывает спиннер и маркер ленты', () => {
+    const sentinelRef = { current: null as HTMLDivElement | null }
+    render(
+      <OffersSection
+        title="Популярное"
+        users={users}
+        mode="expandable"
+        renderItem={renderItem}
+        isLoading
+        hasMore
+        sentinelRef={sentinelRef}
+      />,
+    )
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    expect(sentinelRef.current).toBeNull()
+  })
+
   it('не раскрывает соседнюю секцию и даёт каждой кнопке свой список', async () => {
     const user = userEvent.setup()
     render(

@@ -1,7 +1,14 @@
+import { configureStore } from '@reduxjs/toolkit'
+import { Provider } from 'react-redux'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { MemoryRouter } from 'react-router-dom'
-import { userEvent, within } from 'storybook/test'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
+
+import { usersReducer } from '@/entities/user'
+import { createUser } from '@/entities/user/testing'
 import { StepCredentials } from './StepCredentials'
+
+const credentials = { email: 'petrov@mail.ru', password: 'password123' }
 
 const meta = {
   title: 'features/register/StepCredentials',
@@ -16,27 +23,40 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <div style={{ width: 436 }}>
-          <Story />
-        </div>
-      </MemoryRouter>
+      <Provider
+        store={configureStore({
+          reducer: { users: usersReducer },
+          preloadedState: {
+            users: {
+              ...usersReducer(undefined, { type: '@@init' }),
+              items: [createUser({ email: credentials.email })],
+              status: 'succeeded' as const,
+            },
+          },
+        })}
+      >
+        <MemoryRouter>
+          <div style={{ width: 436 }}>
+            <Story />
+          </div>
+        </MemoryRouter>
+      </Provider>
     ),
   ],
 } satisfies Meta<typeof StepCredentials>
 export default meta
 type Story = StoryObj<typeof meta>
 export const Default: Story = {}
-export const Filled: Story = {
+export const Filled: Story = { args: { defaultValues: credentials } }
+export const EmailTaken: Story = {
+  args: Filled.args,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    await userEvent.type(canvas.getByLabelText('Email'), 'petrov@mail.ru')
-    await userEvent.type(canvas.getByLabelText('Пароль'), 'password123')
+    const submit = canvas.getByRole('button', { name: 'Далее' })
+    await waitFor(() => expect(submit).toBeEnabled())
+    await userEvent.click(submit)
+    await expect(canvas.findByText('Email уже используется')).resolves.toBeVisible()
   },
-}
-export const EmailTaken: Story = {
-  play: Filled.play,
-  args: { emailError: 'Email уже используется' },
   parameters: {
     design: {
       type: 'figma',

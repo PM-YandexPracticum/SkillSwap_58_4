@@ -1,1 +1,1 @@
-export { AvatarUpload } from './ui/AvatarUpload'
+export { AvatarUpload, type AvatarUploadProps } from './ui/AvatarUpload'

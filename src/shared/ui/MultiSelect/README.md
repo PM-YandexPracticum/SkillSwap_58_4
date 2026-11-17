@@ -27,3 +27,5 @@ import { MultiSelect } from '@/shared/ui/MultiSelect'
   onChange={setSelectedIds}
 />
 ```
+
+Для форм доступны `onBlur` (уход фокуса за пределы всего поля со списком) и `ref` на основное поле. Переход к кнопке очистки или чекбоксам внутри списка не вызывает внешний `onBlur`.

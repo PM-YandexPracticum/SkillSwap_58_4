@@ -13,6 +13,7 @@ export {
   selectUsersSaveError,
   selectUserById,
   selectUserByEmail,
+  selectCurrentUser,
   selectPopularUsers,
   selectNewUsers,
   selectRecommendedUsers,

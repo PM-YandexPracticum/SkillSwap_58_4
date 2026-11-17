@@ -86,6 +86,18 @@
   padding-top: var(--space-24);
 }
 
+/* Спиннер догрузки ленты по центру под сеткой. */
+.loading {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--space-40);
+}
+
+/* Пустой маркер конца ленты высотой 1 px: его видимость отслеживает IntersectionObserver. */
+.sentinel {
+  height: 1px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fold {
     transition: none;
