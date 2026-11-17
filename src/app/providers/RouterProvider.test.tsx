@@ -12,14 +12,16 @@ const PAGE_READY_TIMEOUT = 5_000
 async function openApp(path: string) {
   // loadSeed кеширует ответы на уровне модуля. Каждый запуск имитирует новую вкладку.
   vi.resetModules()
-  const [{ createAppStore }, { AppRouter }, users, skills, categories, cities] = await Promise.all([
-    import('@/app/store'),
-    import('./RouterProvider'),
-    import('@/entities/user'),
-    import('@/entities/skill'),
-    import('@/entities/category'),
-    import('@/entities/city'),
-  ])
+  const [{ createAppStore }, { AppRouter }, { ToastProvider }, users, skills, categories, cities] =
+    await Promise.all([
+      import('@/app/store'),
+      import('./RouterProvider'),
+      import('./ToastProvider'),
+      import('@/entities/user'),
+      import('@/entities/skill'),
+      import('@/entities/category'),
+      import('@/entities/city'),
+    ])
   const loads = {
     users: vi.spyOn(users, 'fetchUsers'),
     skills: vi.spyOn(skills, 'fetchSkills'),
@@ -31,7 +33,9 @@ async function openApp(path: string) {
   render(
     <StrictMode>
       <Provider store={store}>
-        <AppRouter />
+        <ToastProvider>
+          <AppRouter />
+        </ToastProvider>
       </Provider>
     </StrictMode>,
   )

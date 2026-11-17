@@ -1,3 +1,4 @@
+import { ToastContext } from '@/shared/lib/toast'
 import { configureStore } from '@reduxjs/toolkit'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Provider } from 'react-redux'
@@ -9,6 +10,8 @@ import { exchangesReducer } from '@/entities/exchange'
 import { sessionReducer } from '@/entities/session'
 import { skillsReducer } from '@/entities/skill'
 import { createSkill } from '@/entities/skill/testing'
+import { favoriteToggleReducer } from '@/features/favorite-toggle'
+import { usersReducer } from '@/entities/user'
 import { createUser } from '@/entities/user/testing'
 
 import { OfferCard } from './OfferCard'
@@ -63,7 +66,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'P3-08 / P7-04: данные из preloadedState, без запросов и сохранения. Гость и вошедший без исходящего предложения видят ссылку; собственное предложение заменяет её статусом. Счётчик рядом с сердечком добавлен по ТЗ — в Figma есть только иконка. «Подробнее» — ссылка; обработка лайка появится в P5-07. Размер карточки из макета — 324 × 368 px.',
+          'P3-08 / P7-04: данные из preloadedState, без запросов и сохранения. Гость и вошедший без исходящего предложения видят ссылку; собственное предложение заменяет её статусом. Счётчик рядом с сердечком добавлен по ТЗ — в Figma есть только иконка. «Подробнее» — ссылка; сердечко использует feature P5-07. Размер карточки из макета — 324 × 368 px.',
       },
     },
   },
@@ -71,6 +74,8 @@ const meta = {
     (Story, { args, parameters }) => {
       const store = configureStore({
         reducer: {
+          users: usersReducer,
+          favoriteToggle: favoriteToggleReducer,
           cities: citiesReducer,
           categories: categoriesReducer,
           skills: skillsReducer,
@@ -78,6 +83,17 @@ const meta = {
           exchanges: exchangesReducer,
         },
         preloadedState: {
+          users: {
+            items: [
+              createUser(args.user),
+              createUser({ id: 'current-user-id', email: 'viewer@example.com' }),
+            ],
+            status: 'succeeded' as const,
+            error: null,
+            saveStatus: 'idle' as const,
+            pendingSaves: 0,
+            saveError: null,
+          },
           cities: {
             items: [{ id: args.user.cityId, name: 'Санкт-Петербург' }],
             status: 'succeeded' as const,
@@ -123,11 +139,13 @@ const meta = {
       })
       return (
         <Provider store={store}>
-          <MemoryRouter>
-            <div style={{ width: 324 }}>
-              <Story />
-            </div>
-          </MemoryRouter>
+          <ToastContext.Provider value={{ showToast: () => {}, removeToast: () => {} }}>
+            <MemoryRouter>
+              <div style={{ width: 324 }}>
+                <Story />
+              </div>
+            </MemoryRouter>
+          </ToastContext.Provider>
         </Provider>
       )
     },

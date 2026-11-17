@@ -1,3 +1,10 @@
+import { ToastContext } from '@/shared/lib/toast'
+import { configureStore } from '@reduxjs/toolkit'
+import { Provider } from 'react-redux'
+import { MemoryRouter } from 'react-router-dom'
+import { sessionReducer } from '@/entities/session'
+import { usersReducer } from '@/entities/user'
+import { favoriteToggleReducer } from '@/features/favorite-toggle'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
@@ -69,15 +76,30 @@ const meta = {
     docs: {
       description: {
         component:
-          'P3-09: данные приходят пропсами, их собирает страница. «Поделиться» и «⋯» — заглушки, лайк — только вид (логика — P5-07).',
+          'P3-09: данные приходят пропсами, их собирает страница. «Поделиться» и «⋯» — заглушки, сердечко P5-07 в гостевом состоянии переводит на вход.',
       },
     },
   },
   decorators: [
     (Story) => (
-      <div style={{ maxWidth: 'var(--container-width)', margin: '0 auto' }}>
-        <Story />
-      </div>
+      <Provider
+        store={configureStore({
+          reducer: {
+            session: sessionReducer,
+            users: usersReducer,
+            favoriteToggle: favoriteToggleReducer,
+          },
+          preloadedState: { session: { session: null } },
+        })}
+      >
+        <ToastContext.Provider value={{ showToast: () => {}, removeToast: () => {} }}>
+          <MemoryRouter>
+            <div style={{ maxWidth: 'var(--container-width)', margin: '0 auto' }}>
+              <Story />
+            </div>
+          </MemoryRouter>
+        </ToastContext.Provider>
+      </Provider>
     ),
   ],
 } satisfies Meta<typeof SkillDetails>

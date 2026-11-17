@@ -1,6 +1,5 @@
 /* Токенов line-height и letter-spacing в global.css нет, поэтому значения из макета заданы здесь */
 .summary {
-  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-12);
@@ -23,6 +22,7 @@
 }
 
 .name {
+  flex: 1;
   font-family: var(--font-name);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
@@ -36,13 +36,14 @@
   letter-spacing: 0.02em;
 }
 
-/* Лайк — в правом верхнем углу блока, как в макете; длинное имя обрезается до него */
-.action {
-  position: absolute;
-  top: 0;
-  right: 0;
+/* Слот занимает реальную ширину: число лайков не перекрывает длинное имя. */
+.heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
 }
 
-.withAction .name {
-  padding-right: calc(24px + var(--space-4));
+.action {
+  flex-shrink: 0;
 }

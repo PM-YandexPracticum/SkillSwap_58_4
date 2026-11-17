@@ -57,6 +57,63 @@ describe('createMockCollection', () => {
   })
 
   describe('изменения', () => {
+    it('updateMany сохраняет все изменения одним вызовом и возвращает независимые копии', async () => {
+      const items = createItems()
+      const write = vi.spyOn(Storage.prototype, 'setItem')
+      const result = await items.updateMany((current) =>
+        current.map(({ id, title }) => ({
+          id,
+          changes: { title: `${title}!` },
+        })),
+      )
+      expect(write).toHaveBeenCalledTimes(1)
+      result[0].tags.push('вне базы')
+      expect(await createItems().getAll()).toEqual(
+        SEED.map((item) => ({ ...item, title: `${item.title}!` })),
+      )
+    })
+
+    it('updateMany вычисляет изменения по актуальному снимку внутри очереди', async () => {
+      const items = createItems()
+      await Promise.all(
+        ['x', 'y'].map((tag) =>
+          items.updateMany((current) => [
+            {
+              id: 'b',
+              changes: { tags: [...current[1].tags, tag] },
+            },
+          ]),
+        ),
+      )
+      expect((await items.getById('b'))?.tags).toEqual(['x', 'y'])
+    })
+
+    it.each(['missing', 'duplicate', 'quota'] as const)(
+      'updateMany: %s не оставляет частичных изменений',
+      async (failure) => {
+        const items = createItems()
+        if (failure === 'quota')
+          vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+            throw new DOMException('quota', 'QuotaExceededError')
+          })
+        await expect(
+          items.updateMany(() => [
+            { id: 'a', changes: { title: 'Изменено' } },
+            {
+              id: failure === 'missing' ? 'нет' : failure === 'duplicate' ? 'a' : 'b',
+              changes: { tags: ['новый'] },
+            },
+          ]),
+        ).rejects.toThrow()
+        expect(await items.getAll()).toEqual(SEED)
+      },
+    )
+
+    it('updateMany без изменений не пишет в хранилище', async () => {
+      const write = vi.spyOn(Storage.prototype, 'setItem')
+      expect(await createItems().updateMany(() => [])).toEqual([])
+      expect(write).not.toHaveBeenCalled()
+    })
     it('create сохраняет запись, и она видна после «перезагрузки»', async () => {
       const item = { id: 'c', title: 'Третий', tags: [] }
 
@@ -286,6 +343,17 @@ describe('проверка структуры коллекции', () => {
     expect(await items.getById('a')).toEqual(SEED[0])
     expect(localStorage.getItem(`${MOCK_DB.STORAGE_PREFIX}validated-update`)).toBeNull()
   })
+
+  it('отклоняет весь updateMany, если вторая запись не прошла runtime-проверку', async () => {
+    const items = createMockCollection('items', SEED, { delayMs: 0, validate })
+    await expect(
+      items.updateMany(() => [
+        { id: 'a', changes: { title: 'Изменено' } },
+        { id: 'b', changes: { tags: [42] } as unknown as Partial<Item> },
+      ]),
+    ).rejects.toThrow('Неверная структура записи')
+    expect(await items.getAll()).toEqual(SEED)
+  })
 })
 
 describe('ограничения записи внутри очереди коллекции', () => {
@@ -315,5 +383,16 @@ describe('ограничения записи внутри очереди кол
     await expect(items.update('a', { title: 'Первый', tags: ['новый'] })).resolves.toMatchObject({
       tags: ['новый'],
     })
+  })
+
+  it('validateWrite проверяет итоговый список updateMany целиком до записи', async () => {
+    const items = constrained()
+    await expect(
+      items.updateMany(() => [
+        { id: 'a', changes: { title: 'Дубль' } },
+        { id: 'b', changes: { title: 'Дубль' } },
+      ]),
+    ).rejects.toThrow('Такое название уже есть')
+    expect(await items.getAll()).toEqual(SEED)
   })
 })

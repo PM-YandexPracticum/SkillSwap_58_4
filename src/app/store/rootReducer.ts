@@ -7,6 +7,7 @@ import { sessionReducer } from '@/entities/session'
 import { skillsReducer } from '@/entities/skill'
 import { usersReducer } from '@/entities/user'
 import { catalogFilterReducer } from '@/features/catalog-filter'
+import { favoriteToggleReducer } from '@/features/favorite-toggle'
 import { registerReducer } from '@/features/register'
 import { searchReducer } from '@/features/skill-search'
 
@@ -22,6 +23,7 @@ export const rootReducer = combineReducers({
   users: usersReducer,
   // features
   catalogFilter: catalogFilterReducer,
+  favoriteToggle: favoriteToggleReducer,
   register: registerReducer,
   search: searchReducer,
 })

@@ -10,6 +10,7 @@ import { notificationsReducer, type NotificationsState } from '@/entities/notifi
 import { skillsReducer, type Skill } from '@/entities/skill'
 import { sessionReducer } from '@/entities/session'
 import { usersReducer, type User } from '@/entities/user'
+import { favoriteToggleReducer } from '@/features/favorite-toggle'
 import { ToastContext } from '@/shared/lib/toast'
 import { loadSeed } from '@/shared/api'
 import { getSkillRoute, ROUTES } from '@/shared/config'
@@ -70,6 +71,7 @@ function renderAt(skillId: string): Story['render'] {
         exchanges: exchangesReducer,
         notifications: notificationsReducer,
         session: sessionReducer,
+        favoriteToggle: favoriteToggleReducer,
       },
       preloadedState: {
         cities: { items: [...cities], status: 'succeeded' as const },
