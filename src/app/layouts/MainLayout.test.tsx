@@ -2,6 +2,12 @@ import { screen, within } from '@testing-library/react'
 import { Route, Routes } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
+import { createTestStore } from '@/app/test/createTestStore'
+import { RequireAuth } from '@/app/router/RequireAuth'
+import { startSession } from '@/entities/session'
+import { fetchUsers } from '@/entities/user'
+import { createUser } from '@/entities/user/testing'
+import { fetchNotifications } from '@/entities/notification'
 import { selectSearchQuery } from '@/features/skill-search'
 import { ROUTES } from '@/shared/config'
 import { AllSkillsPage } from '@/pages/all-skills'
@@ -39,6 +45,41 @@ function renderLayout() {
 }
 
 describe('MainLayout', () => {
+  it.each([ROUTES.PROFILE, ROUTES.FAVORITES])(
+    'выход из меню на %s открывает главную и сразу меняет шапку на гостевую',
+    async (route) => {
+      const account = createUser()
+      const store = createTestStore()
+      store.dispatch(fetchUsers.fulfilled([account], 'users'))
+      store.dispatch(startSession(account.id))
+      store.dispatch(fetchNotifications.fulfilled([], 'notifications'))
+      const { user } = renderWithProviders(
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route path={ROUTES.HOME} element={<h1>Главная</h1>} />
+            <Route
+              path={route}
+              element={
+                <RequireAuth>
+                  <h1>Закрытая страница</h1>
+                </RequireAuth>
+              }
+            />
+          </Route>
+          <Route path={ROUTES.LOGIN} element={<h1>Вход</h1>} />
+        </Routes>,
+        { store, route },
+      )
+      const header = within(screen.getByRole('banner'))
+      await user.click(header.getByRole('button', { name: account.name }))
+      await user.click(header.getByRole('button', { name: 'Выйти' }))
+
+      expect(screen.getByRole('heading', { name: 'Главная' })).toBeInTheDocument()
+      expect(header.getByRole('button', { name: 'Войти' })).toBeInTheDocument()
+      expect(store.getState().session.session).toBeNull()
+    },
+  )
+
   it('показывает шапку, страницу и подвал с единственной основной областью', () => {
     renderLayout()
 

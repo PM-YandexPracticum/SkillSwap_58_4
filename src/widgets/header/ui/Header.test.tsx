@@ -1,15 +1,34 @@
-import { act, screen } from '@testing-library/react'
+import { StrictMode } from 'react'
+import { act, screen, waitFor } from '@testing-library/react'
 import { Route, Routes } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
 import { setSort } from '@/features/catalog-filter'
 import { selectSearchQuery } from '@/features/skill-search'
-import { ROUTES } from '@/shared/config'
+import { ROUTES, STORAGE_KEYS } from '@/shared/config'
+import { createTestStore } from '@/app/test/createTestStore'
+import { startSession, endSession } from '@/entities/session'
+import { fetchUsers } from '@/entities/user'
+import { createUser } from '@/entities/user/testing'
+import { fetchNotifications, type Notification } from '@/entities/notification'
+import * as notifications from '@/entities/notification'
+import { createNotification } from '@/entities/notification/testing'
 
 import { Header, type HeaderProps } from './Header'
 
-const renderHeader = (props: HeaderProps = {}, route: string = ROUTES.HOME) =>
-  renderWithProviders(<Header {...props} />, { route })
+const account = createUser({ name: 'Мария', avatarUrl: '/images/avatars/u02.jpg' })
+const authorized = (items: Notification[] = []) => {
+  const store = createTestStore()
+  store.dispatch(fetchUsers.fulfilled([account], 'users'))
+  store.dispatch(startSession(account.id))
+  store.dispatch(fetchNotifications.fulfilled(items, 'notifications'))
+  return store
+}
+const renderHeader = (
+  props: HeaderProps = {},
+  route: string = ROUTES.HOME,
+  store = createTestStore(),
+) => renderWithProviders(<Header {...props} />, { route, store })
 
 describe('Header', () => {
   describe('гость', () => {
@@ -29,7 +48,7 @@ describe('Header', () => {
 
     it.each([
       ['Войти', ROUTES.LOGIN, 'Вход'],
-      ['Зарегистрироваться', ROUTES.REGISTER, 'Регистрация'],
+      ['Зарегистрироваться', ROUTES.REGISTER_STEP_1, 'Регистрация'],
     ])('%s ведёт на нужную страницу', async (label, path, title) => {
       const { user } = renderWithProviders(
         <Routes>
@@ -88,10 +107,8 @@ describe('Header', () => {
   })
 
   describe('вошедший', () => {
-    const auth: HeaderProps = { isAuth: true, userName: 'Мария' }
-
     it('вместо кнопок входа показывает колокольчик, сердечко и имя', () => {
-      renderHeader(auth)
+      renderHeader({}, ROUTES.HOME, authorized())
 
       expect(screen.queryByRole('button', { name: 'Войти' })).not.toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Уведомления' })).toBeInTheDocument()
@@ -99,17 +116,22 @@ describe('Header', () => {
         'href',
         ROUTES.FAVORITES,
       )
-      expect(screen.getByRole('button', { name: 'Мария' })).toBeInTheDocument()
+      const trigger = screen.getByRole('button', { name: 'Мария' })
+      expect(trigger.querySelector('img')).toHaveAttribute('src', account.avatarUrl)
     })
 
     it('сообщает скринридеру о непрочитанных уведомлениях', () => {
-      renderHeader({ ...auth, hasUnread: true })
+      renderHeader({}, ROUTES.HOME, authorized([createNotification({ userId: account.id })]))
 
       expect(screen.getByRole('button', { name: 'Уведомления, есть новые' })).toBeInTheDocument()
     })
 
     it('объявляет состояние окна уведомлений', async () => {
-      const { user } = renderHeader({ ...auth, notifications: <p>Список уведомлений</p> })
+      const { user } = renderHeader(
+        { notifications: <p>Список уведомлений</p> },
+        ROUTES.HOME,
+        authorized(),
+      )
 
       const trigger = screen.getByRole('button', { name: 'Уведомления' })
       expect(trigger).toHaveAttribute('aria-expanded', 'false')
@@ -129,7 +151,7 @@ describe('Header', () => {
     })
 
     it('не объявляет меню открытым, если слот уведомлений не передан', () => {
-      renderHeader(auth)
+      renderHeader({}, ROUTES.HOME, authorized())
 
       const trigger = screen.getByRole('button', { name: 'Уведомления' })
       expect(trigger).toHaveAttribute('aria-expanded', 'false')
@@ -146,7 +168,7 @@ describe('Header', () => {
     })
 
     it('на странице избранного сердечко отмечено как текущая страница', () => {
-      renderHeader(auth, ROUTES.FAVORITES)
+      renderHeader({}, ROUTES.FAVORITES, authorized())
 
       expect(screen.getByRole('link', { name: 'Избранное' })).toHaveAttribute(
         'aria-current',
@@ -155,16 +177,19 @@ describe('Header', () => {
     })
 
     it('колокольчик открывает слот notifications', async () => {
-      const { user } = renderHeader({ ...auth, notifications: <p>Список уведомлений</p> })
+      const { user } = renderHeader(
+        { notifications: <p>Список уведомлений</p> },
+        ROUTES.HOME,
+        authorized(),
+      )
 
       await user.click(screen.getByRole('button', { name: 'Уведомления' }))
 
       expect(screen.getByText('Список уведомлений')).toBeInTheDocument()
     })
 
-    it('меню пользователя: «Личный кабинет» — ссылка, «Выйти» вызывает onLogout', async () => {
-      const onLogout = vi.fn()
-      const { user } = renderHeader({ ...auth, onLogout })
+    it('меню пользователя: «Личный кабинет» — ссылка, «Выйти» завершает сессию', async () => {
+      const { user, store } = renderHeader({}, ROUTES.HOME, authorized())
 
       const trigger = screen.getByRole('button', { name: 'Мария' })
       expect(trigger).not.toHaveAttribute('aria-controls')
@@ -178,16 +203,21 @@ describe('Header', () => {
       expect(screen.getByRole('link', { name: 'Личный кабинет' })).toBeInTheDocument()
 
       await user.click(screen.getByRole('button', { name: 'Выйти' }))
-      expect(onLogout).toHaveBeenCalledTimes(1)
+      expect(store.getState().session.session).toBeNull()
+      expect(localStorage.getItem(STORAGE_KEYS.SESSION)).toBeNull()
+      expect(screen.getByRole('button', { name: 'Войти' })).toBeInTheDocument()
       expect(screen.queryByRole('button', { name: 'Выйти' })).not.toBeInTheDocument()
     })
 
     it('одновременно открыто только одно меню', async () => {
-      const { user } = renderHeader({
-        ...auth,
-        categoriesMenu: <p>Меню навыков</p>,
-        notifications: <p>Список уведомлений</p>,
-      })
+      const { user } = renderHeader(
+        {
+          categoriesMenu: <p>Меню навыков</p>,
+          notifications: <p>Список уведомлений</p>,
+        },
+        ROUTES.HOME,
+        authorized(),
+      )
 
       await user.click(screen.getByRole('button', { name: 'Все навыки' }))
       await user.click(screen.getByRole('button', { name: 'Уведомления' }))
@@ -197,7 +227,7 @@ describe('Header', () => {
     })
 
     it('до меню пользователя можно дойти с клавиатуры', async () => {
-      const { user } = renderHeader(auth)
+      const { user } = renderHeader({}, ROUTES.HOME, authorized())
 
       const trigger = screen.getByRole('button', { name: 'Мария' })
       for (let i = 0; i < 20 && document.activeElement !== trigger; i += 1) {
@@ -208,5 +238,100 @@ describe('Header', () => {
       await user.keyboard('{Enter}')
       expect(screen.getByRole('link', { name: 'Личный кабинет' })).toBeInTheDocument()
     })
+  })
+})
+
+describe('Header — обновление store', () => {
+  it('ошибка загрузки пользователей сохраняет сессию и доступ к меню выхода', async () => {
+    const loaded = authorized().getState()
+    const store = createTestStore({
+      ...loaded,
+      users: { ...loaded.users, items: [], status: 'failed' },
+    })
+    const { user } = renderHeader({}, ROUTES.SERVER_ERROR, store)
+
+    expect(screen.queryByRole('button', { name: 'Войти' })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Меню пользователя' }))
+    expect(screen.getByRole('button', { name: 'Выйти' })).toBeInTheDocument()
+    expect(store.getState().session).toEqual(loaded.session)
+  })
+
+  it('переключает вид при входе и сразу показывает обновлённые имя и аватар', () => {
+    const { store } = renderHeader()
+    act(() => {
+      store.dispatch(fetchUsers.fulfilled([account], 'users'))
+      store.dispatch(startSession(account.id))
+    })
+    expect(screen.getByRole('button', { name: 'Мария' })).toBeInTheDocument()
+    act(() =>
+      store.dispatch(
+        fetchUsers.fulfilled([{ ...account, name: 'Анна', avatarUrl: '/new.jpg' }], 'update'),
+      ),
+    )
+    expect(screen.getByRole('button', { name: 'Анна' }).querySelector('img')).toHaveAttribute(
+      'src',
+      '/new.jpg',
+    )
+    act(() => store.dispatch(endSession()))
+    expect(screen.getByRole('button', { name: 'Войти' })).toBeInTheDocument()
+  })
+
+  it('чужое новое и своё прочитанное уведомления не показывают точку', () => {
+    renderHeader(
+      {},
+      ROUTES.HOME,
+      authorized([
+        createNotification({ id: 'other', userId: 'another-user' }),
+        createNotification({ id: 'own', userId: account.id, isRead: true }),
+      ]),
+    )
+    expect(screen.getByRole('button', { name: 'Уведомления' })).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Уведомления, есть новые' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('Escape из меню возвращает фокус на имя, клик снаружи закрывает меню', async () => {
+    const { user } = renderHeader({}, ROUTES.HOME, authorized())
+    const trigger = screen.getByRole('button', { name: 'Мария' })
+    await user.click(trigger)
+    await user.tab()
+    expect(screen.getByRole('link', { name: 'Личный кабинет' })).toHaveFocus()
+    await user.keyboard('{Escape}')
+    expect(trigger).toHaveFocus()
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    await user.click(trigger)
+    await user.click(screen.getByRole('link', { name: 'О проекте' }))
+    expect(screen.queryByRole('button', { name: 'Выйти' })).not.toBeInTheDocument()
+  })
+
+  it('загружает уведомления один раз и показывает свои непрочитанные после загрузки', async () => {
+    const saved = authorized().getState()
+    localStorage.setItem(
+      'skillswap_db_notifications',
+      JSON.stringify([createNotification({ userId: account.id })]),
+    )
+    const ready = createTestStore({
+      ...saved,
+      notifications: { items: [], status: 'idle', error: null, pendingRequests: 0 },
+    })
+    const fetchSeed = vi.spyOn(globalThis, 'fetch')
+    const loads = vi.spyOn(notifications, 'fetchNotifications')
+    renderWithProviders(
+      <StrictMode>
+        <Header />
+      </StrictMode>,
+      { store: ready },
+    )
+
+    expect(
+      await screen.findByRole('button', { name: 'Уведомления, есть новые' }),
+    ).toBeInTheDocument()
+    await waitFor(() => expect(ready.getState().notifications.pendingRequests).toBe(0))
+    // Сохранённые уведомления читаются из базы, справочники повторно не запрашиваются.
+    expect(fetchSeed).not.toHaveBeenCalled()
+    expect(loads).toHaveBeenCalledTimes(1)
+    fetchSeed.mockRestore()
+    loads.mockRestore()
   })
 })
