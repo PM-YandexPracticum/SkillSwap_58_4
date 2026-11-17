@@ -6,6 +6,7 @@ import { renderWithProviders } from '@/app/test/renderWithProviders'
 import { createTestStore } from '@/app/test/createTestStore'
 import { fetchUsers } from '@/entities/user'
 import { createUser } from '@/entities/user/testing'
+import { FavoriteButton } from '@/features/favorite-toggle'
 import { ROUTES, STORAGE_KEYS } from '@/shared/config'
 import { LoginPage } from './LoginPage'
 
@@ -81,6 +82,34 @@ describe('LoginPage', () => {
 
     expect(
       await screen.findByRole('heading', { name: '/skill/s01?from=catalog#details' }),
+    ).toBeInTheDocument()
+  })
+
+  it('после клика гостя по сердечку возвращает на ту же карточку после входа', async () => {
+    const store = createTestStore({ session: { session: null } })
+    store.dispatch(fetchUsers.fulfilled([account], 'favorite-return-test'))
+    const { user } = renderWithProviders(
+      <Routes>
+        <Route
+          path="/skill/:id"
+          element={
+            <>
+              <Destination />
+              <FavoriteButton userId={account.id} likesCount={0} />
+            </>
+          }
+        />
+        <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+        <Route path="*" element={<Destination />} />
+      </Routes>,
+      { route: '/skill/s01?sort=popular#card', store },
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Добавить в избранное' }))
+    await submit(user, account.email, account.password)
+
+    expect(
+      await screen.findByRole('heading', { name: '/skill/s01?sort=popular#card' }),
     ).toBeInTheDocument()
   })
 
