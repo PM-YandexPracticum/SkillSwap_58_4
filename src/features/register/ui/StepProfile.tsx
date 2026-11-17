@@ -26,6 +26,8 @@ export interface StepProfileProps {
   defaultValues?: ProfileStepValues
   /** Слот аватара: `AvatarUpload` подставляет страница, слайсы features не импортируют друг друга. */
   avatarUpload: ReactNode
+  /** Внешняя обработка фото: блокирует продолжение, в том числе отправку по Enter. */
+  isBusy?: boolean
 }
 
 const EMPTY_VALUES: ProfileStepValues = {
@@ -54,11 +56,24 @@ const GENDER_OPTIONS = [
  * читает из store (их загружает DataProvider); черновик и переходы остаются ответственностью страницы.
  * @see Figma: «Регистрация 2 шаг» (1:1497 … 1:1717)
  */
-export function StepProfile({ onNext, onBack, defaultValues, avatarUpload }: StepProfileProps) {
+export function StepProfile({
+  onNext,
+  onBack,
+  defaultValues,
+  avatarUpload,
+  isBusy = false,
+}: StepProfileProps) {
   const cities = useAppSelector(selectCities)
   const categories = useAppSelector(selectCategories)
 
-  const schema = useMemo(() => createProfileStepSchema(cities.map((city) => city.id)), [cities])
+  const schema = useMemo(
+    () =>
+      createProfileStepSchema(
+        cities.map((city) => city.id),
+        categories,
+      ),
+    [cities, categories],
+  )
   const {
     register,
     control,
@@ -84,7 +99,10 @@ export function StepProfile({ onNext, onBack, defaultValues, avatarUpload }: Ste
       className={styles.form}
       aria-label="Расскажите немного о себе"
       noValidate
-      onSubmit={handleSubmit((values) => onNext(values))}
+      aria-busy={isBusy}
+      onSubmit={handleSubmit((values) => {
+        if (!isBusy) onNext(values)
+      })}
     >
       {avatarUpload}
 
@@ -121,6 +139,8 @@ export function StepProfile({ onNext, onBack, defaultValues, avatarUpload }: Ste
             control={control}
             render={({ field }) => (
               <Select
+                ref={field.ref}
+                onBlur={field.onBlur}
                 label="Пол"
                 placeholder="Не указан"
                 options={GENDER_OPTIONS}
@@ -137,13 +157,14 @@ export function StepProfile({ onNext, onBack, defaultValues, avatarUpload }: Ste
           control={control}
           render={({ field }) => (
             <Select
+              ref={field.ref}
+              onBlur={field.onBlur}
               label="Город"
               placeholder="Выберите город"
               options={cityOptions}
               value={field.value || null}
               onChange={(value) => {
                 field.onChange(value ?? '')
-                // У Select нет onBlur: выбор значения считаем уходом с поля, чтобы показать ошибку
                 field.onBlur()
               }}
               error={errors.cityId?.message}
@@ -152,27 +173,30 @@ export function StepProfile({ onNext, onBack, defaultValues, avatarUpload }: Ste
           )}
         />
 
-        <CategorySubcategorySelect
-          mode="multiple"
-          categories={categories}
-          value={learning}
-          onChange={({ categoryIds, subcategoryIds }) => {
-            const subcategoriesChanged =
-              subcategoryIds.length !== learning.subcategoryIds.length ||
-              subcategoryIds.some((id, index) => id !== learning.subcategoryIds[index])
+        <Controller
+          name="learnSubcategoryIds"
+          control={control}
+          render={({ field }) => (
+            <CategorySubcategorySelect
+              subcategoryRef={field.ref}
+              onSubcategoryBlur={field.onBlur}
+              mode="multiple"
+              categories={categories}
+              value={learning}
+              onChange={({ categoryIds, subcategoryIds }) => {
+                const subcategoriesChanged =
+                  subcategoryIds.length !== learning.subcategoryIds.length ||
+                  subcategoryIds.some((id, index) => id !== learning.subcategoryIds[index])
 
-            setValue('learnCategoryIds', categoryIds, { shouldDirty: true })
-            setValue(
-              'learnSubcategoryIds',
-              subcategoryIds,
-              subcategoriesChanged
-                ? { shouldDirty: true, shouldTouch: true, shouldValidate: true }
-                : { shouldDirty: true },
-            )
-          }}
-          categoryLabel="Категория навыка, которому хотите научиться"
-          subcategoryLabel="Подкатегория навыка, которому хотите научиться"
-          subcategoryError={errors.learnSubcategoryIds?.message}
+                setValue('learnCategoryIds', categoryIds, { shouldDirty: true })
+                field.onChange(subcategoryIds)
+                if (subcategoriesChanged) field.onBlur()
+              }}
+              categoryLabel="Категория навыка, которому хотите научиться"
+              subcategoryLabel="Подкатегория навыка, которому хотите научиться"
+              subcategoryError={errors.learnSubcategoryIds?.message}
+            />
+          )}
         />
       </div>
 
@@ -181,7 +205,7 @@ export function StepProfile({ onNext, onBack, defaultValues, avatarUpload }: Ste
           Назад
         </Button>
 
-        <Button type="submit" disabled={!isValid || isSubmitting}>
+        <Button type="submit" disabled={!isValid || isSubmitting || isBusy}>
           Продолжить
         </Button>
       </div>

@@ -1,3 +1,4 @@
+import { createCategory } from '@/entities/category/testing'
 import { VALIDATION } from '@/shared/config'
 import { createProfileStepSchema, credentialsSchema, profileStepSchema } from './schema'
 
@@ -10,17 +11,25 @@ it('использует общие правила нового пароля и 
   ).toEqual({ email: 'user@example.com', password: 'Abcdefg1' })
 })
 
-/** ISO-дата рождения: ровно `years` лет назад от сегодняшнего дня плюс `extraDays` */
-function birthDateYearsAgo(years: number, extraDays = 0) {
-  const date = new Date()
-  date.setFullYear(date.getFullYear() - years)
-  date.setDate(date.getDate() + extraDays)
-  return [
-    date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2, '0'),
-    String(date.getDate()).padStart(2, '0'),
-  ].join('-')
-}
+beforeEach(() => {
+  vi.useFakeTimers({ toFake: ['Date'] })
+  vi.setSystemTime(new Date('2026-11-17T12:00:00'))
+})
+afterEach(() => vi.useRealTimers())
+
+const categories = [
+  createCategory({
+    subcategories: [
+      { id: 'business-management', categoryId: 'business', title: 'Управление командой' },
+      ...Array.from({ length: 11 }, (_, i) => ({
+        id: `sub-${i}`,
+        categoryId: 'business',
+        title: `Направление ${i}`,
+      })),
+    ],
+  }),
+  createCategory({ id: 'art' }),
+]
 
 const valid = {
   name: 'Ирина',
@@ -32,7 +41,7 @@ const valid = {
 }
 
 const check = (patch: Record<string, unknown>) =>
-  createProfileStepSchema(['moscow', 'spb']).validate({ ...valid, ...patch })
+  createProfileStepSchema(['moscow', 'spb'], categories).validate({ ...valid, ...patch })
 
 describe('profileStepSchema', () => {
   it('принимает корректные значения; пол можно не указывать', async () => {
@@ -80,20 +89,14 @@ describe('profileStepSchema', () => {
     })
 
     it('возраст ровно 14 и ровно 100 лет подходит', async () => {
-      expect(await check({ birthDate: birthDateYearsAgo(14) })).toBeTruthy()
-      expect(await check({ birthDate: birthDateYearsAgo(100) })).toBeTruthy()
+      expect(await check({ birthDate: '2012-11-17' })).toBeTruthy()
+      expect(await check({ birthDate: '1926-11-17' })).toBeTruthy()
     })
 
     it('младше 14, старше 100 и будущее не подходят', async () => {
-      await expect(check({ birthDate: birthDateYearsAgo(14, 1) })).rejects.toThrow(
-        'Возраст от 14 до 100 лет',
-      )
-      await expect(check({ birthDate: birthDateYearsAgo(101) })).rejects.toThrow(
-        'Возраст от 14 до 100 лет',
-      )
-      await expect(check({ birthDate: birthDateYearsAgo(0, 1) })).rejects.toThrow(
-        'Возраст от 14 до 100 лет',
-      )
+      await expect(check({ birthDate: '2012-11-18' })).rejects.toThrow('Возраст от 14 до 100 лет')
+      await expect(check({ birthDate: '1925-11-17' })).rejects.toThrow('Возраст от 14 до 100 лет')
+      await expect(check({ birthDate: '2026-11-18' })).rejects.toThrow('Возраст от 14 до 100 лет')
     })
   })
 
@@ -112,6 +115,13 @@ describe('profileStepSchema', () => {
     })
   })
 
+  it.each([null, undefined, 'business'])(
+    'не падает при неверном типе списка категорий: %j',
+    async (learnCategoryIds) => {
+      await expect(check({ learnCategoryIds })).rejects.toMatchObject({ name: 'ValidationError' })
+    },
+  )
+
   describe('«Хочу научиться»', () => {
     const ids = (count: number) => Array.from({ length: count }, (_, i) => `sub-${i}`)
 
@@ -123,14 +133,33 @@ describe('profileStepSchema', () => {
     })
 
     it('не больше 10 подкатегорий', async () => {
-      expect(await check({ learnSubcategoryIds: ids(VALIDATION.LEARN_SUBCATEGORIES.MAX) })).toBeTruthy()
+      expect(
+        await check({ learnSubcategoryIds: ids(VALIDATION.LEARN_SUBCATEGORIES.MAX) }),
+      ).toBeTruthy()
       await expect(
         check({ learnSubcategoryIds: ids(VALIDATION.LEARN_SUBCATEGORIES.MAX + 1) }),
       ).rejects.toThrow('Не больше 10 направлений')
     })
 
-    it('категории сами по себе не обязательны', async () => {
-      expect(await check({ learnCategoryIds: [] })).toBeTruthy()
+    it.each([
+      { learnCategoryIds: ['unknown'] },
+      { learnCategoryIds: [] },
+      { learnCategoryIds: ['art'] },
+      { learnCategoryIds: ['business', 'business'] },
+      { learnSubcategoryIds: ['unknown'] },
+      { learnSubcategoryIds: ['business-management', 'business-management'] },
+    ])('не принимает несогласованный выбор из черновика: %j', async (patch) => {
+      await expect(check(patch)).rejects.toThrow('Выберите направления из списка без повторов')
+    })
+
+    it('принимает несколько категорий и подкатегорий, в том числе категорию без выбранных подкатегорий', async () => {
+      expect(
+        await check({
+          learnCategoryIds: ['business', 'art'],
+          learnSubcategoryIds: ['business-management', 'art-marketing'],
+        }),
+      ).toBeTruthy()
+      expect(await check({ learnCategoryIds: ['business', 'art'] })).toBeTruthy()
     })
   })
 })

@@ -1,4 +1,6 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
+
+import userEvent from '@testing-library/user-event'
 
 import { VALIDATION } from '@/shared/config'
 import { fileToDataUrl } from '@/shared/lib/image'
@@ -11,7 +13,7 @@ vi.mock('@/shared/lib/image', async (importOriginal) => ({
 }))
 
 const getInput = () => screen.getByTestId('avatar-upload-input') as HTMLInputElement
-const pick = (file: File) => fireEvent.change(getInput(), { target: { files: [file] } })
+const pick = (file: File) => userEvent.setup({ applyAccept: false }).upload(getInput(), file)
 const image = (name = 'me.png', type = 'image/png') => new File(['x'], name, { type })
 
 afterEach(() => vi.clearAllMocks())
@@ -45,7 +47,7 @@ describe('AvatarUpload', () => {
     const click = vi.spyOn(HTMLInputElement.prototype, 'click')
     render(<AvatarUpload value={null} onChange={vi.fn()} />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Добавить фото' }))
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Добавить фото' }))
 
     expect(click).toHaveBeenCalledOnce()
     expect(getInput()).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp')
@@ -56,7 +58,7 @@ describe('AvatarUpload', () => {
     const onChange = vi.fn()
     render(<AvatarUpload value={null} onChange={onChange} />)
 
-    pick(image('me.png'))
+    await pick(image('me.png'))
 
     await waitFor(() => expect(onChange).toHaveBeenCalledWith('data:image/png;base64,me.png'))
     expect(fileToDataUrl).toHaveBeenCalledOnce()
@@ -67,27 +69,27 @@ describe('AvatarUpload', () => {
     const onChange = vi.fn()
     render(<AvatarUpload value={null} onChange={onChange} />)
 
-    pick(image('me', type))
+    await pick(image('me', type))
 
     await waitFor(() => expect(onChange).toHaveBeenCalledOnce())
   })
 
-  it('не принимает файл неверного типа и не читает его', () => {
+  it('не принимает файл неверного типа и не читает его', async () => {
     const onChange = vi.fn()
     render(<AvatarUpload value={null} onChange={onChange} />)
 
-    pick(image('doc.pdf', 'application/pdf'))
+    await pick(image('doc.pdf', 'application/pdf'))
 
     expect(screen.getByRole('alert')).toHaveTextContent('Только JPG, PNG или WEBP')
     expect(onChange).not.toHaveBeenCalled()
     expect(fileToDataUrl).not.toHaveBeenCalled()
   })
 
-  it('не принимает файл больше 1 МБ', () => {
+  it('не принимает файл больше 1 МБ', async () => {
     const onChange = vi.fn()
     render(<AvatarUpload value={null} onChange={onChange} />)
 
-    pick(
+    await pick(
       new File([new Uint8Array(VALIDATION.IMAGE.MAX_SIZE_BYTES + 1)], 'big.png', {
         type: 'image/png',
       }),
@@ -97,10 +99,10 @@ describe('AvatarUpload', () => {
     expect(onChange).not.toHaveBeenCalled()
   })
 
-  it('связывает ошибку с кнопкой для скринридера', () => {
+  it('связывает ошибку с кнопкой для скринридера', async () => {
     render(<AvatarUpload value={null} onChange={vi.fn()} />)
 
-    pick(image('doc.pdf', 'application/pdf'))
+    await pick(image('doc.pdf', 'application/pdf'))
 
     expect(screen.getByRole('button', { name: 'Добавить фото' })).toHaveAccessibleDescription(
       'Только JPG, PNG или WEBP',
@@ -111,9 +113,9 @@ describe('AvatarUpload', () => {
     const onChange = vi.fn()
     render(<AvatarUpload value={null} onChange={onChange} />)
 
-    pick(image('doc.pdf', 'application/pdf'))
+    await pick(image('doc.pdf', 'application/pdf'))
     expect(screen.getByRole('alert')).toBeInTheDocument()
-    pick(image('me.png'))
+    await pick(image('me.png'))
 
     await waitFor(() => expect(onChange).toHaveBeenCalledOnce())
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
@@ -124,7 +126,7 @@ describe('AvatarUpload', () => {
     const onChange = vi.fn()
     render(<AvatarUpload value={null} onChange={onChange} />)
 
-    pick(image('me.png'))
+    await pick(image('me.png'))
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Не удалось загрузить фото. Попробуйте другой файл',
@@ -139,18 +141,20 @@ describe('AvatarUpload', () => {
     )
     render(<AvatarUpload value={null} onChange={vi.fn()} />)
 
-    pick(image('me.png'))
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Добавить фото' })).toBeDisabled())
+    await pick(image('me.png'))
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Добавить фото' })).toBeDisabled(),
+    )
 
     resolve('data:image/png;base64,me.png')
     await waitFor(() => expect(screen.getByRole('button', { name: 'Добавить фото' })).toBeEnabled())
   })
 
-  it('внешняя ошибка показывается, ошибка файла важнее неё', () => {
+  it('внешняя ошибка показывается, ошибка файла важнее неё', async () => {
     render(<AvatarUpload value={null} onChange={vi.fn()} error="Загрузите фото" />)
     expect(screen.getByRole('alert')).toHaveTextContent('Загрузите фото')
 
-    pick(image('doc.pdf', 'application/pdf'))
+    await pick(image('doc.pdf', 'application/pdf'))
     expect(screen.getByRole('alert')).toHaveTextContent('Только JPG, PNG или WEBP')
   })
 
@@ -158,5 +162,59 @@ describe('AvatarUpload', () => {
     render(<AvatarUpload value={null} onChange={vi.fn()} disabled />)
 
     expect(screen.getByRole('button', { name: 'Добавить фото' })).toBeDisabled()
+  })
+  it.each(['успех', 'ошибка'])(
+    'не вызывает callbacks после ухода со страницы: %s',
+    async (outcome) => {
+      let resolve!: (value: string) => void
+      let reject!: (error: Error) => void
+      vi.mocked(fileToDataUrl).mockImplementationOnce(
+        () =>
+          new Promise<string>((done, fail) => {
+            resolve = done
+            reject = fail
+          }),
+      )
+      const onChange = vi.fn()
+      const onProcessingChange = vi.fn()
+      const { unmount } = render(
+        <AvatarUpload value={null} onChange={onChange} onProcessingChange={onProcessingChange} />,
+      )
+      await pick(image())
+      expect(onProcessingChange).toHaveBeenLastCalledWith(true)
+      unmount()
+      onProcessingChange.mockClear()
+      await act(async () => {
+        if (outcome === 'успех') resolve('data:image/png;base64,late')
+        else reject(new Error('broken'))
+      })
+      expect(onChange).not.toHaveBeenCalled()
+      expect(onProcessingChange).not.toHaveBeenCalled()
+    },
+  )
+
+  it('сообщает форме о завершении чтения, включая ошибку', async () => {
+    vi.mocked(fileToDataUrl).mockRejectedValueOnce(new Error('broken'))
+    const onProcessingChange = vi.fn()
+    render(<AvatarUpload value={null} onChange={vi.fn()} onProcessingChange={onProcessingChange} />)
+    await pick(image())
+    await screen.findByRole('alert')
+    expect(onProcessingChange.mock.calls).toEqual([[true], [false]])
+  })
+  it('позволяет повторить выбор того же файла после ошибки чтения', async () => {
+    vi.mocked(fileToDataUrl).mockRejectedValueOnce(new Error('broken'))
+    const onChange = vi.fn()
+    const user = userEvent.setup()
+    const file = image()
+    render(<AvatarUpload value="data:image/png;base64,saved" onChange={onChange} />)
+    await user.upload(getInput(), file)
+    await screen.findByRole('alert')
+    expect(screen.getByRole('img', { name: 'Аватар пользователя' })).toHaveAttribute(
+      'src',
+      'data:image/png;base64,saved',
+    )
+    await user.upload(getInput(), file)
+    await waitFor(() => expect(onChange).toHaveBeenCalledWith('data:image/png;base64,me.png'))
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 })

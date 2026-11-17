@@ -2,9 +2,12 @@ import { StrictMode } from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'react-redux'
-import { ROUTES } from '@/shared/config'
+import { ROUTES, STORAGE_KEYS } from '@/shared/config'
 
 const fetchFromPublicDb = globalThis.fetch
+// После resetModules весь lazy-маршрут собирается заново. В полном прогоне холодный импорт
+// может занять больше стандартной секунды RTL; ждём сам заголовок, без фиксированной задержки.
+const PAGE_READY_TIMEOUT = 5_000
 
 async function openApp(path: string) {
   // loadSeed кеширует ответы на уровне модуля. Каждый запуск имитирует новую вкладку.
@@ -40,12 +43,82 @@ afterEach(() => {
   window.history.replaceState(null, '', '/')
 })
 
+describe('восстановление сессии при старте', { timeout: 20_000 }, () => {
+  const origin = `${ROUTES.FAVORITES}?from=catalog#saved`
+
+  it('сбрасывает сессию неизвестного пользователя и передаёт исходный адрес на вход', async () => {
+    localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify({ userId: 'missing', token: 'mock' }))
+    const { store } = await openApp(origin)
+
+    expect(
+      await screen.findByRole('heading', { name: 'Вход' }, { timeout: PAGE_READY_TIMEOUT }),
+    ).toBeInTheDocument()
+    expect(window.location.pathname).toBe(ROUTES.LOGIN)
+    expect(window.history.state.usr.from).toMatchObject({
+      pathname: ROUTES.FAVORITES,
+      search: '?from=catalog',
+      hash: '#saved',
+    })
+    expect(store.getState().session.session).toBeNull()
+    expect(localStorage.getItem(STORAGE_KEYS.SESSION)).toBeNull()
+  })
+
+  it('сохраняет известную сессию во время загрузки и после неё', async () => {
+    const session = { userId: 'u01', token: 'mock' }
+    localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(session))
+    const { store } = await openApp(origin)
+
+    expect(screen.getByRole('status', { name: 'Загрузка' })).toBeInTheDocument()
+    expect(store.getState().session.session).toEqual(session)
+    await waitFor(() => expect(store.getState().users.status).toBe('succeeded'))
+    expect(
+      await screen.findByRole(
+        'heading',
+        { name: 'FavoritesPage' },
+        { timeout: PAGE_READY_TIMEOUT },
+      ),
+    ).toBeInTheDocument()
+    expect(window.location.pathname).toBe(ROUTES.FAVORITES)
+    expect(store.getState().session.session).toEqual(session)
+    expect(localStorage.getItem(STORAGE_KEYS.SESSION)).toBe(JSON.stringify(session))
+  })
+
+  it('ошибка загрузки пользователей не завершает сохранённую сессию', async () => {
+    const session = { userId: 'u01', token: 'mock' }
+    localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(session))
+    vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) =>
+      String(input).endsWith('/db/users.json')
+        ? Promise.resolve(new Response('Unavailable', { status: 503 }))
+        : fetchFromPublicDb(input, init),
+    )
+    const { store } = await openApp(origin)
+
+    expect(
+      await screen.findByRole(
+        'heading',
+        { name: 'На сервере произошла ошибка' },
+        { timeout: PAGE_READY_TIMEOUT },
+      ),
+    ).toBeInTheDocument()
+    await waitFor(() => {
+      const { users, skills, categories, cities } = store.getState()
+      expect([users.status, skills.status, categories.status, cities.status]).not.toContain(
+        'loading',
+      )
+    })
+    expect(store.getState().session.session).toEqual(session)
+    expect(localStorage.getItem(STORAGE_KEYS.SESSION)).toBe(JSON.stringify(session))
+  })
+})
+
 describe('стартовая загрузка', { timeout: 20_000 }, () => {
   it('загружает все четыре коллекции при прямом открытии входа', async () => {
     const { store, loads } = await openApp(ROUTES.LOGIN)
 
     expect(screen.getByRole('status', { name: 'Загрузка' })).toBeInTheDocument()
-    expect(await screen.findByRole('heading', { name: 'Вход' })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { name: 'Вход' }, { timeout: PAGE_READY_TIMEOUT }),
+    ).toBeInTheDocument()
     const { users: loadedUsers, skills, categories, cities } = store.getState()
     expect([loadedUsers.status, skills.status, categories.status, cities.status]).toEqual([
       'succeeded',
@@ -71,7 +144,11 @@ describe('стартовая загрузка', { timeout: 20_000 }, () => {
       const user = userEvent.setup()
 
       expect(
-        await screen.findByRole('heading', { name: 'На сервере произошла ошибка' }),
+        await screen.findByRole(
+          'heading',
+          { name: 'На сервере произошла ошибка' },
+          { timeout: PAGE_READY_TIMEOUT },
+        ),
       ).toBeInTheDocument()
       expect(window.location.pathname).toBe(ROUTES.SERVER_ERROR)
       expect(store.getState()[failedCollection].status).toBe('failed')
@@ -79,7 +156,11 @@ describe('стартовая загрузка', { timeout: 20_000 }, () => {
       collectionAvailable = true
       await user.click(screen.getByRole('button', { name: 'На главную' }))
       expect(
-        await screen.findByRole('heading', { name: 'Каталог предложений' }),
+        await screen.findByRole(
+          'heading',
+          { name: 'Каталог предложений' },
+          { timeout: PAGE_READY_TIMEOUT },
+        ),
       ).toBeInTheDocument()
       expect(window.location.pathname).toBe(ROUTES.HOME)
       expect(store.getState()[failedCollection].status).toBe('succeeded')
@@ -101,7 +182,11 @@ describe('стартовая загрузка', { timeout: 20_000 }, () => {
     await openApp(ROUTES.SERVER_ERROR)
 
     expect(
-      await screen.findByRole('heading', { name: 'На сервере произошла ошибка' }),
+      await screen.findByRole(
+        'heading',
+        { name: 'На сервере произошла ошибка' },
+        { timeout: PAGE_READY_TIMEOUT },
+      ),
     ).toBeInTheDocument()
     expect(fetchSeed).not.toHaveBeenCalled()
   })
@@ -114,12 +199,20 @@ describe('маршруты регистрации P6-01', { timeout: 20_000 }, (
       const { store } = await openApp(route)
       const user = userEvent.setup()
       expect(
-        await screen.findByRole('heading', { name: 'Регистрация', level: 1 }),
+        await screen.findByRole(
+          'heading',
+          { name: 'Регистрация', level: 1 },
+          { timeout: PAGE_READY_TIMEOUT },
+        ),
       ).toBeInTheDocument()
       await waitFor(() => expect(window.location.pathname).toBe(ROUTES.REGISTER_STEP_1))
       await user.click(screen.getByRole('button', { name: 'Закрыть' }))
       expect(
-        await screen.findByRole('heading', { name: 'Каталог предложений' }),
+        await screen.findByRole(
+          'heading',
+          { name: 'Каталог предложений' },
+          { timeout: PAGE_READY_TIMEOUT },
+        ),
       ).toBeInTheDocument()
       expect(window.location.pathname).toBe(ROUTES.HOME)
       expect(store.getState().register.completedStep).toBe(0)
@@ -153,8 +246,14 @@ describe('первый шаг регистрации P6-02', { timeout: 20_000 }
     expect(screen.getByLabelText('Пароль')).toHaveValue('Password123')
 
     await user.click(screen.getByRole('button', { name: 'Закрыть' }))
-    await screen.findByRole('heading', { name: 'Каталог предложений' })
-    expect(store.getState().register).toEqual({ draft: initialDraft, completedStep: 0 })
+    await screen.findByRole(
+      'heading',
+      { name: 'Каталог предложений' },
+      { timeout: PAGE_READY_TIMEOUT },
+    )
+    await waitFor(() =>
+      expect(store.getState().register).toEqual({ draft: initialDraft, completedStep: 0 }),
+    )
     await waitFor(() => expect(store.getState().exchanges.status).toBe('succeeded'))
   })
 })

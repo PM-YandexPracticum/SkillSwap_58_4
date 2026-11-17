@@ -1,12 +1,10 @@
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { selectCategoriesStatus } from '@/entities/category'
-import { selectCitiesStatus } from '@/entities/city'
 import { AvatarUpload } from '@/features/avatar-upload'
 import { draftUpdated, selectRegisterDraft, stepCompleted, StepProfile } from '@/features/register'
 import { ROUTES } from '@/shared/config'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
-import { Loader } from '@/shared/ui/Loader'
 
 /**
  * Шаг 2 «Расскажите немного о себе» — маршрут `/register/step-2`. Форма — `StepProfile` из features/register,
@@ -17,6 +15,8 @@ import { Loader } from '@/shared/ui/Loader'
  * «Назад» сохраняет введённое как есть (без проверки) и открывает шаг 1: ничего не стирается.
  * Аватар попадает в черновик сразу после выбора как готовый data URL (`draft.avatarPreviewUrl`):
  * `File` в store не кладём, при сохранении пользователя (P6-06) строку повторно не сжимаем.
+ * Во время обработки фото продолжение заблокировано; уход назад или закрытие отменяет применение результата.
+ * Загрузкой и ошибками справочников управляет `DataProvider`, страница не повторяет его проверки.
  *
  * @see Figma: «Регистрация 2 шаг» (1:1497 … 1:1717).
  */
@@ -24,16 +24,11 @@ export function RegisterStep2Page() {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const draft = useAppSelector(selectRegisterDraft)
-  const categoriesStatus = useAppSelector(selectCategoriesStatus)
-  const citiesStatus = useAppSelector(selectCitiesStatus)
-
-  if (categoriesStatus === 'failed' || citiesStatus === 'failed') {
-    return <Navigate to={ROUTES.SERVER_ERROR} replace />
-  }
-  if (categoriesStatus !== 'succeeded' || citiesStatus !== 'succeeded') return <Loader />
+  const [isAvatarProcessing, setIsAvatarProcessing] = useState(false)
 
   return (
     <StepProfile
+      isBusy={isAvatarProcessing}
       defaultValues={{
         name: draft.name,
         birthDate: draft.birthDate,
@@ -53,6 +48,7 @@ export function RegisterStep2Page() {
       }}
       avatarUpload={
         <AvatarUpload
+          onProcessingChange={setIsAvatarProcessing}
           value={draft.avatarPreviewUrl}
           onChange={(dataUrl) => dispatch(draftUpdated({ avatarPreviewUrl: dataUrl }))}
         />

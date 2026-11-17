@@ -1,8 +1,9 @@
-import { screen, within } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import { Route, Routes } from 'react-router-dom'
 import { renderWithProviders } from '@/app/test/renderWithProviders'
 import { createUser } from '@/entities/user/testing'
 import { createSkill } from '@/entities/skill/testing'
+import { CATALOG } from '@/shared/config'
 import { CatalogView } from './CatalogView'
 
 const users = Array.from({ length: 10 }, (_, i) =>
@@ -113,5 +114,115 @@ describe('CatalogView', () => {
     const popular = screen.getByRole('region', { name: 'Популярное' })
     await user.click(within(popular).getByRole('button', { name: 'Смотреть все' }))
     expect(within(popular).getAllByRole('article')).toHaveLength(5)
+  })
+
+  describe('ленты «Рекомендуем» и результатов (P5-06)', () => {
+    /** Управляем видимостью маркера вручную: в jsdom нет настоящего IntersectionObserver. */
+    class ObserverMock {
+      static instances: ObserverMock[] = []
+      target: Element | null = null
+      observe = vi.fn((target: Element) => {
+        this.target = target
+      })
+      disconnect = vi.fn()
+
+      constructor(private callback: IntersectionObserverCallback) {
+        ObserverMock.instances.push(this)
+      }
+
+      intersect() {
+        act(() => {
+          this.callback(
+            [{ target: this.target, isIntersecting: true } as IntersectionObserverEntry],
+            this as unknown as IntersectionObserver,
+          )
+        })
+      }
+    }
+
+    /** Пользователь прокручивает страницу, маркер конца ленты входит в экран. */
+    function scrollToEnd() {
+      fireEvent.wheel(window)
+      fireEvent.scroll(window)
+      ObserverMock.instances[ObserverMock.instances.length - 1]!.intersect()
+    }
+
+    function finishLoading() {
+      act(() => {
+        vi.advanceTimersByTime(CATALOG.SCROLL_DELAY_MS)
+      })
+    }
+
+    const cardsOf = (title: string) =>
+      within(screen.getByRole('region', { name: title })).getAllByRole('article')
+
+    const results = {
+      filters: [],
+      sort: 'newest' as const,
+      onRemoveFilter: vi.fn(),
+      onSortChange: vi.fn(),
+    }
+
+    beforeEach(() => {
+      vi.useFakeTimers()
+      ObserverMock.instances = []
+      vi.stubGlobal('IntersectionObserver', ObserverMock)
+    })
+
+    afterEach(() => {
+      vi.clearAllTimers()
+      vi.useRealTimers()
+      vi.unstubAllGlobals()
+    })
+
+    it('«Рекомендуем»: 6 карточек, при прокрутке спиннер и следующая порция', () => {
+      renderWithProviders(<CatalogView users={users} popularUsers={users} newUsers={users} />, {
+        preloadedState: state,
+      })
+      const recommended = screen.getByRole('region', { name: 'Рекомендуем' })
+      expect(cardsOf('Рекомендуем')).toHaveLength(CATALOG.SCROLL_BATCH)
+      expect(within(recommended).queryByRole('status')).not.toBeInTheDocument()
+
+      scrollToEnd()
+      expect(within(recommended).getByRole('status', { name: 'Загрузка' })).toBeInTheDocument()
+      expect(cardsOf('Рекомендуем')).toHaveLength(CATALOG.SCROLL_BATCH)
+
+      finishLoading()
+      expect(cardsOf('Рекомендуем')).toHaveLength(users.length)
+      expect(cardsOf('Рекомендуем')[9]).toHaveTextContent('Автор 9')
+      expect(within(recommended).queryByRole('status')).not.toBeInTheDocument()
+      // «Популярное» и «Новое» лента не трогает.
+      expect(cardsOf('Популярное')).toHaveLength(3)
+    })
+
+    it('результаты: счётчик — все совпадения, карточки догружаются порциями', () => {
+      renderWithProviders(
+        <CatalogView users={users} popularUsers={[]} newUsers={[]} results={results} />,
+        { preloadedState: state },
+      )
+      const title = 'Подходящие предложения: 10'
+      expect(screen.getByRole('heading', { name: title })).toBeInTheDocument()
+      expect(cardsOf(title)).toHaveLength(CATALOG.SCROLL_BATCH)
+
+      scrollToEnd()
+      finishLoading()
+      expect(cardsOf(title)).toHaveLength(users.length)
+    })
+
+    it('новый список результатов (фильтр, поиск, сортировка) начинает ленту сначала', () => {
+      const { rerender } = renderWithProviders(
+        <CatalogView users={users} popularUsers={[]} newUsers={[]} results={results} />,
+        { preloadedState: state },
+      )
+      const title = 'Подходящие предложения: 10'
+      scrollToEnd()
+      finishLoading()
+      expect(cardsOf(title)).toHaveLength(users.length)
+
+      const reversed = [...users].reverse()
+      rerender(<CatalogView users={reversed} popularUsers={[]} newUsers={[]} results={results} />)
+      expect(cardsOf(title)).toHaveLength(CATALOG.SCROLL_BATCH)
+      expect(cardsOf(title)[0]).toHaveTextContent('Автор 9')
+    })
   })
 })

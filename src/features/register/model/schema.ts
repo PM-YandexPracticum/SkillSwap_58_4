@@ -1,4 +1,5 @@
 import * as yup from 'yup'
+import { syncCategorySelection, type Category } from '@/entities/category'
 import type { Gender } from '@/entities/user'
 import { VALIDATION } from '@/shared/config'
 import {
@@ -24,9 +25,37 @@ export const credentialsSchema = yup.object({
  * справочником. «О себе» на этом шаге нет — только в профиле. Аватар необязателен и проверяется при выборе
  * файла (`validateImageFile` в `AvatarUpload`), поэтому в схему не входит.
  * Связь «категория ↔ подкатегория» обеспечивает `CategorySubcategorySelect` (P6-03).
+ * Схема сверяет и восстановленный черновик со справочником через тот же `syncCategorySelection`:
+ * неизвестные id, повторы и подкатегории без своей выбранной категории не принимаются.
  */
-export function createProfileStepSchema(cityIds?: readonly string[]) {
+export function createProfileStepSchema(
+  cityIds?: readonly string[],
+  categories?: readonly Category[],
+) {
   const { MIN, MAX } = VALIDATION.LEARN_SUBCATEGORIES
+  const learningSelection = (value: readonly string[] | undefined, context: yup.TestContext) => {
+    if (!categories) return true
+    const parent = context.parent as {
+      learnCategoryIds: readonly string[]
+    }
+    // Ошибку типа массива отдаёт само Yup, нормализатор получает только массивы.
+    if (!Array.isArray(parent.learnCategoryIds)) return true
+    const selection = {
+      categoryIds: parent.learnCategoryIds,
+      subcategoryIds: value ?? [],
+    }
+    const normalized = syncCategorySelection(categories, selection, selection)
+    const matches =
+      categories.length > 0 &&
+      normalized.categoryIds.length === selection.categoryIds.length &&
+      normalized.subcategoryIds.length === selection.subcategoryIds.length &&
+      normalized.categoryIds.every((id, index) => id === selection.categoryIds[index]) &&
+      normalized.subcategoryIds.every((id, index) => id === selection.subcategoryIds[index])
+    return (
+      matches || context.createError({ message: 'Выберите направления из списка без повторов' })
+    )
+  }
+
   return yup.object({
     name: nameField(),
     birthDate: birthDateField(),
@@ -39,10 +68,11 @@ export function createProfileStepSchema(cityIds?: readonly string[]) {
       .of(yup.string().defined())
       .defined()
       .min(MIN, 'Выберите хотя бы одно направление')
-      .max(MAX, `Не больше ${MAX} направлений`),
+      .max(MAX, `Не больше ${MAX} направлений`)
+      .test('learning-selection', learningSelection),
   })
 }
 
-/** Схема без справочника городов; в форме используем `createProfileStepSchema` с id загруженных городов. */
+/** Схема для вывода типов; форма передаёт в `createProfileStepSchema` загруженные города и категории. */
 export const profileStepSchema = createProfileStepSchema()
 export type ProfileStepValues = yup.InferType<typeof profileStepSchema>

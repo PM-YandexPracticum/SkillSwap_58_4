@@ -1,4 +1,4 @@
-import { useId, useRef, useState, type ChangeEvent } from 'react'
+import { useEffect, useId, useRef, useState, type ChangeEvent } from 'react'
 
 import AddIcon from '@/shared/assets/icons/add.svg?react'
 import UserCircleIcon from '@/shared/assets/icons/user-circle.svg?react'
@@ -24,6 +24,8 @@ export interface AvatarUploadProps {
   onChange: (dataUrl: string) => void
   /** Внешняя ошибка поля. Ошибка выбранного файла показывается вместо неё. */
   error?: string
+  /** Состояние чтения: родитель может запретить отправку формы до готовности фото. */
+  onProcessingChange?: (isProcessing: boolean) => void
   disabled?: boolean
 }
 
@@ -31,13 +33,28 @@ export interface AvatarUploadProps {
  * Аватар второго шага регистрации: блок 72 px, внутри user-circle или фото и кнопка «+» 16 px.
  * Кнопка открывает выбор файла (jpg, png, webp до 1 МБ). Файл проверяет `validateImageFile`:
  * тексты ошибок «Только JPG, PNG или WEBP» / «Файл больше 1 МБ» показываются под аватаром.
- * Подходящий файл читает `fileToDataUrl`, пока идёт чтение, кнопка недоступна.
+ * Подходящий файл читает `fileToDataUrl`, пока идёт чтение, кнопка недоступна, `onProcessingChange` сообщает об этом форме.
+ * После размонтирования результат и ошибка чтения игнорируются.
  * Компонент не знает про черновик: фото сохраняет тот, кто его использует (регистрация — P6-04,
  * личные данные в кабинете — P7-06).
  * @see Figma: «Регистрация 2 шаг» (1:1497, блок `Icon+Add`).
  */
-export function AvatarUpload({ value, onChange, error, disabled = false }: AvatarUploadProps) {
+export function AvatarUpload({
+  value,
+  onChange,
+  error,
+  onProcessingChange,
+  disabled = false,
+}: AvatarUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const requestId = useRef(0)
+  useEffect(
+    () => () => {
+      // Закрытие формы отменяет применение результата, само чтение FileReader завершится отдельно.
+      requestId.current += 1
+    },
+    [],
+  )
   const errorId = useId()
   const [fileError, setFileError] = useState<string>()
   const [isLoading, setIsLoading] = useState(false)
@@ -47,7 +64,7 @@ export function AvatarUpload({ value, onChange, error, disabled = false }: Avata
     const file = event.target.files?.[0]
     // Сбрасываем выбор: тот же файл можно выбрать повторно, и событие сработает снова
     event.target.value = ''
-    if (!file) return
+    if (!file || disabled || isLoading) return
 
     const validationError = validateImageFile(file)
     if (validationError) {
@@ -55,14 +72,20 @@ export function AvatarUpload({ value, onChange, error, disabled = false }: Avata
       return
     }
 
+    const currentRequest = ++requestId.current
     setFileError(undefined)
     setIsLoading(true)
+    onProcessingChange?.(true)
     try {
-      onChange(await fileToDataUrl(file))
+      const dataUrl = await fileToDataUrl(file)
+      if (requestId.current === currentRequest) onChange(dataUrl)
     } catch {
-      setFileError(READ_ERROR)
+      if (requestId.current === currentRequest) setFileError(READ_ERROR)
     } finally {
-      setIsLoading(false)
+      if (requestId.current === currentRequest) {
+        setIsLoading(false)
+        onProcessingChange?.(false)
+      }
     }
   }
 
@@ -91,6 +114,7 @@ export function AvatarUpload({ value, onChange, error, disabled = false }: Avata
         ref={inputRef}
         type="file"
         hidden
+        disabled={disabled || isLoading}
         accept={ACCEPT}
         data-testid="avatar-upload-input"
         onChange={(event) => void handleChange(event)}

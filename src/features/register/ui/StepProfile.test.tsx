@@ -182,10 +182,25 @@ describe('StepProfile', () => {
       expect(await screen.findByText('Возраст от 14 до 100 лет')).toBeInTheDocument()
     })
 
+    it('город: проверяет пустое поле при уходе без выбора', async () => {
+      const { user } = renderForm()
+      await user.click(screen.getByRole('combobox', { name: 'Город' }))
+      await user.tab()
+      expect(await screen.findByText('Выберите город из списка')).toBeInTheDocument()
+    })
+
+    it('подкатегории: проверяет пустой список при уходе без выбора', async () => {
+      const { user } = renderForm()
+      await user.click(screen.getByRole('button', { name: /^Подкатегория навыка/ }))
+      await user.click(screen.getByLabelText('Имя'))
+      expect(await screen.findByText('Выберите хотя бы одно направление')).toBeInTheDocument()
+    })
+
     it('город: ошибка появляется, когда выбор очищен', async () => {
       const { user } = renderForm({ defaultValues })
 
       await user.click(screen.getByRole('button', { name: 'Очистить' }))
+      await user.tab()
 
       expect(await screen.findByText('Выберите город из списка')).toBeInTheDocument()
       expect(submitButton()).toBeDisabled()
@@ -267,4 +282,32 @@ describe('StepProfile: отправка и выбор значений', () => {
     expect(screen.getByRole('checkbox', { name: 'Бизнес и карьера' })).toBeChecked()
     expect(screen.getByRole('checkbox', { name: 'Иностранные языки' })).toBeChecked()
   })
+})
+
+it('не отправляет форму по Enter, пока обрабатывается фото', async () => {
+  const onNext = vi.fn()
+  const { user } = renderForm({ defaultValues, onNext, isBusy: true })
+  await user.click(screen.getByLabelText('Имя'))
+  await user.keyboard('{Enter}')
+  expect(submitButton()).toBeDisabled()
+  expect(onNext).not.toHaveBeenCalled()
+})
+
+it('не разрешает продолжить с неизвестной подкатегорией из черновика', async () => {
+  const onNext = vi.fn()
+  const { user } = renderForm({
+    defaultValues: { ...defaultValues, learnSubcategoryIds: ['unknown'] },
+    onNext,
+  })
+  await user.click(screen.getByLabelText('Имя'))
+  await user.keyboard('{Enter}')
+  await user.click(screen.getByRole('button', { name: /^Подкатегория навыка/ }))
+  await user.click(screen.getByLabelText('Имя'))
+  expect(await screen.findByText('Выберите направления из списка без повторов')).toBeInTheDocument()
+  await user.click(screen.getByRole('button', { name: /^Подкатегория навыка/ }))
+  await user.click(screen.getByRole('checkbox', { name: 'Управление командой' }))
+  await user.keyboard('{Escape}')
+  await waitFor(() => expect(submitButton()).toBeEnabled())
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  expect(onNext).not.toHaveBeenCalled()
 })

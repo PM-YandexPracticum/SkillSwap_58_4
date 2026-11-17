@@ -1,3 +1,4 @@
+import { createRef } from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState, type FormEvent } from 'react'
@@ -248,5 +249,29 @@ describe('MultiSelect', () => {
     expect(checkbox('Бизнес и карьера')).toHaveFocus()
     expect(field()).toHaveAttribute('aria-expanded', 'true')
     expect(onSubmit).not.toHaveBeenCalled()
+  })
+  it('blur не срабатывает между полем и чекбоксами; ref позволяет вернуться к полю', async () => {
+    const ref = createRef<HTMLButtonElement>()
+    const onBlur = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <>
+        <MultiSelect
+          ref={ref}
+          label="Категории"
+          options={options}
+          value={[]}
+          onChange={vi.fn()}
+          onBlur={onBlur}
+        />
+        <button onClick={() => ref.current?.focus()}>Вернуться к полю</button>
+      </>,
+    )
+    await user.click(field())
+    await user.keyboard('{ArrowDown}{ArrowDown}{Escape}')
+    expect(onBlur).not.toHaveBeenCalled()
+    await user.click(screen.getByRole('button', { name: 'Вернуться к полю' }))
+    expect(onBlur).toHaveBeenCalledOnce()
+    expect(field()).toHaveFocus()
   })
 })

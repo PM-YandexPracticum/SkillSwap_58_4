@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { useArgs } from 'storybook/preview-api'
 import { fn } from 'storybook/test'
 import { IMAGE_PLACEHOLDERS } from '@/shared/lib/image'
 import { AvatarUpload } from './AvatarUpload'
@@ -8,6 +9,18 @@ const meta = {
   component: AvatarUpload,
   tags: ['autodocs'],
   args: { value: null, onChange: fn() },
+  render: function Render(args) {
+    const [, updateArgs] = useArgs()
+    return (
+      <AvatarUpload
+        {...args}
+        onChange={(value) => {
+          args.onChange(value)
+          updateArgs({ value })
+        }}
+      />
+    )
+  },
   parameters: {
     design: {
       type: 'figma',

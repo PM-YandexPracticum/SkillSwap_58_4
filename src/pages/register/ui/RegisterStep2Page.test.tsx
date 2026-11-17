@@ -1,9 +1,10 @@
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { Route, Routes, useLocation } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
 import { createCategory } from '@/entities/category/testing'
-import type { RegisterDraft } from '@/features/register'
+import { registerReset, type RegisterDraft } from '@/features/register'
 import { ROUTES } from '@/shared/config'
 import { fileToDataUrl } from '@/shared/lib/image'
 import { RegisterStep2Page } from './RegisterStep2Page'
@@ -169,25 +170,22 @@ describe('RegisterStep2Page', () => {
     const getInput = () => screen.getByTestId('avatar-upload-input')
 
     it('выбранный файл попадает в черновик готовым data URL, без повторного сжатия', async () => {
-      const { store } = renderStep()
-
-      fireEvent.change(getInput(), {
-        target: { files: [new File(['x'], 'me.png', { type: 'image/png' })] },
-      })
+      const { user, store } = renderStep()
+      await user.upload(getInput(), new File(['x'], 'me.png', { type: 'image/png' }))
 
       await waitFor(() =>
-        expect(store.getState().register.draft.avatarPreviewUrl).toBe('data:image/png;base64,me.png'),
+        expect(store.getState().register.draft.avatarPreviewUrl).toBe(
+          'data:image/png;base64,me.png',
+        ),
       )
       expect(fileToDataUrl).toHaveBeenCalledOnce()
       expect(await screen.findByRole('img', { name: 'Аватар пользователя' })).toBeInTheDocument()
     })
 
-    it('неподходящий файл не сохраняется, показывается ошибка', () => {
+    it('неподходящий файл не сохраняется, показывается ошибка', async () => {
       const { store } = renderStep()
-
-      fireEvent.change(getInput(), {
-        target: { files: [new File(['x'], 'doc.pdf', { type: 'application/pdf' })] },
-      })
+      const user = userEvent.setup({ applyAccept: false })
+      await user.upload(getInput(), new File(['x'], 'doc.pdf', { type: 'application/pdf' }))
 
       expect(screen.getByRole('alert')).toHaveTextContent('Только JPG, PNG или WEBP')
       expect(store.getState().register.draft.avatarPreviewUrl).toBeNull()
@@ -206,17 +204,67 @@ describe('RegisterStep2Page', () => {
     })
   })
 
-  it('показывает Loader, если общий провайдер ещё не завершил загрузку', () => {
-    renderStep({
-      categories: { items: [], status: 'loading' },
-      cities: { items: [], status: 'loading' },
-    })
-    expect(screen.getByRole('status', { name: 'Загрузка' })).toBeInTheDocument()
-  })
+  it.each(['успех', 'ошибка'])(
+    'ожидает чтение фото и восстанавливает продолжение после результата: %s',
+    async (outcome) => {
+      let resolve!: (value: string) => void
+      let reject!: (error: Error) => void
+      vi.mocked(fileToDataUrl).mockImplementationOnce(
+        () =>
+          new Promise<string>((done, fail) => {
+            resolve = done
+            reject = fail
+          }),
+      )
+      const { user, store } = renderStep()
+      await fillValid(user)
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Продолжить' })).toBeEnabled())
+      await user.upload(
+        screen.getByTestId('avatar-upload-input'),
+        new File(['x'], 'me.png', { type: 'image/png' }),
+      )
+      expect(screen.getByRole('button', { name: 'Продолжить' })).toBeDisabled()
+      await user.click(screen.getByLabelText('Имя'))
+      await user.keyboard('{Enter}')
+      expect(screen.getByRole('form')).toBeInTheDocument()
+      expect(store.getState().register.completedStep).toBe(0)
+      await act(async () => {
+        if (outcome === 'успех') resolve('data:image/png;base64,ready')
+        else reject(new Error('broken'))
+      })
+      if (outcome === 'ошибка')
+        expect(screen.getByRole('alert')).toHaveTextContent('Не удалось загрузить фото')
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Продолжить' })).toBeEnabled())
+      await user.click(screen.getByRole('button', { name: 'Продолжить' }))
+      expect(screen.getByText(`Адрес: ${ROUTES.REGISTER_STEP_3}`)).toBeInTheDocument()
+      expect(store.getState().register.draft.avatarPreviewUrl).toBe(
+        outcome === 'успех' ? 'data:image/png;base64,ready' : null,
+      )
+    },
+  )
 
-  it.each(['categories', 'cities'] as const)('при ошибке %s открывает страницу ошибки', (slice) => {
-    renderStep({ [slice]: { items: [], status: 'failed' } })
-    expect(screen.getByRole('heading', { name: 'Ошибка сервера' })).toBeInTheDocument()
-    expect(screen.queryByRole('form')).not.toBeInTheDocument()
+  it('после ухода назад и очистки черновика позднее фото не восстанавливает данные', async () => {
+    let resolve!: (value: string) => void
+    vi.mocked(fileToDataUrl).mockImplementationOnce(
+      () =>
+        new Promise<string>((done) => {
+          resolve = done
+        }),
+    )
+    const { user, store } = renderStep()
+    await user.upload(
+      screen.getByTestId('avatar-upload-input'),
+      new File(['x'], 'me.png', { type: 'image/png' }),
+    )
+    await user.click(screen.getByRole('button', { name: 'Назад' }))
+    expect(screen.getByText(`Адрес: ${ROUTES.REGISTER_STEP_1}`)).toBeInTheDocument()
+    act(() => {
+      store.dispatch(registerReset())
+    })
+    const resetDraft = store.getState().register.draft
+    await act(async () => {
+      resolve('data:image/png;base64,late')
+    })
+    expect(store.getState().register.draft).toEqual(resetDraft)
   })
 })

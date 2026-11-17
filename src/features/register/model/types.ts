@@ -11,7 +11,7 @@ export interface RegisterDraft {
   password: string
   /** Шаг 2 — «Расскажите немного о себе» */
   name: string
-  /** Аватар: готовый data URL (800 px, JPEG) или `null`, если фото не выбрано */
+  /** Аватар: готовый data URL (до 800 px; небольшое фото сохраняет исходный формат) или `null` */
   avatarPreviewUrl: string | null
   birthDate: string
   gender: Gender | null
