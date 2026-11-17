@@ -64,7 +64,7 @@ describe('toggleFavorite', () => {
     const { store } = await setup()
 
     const firstWrite = store.dispatch(toggleFavorite(targetUserId))
-    expect(store.getState().favoriteToggle.isPending).toBe(true)
+    expect(store.getState().favoriteToggle.pendingUserIds).toContain(targetUserId)
     const repeatedWrite = await store.dispatch(toggleFavorite(targetUserId))
 
     expect(toggleFavorite.rejected.match(repeatedWrite)).toBe(true)
@@ -78,23 +78,52 @@ describe('toggleFavorite', () => {
     )
   })
 
-  it('откатывает первую запись в store и базе, если сохранение счётчика не удалось', async () => {
+  it('при постоянной ошибке хранилища не меняет ни избранное, ни счётчик; повтор безопасен', async () => {
     const { store, currentUser, targetUser } = await setup()
-    const originalSetItem = Storage.prototype.setItem
-    let writeCount = 0
-    vi.spyOn(Storage.prototype, 'setItem').mockImplementation((key, value) => {
-      writeCount += 1
-      if (writeCount === 2) throw new DOMException('quota', 'QuotaExceededError')
-      return originalSetItem.call(localStorage, key, value)
+    const write = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('quota', 'QuotaExceededError')
     })
 
     const result = await store.dispatch(toggleFavorite(targetUserId))
-
-    expect(toggleFavorite.rejected.match(result)).toBe(true)
-    if (toggleFavorite.rejected.match(result)) {
-      expect(result.payload).toBe(DATA_ERRORS.STORAGE_FULL)
-    }
+    expect(result.payload).toBe(DATA_ERRORS.STORAGE_FULL)
     expect(store.getState().users.items).toEqual(expect.arrayContaining([currentUser, targetUser]))
     expect(await getUsers()).toEqual(expect.arrayContaining([currentUser, targetUser]))
+
+    write.mockRestore()
+    await store.dispatch(toggleFavorite(targetUserId)).unwrap()
+    const reloaded = createTestStore()
+    await reloaded.dispatch(fetchUsers()).unwrap()
+    expect(reloaded.getState().users.items).toEqual(
+      expect.arrayContaining([
+        { ...currentUser, likedUserIds: [targetUserId] },
+        { ...targetUser, likesCount: 8 },
+      ]),
+    )
+  })
+
+  it('сохраняет пару пользователей одним обращением к хранилищу', async () => {
+    const { store } = await setup()
+    const write = vi.spyOn(Storage.prototype, 'setItem')
+    await store.dispatch(toggleFavorite(targetUserId)).unwrap()
+    expect(write).toHaveBeenCalledTimes(1)
+  })
+
+  it('разные сердечки сохраняются без потери избранного и блокируются независимо', async () => {
+    const { store } = await setup()
+    const other = createUser({
+      id: 'other-target',
+      email: 'other-target@example.com',
+      likesCount: 0,
+    })
+    await saveUser(other)
+    await store.dispatch(fetchUsers()).unwrap()
+    const first = store.dispatch(toggleFavorite(targetUserId))
+    const second = store.dispatch(toggleFavorite(other.id))
+    await Promise.all([first.unwrap(), second.unwrap()])
+    expect(
+      store.getState().users.items.find((user) => user.id === currentUserId)?.likedUserIds,
+    ).toEqual([targetUserId, other.id])
+    expect(store.getState().users.items.find((user) => user.id === other.id)?.likesCount).toBe(1)
+    expect(store.getState().favoriteToggle.pendingUserIds).toEqual([])
   })
 })

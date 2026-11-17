@@ -21,8 +21,3 @@
 .selected svg {
   color: var(--color-accent-strong);
 }
-
-.error {
-  color: var(--color-error);
-  font-size: var(--font-size-xs);
-}

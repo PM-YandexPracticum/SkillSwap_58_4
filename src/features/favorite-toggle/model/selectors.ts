@@ -12,5 +12,5 @@ export const selectFavoriteIds = createSelector(
   (currentUser): string[] => currentUser?.likedUserIds ?? EMPTY_FAVORITE_IDS,
 )
 
-export const selectFavoriteTogglePending = (state: RootState): boolean =>
-  state.favoriteToggle.isPending
+export const selectFavoriteTogglePending = (state: RootState, userId: string): boolean =>
+  state.favoriteToggle.pendingUserIds.includes(userId)

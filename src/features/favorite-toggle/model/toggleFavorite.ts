@@ -1,22 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
-import { selectCurrentUser, selectUserById, updateDataUser } from '@/entities/user'
+import { selectCurrentUser, selectUserById, updateUserFavorite } from '@/entities/user'
 import { DATA_ERRORS } from '@/shared/config'
-
-function getSaveError(error: unknown): string {
-  return Object.values(DATA_ERRORS).find((message) => message === error) ?? DATA_ERRORS.SAVE_USER
-}
-/**
- * Лайк / снятие лайка. Своего хранилища у избранного нет. Меняются два пользователя (без мутаций — новые объекты):
- * - у текущего пользователя `likedUserIds` (+ id / − id) — из этого строится страница «Избранное»;
- * - у того, кого лайкнули, `likesCount` (+1 / −1) — это счётчик на карточке и сортировка «Популярного».
- * Оба изменения сохраняются через `updateUser` из entities/user; если не получилось — откатить.
- * @param targetUserId кого лайкаем
- */
+import { selectFavoriteTogglePending } from './selectors'
 
 /**
- * Меняет лайк текущего пользователя и счётчик адресата.
- * Если сохранение второй записи не удалось, восстанавливает первую.
+ * Переключает лайк через атомарную операцию entities/user: избранное и счётчик
+ * появляются в store только после общего сохранения. Ошибка не требует отката.
+ * Запущенная операция завершается для исходного пользователя даже после выхода;
+ * устаревший ответ не должен показывать ошибку в UI новой сессии.
  */
 export const toggleFavorite = createAsyncThunk<
   void,
@@ -25,49 +17,12 @@ export const toggleFavorite = createAsyncThunk<
 >(
   'favoriteToggle/toggle',
   async (targetUserId, { dispatch, getState, rejectWithValue }) => {
-    const state = getState()
-    const currentUser = selectCurrentUser(state)
-    const targetUser = selectUserById(state, targetUserId)
-
-    if (!currentUser || !targetUser || currentUser.id === targetUserId) return
-
-    const alreadyLiked = currentUser.likedUserIds.includes(targetUserId)
-    const nextLikedUserIds = alreadyLiked
-      ? currentUser.likedUserIds.filter((id) => id !== targetUserId)
-      : [...currentUser.likedUserIds, targetUserId]
-    const likesDelta = alreadyLiked ? -1 : 1
-
+    const currentUser = selectCurrentUser(getState())
+    if (!currentUser) return
     try {
-      await dispatch(
-        updateDataUser({
-          id: currentUser.id,
-          changes: { likedUserIds: nextLikedUserIds },
-        }),
-      ).unwrap()
+      await dispatch(updateUserFavorite({ currentUserId: currentUser.id, targetUserId })).unwrap()
     } catch (error) {
-      return rejectWithValue(getSaveError(error))
-    }
-
-    try {
-      await dispatch(
-        updateDataUser({
-          id: targetUser.id,
-          changes: { likesCount: Math.max(0, targetUser.likesCount + likesDelta) },
-        }),
-      ).unwrap()
-    } catch (error) {
-      try {
-        await dispatch(
-          updateDataUser({
-            id: currentUser.id,
-            changes: { likedUserIds: currentUser.likedUserIds },
-          }),
-        ).unwrap()
-      } catch {
-        return rejectWithValue(DATA_ERRORS.SAVE_USER)
-      }
-
-      return rejectWithValue(getSaveError(error))
+      return rejectWithValue(typeof error === 'string' ? error : DATA_ERRORS.SAVE_USER)
     }
   },
   {
@@ -75,7 +30,7 @@ export const toggleFavorite = createAsyncThunk<
       const state = getState()
       const currentUser = selectCurrentUser(state)
       return (
-        !state.favoriteToggle.isPending &&
+        !selectFavoriteTogglePending(state, targetUserId) &&
         !!currentUser &&
         currentUser.id !== targetUserId &&
         !!selectUserById(state, targetUserId)
