@@ -58,6 +58,7 @@ export function markNotificationRead(id: string): Promise<Notification> {
  * У уже прочитанных `isRead` не меняется: в `changes` они не попадают,
  * поэтому `updateMany` не делает лишний setItem, когда новых нет.
  * Возвращает полный список владельца, включая уже просмотренные (как и раньше).
+ * P7-05: пакетная операция mock DB — одно чтение, одна запись, одна задержка.
  */
 export function markAllNotificationsRead(userId: string): Promise<Notification[]> {
   return enqueue(async () => {
@@ -76,6 +77,7 @@ export function markAllNotificationsRead(userId: string): Promise<Notification[]
  * Удалить новые и просмотренные уведомления владельца одним обращением к «базе».
  * Чужие записи не удаляются: фильтр по владельцу уходит в removeMany.
  * Возвращает id удалённых уведомлений.
+ * P7-05: пакетная операция mock DB — одно чтение, одна запись, одна задержка.
  */
 export function clearNotifications(userId: string): Promise<string[]> {
   return enqueue(() => notifications.removeMany((item) => item.userId === userId))

@@ -7,8 +7,8 @@
 ## Что внутри
 
 - `types.ts` — `NotificationWithName`: `Notification` плюс `userName`, готовое имя в дательном падеже. Панель склонений не делает, имя готовит вызывающий код (P3-15, P7-05).
-- `useNotifications.ts` — хук панели: читает сессию, уведомления, пользователей, флаг новых уведомлений, статус и ошибку; собирает `NotificationWithName[]` через `buildNotificationsWithNames` и возвращает `notifications`, `hasUnread`, `isLoading`, `error`. Действия («Прочитать все», «Очистить») и навигацию «Перейти» выполняет `MainLayout` — он передаёт обработчики в пропсы панели.
-- `useNotifications.test.tsx` — тесты чтения: без сессии не падает и отдаёт пустой список, `hasUnread: false`; вошедшему — только свои уведомления со склонённым именем и `hasUnread: true`; статус `loading` даёт `isLoading: true`. Тесты повтора загрузки добавятся вместе с `fetchNotifications` в хуке (аудит P7-05 от 13.11.2026).
+- `useNotifications.ts` — хук панели: читает сессию, уведомления, пользователей, флаг новых уведомлений, статус и ошибку; собирает `NotificationWithName[]` через `buildNotificationsWithNames` и возвращает `notifications`, `hasUnread`, `isLoading`, `loadError`, `retry`, `error`. `loadError` — ошибка загрузки списка (показывается с кнопкой «Повторить»), `error` — ошибка действия «Прочитать все»/«Очистить»; отделены друг от друга. `retry()` повторяет `fetchNotifications()`, пока `status !== 'loading'`. Действия («Прочитать все», «Очистить») и навигацию «Перейти» выполняет `MainLayout` — он передаёт обработчики в пропсы панели.
+- `useNotifications.test.tsx` — тесты чтения: без сессии не падает и отдаёт пустой список, `hasUnread: false`; вошедшему — только свои уведомления со склонённым именем и `hasUnread: true`; статус `loading` даёт `isLoading: true`. Тесты повтора загрузки — в `useNotifications.test.tsx`: `failed` → `retry()` → `succeeded`, `retry` при `loading` не дублирует, смена пользователя не показывает чужие (аудит P7-05 от 13.11.2026).
 
 ## Тестирование
 
