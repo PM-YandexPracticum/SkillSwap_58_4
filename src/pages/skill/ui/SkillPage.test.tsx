@@ -110,6 +110,7 @@ const preloadedState = {
     status: 'succeeded' as const,
     pendingRequests: 0,
     error: null,
+    loadError: null,
   },
 }
 

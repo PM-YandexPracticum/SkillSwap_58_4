@@ -323,7 +323,13 @@ describe('Header — обновление store', () => {
     )
     const store = createTestStore({
       ...saved,
-      notifications: { items: [], status: 'idle', error: null, pendingRequests: 0 },
+      notifications: {
+        items: [],
+        status: 'idle',
+        error: null,
+        pendingRequests: 0,
+        loadError: null,
+      },
     })
     const loads = vi.spyOn(notifications, 'fetchNotifications')
     try {
