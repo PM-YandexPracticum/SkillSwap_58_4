@@ -78,7 +78,7 @@ describe('восстановление сессии при старте', { time
     expect(
       await screen.findByRole(
         'heading',
-        { name: 'FavoritesPage' },
+        { name: 'Избранное' },
         { timeout: PAGE_READY_TIMEOUT },
       ),
     ).toBeInTheDocument()
