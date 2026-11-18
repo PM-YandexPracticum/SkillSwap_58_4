@@ -15,8 +15,8 @@ import type { ID } from '@/shared/types'
  *
  * @param exchangeId - id обмена из `notification.exchangeId`
  * @param exchanges - полный список обменов (из `selectExchanges`)
- * @returns `skillId` навыка получателя либо `undefined`, если обмена нет —
- *          тогда обработчик «Перейти» в `MainLayout` не вызывает `navigate`
+ * @returns `skillId` получателя либо `undefined`; MainLayout проверяет запасную
+ *          ссылку из профиля адресата и владельца навыка перед переходом.
  * @see Figma: 1:2148 (окно уведомлений)
  * @see docs/requirements/tz.md — P7-05
  */

@@ -17,6 +17,20 @@ beforeEach(async () => {
 })
 
 describe('notificationApi', () => {
+  it.each([
+    { name: 'создание', save: saveNotification },
+    { name: 'повтор предложения', save: ensureExchangeNotification },
+  ])('$name сохраняет снимок входных данных до ожидания очереди', async ({ save }) => {
+    const input = createNotification({ id: 'snapshot', userId: 'snapshot-owner' })
+    const expected = { ...input }
+    const pending = save(input)
+    input.userId = 'changed-owner'
+    input.isRead = true
+
+    expect(await pending).toEqual(expected)
+    expect(await getNotifications()).toContainEqual(expected)
+  })
+
   it('прочитать все меняет только уведомления указанного владельца', async () => {
     await markAllNotificationsRead(own.userId)
     const result = await getNotifications()
@@ -136,4 +150,18 @@ describe('ensureExchangeNotification', () => {
       (await getNotifications()).filter((item) => item.exchangeId === notification.exchangeId),
     ).toEqual([notification, other])
   })
+})
+
+it('прочитать все читает коллекцию один раз и возвращает также просмотренные', async () => {
+  const read = createNotification({ id: 'already-read', userId: own.userId, isRead: true })
+  await saveNotification(read)
+  const spy = vi.spyOn(Storage.prototype, 'getItem')
+  try {
+    const items = await markAllNotificationsRead(own.userId)
+    expect(items).toContainEqual(read)
+    expect(items).toContainEqual({ ...own, isRead: true })
+    expect(spy.mock.calls.filter(([key]) => key === 'skillswap_db_notifications')).toHaveLength(1)
+  } finally {
+    spy.mockRestore()
+  }
 })

@@ -81,32 +81,31 @@ export const ensureExchangeNotification = createAsyncThunk<Notification, Notific
 /** Прочитать новые уведомления текущего пользователя. Чужие записи не затрагиваются. */
 export const markAllRead = createAsyncThunk<Notification[], void, ThunkConfig>(
   'notifications/markAllRead',
-  async (_, { getState, dispatch, rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     const userId = getState().session.session?.userId
     if (!userId) return rejectWithValue(DATA_ERRORS.SIGN_IN)
     try {
       return await markAllNotificationsRead(userId)
     } catch (error) {
-      // Несколько записей сохраняются по очереди: при ошибке восстанавливаем фактическое состояние базы.
-      await dispatch(fetchNotifications())
       return rejectWithValue(saveError(error, DATA_ERRORS.READ_NOTIFICATIONS))
     }
   },
+  { condition: (_, { getState }) => getState().notifications.pendingRequests === 0 },
 )
 
 /** Удалить новые и просмотренные уведомления только владельца текущей сессии. */
 export const clearAllNotifications = createAsyncThunk<string[], void, ThunkConfig>(
   'notifications/clearAll',
-  async (_, { getState, dispatch, rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     const userId = getState().session.session?.userId
     if (!userId) return rejectWithValue(DATA_ERRORS.SIGN_IN)
     try {
       return await clearNotifications(userId)
     } catch (error) {
-      await dispatch(fetchNotifications())
       return rejectWithValue(saveError(error, DATA_ERRORS.CLEAR_NOTIFICATIONS))
     }
   },
+  { condition: (_, { getState }) => getState().notifications.pendingRequests === 0 },
 )
 
 /** Сохранённые уведомления. Видимость по владельцу — в селекторах, запись — только через API. */

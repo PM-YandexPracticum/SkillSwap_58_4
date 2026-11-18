@@ -1,21 +1,11 @@
-# src/widgets/notifications-panel/model — типы и Redux-логика панели
+# src/widgets/notifications-panel/model
 
-Здесь — типы виджета и хук чтения уведомлений. Без React-компонентов.
+Типы и загрузка данных для панели. UI получает готовый список и обработчики.
 
-Зачем сегмент: `NotificationWithName` — общий тип панели, его используют `lib/`, `ui/` и `useNotifications`. По [fsd.md](../../../../docs/architecture/fsd.md) сегменты создаются «по необходимости»; в `widgets` этот сегмент первый.
+- `types.ts` — `NotificationWithName`: уведомление и готовое имя адресата в дательном падеже.
+- `useNotifications.ts` — единственный загрузчик уведомлений в `MainLayout`. Работает и при закрытой панели, делает одну автоматическую попытку на сессию. После ошибки ждёт явного повтора, повторные клики во время запроса не создают новые запросы. Возвращает `notifications`, `status`, `error`, `loadError`, `retry`.
+- `useNotifications.test.tsx` — гость, StrictMode, ошибка и ручной повтор, смена пользователя, поздний ответ после выхода. Используется настоящий `createTestStore`, без неполных слайсов и приведения `as never`.
 
-## Что внутри
-
-- `types.ts` — `NotificationWithName`: `Notification` плюс `userName`, готовое имя в дательном падеже. Панель склонений не делает, имя готовит вызывающий код (P3-15, P7-05).
-- `useNotifications.ts` — хук панели: читает сессию, уведомления, пользователей, флаг новых уведомлений, статус и ошибку; собирает `NotificationWithName[]` через `buildNotificationsWithNames` и возвращает `notifications`, `hasUnread`, `isLoading`, `loadError`, `retry`, `error`. `loadError` — ошибка загрузки списка (показывается с кнопкой «Повторить»), `error` — ошибка действия «Прочитать все»/«Очистить»; отделены друг от друга. `retry()` повторяет `fetchNotifications()`, пока `status !== 'loading'`. Действия («Прочитать все», «Очистить») и навигацию «Перейти» выполняет `MainLayout` — он передаёт обработчики в пропсы панели.
-- `useNotifications.test.tsx` — тесты чтения: без сессии не падает и отдаёт пустой список, `hasUnread: false`; вошедшему — только свои уведомления со склонённым именем и `hasUnread: true`; статус `loading` даёт `isLoading: true`. Тесты повтора загрузки — в `useNotifications.test.tsx`: `failed` → `retry()` → `succeeded`, `retry` при `loading` не дублирует, смена пользователя не показывает чужие (аудит P7-05 от 13.11.2026).
-
-## Тестирование
-
-- Store для теста — `createTestStore` из `@/app/test/createTestStore` (алиас `createAppStore`): импорт `@/app/store` из теста нижнего слоя запрещён FSD-правилом линтера.
-- `renderHook` не принимает `renderWithProviders` (тот рендерит компонент), поэтому обёртка своя: `Provider store={store}`, ничего больше не нужно — хук не использует `useToast`, `useNavigate`, `useLocation`.
-- `preloadedState` намеренно неполный (`items` без `pendingRequests`, `users` без `saveStatus` и т. п.): тесту важны только поля, которые он читает. Redux дополнит недостающее из `initialState` слайсов в рантайме, а `as never` снимает проверку типов на этом объекте. Полный `RootState` в тесте не собирается — иначе он начнёт ломаться при любом новом поле слайса.
-
-## Открыто на следующие шаги
-
-- Колокольчик виден только вошедшему — `Header.isAuth`, P5-09. Хук обязан выдерживать `session === null`, но UI-скрытие проверяется отдельно, не здесь.
+Список ограничивает селектор `selectNotifications`, точку в `Header` — `selectHasUnread`.
+Хук добавляет имена через чистую функцию из `lib`; массовые действия и навигацию
+подключает `MainLayout`. Загрузка не входит в `DataProvider` и не зависит от открытия окна.

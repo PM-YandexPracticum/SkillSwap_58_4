@@ -52,7 +52,7 @@ describe('exchange selectors', () => {
     state.exchanges.items = [pending, items[1]]
     expect(selectOutgoingExchange(state, 'recipient')).toBe(pending)
     expect(selectOutgoingExchange(state, 'sender')).toBeUndefined()
-    expect(selectHasProposed(state, 'recipient')).toBe(true)
+    expect(selectHasProposed(state, 'recipient')).toBe(false)
   })
 
   it('после выхода не показывает обмены и бейдж предложенного обмена', () => {

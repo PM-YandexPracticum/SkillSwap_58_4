@@ -182,3 +182,15 @@ describe('NotificationsPanel', () => {
     expect(screen.queryByRole('button', { name: 'Повторить' })).not.toBeInTheDocument()
   })
 })
+
+it('блокирует действия, пока выполняется операция с уведомлениями', async () => {
+  const { onMarkAllRead, onClear } = setupWithStatus(
+    [createItem({ id: 'new' }), createItem({ id: 'read', isRead: true })],
+    { status: 'loading' },
+  )
+  expect(screen.getByRole('button', { name: 'Прочитать все' })).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Очистить' })).toBeDisabled()
+  await userEvent.click(screen.getByRole('button', { name: 'Прочитать все' }))
+  expect(onMarkAllRead).not.toHaveBeenCalled()
+  expect(onClear).not.toHaveBeenCalled()
+})

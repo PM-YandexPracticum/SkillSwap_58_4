@@ -2,6 +2,7 @@ import { MarkAllReadButton } from '@/features/notifications-read'
 import { NotificationItem } from '@/entities/notification'
 import { Button } from '@/shared/ui/Button'
 import { Loader } from '@/shared/ui/Loader'
+import type { LoadingStatus } from '@/shared/types'
 
 import styles from './NotificationsPanel.module.css'
 
@@ -32,7 +33,7 @@ export interface NotificationsPanelProps {
    * Статус загрузки. «Уведомлений пока нет» показываем только при 'succeeded':
    * иначе пустой список при загрузке или ошибке выглядел бы как «уведомлений нет».
    */
-  status?: 'idle' | 'loading' | 'succeeded' | 'failed'
+  status?: LoadingStatus
   /**
    * Ошибка первоначальной загрузки — показываем вместо списка вместе с кнопкой «Повторить».
    * Текст берётся из `DATA_ERRORS`, в компоненте не дублируется.
@@ -45,11 +46,11 @@ export interface NotificationsPanelProps {
   actionError?: string | null
   /** Повтор первоначальной загрузки. Пока статус 'loading' — кнопка недоступна. */
   onRetry?: () => void
-  /** «Прочитать все» — в P3-15 заглушка, в P7-05 dispatch */
+  /** Прочтение новых уведомлений; MainLayout передаёт обработчик Redux. */
   onMarkAllRead: () => void
-  /** «Очистить» — в P3-15 заглушка, сохранение — P4-07 */
+  /** Удаление всех уведомлений владельца; MainLayout передаёт обработчик Redux. */
   onClear: () => void
-  /** «Перейти» — ведёт к карточке навыка адресата; подключение в P7-05 */
+  /** «Перейти» — id уведомления для навигации к навыку адресата. */
   onGo: (id: string) => void
 }
 
@@ -59,9 +60,8 @@ export interface NotificationsPanelProps {
  * Просмотренные — без кнопки, не кликаются. Пусто — «Уведомлений пока нет».
  * Открытие окна управляется снаружи через Dropdown (align="end"), панель его не рисует.
  *
- * По P3-15 «Прочитать все» и «Очистить» — обычные кнопки без логики:
- * в stories и тестах передаём функции-заглушки. Сохранение прочтения — P4-07,
- * подключение к шапке — P7-05.
+ * Данные, статусы и действия передаёт MainLayout; stories используют заглушки.
+ * Во время операции повторное действие недоступно; ошибка не скрывает сохранённый список.
  *
  * @see Figma: 1:2190 (окно), 1:2148 (экран с открытой панелью)
  */
@@ -113,7 +113,7 @@ export function NotificationsPanel({
               <header className={styles.header}>
                 <h2 className={styles.title}>{TITLE_NEW}</h2>
                 <div className={styles.actionButton}>
-                  <MarkAllReadButton onClick={onMarkAllRead} />
+                  <MarkAllReadButton onClick={onMarkAllRead} disabled={status === 'loading'} />
                 </div>
               </header>
               <ul className={styles.list}>
@@ -134,7 +134,7 @@ export function NotificationsPanel({
               <header className={styles.header}>
                 <h2 className={styles.title}>{TITLE_READ}</h2>
                 <div className={styles.actionButton}>
-                  <Button variant="ghost" onClick={onClear}>
+                  <Button variant="ghost" onClick={onClear} disabled={status === 'loading'}>
                     {BUTTON_CLEAR}
                   </Button>
                 </div>

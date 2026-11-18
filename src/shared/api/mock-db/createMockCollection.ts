@@ -23,9 +23,13 @@ export interface MockCollection<T extends WithId> {
   createIfAbsent(item: T, keyOf: (item: T) => string): Promise<T>
   /** Изменить поля записи — возвращает новую запись. @throws {Error} если id не найден */
   update(id: string, changes: Partial<Omit<T, 'id'>>): Promise<T>
-  /** Читает актуальные данные в очереди и сохраняет несколько изменений одной записью. */
+  /**
+   * Читает актуальные данные в очереди и сохраняет несколько изменений одной записью.
+   * По умолчанию возвращает изменённые записи; selectResult выбирает ответ из итогового снимка.
+   */
   updateMany(
     getChanges: (items: readonly T[]) => readonly { id: string; changes: Partial<Omit<T, 'id'>> }[],
+    selectResult?: (items: readonly T[]) => readonly T[],
   ): Promise<T[]>
   /** Удалить запись. Если её нет — ничего не происходит */
   remove(id: string): Promise<void>
@@ -197,11 +201,11 @@ export function createMockCollection<T extends WithId>(
     return clone(created)
   }
 
-  const updateMany: MockCollection<T>['updateMany'] = (getChanges) =>
+  const updateMany: MockCollection<T>['updateMany'] = (getChanges, selectResult) =>
     respond(async () => {
       const list = await read()
       const changes = getChanges(clone(list))
-      if (changes.length === 0) return []
+      if (changes.length === 0) return clone([...(selectResult?.(list) ?? [])])
       const currentById = new Map(list.map((item) => [item.id, item]))
       const updatedById = new Map<string, T>()
       for (const { id, changes: fields } of changes) {
@@ -216,7 +220,7 @@ export function createMockCollection<T extends WithId>(
       const next = list.map((item) => updatedById.get(item.id) ?? item)
       for (const updated of updatedById.values()) validateWrite?.(updated, next, 'update')
       writeList(key, next)
-      return clone([...updatedById.values()])
+      return clone([...(selectResult ? selectResult(next) : updatedById.values())])
     })
 
   return {
@@ -251,16 +255,14 @@ export function createMockCollection<T extends WithId>(
     removeMany: (match) =>
       respond(async () => {
         const list = await read()
-        // фиксируем «кого удаляем» до записи — фильтр должен сработать один раз
-        const removed = list.filter(match)
-        // выходим без записи, если удалять нечего
-        if (removed.length) {
-          writeList(
-            key,
-            list.filter((item) => !match(item)),
-          )
+        const removed: string[] = []
+        const remaining: T[] = []
+        for (const item of list) {
+          if (match(item)) removed.push(item.id)
+          else remaining.push(item)
         }
-        return removed.map((item) => item.id)
+        if (removed.length) writeList(key, remaining)
+        return removed
       }),
   }
 }

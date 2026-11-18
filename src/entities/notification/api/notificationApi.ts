@@ -17,23 +17,17 @@ const notifications = createMockCollection<Notification>(
   { validate: isNotification },
 )
 
-// Массовые операции и создание не перемешиваются: очистка не удаляет записи, пришедшие после неё.
-let operationQueue: Promise<unknown> = Promise.resolve()
-function enqueue<T>(operation: () => Promise<T>): Promise<T> {
-  const result = operationQueue.then(operation)
-  operationQueue = result.catch(() => undefined)
-  return result
-}
+// Каждая операция атомарна и использует общую очередь createMockCollection.
 
 /** Все уведомления (фильтр по текущему пользователю — в селекторах). */
 export function getNotifications(): Promise<Notification[]> {
-  return enqueue(() => notifications.getAll())
+  return notifications.getAll()
 }
 
 /** Новое уведомление «Вы предложили обмен …». Данные копируются до ожидания очереди. */
 export function createNotification(notification: Notification): Promise<Notification> {
   const input = { ...notification }
-  return enqueue(() => notifications.create(input))
+  return notifications.create(input)
 }
 
 /**
@@ -42,14 +36,14 @@ export function createNotification(notification: Notification): Promise<Notifica
  */
 export function ensureExchangeNotification(notification: Notification): Promise<Notification> {
   const input = { ...notification }
-  return enqueue(() =>
-    notifications.createIfAbsent(input, (item) => JSON.stringify([item.userId, item.exchangeId])),
+  return notifications.createIfAbsent(input, (item) =>
+    JSON.stringify([item.userId, item.exchangeId]),
   )
 }
 
 /** Отметить одно уведомление прочитанным; для кнопки «Прочитать все» — markAllRead в model. */
 export function markNotificationRead(id: string): Promise<Notification> {
-  return enqueue(() => notifications.update(id, { isRead: true }))
+  return notifications.update(id, { isRead: true })
 }
 
 /**
@@ -61,16 +55,13 @@ export function markNotificationRead(id: string): Promise<Notification> {
  * P7-05: пакетная операция mock DB — одно чтение, одна запись, одна задержка.
  */
 export function markAllNotificationsRead(userId: string): Promise<Notification[]> {
-  return enqueue(async () => {
-    await notifications.updateMany((items) =>
+  return notifications.updateMany(
+    (items) =>
       items
         .filter((item) => item.userId === userId && !item.isRead)
         .map((item) => ({ id: item.id, changes: { isRead: true } })),
-    )
-    // updateMany вернул только изменённые; читаем актуальный список владельца
-    const fresh = await notifications.getAll()
-    return fresh.filter((item) => item.userId === userId)
-  })
+    (items) => items.filter((item) => item.userId === userId),
+  )
 }
 
 /**
@@ -80,5 +71,5 @@ export function markAllNotificationsRead(userId: string): Promise<Notification[]
  * P7-05: пакетная операция mock DB — одно чтение, одна запись, одна задержка.
  */
 export function clearNotifications(userId: string): Promise<string[]> {
-  return enqueue(() => notifications.removeMany((item) => item.userId === userId))
+  return notifications.removeMany((item) => item.userId === userId)
 }

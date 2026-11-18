@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { fetchExchanges } from '@/entities/exchange'
+import { loadExchangesIfNeeded } from '@/entities/exchange'
 import {
   selectUsers,
   selectPopularUsers,
@@ -23,12 +23,6 @@ import { selectSkills } from '@/entities/skill'
 import { selectSearchQuery } from '@/features/skill-search'
 import { buildActiveFilters } from '../lib/buildActiveFilters'
 import { parseFilterRemoval } from '../lib/parseFilterRemoval'
-
-/** Только обмены: общие справочники загружает DataProvider. */
-function loadCatalogExchanges(dispatch: AppDispatch, getState: () => RootState) {
-  // Читаем актуальный store: второй эффект StrictMode уже увидит loading.
-  if (getState().exchanges.status === 'idle') void dispatch(fetchExchanges())
-}
 
 /**
  * Главная страница P3-10: готовые карточки и секции, панель фильтров и единая область main.
@@ -56,7 +50,7 @@ export function CatalogPage() {
   const searchQuery = useAppSelector(selectSearchQuery)
 
   useEffect(() => {
-    dispatch(loadCatalogExchanges)
+    void dispatch(loadExchangesIfNeeded())
   }, [dispatch])
 
   const tags = useMemo(

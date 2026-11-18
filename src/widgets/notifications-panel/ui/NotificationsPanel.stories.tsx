@@ -14,12 +14,11 @@ const RECIPIENT_NAME = 'Ивану'
 const MOCK_CREATED_AT = '2026-05-23T10:00:00.000Z'
 
 /** Строка панели: уведомление из фабрики + подготовленное имя */
-const createItem = (overrides: Partial<NotificationWithName> = {}): NotificationWithName =>
-  ({
-    ...createNotification({ createdAt: MOCK_CREATED_AT }),
-    userName: RECIPIENT_NAME,
-    ...overrides,
-  }) as NotificationWithName
+const createItem = (overrides: Partial<NotificationWithName> = {}): NotificationWithName => ({
+  ...createNotification({ createdAt: MOCK_CREATED_AT }),
+  userName: RECIPIENT_NAME,
+  ...overrides,
+})
 
 /**
  * Окно колокольчика — фрейм 1:2190 (экран с открытой панелью — 1:2148).
@@ -27,8 +26,9 @@ const createItem = (overrides: Partial<NotificationWithName> = {}): Notification
  * Записи распределяются по isRead; пусто — «Уведомлений пока нет».
  *
  * LoadError — ошибка загрузки, MarkAllReadError, ClearError — ошибки операции;
- * добавлено по аудиту P7-05 13.11.2026 (comit b43f928).
- * Обработчики — заглушки: сохранение прочтения — P4-07 (влито), подключение к шапке — P5-09/P7-05.
+ * Эти состояния добавлены по аудиту P7-05; в макете их нет.
+ * Обработчики — заглушки для изолированной демонстрации. В приложении подключение к шапке
+ * и Redux выполняет MainLayout (P7-05).
  */
 const meta: Meta<typeof NotificationsPanel> = {
   title: 'widgets/notifications-panel/NotificationsPanel',
@@ -94,6 +94,17 @@ export const OnlyRead: Story = {
 
 /** Пустая панель: «Уведомлений пока нет», секций и кнопок нет */
 export const Empty: Story = {}
+
+/** Первоначальная загрузка не выглядит как пустой список. */
+export const Loading: Story = { args: { status: 'loading' } }
+
+/** Операция идёт: список остаётся, «Прочитать все» и «Очистить» недоступны. */
+export const Busy: Story = {
+  args: {
+    status: 'loading',
+    notifications: [createItem({ id: 'n1' }), createItem({ id: 'n2', isRead: true })],
+  },
+}
 
 /**
  * Ошибка загрузки: вместо списка — сообщение и «Повторить», данных нет.

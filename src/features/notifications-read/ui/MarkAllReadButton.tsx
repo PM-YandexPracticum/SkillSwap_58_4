@@ -3,13 +3,14 @@ import { Button } from '@/shared/ui/Button'
 import styles from './MarkAllReadButton.module.css'
 
 export interface MarkAllReadButtonProps {
-  /** Обработчик «Прочитать все». В P3-15 — заглушка, в P7-05 — dispatch */
+  /** Обработчик «Прочитать все»: в приложении его передаёт MainLayout, в story — заглушка. */
   onClick?: () => void
+  disabled?: boolean
 }
 
 /**
  * Кнопка «Прочитать все»: переводит новые уведомления в просмотренные.
- * В P3-15 вызывает переданный обработчик, Redux — в P7-05.
+ * Компонент не знает о Redux и вызывает переданный обработчик.
  *
  * В макете 1:2148 — зелёный текст (#508826), Medium, без фона.
  * У shared/ui/Button такого варианта нет: ghost даёт серый цвет и вес 400.
@@ -17,10 +18,10 @@ export interface MarkAllReadButtonProps {
  *
  * @see Figma: 1:2239 (открытое окно), 1:2190 (окно), 1:2148 (экран)
  */
-export function MarkAllReadButton({ onClick }: MarkAllReadButtonProps) {
+export function MarkAllReadButton({ onClick, disabled }: MarkAllReadButtonProps) {
   return (
     <span className={styles.wrapper}>
-      <Button variant="ghost" onClick={onClick}>
+      <Button variant="ghost" onClick={onClick} disabled={disabled}>
         Прочитать все
       </Button>
     </span>

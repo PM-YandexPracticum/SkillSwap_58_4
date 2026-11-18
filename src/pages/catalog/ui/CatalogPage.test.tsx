@@ -3,7 +3,6 @@ import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { renderWithProviders } from '@/app/test/renderWithProviders'
 import { createSkill } from '@/entities/skill/testing'
 import { fetchUsers } from '@/entities/user'
-import * as exchanges from '@/entities/exchange'
 import { createUser } from '@/entities/user/testing'
 import { CATALOG } from '@/shared/config'
 import { CatalogPage } from './CatalogPage'
@@ -289,7 +288,6 @@ describe('CatalogPage', () => {
 
   describe('загрузка обменов', () => {
     it('один раз загружает сохранённые обмены, в том числе в StrictMode', async () => {
-      const load = vi.spyOn(exchanges, 'fetchExchanges')
       const { store } = renderWithProviders(
         <StrictMode>
           <CatalogPage />
@@ -302,15 +300,14 @@ describe('CatalogPage', () => {
         },
       )
       expect(await screen.findByRole('heading', { name: 'Популярное' })).toBeInTheDocument()
-      expect(load).toHaveBeenCalledTimes(1)
+      expect(store.getState().exchanges.pendingRequests).toBe(1)
       await waitFor(() => expect(store.getState().exchanges.status).toBe('succeeded'))
     })
 
-    it.each(['loading', 'succeeded', 'failed'] as const)(
+    it.each(['loading', 'succeeded'] as const)(
       'не запускает обмены повторно при статусе %s',
       (status) => {
-        const load = vi.spyOn(exchanges, 'fetchExchanges')
-        renderWithProviders(<CatalogPage />, {
+        const { store } = renderWithProviders(<CatalogPage />, {
           preloadedState: {
             ...ready,
             exchanges: {
@@ -322,12 +319,12 @@ describe('CatalogPage', () => {
           },
         })
         expect(screen.getByRole('heading', { name: 'Популярное' })).toBeInTheDocument()
-        expect(load).not.toHaveBeenCalled()
+        expect(store.getState().exchanges.pendingRequests).toBe(status === 'loading' ? 1 : 0)
       },
     )
 
-    it('ошибка загрузки обменов не прячет каталог', () => {
-      renderWithProviders(<CatalogPage />, {
+    it('при новом входе после ошибки повторяет загрузку, не скрывая каталог', async () => {
+      const { store } = renderWithProviders(<CatalogPage />, {
         preloadedState: {
           ...ready,
           exchanges: {
@@ -340,6 +337,8 @@ describe('CatalogPage', () => {
       })
       expect(screen.getByRole('heading', { name: 'Популярное' })).toBeInTheDocument()
       expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+      expect(store.getState().exchanges.pendingRequests).toBe(1)
+      await waitFor(() => expect(store.getState().exchanges.status).toBe('succeeded'))
     })
   })
 })

@@ -1,83 +1,97 @@
-import { renderHook } from '@testing-library/react'
+import { StrictMode, type ReactNode } from 'react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { Provider } from 'react-redux'
-import type { ReactNode } from 'react'
-
 import { createTestStore } from '@/app/test/createTestStore'
+import { startSession, endSession } from '@/entities/session'
 import { createNotification } from '@/entities/notification/testing'
 import { createUser } from '@/entities/user/testing'
-
+import { fetchUsers } from '@/entities/user'
+import { DATA_ERRORS } from '@/shared/config'
 import { useNotifications } from './useNotifications'
 
-/**
- * Обёртка для `renderHook`: тот же store, что и `renderWithProviders`.
- * `preloadedState` намеренно неполный — тесту важны только нужные поля;
- * Redux заполнит недостающее из `initialState` слайсов.
- */
-function createWrapper(preloadedState: Record<string, unknown>) {
-  const store = createTestStore(preloadedState as never)
-  return function Wrapper({ children }: { children: ReactNode }) {
-    return <Provider store={store}>{children}</Provider>
-  }
+const { readNotifications } = vi.hoisted(() => ({ readNotifications: vi.fn() }))
+vi.mock('@/entities/notification/api/notificationApi', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  getNotifications: readNotifications,
+}))
+
+function setup(userId?: string) {
+  const store = createTestStore()
+  const me = createUser({ id: 'me' })
+  const recipient = createUser({ id: 'recipient', name: 'Иван', gender: 'male' })
+  store.dispatch(fetchUsers.fulfilled([me, recipient], 'users'))
+  if (userId) store.dispatch(startSession(userId))
+  const wrapper = ({ children }: { children: ReactNode }) => (
+    <StrictMode>
+      <Provider store={store}>{children}</Provider>
+    </StrictMode>
+  )
+  return { store, ...renderHook(() => useNotifications(), { wrapper }) }
 }
 
 describe('useNotifications', () => {
-  const me = createUser({ id: 'u01' })
-  const ivan = createUser({ id: 'u02', name: 'Иван', gender: 'male' })
+  afterEach(() => vi.resetAllMocks())
 
-  it('без сессии не падает и отдаёт пустой список и hasUnread = false', () => {
-    const { result } = renderHook(() => useNotifications(), {
-      wrapper: createWrapper({
-        notifications: {
-          items: [createNotification({ userId: 'u99', toUserId: ivan.id })],
-          status: 'succeeded',
-          error: null,
-        },
-        users: { items: [me, ivan] },
-      }),
-    })
-
+  it('не загружает данные гостю', () => {
+    const read = readNotifications.mockResolvedValue([])
+    const { result } = setup()
     expect(result.current.notifications).toEqual([])
-    expect(result.current.hasUnread).toBe(false)
+    expect(read).not.toHaveBeenCalled()
   })
 
-  it('вошедшему отдаёт только свои уведомления со склоненным именем', () => {
-    const own = createNotification({ userId: 'u01', toUserId: ivan.id })
-
-    const { result } = renderHook(() => useNotifications(), {
-      wrapper: createWrapper({
-        session: { session: { userId: 'u01', token: 't' } },
-        notifications: {
-          items: [own, createNotification({ userId: 'u99', toUserId: ivan.id })],
-          status: 'succeeded',
-          error: null,
-        },
-        users: { items: [me, ivan] },
-      }),
-    })
-
-    expect(result.current.notifications).toHaveLength(1)
-    expect(result.current.notifications[0].userName).toBe('Ивану')
-    expect(result.current.hasUnread).toBe(true)
+  it('в StrictMode загружает один раз, отдаёт только свои уведомления и готовое имя', async () => {
+    const own = createNotification({ userId: 'me', toUserId: 'recipient' })
+    const read = readNotifications.mockResolvedValue([
+      own,
+      createNotification({ id: 'other', userId: 'other' }),
+    ])
+    const { result } = setup('me')
+    await waitFor(() => expect(result.current.status).toBe('succeeded'))
+    expect(result.current.notifications).toEqual([{ ...own, userName: 'Ивану' }])
+    expect(read).toHaveBeenCalledTimes(1)
   })
 
-  it('показывает isLoading при статусе loading', () => {
-    const { result } = renderHook(() => useNotifications(), {
-      wrapper: createWrapper({
-        notifications: { items: [], status: 'loading', error: null },
-      }),
+  it('после ошибки ждёт ручного повтора, два синхронных повтора дают один запрос', async () => {
+    const read = readNotifications.mockRejectedValueOnce(new Error('offline')).mockResolvedValue([])
+    const { result, rerender } = setup('me')
+    await waitFor(() => expect(result.current.loadError).toBe(DATA_ERRORS.LOAD_NOTIFICATIONS))
+    rerender()
+    expect(read).toHaveBeenCalledTimes(1)
+    await act(async () => {
+      result.current.retry()
+      result.current.retry()
     })
-
-    expect(result.current.isLoading).toBe(true)
+    await waitFor(() => expect(result.current.status).toBe('succeeded'))
+    expect(result.current.loadError).toBeNull()
+    expect(read).toHaveBeenCalledTimes(2)
   })
 
-  it('после ошибки отдаёт текст и функцию retry', () => {
-    const wrapper = createWrapper({
-      session: { session: { userId: 'u01', token: 't' } },
-      notifications: { items: [], status: 'rejected', error: 'Не удалось загрузить уведомления' },
+  it('после ошибки загружает данные при прямой смене пользователя', async () => {
+    const read = readNotifications.mockRejectedValueOnce(new Error('offline')).mockResolvedValue([])
+    const { result, store } = setup('me')
+    await waitFor(() => expect(result.current.loadError).toBeTruthy())
+    await act(async () => {
+      store.dispatch(startSession('other'))
     })
-    const { result } = renderHook(() => useNotifications(), { wrapper })
+    await waitFor(() => expect(result.current.status).toBe('succeeded'))
+    expect(read).toHaveBeenCalledTimes(2)
+  })
 
-    expect(result.current.error).toBe('Не удалось загрузить уведомления')
-    expect(typeof result.current.retry).toBe('function')
+  it('поздний ответ после выхода не показывает уведомления гостю', async () => {
+    let finish!: (items: ReturnType<typeof createNotification>[]) => void
+    readNotifications.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve
+        }),
+    )
+    const { result, store } = setup('me')
+    act(() => {
+      store.dispatch(endSession())
+    })
+    await act(async () => {
+      finish([createNotification({ userId: 'me', toUserId: 'recipient' })])
+    })
+    expect(result.current.notifications).toEqual([])
   })
 })

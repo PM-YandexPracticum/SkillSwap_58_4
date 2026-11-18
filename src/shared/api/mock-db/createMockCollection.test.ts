@@ -57,6 +57,19 @@ describe('createMockCollection', () => {
   })
 
   describe('изменения', () => {
+    it.each([true, false])(
+      'updateMany выбирает независимый ответ из итогового снимка (изменения: %s)',
+      async (change) => {
+        const items = createItems()
+        const result = await items.updateMany(
+          () => (change ? [{ id: 'a', changes: { title: 'Изменено' } }] : []),
+          (list) => list,
+        )
+        expect(result).toEqual(change ? [{ ...SEED[0], title: 'Изменено' }, SEED[1]] : SEED)
+        result[0].tags.push('вне базы')
+        expect((await items.getById('a'))?.tags).toEqual(['x'])
+      },
+    )
     it('updateMany сохраняет все изменения одним вызовом и возвращает независимые копии', async () => {
       const items = createItems()
       const write = vi.spyOn(Storage.prototype, 'setItem')
@@ -525,6 +538,11 @@ describe('updateMany (P7-05: пакетное изменение чужих не
 })
 
 describe('removeMany', () => {
+  it('проверяет каждую запись один раз', async () => {
+    const match = vi.fn(isOwner('u1'))
+    await createOwned().removeMany(match)
+    expect(match).toHaveBeenCalledTimes(OWNED_SEED.length)
+  })
   it('удаляет все записи владельца и не трогает чужие', async () => {
     const items = createOwned()
 
