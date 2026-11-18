@@ -42,10 +42,14 @@ const ServerErrorPage = lazy(() =>
   import('@/pages/server-error').then((m) => ({ default: m.ServerErrorPage })),
 )
 
-/** Маршруты приложения, лейауты и границы доступа; страницы загружаются по запросу. */
+/**
+ * Маршруты приложения, лейауты и границы доступа; страницы загружаются по запросу.
+ * useTransitions=false согласует смену маршрута с синхронной сессией Redux:
+ * при выходе guard не успевает перенаправить со старого адреса на /login.
+ */
 export function AppRouter() {
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <BrowserRouter basename={import.meta.env.BASE_URL} useTransitions={false}>
       <RegisterDraftLifecycle />
       <Suspense fallback={<Loader />}>
         <Routes>

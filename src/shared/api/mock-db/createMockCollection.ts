@@ -23,6 +23,10 @@ export interface MockCollection<T extends WithId> {
   createIfAbsent(item: T, keyOf: (item: T) => string): Promise<T>
   /** Изменить поля записи — возвращает новую запись. @throws {Error} если id не найден */
   update(id: string, changes: Partial<Omit<T, 'id'>>): Promise<T>
+  /** Читает актуальные данные в очереди и сохраняет несколько изменений одной записью. */
+  updateMany(
+    getChanges: (items: readonly T[]) => readonly { id: string; changes: Partial<Omit<T, 'id'>> }[],
+  ): Promise<T[]>
   /** Удалить запись. Если её нет — ничего не происходит */
   remove(id: string): Promise<void>
   /**
@@ -209,6 +213,28 @@ export function createMockCollection<T extends WithId>(
     return clone(created)
   }
 
+  const updateMany: MockCollection<T>['updateMany'] = (getChanges) =>
+    respond(async () => {
+      const list = await read()
+      const changes = getChanges(clone(list))
+      if (changes.length === 0) return []
+      const currentById = new Map(list.map((item) => [item.id, item]))
+      const updatedById = new Map<string, T>()
+      for (const { id, changes: fields } of changes) {
+        const current = currentById.get(id)
+        if (!current) throw new Error(`Запись с id «${id}» не найдена в коллекции «${name}»`)
+        if (updatedById.has(id))
+          throw new Error(`Повтор id «${id}» в изменениях коллекции «${name}»`)
+        const updated = { ...current, ...clone(fields), id }
+        assertValidItem(updated, validate, name)
+        updatedById.set(id, updated)
+      }
+      const next = list.map((item) => updatedById.get(item.id) ?? item)
+      for (const updated of updatedById.values()) validateWrite?.(updated, next, 'update')
+      writeList(key, next)
+      return clone([...updatedById.values()])
+    })
+
   return {
     getAll: () => respond(read),
     getById: (id) => respond(async () => (await read()).find((item) => item.id === id)),
@@ -223,20 +249,11 @@ export function createMockCollection<T extends WithId>(
         return existing ? clone(existing) : insert(list, input)
       })
     },
-    update: (id, changes) =>
-      respond(async () => {
-        const list = await read()
-        const current = list.find((item) => item.id === id)
-        if (!current) throw new Error(`Запись с id «${id}» не найдена в коллекции «${name}»`)
-        const updated: T = { ...current, ...clone(changes), id }
-        assertValidItem(updated, validate, name)
-        validateWrite?.(updated, list, 'update')
-        writeList(
-          key,
-          list.map((item) => (item.id === id ? updated : item)),
-        )
-        return clone(updated)
-      }),
+    update: (id, changes) => {
+      const input = clone(changes)
+      return updateMany(() => [{ id, changes: input }]).then(([updated]) => updated)
+    },
+    updateMany,
     remove: (id) =>
       respond(async () => {
         const list = await read()

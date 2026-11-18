@@ -12,7 +12,7 @@
 - `selectors.ts` — мемоизированные `PublicUser[]` для UI, текущий пользователь `selectCurrentUser`, поиск по id, сортировки «Популярное» / «Новое», стабильный список «Рекомендуем»; `selectUserByEmail` — полная запись только для логики входа
 - `selectors.test.ts` — публичный API, отсутствие паролей в UI-селекторах, email без учёта регистра, стабильность ссылок, порядка и сортировок
 - `types.ts` — Пользователь платформы. Образцы — `public/db/users.json`; чтение и запись — только через `entities/user/api`
-- `usersSlice.ts` — загрузка через `fetchUsers`, запись через `createNewUser` / `updateDataUser`; независимые состояния загрузки и сохранения
+- `usersSlice.ts` — загрузка через `fetchUsers`, запись через `createNewUser` / `updateDataUser` / `updateUserFavorite`; независимые состояния загрузки и сохранения
 - `usersSlice.test.ts` — переходы состояний загрузки, ошибки и повторы, чтение образцов и localStorage
 - `usersSlice.writes.test.ts` — сохранение/повторное чтение, неизменность и порядок, уникальность email, параллельные запросы, нехватка места и повтор записи
 
@@ -39,7 +39,7 @@
 
 ## Сохранение (P4-06)
 
-Публичные thunks: `createNewUser(user)` и `updateDataUser({ id, changes })`.
+Публичные thunks: `createNewUser(user)`, `updateDataUser({ id, changes })` и `updateUserFavorite({ currentUserId, targetUserId })`. Последний сохраняет связанную пару пользователей одной операцией API и обновляет обе записи в store после успеха.
 Сначала API сохраняет данные, затем `fulfilled` обновляет store новой записью.
 Обновление сохраняет позицию пользователя; отсутствующая в store запись добавляется в конец.
 Повторная загрузка и сохранение не дублируют id. Массивы и прежние объекты не изменяются.

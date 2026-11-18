@@ -1,13 +1,18 @@
-import { useId, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 
 import { SearchInput } from '@/features/skill-search'
+import { LogoutButton } from '@/features/logout'
+import { selectIsAuth } from '@/entities/session'
+import { selectCurrentUser } from '@/entities/user'
+import { fetchNotifications, selectHasUnread } from '@/entities/notification'
 import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react'
 import LikeIcon from '@/shared/assets/icons/like.svg?react'
 import LikeFilledIcon from '@/shared/assets/icons/like-filled.svg?react'
 import MoonIcon from '@/shared/assets/icons/moon.svg?react'
 import NotificationIcon from '@/shared/assets/icons/notification.svg?react'
 import { ROUTES } from '@/shared/config'
+import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { Avatar } from '@/shared/ui/Avatar'
 import { Button } from '@/shared/ui/Button'
 import { Dropdown } from '@/shared/ui/Dropdown'
@@ -18,26 +23,16 @@ import styles from './Header.module.css'
 type OpenMenu = 'categories' | 'notifications' | 'user'
 
 export interface HeaderProps {
-  /** Вошёл ли пользователь. Пока вид переключаем пропом; по сессии его будет выбирать P5-09 */
-  isAuth?: boolean
-  /** Имя рядом с аватаром (только для вошедшего) */
-  userName?: string
-  /** Фото пользователя; `null` — заглушка */
-  userAvatar?: string | null
-  /** Есть ли непрочитанные уведомления — красная точка на колокольчике */
-  hasUnread?: boolean
   /** Меню «Все навыки ▾» — `CategoriesMenu` из `widgets/categories-menu`, передаёт `MainLayout` (виджет не импортирует виджет) */
   categoriesMenu?: ReactNode
   /** Окно колокольчика — `NotificationsPanel` из `widgets/notifications-panel`, передаёт `MainLayout` (P7-05) */
   notifications?: ReactNode
-  /** Нажали «Выйти» в меню пользователя */
-  onLogout?: () => void
   /** Дополнительный CSS-класс */
   className?: string
 }
 
 /**
- * Шапка сайта в двух видах (проп `isAuth`).
+ * Шапка читает состояние входа и текущего пользователя из Redux.
  * Гость: Logo, «О проекте», «Все навыки ▾» (слот `categoriesMenu`), SearchInput, иконка темы (пока без действия — фаза 9),
  * «Войти», «Зарегистрироваться».
  * Вошедший: вместо кнопок — колокольчик с точкой непрочитанных (слот `notifications`), сердечко → `/favorites`
@@ -45,27 +40,36 @@ export interface HeaderProps {
  * Открыто может быть одно меню из трёх: «Все навыки», уведомления, меню пользователя.
  * @see Figma: 1:2861 (гость), 1:2996 (вошедший), точка на колокольчике — 1:1919
  */
-export function Header({
-  isAuth = false,
-  userName = '',
-  userAvatar = null,
-  hasUnread = false,
-  categoriesMenu,
-  notifications,
-  onLogout,
-  className,
-}: HeaderProps) {
+export function Header({ categoriesMenu, notifications, className }: HeaderProps) {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const isAuth = useAppSelector(selectIsAuth)
+  const currentUser = useAppSelector(selectCurrentUser)
+  const hasUnread = useAppSelector(selectHasUnread)
   const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null)
   const userMenuId = useId()
   const categoriesMenuId = useId()
   const categoriesTriggerRef = useRef<HTMLButtonElement>(null)
+  const userTriggerRef = useRef<HTMLButtonElement>(null)
   const notificationsPanelId = useId()
   const hasCategoriesMenu = Boolean(categoriesMenu)
   const hasNotifications = Boolean(notifications)
   const isCategoriesOpen = openMenu === 'categories' && hasCategoriesMenu
   const isNotificationsOpen = openMenu === 'notifications' && hasNotifications
   const isUserMenuOpen = openMenu === 'user'
+
+  useEffect(() => {
+    setOpenMenu(null)
+  }, [isAuth, currentUser?.id])
+
+  useEffect(() => {
+    if (!isAuth) return
+    // До интеграции P7-05 сохраняем загрузку точки даже при закрытой панели.
+    // TODO(P7-05): перенести этот запуск вместе с подключением единого загрузчика панели.
+    void dispatch((dispatch, getState) => {
+      if (getState().notifications.status === 'idle') return dispatch(fetchNotifications())
+    })
+  }, [dispatch, isAuth])
 
   const toggle = (menu: OpenMenu) => setOpenMenu((current) => (current === menu ? null : menu))
   const closer = (menu: OpenMenu) => () =>
@@ -162,18 +166,28 @@ export function Header({
               onClose={closer('user')}
               trigger={
                 <button
+                  ref={userTriggerRef}
                   className={styles.user}
                   type="button"
+                  aria-label={currentUser?.name ? undefined : 'Меню пользователя'}
                   aria-expanded={isUserMenuOpen}
                   aria-controls={isUserMenuOpen ? userMenuId : undefined}
                   onClick={() => toggle('user')}
                 >
-                  {userName}
-                  <Avatar src={userAvatar} alt="" size="sm" />
+                  <span className={styles.userName} title={currentUser?.name}>
+                    {currentUser?.name}
+                  </span>
+                  <Avatar src={currentUser?.avatarUrl ?? null} alt="" size="sm" />
                 </button>
               }
             >
-              <ul id={userMenuId} className={styles.menu}>
+              <ul
+                id={userMenuId}
+                className={styles.menu}
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape') userTriggerRef.current?.focus()
+                }}
+              >
                 <li>
                   <Link
                     className={styles.menuItem}
@@ -184,16 +198,7 @@ export function Header({
                   </Link>
                 </li>
                 <li>
-                  <button
-                    className={styles.menuItem}
-                    type="button"
-                    onClick={() => {
-                      setOpenMenu(null)
-                      onLogout?.()
-                    }}
-                  >
-                    Выйти
-                  </button>
+                  <LogoutButton className={styles.menuItem} />
                 </li>
               </ul>
             </Dropdown>
@@ -203,7 +208,7 @@ export function Header({
             <Button variant="secondary" onClick={() => navigate(ROUTES.LOGIN)}>
               Войти
             </Button>
-            <Button onClick={() => navigate(ROUTES.REGISTER)}>Зарегистрироваться</Button>
+            <Button onClick={() => navigate(ROUTES.REGISTER_STEP_1)}>Зарегистрироваться</Button>
           </div>
         )}
       </div>

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, isAnyOf } from '@reduxjs/toolkit'
 import { DATA_ERRORS } from '@/shared/config'
 import { shuffle } from '@/shared/lib/shuffle'
 import type { LoadingStatus } from '@/shared/types'
-import { createUser, getUsers, updateUser } from '../api/userApi'
+import { createUser, getUsers, toggleUserFavorite, updateUser } from '../api/userApi'
 import type { User } from './types'
 
 export interface UsersState {
@@ -66,6 +66,19 @@ export const updateDataUser = createAsyncThunk<
   }
 })
 
+/** Сохраняет связанные поля лайка и возвращает обе записи для согласованного обновления store. */
+export const updateUserFavorite = createAsyncThunk<
+  User[],
+  { currentUserId: string; targetUserId: string },
+  { rejectValue: string }
+>('users/updateFavorite', async ({ currentUserId, targetUserId }, { rejectWithValue }) => {
+  try {
+    return await toggleUserFavorite(currentUserId, targetUserId)
+  } catch (error) {
+    return rejectWithValue(saveError(error))
+  }
+})
+
 export const usersSlice = createSlice({
   name: 'users',
   initialState,
@@ -85,25 +98,38 @@ export const usersSlice = createSlice({
         state.status = 'failed'
         state.error = DATA_ERRORS.LOAD_USERS
       })
-      .addMatcher(isAnyOf(createNewUser.pending, updateDataUser.pending), (state) => {
-        if (state.pendingSaves === 0) state.saveError = null
-        state.pendingSaves += 1
-        state.saveStatus = 'loading'
-      })
-      .addMatcher(isAnyOf(createNewUser.fulfilled, updateDataUser.fulfilled), (state, action) => {
-        const saved = action.payload
-        state.items = state.items.some((user) => user.id === saved.id)
-          ? state.items.map((user) => (user.id === saved.id ? saved : user))
-          : [...state.items, saved]
-        state.pendingSaves = Math.max(0, state.pendingSaves - 1)
-        state.saveStatus =
-          state.pendingSaves > 0 ? 'loading' : state.saveError ? 'failed' : 'succeeded'
-      })
-      .addMatcher(isAnyOf(createNewUser.rejected, updateDataUser.rejected), (state, action) => {
-        state.pendingSaves = Math.max(0, state.pendingSaves - 1)
-        state.saveStatus = state.pendingSaves > 0 ? 'loading' : 'failed'
-        state.saveError = action.payload ?? DATA_ERRORS.SAVE_USER
-      })
+      .addMatcher(
+        isAnyOf(createNewUser.pending, updateDataUser.pending, updateUserFavorite.pending),
+        (state) => {
+          if (state.pendingSaves === 0) state.saveError = null
+          state.pendingSaves += 1
+          state.saveStatus = 'loading'
+        },
+      )
+      .addMatcher(
+        isAnyOf(createNewUser.fulfilled, updateDataUser.fulfilled, updateUserFavorite.fulfilled),
+        (state, action) => {
+          const saved = Array.isArray(action.payload) ? action.payload : [action.payload]
+          const byId = new Map(saved.map((user) => [user.id, user]))
+          state.items = state.items.map((user) => {
+            const updated = byId.get(user.id) ?? user
+            byId.delete(user.id)
+            return updated
+          })
+          state.items.push(...byId.values())
+          state.pendingSaves = Math.max(0, state.pendingSaves - 1)
+          state.saveStatus =
+            state.pendingSaves > 0 ? 'loading' : state.saveError ? 'failed' : 'succeeded'
+        },
+      )
+      .addMatcher(
+        isAnyOf(createNewUser.rejected, updateDataUser.rejected, updateUserFavorite.rejected),
+        (state, action) => {
+          state.pendingSaves = Math.max(0, state.pendingSaves - 1)
+          state.saveStatus = state.pendingSaves > 0 ? 'loading' : 'failed'
+          state.saveError = action.payload ?? DATA_ERRORS.SAVE_USER
+        },
+      )
   },
 })
 

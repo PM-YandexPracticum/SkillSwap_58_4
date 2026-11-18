@@ -17,3 +17,7 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+
+.selected svg {
+  color: var(--color-accent-strong);
+}

@@ -1,8 +1,13 @@
+import { ToastContext } from '@/shared/lib/toast'
+import { configureStore } from '@reduxjs/toolkit'
+import { Provider } from 'react-redux'
+import { MemoryRouter } from 'react-router-dom'
+import { sessionReducer } from '@/entities/session'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { UserCard, type PublicUser } from '@/entities/user'
+import { UserCard, usersReducer, type PublicUser } from '@/entities/user'
 import { createUser } from '@/entities/user/testing'
-import { FavoriteButton } from '@/features/favorite-toggle'
+import { FavoriteButton, favoriteToggleReducer } from '@/features/favorite-toggle'
 import { Button } from '@/shared/ui/Button'
 
 import { OffersCarousel } from './OffersCarousel'
@@ -57,9 +62,24 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div style={{ maxWidth: 'var(--container-width)', margin: '0 auto' }}>
-        <Story />
-      </div>
+      <Provider
+        store={configureStore({
+          reducer: {
+            session: sessionReducer,
+            users: usersReducer,
+            favoriteToggle: favoriteToggleReducer,
+          },
+          preloadedState: { session: { session: null } },
+        })}
+      >
+        <ToastContext.Provider value={{ showToast: () => {}, removeToast: () => {} }}>
+          <MemoryRouter>
+            <div style={{ maxWidth: 'var(--container-width)', margin: '0 auto' }}>
+              <Story />
+            </div>
+          </MemoryRouter>
+        </ToastContext.Provider>
+      </Provider>
     ),
   ],
 } satisfies Meta<typeof OffersCarousel>

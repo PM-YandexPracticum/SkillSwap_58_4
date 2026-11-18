@@ -4,6 +4,7 @@ export {
   fetchUsers,
   createNewUser,
   updateDataUser,
+  updateUserFavorite,
   type UsersState,
 } from './model/usersSlice'
 export {
