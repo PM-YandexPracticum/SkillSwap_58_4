@@ -19,6 +19,8 @@ const IMAGE_COUNT_ERROR = 'Добавьте от 1 до 4 фото'
 
 export interface SkillFormProps {
   defaultValues?: Partial<SkillFormValues>
+  /** Фото навыка для восстановления данных шага из черновика регистрации. */
+  defaultImages?: readonly string[]
   /** Фото навыка передаются как data URL в порядке выбора. */
   onSubmit: (values: SkillFormValues, images: string[]) => void
   /** Возвращает пользователя на шаг 2. */
@@ -33,7 +35,7 @@ export interface SkillFormProps {
  * Пока фото читаются и сжимаются, повторный выбор и отправка формы недоступны.
  * @see Figma: «Регистрация 3 шаг» (1:1761)
  */
-export function SkillForm({ defaultValues, onSubmit, onBack }: SkillFormProps) {
+export function SkillForm({ defaultValues, defaultImages, onSubmit, onBack }: SkillFormProps) {
   const categories = useAppSelector(selectCategories)
   const {
     register,
@@ -55,7 +57,7 @@ export function SkillForm({ defaultValues, onSubmit, onBack }: SkillFormProps) {
     },
   })
 
-  const [images, setImages] = useState<string[]>([])
+  const [images, setImages] = useState<string[]>(() => [...(defaultImages ?? [])])
   const [isProcessing, setIsProcessing] = useState(false)
   const [imageError, setImageError] = useState<string>()
 

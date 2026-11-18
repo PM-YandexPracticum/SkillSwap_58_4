@@ -13,5 +13,5 @@
 - [`lib/`](lib/README.md) — чистые функции
 - [`model/`](model/README.md) — типы, слайс, селекторы
 - [`ui/`](ui/README.md) — React-компоненты
-- `index.ts` — публичный API: `fetchSkills`, `createNewSkill`, редьюсер, селекторы данных/загрузки/записи и компоненты; импортировать снаружи только отсюда
+- `index.ts` — публичный API: `fetchSkills`, `createNewSkill`, `updateDataSkill`, редьюсер, селекторы данных/загрузки/записи и компоненты; импортировать снаружи только отсюда
 - `testing.ts` — публичный API для тестов и stories: фабрика `createSkill()`
