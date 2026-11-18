@@ -22,6 +22,12 @@ export interface SkillPreviewModalProps {
   onEdit: () => void
   /** «Готово»: регистрация завершается (P6-06) */
   onConfirm: () => void
+  /** Отключает действия, пока завершается сохранение. */
+  isBusy?: boolean
+  /** Понятная ошибка завершения регистрации. */
+  error?: string | null
+  /** После сохранения навыка редактирование запретить, чтобы повтор использовал прежние id. */
+  isEditDisabled?: boolean
 }
 
 /**
@@ -39,6 +45,9 @@ export function SkillPreviewModal({
   images,
   onEdit,
   onConfirm,
+  isBusy = false,
+  error,
+  isEditDisabled = false,
 }: SkillPreviewModalProps) {
   const categories = [skill.categoryTitle, skill.subcategoryTitle].filter(Boolean).join(' / ')
   return (
@@ -58,15 +67,18 @@ export function SkillPreviewModal({
               <p className={styles.description}>{skill.description}</p>
             </div>
             <div className={styles.actions}>
-              <Button variant="secondary" onClick={onEdit}>
+              <Button variant="secondary" onClick={onEdit} disabled={isBusy || isEditDisabled}>
                 Редактировать
                 <EditIcon className={styles.icon} aria-hidden="true" />
               </Button>
-              <Button onClick={onConfirm}>Готово</Button>
+              <Button onClick={onConfirm} disabled={isBusy}>
+                {isBusy ? 'Сохраняем…' : 'Готово'}
+              </Button>
             </div>
           </div>
           <SkillGallery title={skill.title} images={images} />
         </div>
+        {error && <p role="alert">{error}</p>}
       </div>
     </Modal>
   )

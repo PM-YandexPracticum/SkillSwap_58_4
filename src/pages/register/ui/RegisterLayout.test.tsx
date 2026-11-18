@@ -78,6 +78,8 @@ describe('RegisterLayout', () => {
               email: 'new@mail.ru',
             },
             completedStep: 1,
+            completionStatus: 'idle',
+            completionError: null,
           },
         },
       },

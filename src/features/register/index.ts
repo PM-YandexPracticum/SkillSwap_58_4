@@ -13,7 +13,10 @@ export {
   registerReset,
   selectCompletedStep,
   selectRegisterDraft,
+  selectRegistrationStatus,
+  selectRegistrationError,
   type RegisterState,
   type RegisterStep,
 } from './model/registerSlice'
+export { completeRegistration } from './model/completeRegistration'
 export type { RegisterDraft } from './model/types'

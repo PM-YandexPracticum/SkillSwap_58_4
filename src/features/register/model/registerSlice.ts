@@ -1,5 +1,13 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { DATA_ERRORS } from '@/shared/config'
+import type { LoadingStatus } from '@/shared/types'
 import type { RegisterDraft } from './types'
+import { completeRegistration } from './completeRegistration'
+import {
+  registerReset,
+  registrationAttemptPrepared,
+  registrationSkillSaved,
+} from './registerActions'
 
 /** Номер шага регистрации */
 export type RegisterStep = 1 | 2 | 3
@@ -11,10 +19,14 @@ export interface RegisterState {
    */
   completedStep: 0 | RegisterStep
   draft: RegisterDraft
+  completionStatus: LoadingStatus
+  completionError: string | null
 }
 
 const initialState: RegisterState = {
   completedStep: 0,
+  completionStatus: 'idle',
+  completionError: null,
   draft: {
     email: '',
     password: '',
@@ -26,6 +38,7 @@ const initialState: RegisterState = {
     learnCategoryIds: [],
     learnSubcategoryIds: [],
     skill: null,
+    completion: null,
   },
 }
 
@@ -33,7 +46,7 @@ const initialState: RegisterState = {
  * Черновик регистрации из 3 шагов. «Назад» не стирает введённое, «Закрыть ×» — сбрасывает черновик.
  * После «Готово» пользователь всегда попадает в каталог (ТЗ наставника, 2.6).
  *
- * - `draftUpdated(partial)` — дописать поля шага в черновик, остальные не трогаются;
+ * - `draftUpdated(partial)` — дописать поля шага в черновик; при изменении навыка сбрасывает состояние его записи;
  * - `stepCompleted(step)` — шаг пройден («Далее» / «Продолжить»). Номер только растёт: вернулся на шаг 1
  *   и снова нажал «Далее» — шаг 2 остаётся пройденным, если был пройден;
  * - `registerReset()` — пустой черновик и ни одного пройденного шага.
@@ -45,19 +58,45 @@ export const registerSlice = createSlice({
   name: 'register',
   initialState,
   reducers: {
-    draftUpdated(state, action: PayloadAction<Partial<RegisterDraft>>) {
+    draftUpdated(state, action: PayloadAction<Partial<Omit<RegisterDraft, 'completion'>>>) {
       state.draft = { ...state.draft, ...action.payload }
+      if (Object.prototype.hasOwnProperty.call(action.payload, 'skill')) {
+        state.draft.completion = null
+      }
     },
     stepCompleted(state, action: PayloadAction<RegisterStep>) {
       if (action.payload > state.completedStep) {
         state.completedStep = action.payload
       }
     },
-    registerReset: () => initialState,
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(registerReset, () => initialState)
+      .addCase(registrationAttemptPrepared, (state, action) => {
+        state.draft.completion = action.payload
+      })
+      .addCase(registrationSkillSaved, (state) => {
+        if (state.draft.completion) state.draft.completion.skillSaved = true
+      })
+      .addCase(completeRegistration.pending, (state) => {
+        state.completionStatus = 'loading'
+        state.completionError = null
+      })
+      .addCase(completeRegistration.fulfilled, (state) => {
+        state.completionStatus = 'succeeded'
+        state.completionError = null
+      })
+      .addCase(completeRegistration.rejected, (state, action) => {
+        state.completionStatus = 'failed'
+        state.completionError = action.payload ?? DATA_ERRORS.SAVE_USER
+      })
   },
 })
 
-export const { draftUpdated, stepCompleted, registerReset } = registerSlice.actions
+export const { draftUpdated, stepCompleted } = registerSlice.actions
+
+export { registerReset }
 
 export const registerReducer = registerSlice.reducer
 
@@ -66,3 +105,7 @@ export const selectCompletedStep = (state: RootState) => state.register.complete
 
 /** Всё, что введено на шагах, — чтобы после «Назад» поля были заполнены */
 export const selectRegisterDraft = (state: RootState) => state.register.draft
+
+/** Состояние отправки «Готово» и её понятная ошибка для превью. */
+export const selectRegistrationStatus = (state: RootState) => state.register.completionStatus
+export const selectRegistrationError = (state: RootState) => state.register.completionError

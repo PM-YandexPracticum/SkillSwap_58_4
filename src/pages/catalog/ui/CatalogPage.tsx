@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { fetchExchanges } from '@/entities/exchange'
 import {
   selectUsers,
@@ -23,6 +24,7 @@ import { selectSkills } from '@/entities/skill'
 import { selectSearchQuery } from '@/features/skill-search'
 import { buildActiveFilters } from '../lib/buildActiveFilters'
 import { parseFilterRemoval } from '../lib/parseFilterRemoval'
+import { OfferCreatedModal } from '@/features/skill-create'
 
 /** Только обмены: общие справочники загружает DataProvider. */
 function loadCatalogExchanges(dispatch: AppDispatch, getState: () => RootState) {
@@ -41,6 +43,9 @@ function loadCatalogExchanges(dispatch: AppDispatch, getState: () => RootState) 
  */
 export function CatalogPage() {
   const dispatch = useAppDispatch()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [isOfferCreatedOpen, setIsOfferCreatedOpen] = useState(false)
   const users = useAppSelector(selectUsers)
   // fetchUsers один раз перемешивает store: это и есть случайный порядок «Рекомендуем».
   // applyFilters всегда сортирует по дате, поэтому без фильтров его результат не подходит.
@@ -58,6 +63,17 @@ export function CatalogPage() {
   useEffect(() => {
     dispatch(loadCatalogExchanges)
   }, [dispatch])
+
+  useEffect(() => {
+    const state = location.state as { offerCreated?: boolean } | null
+    if (state?.offerCreated !== true) return
+
+    setIsOfferCreatedOpen(true)
+    navigate(`${location.pathname}${location.search}${location.hash}`, {
+      replace: true,
+      state: null,
+    })
+  }, [location.hash, location.pathname, location.search, location.state, navigate])
 
   const tags = useMemo(
     () => buildActiveFilters(filters, categories, cities),
@@ -89,16 +105,19 @@ export function CatalogPage() {
     : undefined
 
   return (
-    <main className={styles.page} aria-labelledby="catalog-title">
-      <h1 className={styles.srOnly} id="catalog-title">
-        Каталог предложений
-      </h1>
-      <CatalogView
-        users={isFiltered ? filteredUsers : recommendedUsers}
-        popularUsers={popularUsers}
-        newUsers={newUsers}
-        results={results}
-      />
-    </main>
+    <>
+      <main className={styles.page} aria-labelledby="catalog-title">
+        <h1 className={styles.srOnly} id="catalog-title">
+          Каталог предложений
+        </h1>
+        <CatalogView
+          users={isFiltered ? filteredUsers : recommendedUsers}
+          popularUsers={popularUsers}
+          newUsers={newUsers}
+          results={results}
+        />
+      </main>
+      <OfferCreatedModal isOpen={isOfferCreatedOpen} onClose={() => setIsOfferCreatedOpen(false)} />
+    </>
   )
 }

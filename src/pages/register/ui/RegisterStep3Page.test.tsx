@@ -3,7 +3,10 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
 import { createCategory } from '@/entities/category/testing'
+import { getSkills } from '@/entities/skill'
+import { getUsers, selectNewUsers } from '@/entities/user'
 import { ROUTES } from '@/shared/config'
+import { resetMockDb } from '@/shared/api'
 import { RegisterStep3Page } from './RegisterStep3Page'
 
 vi.mock('@/shared/lib/image', async (importOriginal) => ({
@@ -13,12 +16,33 @@ vi.mock('@/shared/lib/image', async (importOriginal) => ({
 
 const preloadedState = {
   categories: { items: [createCategory()], status: 'succeeded' as const },
+  cities: { items: [{ id: 'moscow', name: 'Москва' }], status: 'succeeded' as const },
+  register: {
+    completedStep: 3 as const,
+    completionStatus: 'idle' as const,
+    completionError: null,
+    draft: {
+      email: 'registration-flow@example.com',
+      password: 'Chernosliv5',
+      name: 'Анна',
+      avatarPreviewUrl: null,
+      birthDate: '2000-01-10',
+      gender: null,
+      cityId: 'moscow',
+      learnCategoryIds: ['business'],
+      learnSubcategoryIds: ['business-management'],
+      skill: null,
+      completion: null,
+    },
+  },
 }
 
 const originalScrollIntoView = Element.prototype.scrollIntoView
 
 beforeEach(() => {
   Element.prototype.scrollIntoView = vi.fn()
+  localStorage.clear()
+  resetMockDb()
 })
 
 afterEach(() => {
@@ -131,9 +155,8 @@ describe('RegisterStep3Page', () => {
     expect(screen.getByLabelText('Описание')).toHaveValue('Научу основам техники')
   })
 
-  it('«Готово» открывает каталог с флагом окна «Ваше предложение создано», ничего не сохраняя', async () => {
+  it('«Готово» сохраняет связанные записи, создаёт сессию и открывает каталог с окном', async () => {
     const { user, store } = renderStep()
-    const before = store.getState().register
 
     await fillForm(user)
     await uploadImage(user)
@@ -141,9 +164,34 @@ describe('RegisterStep3Page', () => {
     await user.click(screen.getByRole('button', { name: 'Готово' }))
 
     expect(
-      screen.getByText(`Адрес: ${ROUTES.HOME} · окно «Ваше предложение создано»`),
+      await screen.findByText(
+        `Адрес: ${ROUTES.HOME} · окно «Ваше предложение создано»`,
+        {},
+        { timeout: 5000 },
+      ),
     ).toBeInTheDocument()
-    expect(store.getState().register).toEqual(before)
+    const savedUser = store
+      .getState()
+      .users.items.find((item) => item.email === 'registration-flow@example.com')
+    expect(savedUser).toMatchObject({
+      name: 'Анна',
+      about: '',
+      likesCount: 0,
+      learnSubcategoryIds: ['business-management'],
+    })
+    expect(selectNewUsers(store.getState())[0]?.id).toBe(savedUser?.id)
+    const savedSkill = store
+      .getState()
+      .skills.items.find((item) => item.id === savedUser?.teachSkillId)
+    expect(savedSkill).toMatchObject({
+      authorId: savedUser?.id,
+      title: 'Игра на барабанах',
+      images: ['data:image/png;base64,drums.png'],
+    })
+    expect(store.getState().session.session?.userId).toBe(savedUser?.id)
+    expect((await getUsers()).some((item) => item.id === savedUser?.id)).toBe(true)
+    expect((await getSkills()).some((item) => item.id === savedSkill?.id)).toBe(true)
+    expect(store.getState().register.draft.email).toBe('')
   })
 
   it('показывает Loader, если общий провайдер ещё не завершил загрузку категорий', () => {

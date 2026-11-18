@@ -1,5 +1,7 @@
 import { StrictMode } from 'react'
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { useEffect, useRef } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { renderWithProviders } from '@/app/test/renderWithProviders'
 import { createSkill } from '@/entities/skill/testing'
 import { fetchUsers } from '@/entities/user'
@@ -33,6 +35,26 @@ const ready: Partial<RootState> = {
 const cardsOf = (title: string) =>
   within(screen.getByRole('region', { name: title })).getAllByRole('article')
 
+function LocationState() {
+  const { state } = useLocation()
+  return (
+    <output data-testid="location-state">{state === null ? 'null' : JSON.stringify(state)}</output>
+  )
+}
+
+function SetOfferCreatedState() {
+  const navigate = useNavigate()
+  const setOnce = useRef(false)
+
+  useEffect(() => {
+    if (setOnce.current) return
+    setOnce.current = true
+    navigate('/', { replace: true, state: { offerCreated: true } })
+  }, [navigate])
+
+  return null
+}
+
 afterEach(() => vi.restoreAllMocks())
 
 describe('CatalogPage', () => {
@@ -43,6 +65,26 @@ describe('CatalogPage', () => {
     expect(screen.getAllByRole('main')).toHaveLength(1)
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
     expect(screen.queryByRole('status', { name: 'Загрузка' })).not.toBeInTheDocument()
+  })
+  it('показывает окно регистрации один раз и удаляет флаг из истории', async () => {
+    renderWithProviders(
+      <StrictMode>
+        <>
+          <SetOfferCreatedState />
+          <CatalogPage />
+          <LocationState />
+        </>
+      </StrictMode>,
+      { preloadedState: ready },
+    )
+
+    expect(await screen.findByRole('dialog', { name: 'Ваше предложение создано' })).toBeVisible()
+    await waitFor(() => expect(screen.getByTestId('location-state')).toHaveTextContent('null'))
+    fireEvent.click(screen.getByRole('button', { name: 'Готово' }))
+
+    expect(
+      screen.queryByRole('dialog', { name: 'Ваше предложение создано' }),
+    ).not.toBeInTheDocument()
   })
   it('использует ту же оболочку страницы для результатов', () => {
     renderWithProviders(<CatalogPage />, {

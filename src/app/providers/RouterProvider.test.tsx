@@ -242,6 +242,8 @@ describe('первый шаг регистрации P6-02', { timeout: 20_000 }
     expect(store.getState().register).toEqual({
       draft: { ...initialDraft, email: 'teamlead@example.com', password: 'Password123' },
       completedStep: 1,
+      completionStatus: 'idle',
+      completionError: null,
     })
     for (const load of Object.values(loads)) expect(load).toHaveBeenCalledTimes(1)
 
@@ -256,7 +258,12 @@ describe('первый шаг регистрации P6-02', { timeout: 20_000 }
       { timeout: PAGE_READY_TIMEOUT },
     )
     await waitFor(() =>
-      expect(store.getState().register).toEqual({ draft: initialDraft, completedStep: 0 }),
+      expect(store.getState().register).toEqual({
+        draft: initialDraft,
+        completedStep: 0,
+        completionStatus: 'idle',
+        completionError: null,
+      }),
     )
     await waitFor(() => expect(store.getState().exchanges.status).toBe('succeeded'))
   })
