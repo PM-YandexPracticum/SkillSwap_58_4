@@ -9,7 +9,7 @@
 
 ## Что внутри
 
-- `exchangesSlice.ts` — `fetchExchanges()` загружает список; `addExchange(exchange)` сохраняет предложение и только после успеха добавляет его в store. Отправитель должен совпадать с владельцем сессии. `status` — `idle / loading / succeeded / failed`, `error` — сообщение или `null`.
+- `exchangesSlice.ts` — `fetchExchanges()` загружает список; `loadExchangesIfNeeded()` запускает его при `idle` или `failed`, но не создаёт запросов в `loading`/`succeeded`; `addExchange(exchange)` сохраняет предложение и только после успеха добавляет его в store. Отправитель должен совпадать с владельцем сессии. `status` — `idle / loading / succeeded / failed`, `error` — сообщение или `null`.
 - `exchangesSlice.test.ts` — загрузка, сохранение при создании нового store, дубль до загрузки списка, гость и чужой отправитель, ошибки API и нехватка места.
 - `selectors.ts` — `selectExchanges` отдаёт входящие и исходящие предложения текущего пользователя, гостю — `[]`; `selectHasProposed(state, otherUserId)` проверяет только исходящее предложение. Статус и ошибка — `selectExchangesStatus` / `selectExchangesError`.
 - `selectors.test.ts` — видимость по сессии, стабильность массива, направление предложения, выход.
@@ -22,3 +22,5 @@
 `completeExchangeProposal(id)` снимает `notificationPending` в базе и store после записи уведомления. API проверяет владельца; гость и другой пользователь завершить чужую запись не могут. `selectOutgoingExchange(state, otherUserId)` возвращает исходящее предложение для повтора; `selectHasProposed` использует тот же отбор.
 
 `selectOutgoingExchange` использует кешируемый индекс получателей текущего владельца с бинарным поиском. Индекс перестраивается при смене списка или пользователя; карточки не перебирают все обмены на каждом вызове. `selectors.lookup.test.ts` проверяет повторное использование и обновление индекса.
+
+`selectHasProposed` возвращает `false` при `notificationPending: true`: незавершённая запись не прячет ссылку на навык и возможность повтора. `CatalogPage` и `useProposeExchange` используют общий `loadExchangesIfNeeded` один раз при входе, а не эффект на каждое изменение статуса.

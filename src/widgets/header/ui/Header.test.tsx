@@ -1,5 +1,4 @@
-import { StrictMode } from 'react'
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { Route, Routes } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
@@ -315,29 +314,12 @@ describe('Header — обновление store', () => {
     expect(screen.queryByRole('button', { name: 'Выйти' })).not.toBeInTheDocument()
   })
 
-  it('восстанавливает свои непрочитанные до открытия панели без повторов в StrictMode', async () => {
-    const saved = authorized().getState()
-    localStorage.setItem(
-      'skillswap_db_notifications',
-      JSON.stringify([createNotification({ userId: account.id })]),
-    )
-    const store = createTestStore({
-      ...saved,
-      notifications: { items: [], status: 'idle', error: null, pendingRequests: 0 },
-    })
+  it('не загружает уведомления самостоятельно', () => {
+    const store = authorized()
     const loads = vi.spyOn(notifications, 'fetchNotifications')
     try {
-      renderWithProviders(
-        <StrictMode>
-          <Header />
-        </StrictMode>,
-        { store },
-      )
-      expect(
-        await screen.findByRole('button', { name: 'Уведомления, есть новые' }),
-      ).toBeInTheDocument()
-      await waitFor(() => expect(store.getState().notifications.pendingRequests).toBe(0))
-      expect(loads).toHaveBeenCalledTimes(1)
+      renderHeader({}, ROUTES.HOME, store)
+      expect(loads).not.toHaveBeenCalled()
     } finally {
       loads.mockRestore()
     }

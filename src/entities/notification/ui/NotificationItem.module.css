@@ -38,6 +38,11 @@
   color: var(--color-text); /* #253017 */
 }
 
+/* Обводка 1.5 px из Figma сохраняется при увеличении общей иконки с 24 до 40 px. */
+.icon path {
+  vector-effect: non-scaling-stroke;
+}
+
 .text {
   display: flex;
   flex-direction: column;

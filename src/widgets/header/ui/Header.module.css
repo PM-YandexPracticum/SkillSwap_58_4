@@ -161,3 +161,10 @@
   max-height: calc(100dvh - var(--space-100) - var(--space-20));
   overflow-y: auto;
 }
+
+/* Длинный список остаётся доступен в пределах desktop-окна; рамку рисует сама панель. */
+.notificationsPopover {
+  border: 0;
+  max-height: calc(100dvh - var(--space-100) - var(--space-20));
+  overflow-y: auto;
+}

@@ -2,6 +2,7 @@ export type { Exchange } from './model/types'
 export {
   exchangesReducer,
   fetchExchanges,
+  loadExchangesIfNeeded,
   addExchange,
   completeExchangeProposal,
   type ExchangesState,
