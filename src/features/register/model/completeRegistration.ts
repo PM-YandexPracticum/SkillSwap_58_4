@@ -1,16 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { selectCategories } from '@/entities/category'
 import { selectCities } from '@/entities/city'
-import { createNewSkill, getSkillById, type Skill } from '@/entities/skill'
+import { createNewSkill, getSkillById, updateDataSkill, type Skill } from '@/entities/skill'
 import { startSession } from '@/entities/session'
-import { createNewUser, type User } from '@/entities/user'
+import { createNewUser, getUserById, updateDataUser, type User } from '@/entities/user'
 import { DATA_ERRORS } from '@/shared/config'
 import { credentialsSchema, createProfileStepSchema } from './schema'
-import {
-  registerReset,
-  registrationAttemptPrepared,
-  registrationSkillSaved,
-} from './registerActions'
+import { registrationAttemptPrepared } from './registerActions'
 
 function isSameSkill(saved: Skill, expected: Skill): boolean {
   return (
@@ -43,14 +39,19 @@ function getWriteMessage(error: unknown, fallback: string): string {
   return typeof error === 'string' ? error : fallback
 }
 
-/** Сохраняет согласованную пару навыка и пользователя, затем создаёт сессию. */
+/**
+ * Сохраняет навык перед пользователем, затем создаёт сессию.
+ * Повтор использует прежние id и обновляет свою частично записанную пару.
+ * Уже начатая запись может закончиться после ухода; последующие действия требуют актуального запроса.
+ */
 export const completeRegistration = createAsyncThunk<
   { skill: Skill; user: User },
   void,
   { state: RootState; rejectValue: string }
 >(
   'register/complete',
-  async (_, { dispatch, getState, rejectWithValue }) => {
+  async (_, { dispatch, getState, rejectWithValue, requestId, signal }) => {
+    const isCurrent = () => !signal.aborted && getState().register.completionRequestId === requestId
     const state = getState()
     const { draft } = state.register
     const categories = selectCategories(state)
@@ -81,6 +82,8 @@ export const completeRegistration = createAsyncThunk<
       return rejectWithValue(getValidationMessage(error))
     }
 
+    if (!isCurrent()) return rejectWithValue(DATA_ERRORS.REGISTRATION_CANCELLED)
+
     const category = categories.find((item) => item.id === draft.skill?.categoryId)
     if (!category || !category.subcategories.some(({ id }) => id === draft.skill?.subcategoryId)) {
       return rejectWithValue('Выберите подкатегорию навыка из выбранной категории')
@@ -94,7 +97,6 @@ export const completeRegistration = createAsyncThunk<
           userId: crypto.randomUUID(),
           skillId: crypto.randomUUID(),
           createdAt: now,
-          skillSaved: false,
         }
       } catch {
         return rejectWithValue('Не удалось начать регистрацию. Попробуйте ещё раз')
@@ -132,23 +134,42 @@ export const completeRegistration = createAsyncThunk<
 
     try {
       const savedSkill = await getSkillById(skill.id)
-      if (savedSkill && !isSameSkill(savedSkill, skill)) {
+      if (!isCurrent()) return rejectWithValue(DATA_ERRORS.REGISTRATION_CANCELLED)
+      if (
+        savedSkill &&
+        (savedSkill.authorId !== skill.authorId || savedSkill.createdAt !== skill.createdAt)
+      ) {
         return rejectWithValue(DATA_ERRORS.SAVE_SKILL)
       }
-      if (!savedSkill) await dispatch(createNewSkill(skill)).unwrap()
-      if (!attempt.skillSaved) dispatch(registrationSkillSaved())
+      if (!savedSkill) {
+        await dispatch(createNewSkill(skill)).unwrap()
+      } else if (!isSameSkill(savedSkill, skill)) {
+        const { id, ...changes } = skill
+        await dispatch(updateDataSkill({ id, changes })).unwrap()
+      }
+      if (!isCurrent()) return rejectWithValue(DATA_ERRORS.REGISTRATION_CANCELLED)
     } catch (error) {
       return rejectWithValue(getWriteMessage(error, DATA_ERRORS.SAVE_SKILL))
     }
 
     try {
-      await dispatch(createNewUser(user)).unwrap()
+      const savedUser = await getUserById(user.id)
+      if (!isCurrent()) return rejectWithValue(DATA_ERRORS.REGISTRATION_CANCELLED)
+      if (savedUser) {
+        if (savedUser.teachSkillId !== skill.id || savedUser.createdAt !== user.createdAt) {
+          return rejectWithValue(DATA_ERRORS.SAVE_USER)
+        }
+        const { id, ...changes } = user
+        await dispatch(updateDataUser({ id, changes })).unwrap()
+      } else {
+        await dispatch(createNewUser(user)).unwrap()
+      }
     } catch (error) {
       return rejectWithValue(getWriteMessage(error, DATA_ERRORS.SAVE_USER))
     }
 
+    if (!isCurrent()) return rejectWithValue(DATA_ERRORS.REGISTRATION_CANCELLED)
     dispatch(startSession(user.id))
-    dispatch(registerReset())
     return { skill, user }
   },
   {

@@ -19,4 +19,5 @@ export {
   type RegisterStep,
 } from './model/registerSlice'
 export { completeRegistration } from './model/completeRegistration'
+export { registrationCancelled } from './model/registerActions'
 export type { RegisterDraft } from './model/types'

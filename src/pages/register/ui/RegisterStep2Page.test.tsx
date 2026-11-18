@@ -133,6 +133,7 @@ describe('RegisterStep2Page', () => {
         draft: emptyDraft,
         completionStatus: 'idle',
         completionError: null,
+        completionRequestId: null,
       },
     })
 
@@ -150,6 +151,7 @@ describe('RegisterStep2Page', () => {
         completedStep: 2,
         completionStatus: 'idle',
         completionError: null,
+        completionRequestId: null,
         draft: {
           ...emptyDraft,
           name: 'Ирина',

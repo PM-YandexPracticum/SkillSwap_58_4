@@ -17,6 +17,20 @@ beforeEach(async () => {
 })
 
 describe('notificationApi', () => {
+  it.each([
+    { name: 'создание', save: saveNotification },
+    { name: 'повтор предложения', save: ensureExchangeNotification },
+  ])('$name сохраняет снимок входных данных до ожидания очереди', async ({ save }) => {
+    const input = createNotification({ id: 'snapshot', userId: 'snapshot-owner' })
+    const expected = { ...input }
+    const pending = save(input)
+    input.userId = 'changed-owner'
+    input.isRead = true
+
+    expect(await pending).toEqual(expected)
+    expect(await getNotifications()).toContainEqual(expected)
+  })
+
   it('прочитать все меняет только уведомления указанного владельца', async () => {
     await markAllNotificationsRead(own.userId)
     const result = await getNotifications()
@@ -49,6 +63,38 @@ describe('notificationApi', () => {
     await Promise.all([clearNotifications(own.userId), saveNotification(fresh)])
     expect((await getNotifications()).filter((item) => item.userId === own.userId)).toEqual([fresh])
   })
+  // --- P7-05 новые тесты ---
+  it('новое уведомление после «прочитать все» остаётся непрочитанным', async () => {
+    const fresh = createNotification({ id: 'fresh-unread', userId: own.userId })
+
+    await Promise.all([markAllNotificationsRead(own.userId), saveNotification(fresh)])
+
+    const items = await getNotifications()
+    expect(items).toContainEqual({ ...own, isRead: true }) // старое прочитано
+    expect(items).toContainEqual(fresh) // новое — нет
+  })
+  it.each([
+    { name: 'прочитать все', run: (userId: string) => markAllNotificationsRead(userId) },
+    { name: 'очистить', run: (userId: string) => clearNotifications(userId) },
+  ])('ошибка «$name» из-за переполнения хранилища не меняет записи', async ({ run }) => {
+    // своё уведомление непрочитанным — не зависим от beforeEach
+    await saveNotification(createNotification({ id: `q-${run.name}`, userId: 'owner-test' }))
+
+    const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('quota', 'QuotaExceededError')
+    })
+
+    try {
+      await expect(run('owner-test')).rejects.toThrow('Не хватает места')
+    } finally {
+      setItem.mockRestore()
+    }
+
+    const items = await getNotifications()
+    expect(items.some((item) => item.id === `q-${run.name}`)).toBe(true)
+    expect(items).toContainEqual(other)
+  })
+  // ---
   it('одиночное чтение сохраняется и не меняет чужую запись', async () => {
     await markNotificationRead(own.id)
     expect(await getNotifications()).toContainEqual({ ...own, isRead: true })
@@ -104,4 +150,18 @@ describe('ensureExchangeNotification', () => {
       (await getNotifications()).filter((item) => item.exchangeId === notification.exchangeId),
     ).toEqual([notification, other])
   })
+})
+
+it('прочитать все читает коллекцию один раз и возвращает также просмотренные', async () => {
+  const read = createNotification({ id: 'already-read', userId: own.userId, isRead: true })
+  await saveNotification(read)
+  const spy = vi.spyOn(Storage.prototype, 'getItem')
+  try {
+    const items = await markAllNotificationsRead(own.userId)
+    expect(items).toContainEqual(read)
+    expect(items).toContainEqual({ ...own, isRead: true })
+    expect(spy.mock.calls.filter(([key]) => key === 'skillswap_db_notifications')).toHaveLength(1)
+  } finally {
+    spy.mockRestore()
+  }
 })

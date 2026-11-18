@@ -1,34 +1,31 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 
 import { selectCategories, selectCategoriesStatus } from '@/entities/category'
 import {
   completeRegistration,
   draftUpdated,
+  registrationCancelled,
   selectRegisterDraft,
   selectRegistrationError,
   selectRegistrationStatus,
   StepSkill,
 } from '@/features/register'
-import { SkillForm, SkillPreviewModal, type SkillFormValues } from '@/features/skill-create'
+import { SkillForm, SkillPreviewModal } from '@/features/skill-create'
 import { ROUTES } from '@/shared/config'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { Loader } from '@/shared/ui/Loader'
 
 import { buildSkillPreview } from '../lib/buildSkillPreview'
 
-interface SkillDraft {
-  values: SkillFormValues
-  /** Фото как data URL — в таком виде они показываются в превью и потом сохраняются */
-  images: string[]
-}
-
 /**
  * Шаг 3 «Укажите, чем вы готовы поделиться» — маршрут `/register/step-3`. Форма — `SkillForm` из features/skill-create,
  * колонка шага — `StepSkill` из features/register (слайсы не импортируют друг друга, поэтому собирает страница).
  * Справочник категорий читает из store: его загружает общий `DataProvider`.
  * «Назад» ведёт на шаг 2, «Продолжить» сохраняет навык и фото в черновик и открывает превью «Ваше предложение».
- * «Готово» вызывает единый сценарий завершения регистрации; после записи навыка черновик хранит id для безопасного повтора.
+ * «Готово» вызывает единый сценарий завершения регистрации; черновик хранит id для безопасного повтора.
+ * Превью читает данные из черновика, локально хранится только его открытое состояние.
+ * При уходе отменяется владение запросом: поздний ответ не запускает переход в каталог.
  * Успешный сценарий создаёт сессию и открывает каталог с одноразовым флагом `state.offerCreated`.
  *
  * P6-05: обязательные поля, связь категории с подкатегорией и проверка 1–4 изображений.
@@ -44,37 +41,31 @@ export function RegisterStep3Page() {
   const completionStatus = useAppSelector(selectRegistrationStatus)
   const completionError = useAppSelector(selectRegistrationError)
   const isCompleting = completionStatus === 'loading'
-  const isSkillSaved = Boolean(registerDraft.completion?.skillSaved)
-  const confirming = useRef(false)
-  const [draft, setDraft] = useState<SkillDraft | null>(null)
+  const requestId = useRef<string | null>(null)
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+
+  useEffect(
+    () => () => {
+      if (requestId.current) dispatch(registrationCancelled(requestId.current))
+      requestId.current = null
+    },
+    [dispatch],
+  )
 
   if (categoriesStatus === 'failed') return <Navigate to={ROUTES.SERVER_ERROR} replace />
   if (categoriesStatus !== 'succeeded') return <Loader />
 
   const savedSkill = registerDraft.skill
-  const previewDraft =
-    draft ??
-    (isSkillSaved && savedSkill
-      ? {
-          values: {
-            title: savedSkill.title,
-            categoryId: savedSkill.categoryId,
-            subcategoryId: savedSkill.subcategoryId,
-            description: savedSkill.description,
-          },
-          images: savedSkill.imagePreviewUrls,
-        }
-      : null)
-
   const confirmRegistration = async () => {
-    if (confirming.current || isCompleting) return
-    confirming.current = true
-    const result = await dispatch(completeRegistration())
+    if (requestId.current || isCompleting) return
+    const request = dispatch(completeRegistration())
+    requestId.current = request.requestId
+    const result = await request
+    if (requestId.current !== request.requestId) return
+    requestId.current = null
     if (completeRegistration.fulfilled.match(result)) {
       navigate(ROUTES.HOME, { state: { offerCreated: true } })
-      return
     }
-    confirming.current = false
   }
 
   return (
@@ -93,22 +84,20 @@ export function RegisterStep3Page() {
                 },
               }),
             )
-            setDraft({ values, images })
+            setIsPreviewOpen(true)
           }}
         />
       }
       previewModal={
-        previewDraft && (
+        isPreviewOpen &&
+        savedSkill && (
           <SkillPreviewModal
             isOpen
-            skill={buildSkillPreview(previewDraft.values, categories)}
-            images={previewDraft.images}
+            skill={buildSkillPreview(savedSkill, categories)}
+            images={savedSkill.imagePreviewUrls}
             isBusy={isCompleting}
-            isEditDisabled={isSkillSaved}
             error={completionError}
-            onEdit={() => {
-              if (!isCompleting && !isSkillSaved) setDraft(null)
-            }}
+            onEdit={() => setIsPreviewOpen(false)}
             onConfirm={() => void confirmRegistration()}
           />
         )

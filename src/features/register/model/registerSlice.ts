@@ -6,7 +6,7 @@ import { completeRegistration } from './completeRegistration'
 import {
   registerReset,
   registrationAttemptPrepared,
-  registrationSkillSaved,
+  registrationCancelled,
 } from './registerActions'
 
 /** Номер шага регистрации */
@@ -21,12 +21,15 @@ export interface RegisterState {
   draft: RegisterDraft
   completionStatus: LoadingStatus
   completionError: string | null
+  /** Только этот запрос может менять результат текущего черновика. */
+  completionRequestId: string | null
 }
 
 const initialState: RegisterState = {
   completedStep: 0,
   completionStatus: 'idle',
   completionError: null,
+  completionRequestId: null,
   draft: {
     email: '',
     password: '',
@@ -46,7 +49,7 @@ const initialState: RegisterState = {
  * Черновик регистрации из 3 шагов. «Назад» не стирает введённое, «Закрыть ×» — сбрасывает черновик.
  * После «Готово» пользователь всегда попадает в каталог (ТЗ наставника, 2.6).
  *
- * - `draftUpdated(partial)` — дописать поля шага в черновик; при изменении навыка сбрасывает состояние его записи;
+ * - `draftUpdated(partial)` — дописать поля шага и убрать прежнюю ошибку; id попытки сохраняются для повтора;
  * - `stepCompleted(step)` — шаг пройден («Далее» / «Продолжить»). Номер только растёт: вернулся на шаг 1
  *   и снова нажал «Далее» — шаг 2 остаётся пройденным, если был пройден;
  * - `registerReset()` — пустой черновик и ни одного пройденного шага.
@@ -60,9 +63,8 @@ export const registerSlice = createSlice({
   reducers: {
     draftUpdated(state, action: PayloadAction<Partial<Omit<RegisterDraft, 'completion'>>>) {
       state.draft = { ...state.draft, ...action.payload }
-      if (Object.prototype.hasOwnProperty.call(action.payload, 'skill')) {
-        state.draft.completion = null
-      }
+      state.completionError = null
+      if (state.completionStatus === 'failed') state.completionStatus = 'idle'
     },
     stepCompleted(state, action: PayloadAction<RegisterStep>) {
       if (action.payload > state.completedStep) {
@@ -73,23 +75,36 @@ export const registerSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(registerReset, () => initialState)
+      .addCase(registrationCancelled, (state, action) => {
+        if (state.completionRequestId !== action.payload) return
+        state.completionRequestId = null
+        state.completionStatus = 'idle'
+        state.completionError = null
+      })
       .addCase(registrationAttemptPrepared, (state, action) => {
         state.draft.completion = action.payload
       })
-      .addCase(registrationSkillSaved, (state) => {
-        if (state.draft.completion) state.draft.completion.skillSaved = true
-      })
-      .addCase(completeRegistration.pending, (state) => {
+      .addCase(completeRegistration.pending, (state, action) => {
+        state.completionRequestId = action.meta.requestId
         state.completionStatus = 'loading'
         state.completionError = null
       })
-      .addCase(completeRegistration.fulfilled, (state) => {
+      .addCase(completeRegistration.fulfilled, (state, action) => {
+        if (state.completionRequestId !== action.meta.requestId) return
+        // Черновик больше не нужен. Прогресс сохраняем до перехода: иначе guard
+        // размонтирует шаг 3 раньше его navigate в каталог. При выходе lifecycle сбросит всё.
+        state.draft = initialState.draft
+        state.completionRequestId = null
         state.completionStatus = 'succeeded'
         state.completionError = null
       })
       .addCase(completeRegistration.rejected, (state, action) => {
-        state.completionStatus = 'failed'
-        state.completionError = action.payload ?? DATA_ERRORS.SAVE_USER
+        if (state.completionRequestId !== action.meta.requestId) return
+        state.completionRequestId = null
+        state.completionStatus = action.meta.aborted ? 'idle' : 'failed'
+        state.completionError = action.meta.aborted
+          ? null
+          : (action.payload ?? DATA_ERRORS.SAVE_USER)
       })
   },
 })

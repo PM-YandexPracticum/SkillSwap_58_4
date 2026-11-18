@@ -17,6 +17,7 @@ import { AllSkillsPage } from '@/pages/all-skills'
 import categories from '../../../public/db/categories.json'
 import { AuthLayout } from './AuthLayout'
 import { MainLayout } from './MainLayout'
+import { ToastProvider } from '@/app/providers/ToastProvider'
 
 function renderLayout() {
   return renderWithProviders(
@@ -66,24 +67,26 @@ describe('MainLayout', () => {
       const { unmount } = render(
         <StrictMode>
           <Provider store={store}>
-            <BrowserRouter useTransitions={false}>
-              <Suspense fallback={<p>Загрузка главной</p>}>
-                <Routes>
-                  <Route element={<MainLayout />}>
-                    <Route path={ROUTES.HOME} element={<Home />} />
-                    <Route
-                      path={route}
-                      element={
-                        <RequireAuth>
-                          <h1>Закрытая страница</h1>
-                        </RequireAuth>
-                      }
-                    />
-                  </Route>
-                  <Route path={ROUTES.LOGIN} element={<h1>Вход</h1>} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
+            <ToastProvider>
+              <BrowserRouter useTransitions={false}>
+                <Suspense fallback={<p>Загрузка главной</p>}>
+                  <Routes>
+                    <Route element={<MainLayout />}>
+                      <Route path={ROUTES.HOME} element={<Home />} />
+                      <Route
+                        path={route}
+                        element={
+                          <RequireAuth>
+                            <h1>Закрытая страница</h1>
+                          </RequireAuth>
+                        }
+                      />
+                    </Route>
+                    <Route path={ROUTES.LOGIN} element={<h1>Вход</h1>} />
+                  </Routes>
+                </Suspense>
+              </BrowserRouter>
+            </ToastProvider>
           </Provider>
         </StrictMode>,
       )
@@ -121,30 +124,32 @@ describe('MainLayout', () => {
       const { unmount } = render(
         <StrictMode>
           <Provider store={store}>
-            <BrowserRouter useTransitions={false}>
-              <Routes>
-                <Route element={<MainLayout />}>
-                  <Route path={ROUTES.HOME} element={<h1>Главная</h1>} />
-                  <Route
-                    path={ROUTES.PROFILE}
-                    element={
-                      <RequireAuth>
-                        <h1>Профиль</h1>
-                      </RequireAuth>
-                    }
-                  />
-                  <Route
-                    path={ROUTES.FAVORITES}
-                    element={
-                      <RequireAuth>
-                        <h1>Избранное</h1>
-                      </RequireAuth>
-                    }
-                  />
-                </Route>
-                <Route path={ROUTES.LOGIN} element={<h1>Вход</h1>} />
-              </Routes>
-            </BrowserRouter>
+            <ToastProvider>
+              <BrowserRouter useTransitions={false}>
+                <Routes>
+                  <Route element={<MainLayout />}>
+                    <Route path={ROUTES.HOME} element={<h1>Главная</h1>} />
+                    <Route
+                      path={ROUTES.PROFILE}
+                      element={
+                        <RequireAuth>
+                          <h1>Профиль</h1>
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.FAVORITES}
+                      element={
+                        <RequireAuth>
+                          <h1>Избранное</h1>
+                        </RequireAuth>
+                      }
+                    />
+                  </Route>
+                  <Route path={ROUTES.LOGIN} element={<h1>Вход</h1>} />
+                </Routes>
+              </BrowserRouter>
+            </ToastProvider>
           </Provider>
         </StrictMode>,
       )

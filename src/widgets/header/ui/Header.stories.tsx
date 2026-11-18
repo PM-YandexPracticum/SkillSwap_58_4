@@ -39,6 +39,7 @@ const makeStore = (authorized: boolean, hasUnread: boolean, name = account.name)
         status: 'succeeded' as const,
         pendingRequests: 0,
         error: null,
+        loadError: null,
       },
     },
   })

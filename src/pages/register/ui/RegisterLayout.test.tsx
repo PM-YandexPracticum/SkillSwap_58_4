@@ -80,6 +80,7 @@ describe('RegisterLayout', () => {
             completedStep: 1,
             completionStatus: 'idle',
             completionError: null,
+            completionRequestId: null,
           },
         },
       },

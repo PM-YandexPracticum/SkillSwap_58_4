@@ -244,6 +244,7 @@ describe('первый шаг регистрации P6-02', { timeout: 20_000 }
       completedStep: 1,
       completionStatus: 'idle',
       completionError: null,
+      completionRequestId: null,
     })
     for (const load of Object.values(loads)) expect(load).toHaveBeenCalledTimes(1)
 
@@ -263,6 +264,7 @@ describe('первый шаг регистрации P6-02', { timeout: 20_000 }
         completedStep: 0,
         completionStatus: 'idle',
         completionError: null,
+        completionRequestId: null,
       }),
     )
     await waitFor(() => expect(store.getState().exchanges.status).toBe('succeeded'))

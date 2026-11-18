@@ -29,11 +29,10 @@ export interface RegisterDraft {
     /** фото навыка: готовые data URL */
     imagePreviewUrls: string[]
   } | null
-  /** Стабильные данные повтора, если запись навыка прошла, а пользователя — нет. */
+  /** Стабильные данные попытки для повтора после отказа записи или отмены запроса. */
   completion: {
     userId: string
     skillId: string
     createdAt: string
-    skillSaved: boolean
   } | null
 }

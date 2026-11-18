@@ -1,1 +1,5 @@
-export { NotificationsPanel } from './ui/NotificationsPanel'
+export { NotificationsPanel, type NotificationsPanelProps } from './ui/NotificationsPanel'
+export { useNotifications, type UseNotificationsResult } from './model/useNotifications'
+export { findSkillId } from './lib/findSkillId'
+export { buildNotificationsWithNames } from './lib/buildNotificationsWithNames'
+export type { NotificationWithName } from './model/types'

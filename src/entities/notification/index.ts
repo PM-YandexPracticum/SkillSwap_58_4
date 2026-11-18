@@ -13,6 +13,7 @@ export {
   selectHasUnread,
   selectNotificationsStatus,
   selectNotificationsError,
+  selectNotificationsLoadError,
 } from './model/selectors'
 export {
   getNotifications,

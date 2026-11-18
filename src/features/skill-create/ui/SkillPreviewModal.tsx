@@ -26,8 +26,6 @@ export interface SkillPreviewModalProps {
   isBusy?: boolean
   /** Понятная ошибка завершения регистрации. */
   error?: string | null
-  /** После сохранения навыка редактирование запретить, чтобы повтор использовал прежние id. */
-  isEditDisabled?: boolean
 }
 
 /**
@@ -35,7 +33,8 @@ export interface SkillPreviewModalProps {
  * правильность данных»; слева название, «Категория / Подкатегория», описание и кнопки «Редактировать ✎» / «Готово»;
  * справа галерея: общий SkillGallery с главным фото и колонкой мини-превью, как на странице навыка. При одном фото — просто картинка.
  * «Редактировать», Esc и клик по фону возвращают к форме; «Готово» вызывает onConfirm.
- * Сохранение и завершение регистрации подключит P6-06.
+ * Во время сохранения действия заблокированы; ошибка выводится через role="alert".
+ * После ошибки «Редактировать» возвращает к форме, не теряя введённое.
  * Построено на `shared/ui/Modal`; внутренние отступы задаёт содержимое, высокое окно прокручивается само.
  * @see Figma: «Регистрация 3 шаг - модальное окно ваше предложение» (1:1799)
  */
@@ -47,12 +46,17 @@ export function SkillPreviewModal({
   onConfirm,
   isBusy = false,
   error,
-  isEditDisabled = false,
 }: SkillPreviewModalProps) {
   const categories = [skill.categoryTitle, skill.subcategoryTitle].filter(Boolean).join(' / ')
   return (
-    <Modal isOpen={isOpen} onClose={onEdit} ariaLabel="Ваше предложение">
-      <div className={styles.content}>
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {
+        if (!isBusy) onEdit()
+      }}
+      ariaLabel="Ваше предложение"
+    >
+      <div className={styles.content} aria-busy={isBusy}>
         <header className={styles.header}>
           <h2 className={styles.title}>Ваше предложение</h2>
           <p className={styles.subtitle}>Пожалуйста, проверьте и подтвердите правильность данных</p>
@@ -67,7 +71,7 @@ export function SkillPreviewModal({
               <p className={styles.description}>{skill.description}</p>
             </div>
             <div className={styles.actions}>
-              <Button variant="secondary" onClick={onEdit} disabled={isBusy || isEditDisabled}>
+              <Button variant="secondary" onClick={onEdit} disabled={isBusy}>
                 Редактировать
                 <EditIcon className={styles.icon} aria-hidden="true" />
               </Button>

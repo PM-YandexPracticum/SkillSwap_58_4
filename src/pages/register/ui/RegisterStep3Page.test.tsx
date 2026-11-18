@@ -1,10 +1,11 @@
-import { screen, within } from '@testing-library/react'
+import { screen, within, waitFor } from '@testing-library/react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
 import { createCategory } from '@/entities/category/testing'
 import { getSkills } from '@/entities/skill'
-import { getUsers, selectNewUsers } from '@/entities/user'
+import { createNewUser, getUsers, selectNewUsers } from '@/entities/user'
+import { createUser } from '@/entities/user/testing'
 import { ROUTES } from '@/shared/config'
 import { resetMockDb } from '@/shared/api'
 import { RegisterStep3Page } from './RegisterStep3Page'
@@ -21,6 +22,7 @@ const preloadedState = {
     completedStep: 3 as const,
     completionStatus: 'idle' as const,
     completionError: null,
+    completionRequestId: null,
     draft: {
       email: 'registration-flow@example.com',
       password: 'Chernosliv5',
@@ -46,6 +48,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  vi.restoreAllMocks()
   Element.prototype.scrollIntoView = originalScrollIntoView
 })
 
@@ -206,5 +209,44 @@ describe('RegisterStep3Page', () => {
 
     expect(screen.getByRole('heading', { name: 'Ошибка сервера' })).toBeInTheDocument()
     expect(screen.queryByRole('form')).not.toBeInTheDocument()
+  })
+
+  it('после занятого email позволяет закрыть превью и вернуться к данным регистрации', async () => {
+    const { user, store } = renderStep()
+    await fillForm(user)
+    await uploadImage(user)
+    await store
+      .dispatch(createNewUser(createUser({ email: 'registration-flow@example.com' })))
+      .unwrap()
+    await user.click(screen.getByRole('button', { name: 'Продолжить' }))
+    await user.click(screen.getByRole('button', { name: 'Готово' }))
+    expect(await screen.findByRole('alert', {}, { timeout: 5000 })).toHaveTextContent(
+      'email уже используется',
+    )
+    const attempt = store.getState().register.draft.completion
+
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Назад' }))
+
+    expect(screen.getByText(`Адрес: ${ROUTES.REGISTER_STEP_2}`)).toBeInTheDocument()
+    expect(store.getState().register.draft.completion).toEqual(attempt)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('уход со шага во время сохранения не создаёт сессию и не возвращает в каталог', async () => {
+    const { user, store, unmount } = renderStep()
+    await fillForm(user)
+    await uploadImage(user)
+    await user.click(screen.getByRole('button', { name: 'Продолжить' }))
+    await user.click(screen.getByRole('button', { name: 'Готово' }))
+    unmount()
+    // Чтение дожидается уже запущенного обращения к коллекции, без произвольных sleep.
+    await getSkills()
+    await getUsers()
+
+    expect(store.getState().session.session).toBeNull()
+    expect(store.getState().register.draft.email).toBe('registration-flow@example.com')
+    await waitFor(() => expect(store.getState().register.completionStatus).toBe('idle'))
   })
 })
