@@ -14,3 +14,5 @@
 - `renderWithProviders.test.tsx` — проверка помощника и образец теста компонента
 
 `mockDataValidation.test.ts` проверяет шесть API-коллекций на повреждённые записи localStorage и сохранённый пустой список.
+
+`renderWithProviders` задаёт `MemoryRouter useTransitions={false}`, как основной BrowserRouter приложения. Поэтому тесты переходов и сессии используют тот же порядок обновлений, что и работающий сайт.
