@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { fetchExchanges, selectExchangesStatus, selectOutgoingExchange } from '@/entities/exchange'
+import {
+  loadExchangesIfNeeded,
+  selectExchangesStatus,
+  selectHasProposed,
+} from '@/entities/exchange'
 import { selectSession } from '@/entities/session'
 import { DATA_ERRORS, ROUTES } from '@/shared/config'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
@@ -26,7 +30,7 @@ export function useProposeExchange({ toUserId, skillId, toUserName, toUserGender
   const navigate = useNavigate()
   const { showToast } = useToast()
   const session = useAppSelector(selectSession)
-  const exchange = useAppSelector((state) => selectOutgoingExchange(state, toUserId))
+  const isProposed = useAppSelector((state) => selectHasProposed(state, toUserId))
   const exchangesStatus = useAppSelector(selectExchangesStatus)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -44,13 +48,9 @@ export function useProposeExchange({ toUserId, skillId, toUserName, toUserGender
 
   useEffect(() => {
     if (!session) return
-    // Читаем статус при dispatch: повтор эффекта в StrictMode не запустит второй запрос.
-    void dispatch((dispatch, getState) => {
-      if (getState().exchanges.status === 'idle') return dispatch(fetchExchanges())
-    })
+    void dispatch(loadExchangesIfNeeded())
   }, [dispatch, session])
 
-  const isProposed = !!exchange && !exchange.notificationPending
   const isPending =
     isSubmitting || (!!session && (exchangesStatus === 'idle' || exchangesStatus === 'loading'))
 

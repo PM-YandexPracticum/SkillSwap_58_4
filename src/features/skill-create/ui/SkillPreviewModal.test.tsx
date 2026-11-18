@@ -133,4 +133,35 @@ describe('SkillPreviewModal', () => {
 
     expect(carouselScrollTo).toHaveBeenCalledWith(1)
   })
+
+  it('во время сохранения блокирует действия и закрытие, после ошибки позволяет повтор и редактирование', async () => {
+    const user = userEvent.setup()
+    const onEdit = vi.fn()
+    const onConfirm = vi.fn()
+    const { rerender } = render(
+      <SkillPreviewModal {...props} isBusy onEdit={onEdit} onConfirm={onConfirm} />,
+    )
+
+    expect(screen.getByRole('button', { name: 'Сохраняем…' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Редактировать' })).toBeDisabled()
+    await user.keyboard('{Escape}')
+    // У фона нет роли: это поверхность клика за пределами диалога.
+    await user.click(screen.getByRole('dialog').parentElement!)
+    expect(onEdit).not.toHaveBeenCalled()
+    expect(onConfirm).not.toHaveBeenCalled()
+
+    rerender(
+      <SkillPreviewModal
+        {...props}
+        error="Не удалось сохранить пользователя"
+        onEdit={onEdit}
+        onConfirm={onConfirm}
+      />,
+    )
+    expect(screen.getByRole('alert')).toHaveTextContent('Не удалось сохранить пользователя')
+    await user.click(screen.getByRole('button', { name: 'Готово' }))
+    expect(onConfirm).toHaveBeenCalledOnce()
+    await user.keyboard('{Escape}')
+    expect(onEdit).toHaveBeenCalledOnce()
+  })
 })

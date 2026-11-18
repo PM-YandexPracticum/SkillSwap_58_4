@@ -9,6 +9,13 @@ import { LogoutButton } from './LogoutButton'
 const meta: Meta<typeof LogoutButton> = {
   title: 'features/logout/LogoutButton',
   component: LogoutButton,
+  tags: ['autodocs'],
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2323',
+    },
+  },
   decorators: [
     (Story) => {
       const store = configureStore({
@@ -17,7 +24,7 @@ const meta: Meta<typeof LogoutButton> = {
       })
       return (
         <Provider store={store}>
-          <MemoryRouter initialEntries={[ROUTES.PROFILE]}>
+          <MemoryRouter initialEntries={[ROUTES.PROFILE]} useTransitions={false}>
             <Routes>
               <Route path={ROUTES.PROFILE} element={<Story />} />
               <Route path={ROUTES.HOME} element={<p>Вы вышли из аккаунта</p>} />

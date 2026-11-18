@@ -109,6 +109,7 @@ function renderAt(skillId: string): Story['render'] {
           status: 'succeeded' as const,
           pendingRequests: 0,
           error: null,
+          loadError: null,
         } satisfies NotificationsState,
       },
     })

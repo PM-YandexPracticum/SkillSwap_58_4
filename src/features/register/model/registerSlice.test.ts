@@ -1,3 +1,4 @@
+import { completeRegistration } from './completeRegistration'
 import { createTestStore } from '@/app/test/createTestStore'
 
 import {
@@ -65,5 +66,19 @@ describe('registerSlice', () => {
 
     expect(selectCompletedStep(store.getState())).toBe(1)
     expect(selectRegisterDraft(store.getState()).email).toBe('new@mail.ru')
+  })
+
+  it('игнорирует ошибку старого запроса после запуска нового', () => {
+    let state = registerReducer(initial, completeRegistration.pending('old', undefined))
+    state = registerReducer(state, registerReset())
+    state = registerReducer(state, completeRegistration.pending('new', undefined))
+    const next = registerReducer(
+      state,
+      completeRegistration.rejected(new Error('old'), 'old', undefined, 'Старая ошибка'),
+    )
+
+    expect(next).toEqual(state)
+    expect(next.completionStatus).toBe('loading')
+    expect(next.completionError).toBeNull()
   })
 })
