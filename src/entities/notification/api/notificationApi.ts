@@ -53,18 +53,22 @@ export function markNotificationRead(id: string): Promise<Notification> {
 }
 
 /**
- * Прочитать новые уведомления владельца одним обращением к «базе».
- * Фильтр `userId` уходит в updateMany — чужие уведомления не затрагиваются.
- * У уже прочитанных `isRead` не меняется: updateMany не делает лишний setItem.
+ * Отметить все уведомления владельца прочитанными одним пакетным запросом.
+ * Фильтр `userId` уходит в changes для `updateMany` — чужие уведомления не затрагиваются.
+ * У уже прочитанных `isRead` не меняется: в `changes` они не попадают,
+ * поэтому `updateMany` не делает лишний setItem, когда новых нет.
  * Возвращает полный список владельца, включая уже просмотренные (как и раньше).
  */
 export function markAllNotificationsRead(userId: string): Promise<Notification[]> {
   return enqueue(async () => {
-    const all = await notifications.updateMany(
-      (item) => item.userId === userId, // (1) match
-      () => ({ isRead: true }), // (2) patch
+    await notifications.updateMany((items) =>
+      items
+        .filter((item) => item.userId === userId && !item.isRead)
+        .map((item) => ({ id: item.id, changes: { isRead: true } })),
     )
-    return all.filter((item) => item.userId === userId)
+    // updateMany вернул только изменённые; читаем актуальный список владельца
+    const fresh = await notifications.getAll()
+    return fresh.filter((item) => item.userId === userId)
   })
 }
 

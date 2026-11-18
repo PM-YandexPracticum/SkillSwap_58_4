@@ -29,23 +29,7 @@ export interface MockCollection<T extends WithId> {
   ): Promise<T[]>
   /** Удалить запись. Если её нет — ничего не происходит */
   remove(id: string): Promise<void>
-  /**
-   * Пакетно изменить записи, для которых `match` вернул `true`; остальные (включая чужие)
-   * остаются как есть. Одно чтение, одна запись и одна задержка на весь пакет.
-   * Возвращает полный список после изменений. Если реально ничего не изменилось —
-   * в localStorage не пишет (сравнение по содержимому).
-   * @throws {Error} если сохранение в localStorage упало — ошибка наружу, не глотаем
-   */
-  updateMany(
-    match: (item: Readonly<T>) => boolean,
-    patch: (item: Readonly<T>) => Partial<Omit<T, 'id'>>,
-  ): Promise<T[]>
-  /**
-   * Пакетно удалить записи, для которых `match` вернул `true`; остальные не трогает.
-   * Одно чтение, одна запись и одна задержка на весь пакет.
-   * Возвращает id удалённых записей.
-   * @throws {Error} если сохранение в localStorage упало — ошибка наружу, не глотаем
-   */
+  /** Пакетно удалить записи, для которых `match` вернул `true` (P7-05); остальные не трогает. Возвращает id удалённых. */
   removeMany(match: (item: Readonly<T>) => boolean): Promise<string[]>
 }
 
@@ -263,26 +247,6 @@ export function createMockCollection<T extends WithId>(
             list.filter((item) => item.id !== id),
           )
         }
-      }),
-    updateMany: (match, patch) =>
-      respond(async () => {
-        const list = await read()
-        let changed = false
-        const next = list.map((item) => {
-          // не подошёл под фильтр — отдаём как есть, не трогаем чужие записи
-          if (!match(item)) return item
-          // id всегда принудительно из исходной записи — патч не может его подменить
-          const updated: T = { ...item, ...clone(patch(item)), id: item.id }
-          assertValidItem(updated, validate, name)
-          validateWrite?.(updated, list, 'update')
-          // сравнение по содержимому: пустой патч не даст лишний setItem
-          if (JSON.stringify(updated) !== JSON.stringify(item)) changed = true
-          return updated
-        })
-        // пишем в localStorage, только если реально что-то поменялось
-        if (changed) writeList(key, next)
-        // наружу — копии, чтобы никто не мутировал «базу»
-        return next.map(clone)
       }),
     removeMany: (match) =>
       respond(async () => {
