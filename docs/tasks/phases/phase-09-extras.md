@@ -49,7 +49,7 @@ Issues этой фазы закрыты на GitHub как `not planned` и не
 
 - **Уже готово:** заглушки `ThemeProvider` и `features/theme-toggle`, ключ `STORAGE_KEYS.THEME`.
 - **Файлы:** `src/features/theme-toggle/`, `src/app/providers/ThemeProvider.tsx`, `src/widgets/header/`, `.storybook/preview.tsx`
-- **Статус на 12.11.2026:** Вне доски MVP, исполнитель: не назначен. Дополнительная фаза после MVP; вне доски #133. Для интеграции: P9-01 (Вне доски MVP), P9-02 (Вне доски MVP), P5-09 (In Progress).
+- **Статус на 18.11.2026:** Вне доски MVP, исполнитель: не назначен. Дополнительная фаза после MVP; вне доски #133. Для интеграции: P9-01 (Вне доски MVP), P9-02 (Вне доски MVP), P5-09 (Done).
 - **Issue:** [#89](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/89)
 - **Зависит от:** P9-01, P9-02, P5-09
 
@@ -59,7 +59,7 @@ Issues этой фазы закрыты на GitHub как `not planned` и не
 > Выданные бейджи хранятся в localStorage и повторно не выдаются.
 
 - **Файлы:** `src/entities/badge/` (новый), `src/features/badge-award/` (новый) + тесты
-- **Статус на 12.11.2026:** Вне доски MVP, исполнитель: не назначен. Дополнительная фаза после MVP; вне доски #133. Для интеграции: P9-01 (Вне доски MVP), P5-07 (In Progress).
+- **Статус на 18.11.2026:** Вне доски MVP, исполнитель: не назначен. Дополнительная фаза после MVP; вне доски #133. Для интеграции: P9-01 (Вне доски MVP), P5-07 (Done).
 - **Issue:** [#92](https://github.com/PM-YandexPracticum/SkillSwap_58_4/issues/92)
 - **Зависит от:** P9-01, P4-07, P5-07
 
