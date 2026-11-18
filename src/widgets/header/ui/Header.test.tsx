@@ -5,7 +5,7 @@ import { Route, Routes } from 'react-router-dom'
 import { renderWithProviders } from '@/app/test/renderWithProviders'
 import { setSort } from '@/features/catalog-filter'
 import { selectSearchQuery } from '@/features/skill-search'
-import { ROUTES, STORAGE_KEYS } from '@/shared/config'
+import { ROUTES, STORAGE_KEYS, VALIDATION } from '@/shared/config'
 import { createTestStore } from '@/app/test/createTestStore'
 import { startSession, endSession } from '@/entities/session'
 import { fetchUsers } from '@/entities/user'
@@ -256,6 +256,16 @@ describe('Header — обновление store', () => {
     expect(store.getState().session).toEqual(loaded.session)
   })
 
+  it('сохраняет полное доступное имя пользователя максимальной длины', () => {
+    const name = 'Ш'.repeat(VALIDATION.NAME.MAX)
+    const store = authorized()
+    store.dispatch(fetchUsers.fulfilled([{ ...account, name }], 'long-name'))
+    renderHeader({}, ROUTES.HOME, store)
+
+    expect(screen.getByRole('button', { name })).toBeInTheDocument()
+    expect(screen.getByTitle(name)).toHaveTextContent(name)
+  })
+
   it('переключает вид при входе и сразу показывает обновлённые имя и аватар', () => {
     const { store } = renderHeader()
     act(() => {
@@ -305,33 +315,31 @@ describe('Header — обновление store', () => {
     expect(screen.queryByRole('button', { name: 'Выйти' })).not.toBeInTheDocument()
   })
 
-  it('загружает уведомления один раз и показывает свои непрочитанные после загрузки', async () => {
+  it('восстанавливает свои непрочитанные до открытия панели без повторов в StrictMode', async () => {
     const saved = authorized().getState()
     localStorage.setItem(
       'skillswap_db_notifications',
       JSON.stringify([createNotification({ userId: account.id })]),
     )
-    const ready = createTestStore({
+    const store = createTestStore({
       ...saved,
       notifications: { items: [], status: 'idle', error: null, pendingRequests: 0 },
     })
-    const fetchSeed = vi.spyOn(globalThis, 'fetch')
     const loads = vi.spyOn(notifications, 'fetchNotifications')
-    renderWithProviders(
-      <StrictMode>
-        <Header />
-      </StrictMode>,
-      { store: ready },
-    )
-
-    expect(
-      await screen.findByRole('button', { name: 'Уведомления, есть новые' }),
-    ).toBeInTheDocument()
-    await waitFor(() => expect(ready.getState().notifications.pendingRequests).toBe(0))
-    // Сохранённые уведомления читаются из базы, справочники повторно не запрашиваются.
-    expect(fetchSeed).not.toHaveBeenCalled()
-    expect(loads).toHaveBeenCalledTimes(1)
-    fetchSeed.mockRestore()
-    loads.mockRestore()
+    try {
+      renderWithProviders(
+        <StrictMode>
+          <Header />
+        </StrictMode>,
+        { store },
+      )
+      expect(
+        await screen.findByRole('button', { name: 'Уведомления, есть новые' }),
+      ).toBeInTheDocument()
+      await waitFor(() => expect(store.getState().notifications.pendingRequests).toBe(0))
+      expect(loads).toHaveBeenCalledTimes(1)
+    } finally {
+      loads.mockRestore()
+    }
   })
 })

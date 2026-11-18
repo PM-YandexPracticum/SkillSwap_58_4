@@ -20,6 +20,18 @@ function Address() {
 }
 
 describe('LogoutButton', () => {
+  it('обычное удаление кнопки не завершает сессию', () => {
+    const store = createTestStore()
+    store.dispatch(startSession('u01'))
+    const before = store.getState().session
+    const { unmount } = renderWithProviders(<LogoutButton />, { store })
+
+    unmount()
+
+    expect(store.getState().session).toBe(before)
+    expect(localStorage.getItem(STORAGE_KEYS.SESSION)).not.toBeNull()
+  })
+
   it.each([ROUTES.PROFILE, ROUTES.FAVORITES])(
     'выходит с %s на главную и сохраняет данные базы',
     async (route) => {

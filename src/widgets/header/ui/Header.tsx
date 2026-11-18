@@ -64,7 +64,8 @@ export function Header({ categoriesMenu, notifications, className }: HeaderProps
 
   useEffect(() => {
     if (!isAuth) return
-    // Свежий статус при dispatch исключает повторную загрузку в StrictMode.
+    // До интеграции P7-05 сохраняем загрузку точки даже при закрытой панели.
+    // TODO(P7-05): перенести этот запуск вместе с подключением единого загрузчика панели.
     void dispatch((dispatch, getState) => {
       if (getState().notifications.status === 'idle') return dispatch(fetchNotifications())
     })
@@ -173,7 +174,9 @@ export function Header({ categoriesMenu, notifications, className }: HeaderProps
                   aria-controls={isUserMenuOpen ? userMenuId : undefined}
                   onClick={() => toggle('user')}
                 >
-                  {currentUser?.name}
+                  <span className={styles.userName} title={currentUser?.name}>
+                    {currentUser?.name}
+                  </span>
                   <Avatar src={currentUser?.avatarUrl ?? null} alt="" size="sm" />
                 </button>
               }
