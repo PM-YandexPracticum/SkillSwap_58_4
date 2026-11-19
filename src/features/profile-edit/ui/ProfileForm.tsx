@@ -1,128 +1,198 @@
-import { useState } from 'react'
-import { Input } from '@/shared/ui/Input'
-import { Textarea } from '@/shared/ui/Textarea'
-import { Select } from '@/shared/ui/Select'
+import { useId, type ReactNode } from 'react'
+import { Controller } from 'react-hook-form'
+
+import type { PublicUser } from '@/entities/user'
+import EditIcon from '@/shared/assets/icons/edit.svg?react'
 import { Button } from '@/shared/ui/Button'
-import { selectCities } from '@/entities/city'
-import { useAppSelector } from '@/shared/lib/store'
+import { DatePicker } from '@/shared/ui/DatePicker'
+import { Input } from '@/shared/ui/Input'
+import { PasswordInput } from '@/shared/ui/PasswordInput'
+import { Select } from '@/shared/ui/Select'
+import { Textarea } from '@/shared/ui/Textarea'
+
+import { useProfileForm } from '../model/useProfileForm'
 import styles from './ProfileForm.module.css'
 
-export interface ProfileFormProps {
-  className?: string
+interface ProfileAvatarProps {
+  value: string | null
+  onChange: (dataUrl: string) => void
+  onProcessingChange: (isProcessing: boolean) => void
+  disabled: boolean
 }
 
+export interface ProfileFormProps {
+  /** При смене пользователя страница пересоздаёт редактор через key пользователя и сессии. */
+  user: PublicUser
+  className?: string
+  /** Страница подключает общий загрузчик фото; feature не импортирует соседний feature. */
+  avatarUpload?: (props: ProfileAvatarProps) => ReactNode
+}
+
+const GENDER_OPTIONS = [
+  { value: null, label: 'Не указан' },
+  { value: 'male', label: 'Мужской' },
+  { value: 'female', label: 'Женский' },
+]
+
 /**
- * Форма редактирования личных данных.
- * @see Figma: 1:2370
+ * Личные данные и фото — одна форма с общей Yup-валидацией и записью через updateDataUser.
+ * Во время записи и чтения фото редактирование заблокировано. Ошибка сохраняет ввод,
+ * успех обновляет исходные значения; поздний ответ после ухода не меняет другой редактор.
+ * Изменение лайков или другой записи в store не сбрасывает черновик.
+ * @see Figma: «Профиль_личные данные» (1:2370)
  */
-export function ProfileForm({ className }: ProfileFormProps) {
-  // Локальные стейты для полей (пока без сохранения)
-  const [email, setEmail] = useState('Maria@gmail.com')
-  const [name, setName] = useState('Мария')
-  const [birthDate, setBirthDate] = useState('1995-10-28')
-  const [gender, setGender] = useState<string | null>('female')
-  const [cityId, setCityId] = useState<string | null>('msk')
-  const [about, setAbout] = useState(
-    'Люблю учиться новому, особенно если это можно делать за чаем и в пижаме. Всегда готова пообщаться и обменяться чем-то интересным!',
-  )
-
-  // Получаем города из стора для селекта
-  const cities = useAppSelector(selectCities)
-  const cityOptions = cities.map((c) => ({ value: c.id, label: c.name }))
-
-  // Опции для пола
-  const genderOptions = [
-    { value: 'male', label: 'Мужской' },
-    { value: 'female', label: 'Женский' },
-  ]
+export function ProfileForm({ user, className, avatarUpload }: ProfileFormProps) {
+  const passwordId = useId()
+  const {
+    form,
+    cities,
+    busy,
+    changePassword,
+    togglePassword,
+    submitError,
+    onSubmit,
+    onAvatarProcessingChange,
+  } = useProfileForm(user)
+  const {
+    register,
+    control,
+    formState: { errors, isDirty, isValid },
+  } = form
 
   return (
-    <div className={[styles.form, className].filter(Boolean).join(' ')}>
-      <div className={styles.fieldGroup}>
-        <Input
-          label="Почта"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          rightIcon={
-            <svg
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 20h9"></path>
-              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-            </svg>
-          }
-        />
-        <button type="button" className={styles.changePassword}>
-          Изменить пароль
-        </button>
-      </div>
-
-      <Input
-        label="Имя"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        rightIcon={
-          <svg
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+    <form
+      aria-label="Личные данные"
+      aria-busy={busy}
+      noValidate
+      onSubmit={onSubmit}
+      className={[styles.form, className].filter(Boolean).join(' ')}
+    >
+      <div className={styles.fields}>
+        <div className={styles.fieldGroup}>
+          <Input
+            {...register('email')}
+            label="Почта"
+            type="email"
+            autoComplete="email"
+            disabled={busy}
+            error={errors.email?.message}
+            rightIcon={<EditIcon />}
+          />
+          <button
+            type="button"
+            className={styles.changePassword}
+            onClick={togglePassword}
+            disabled={busy}
+            aria-expanded={changePassword}
+            aria-controls={changePassword ? passwordId : undefined}
           >
-            <path d="M12 20h9"></path>
-            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-          </svg>
-        }
-      />
-
-      <div className={styles.row}>
+            {changePassword ? 'Отменить' : 'Изменить пароль'}
+          </button>
+          {changePassword && (
+            <PasswordInput
+              {...register('password')}
+              id={passwordId}
+              label="Новый пароль"
+              autoComplete="new-password"
+              disabled={busy}
+              error={errors.password?.message}
+              hint="Пароль должен содержать не менее 8 знаков"
+            />
+          )}
+        </div>
         <Input
-          label="Дата рождения"
-          type="date"
-          value={birthDate}
-          onChange={(e) => setBirthDate(e.target.value)}
+          {...register('name')}
+          label="Имя"
+          autoComplete="given-name"
+          disabled={busy}
+          error={errors.name?.message}
+          rightIcon={<EditIcon />}
         />
-
-        <Select label="Пол" options={genderOptions} value={gender} onChange={setGender} />
+        <div className={styles.row}>
+          <Controller
+            control={control}
+            name="birthDate"
+            render={({ field, fieldState }) => (
+              <DatePicker
+                {...field}
+                label="Дата рождения"
+                disabled={busy}
+                onChange={(value) => field.onChange(value ?? '')}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="gender"
+            render={({ field, fieldState }) => (
+              <Select
+                ref={field.ref}
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                label="Пол"
+                options={GENDER_OPTIONS}
+                disabled={busy}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+        </div>
+        <Controller
+          control={control}
+          name="cityId"
+          render={({ field, fieldState }) => (
+            <Select
+              ref={field.ref}
+              value={field.value}
+              onChange={(value) => field.onChange(value ?? '')}
+              onBlur={field.onBlur}
+              label="Город"
+              options={cities.map((city) => ({ value: city.id, label: city.name }))}
+              searchable
+              disabled={busy}
+              error={fieldState.error?.message}
+            />
+          )}
+        />
+        <Textarea
+          {...register('about')}
+          label="О себе"
+          disabled={busy}
+          error={errors.about?.message}
+          rightIcon={<EditIcon />}
+          rows={4}
+        />
+        {submitError && (
+          <p className={styles.error} role="alert">
+            {submitError}
+          </p>
+        )}
+        <Button
+          type="submit"
+          disabled={!isDirty || !isValid || busy}
+          className={styles.submitButton}
+        >
+          Сохранить
+        </Button>
       </div>
-
-      <Select label="Город" options={cityOptions} value={cityId} onChange={setCityId} searchable />
-
-      <Textarea
-        label="О себе"
-        value={about}
-        onChange={(e) => setAbout(e.target.value)}
-        rightIcon={
-          <svg
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 20h9"></path>
-            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-          </svg>
-        }
-        rows={5}
-      />
-
-      <Button variant="primary" type="submit" className={styles.submitButton}>
-        Сохранить
-      </Button>
-    </div>
+      {avatarUpload && (
+        <Controller
+          control={control}
+          name="avatarUrl"
+          render={({ field }) => (
+            <>
+              {avatarUpload({
+                value: field.value,
+                onChange: field.onChange,
+                onProcessingChange: onAvatarProcessingChange,
+                disabled: busy,
+              })}
+            </>
+          )}
+        />
+      )}
+    </form>
   )
 }

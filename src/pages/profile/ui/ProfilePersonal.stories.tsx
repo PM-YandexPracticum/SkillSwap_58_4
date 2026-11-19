@@ -1,84 +1,58 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import { MemoryRouter } from 'react-router-dom';
-import type { User } from '@/entities/user';
-import { citiesReducer } from '@/entities/city';
-import { usersReducer } from '@/entities/user';
-import { sessionReducer } from '@/entities/session';
+import type { Meta, StoryObj } from '@storybook/react-vite'
+import { Provider } from 'react-redux'
+import { configureStore } from '@reduxjs/toolkit'
+import { citiesReducer } from '@/entities/city'
+import { sessionReducer } from '@/entities/session'
+import { usersReducer, getUserById } from '@/entities/user'
+import { ProfilePersonal } from './ProfilePersonal'
 
-import { ProfilePersonal } from './ProfilePersonal';
-
-// Создаем мок-пользователя
-const mockUser: User = {
-  id: 'user-123',
-  name: 'Мария',
-  email: 'Maria@gmail.com',
-  password: 'mock-password',
-  avatarUrl: '',
-  birthDate: '1995-10-28T10:00:00.000Z',
-  gender: 'female', // Теперь TS поймет, что это допустимое значение
-  cityId: 'msk',
-  about: 'Люблю учиться новому...',
-  teachSkillId: 's01',
-  learnSubcategoryIds: ['time-management', 'yoga', 'english', 'photography'],
-  likedUserIds: [],
-  likesCount: 10,
-  createdAt: '2026-01-01T10:00:00.000Z',
-};
-
-const meta: Meta<typeof ProfilePersonal> = {
+const meta = {
   title: 'pages/profile/ProfilePersonal',
   component: ProfilePersonal,
   tags: ['autodocs'],
+  loaders: [async () => ({ profile: await getUserById('u01') })],
   parameters: {
     layout: 'padded',
     design: {
       type: 'figma',
       url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2370',
     },
+    docs: {
+      description: {
+        component:
+          'Личные данные и фото в одной форме. Начальные данные и изменения хранятся в учебной базе браузера Storybook, отдельно от приложения.',
+      },
+    },
   },
   decorators: [
-    (Story) => {
+    (Story, context) => {
+      const currentUser = context.loaded.profile
       const store = configureStore({
-        reducer: {
-          cities: citiesReducer,
-          users: usersReducer,
-          session: sessionReducer,
-        },
+        reducer: { cities: citiesReducer, users: usersReducer, session: sessionReducer },
         preloadedState: {
-          // Мокаем города (нужны для формы)
-          cities: {
-            items: [{ id: 'msk', name: 'Москва' }],
-            status: 'succeeded' as const,
-          },
-          // Мокаем список пользователей, чтобы сработал selectUserById
-          users: { saveStatus: 'idle' as const, pendingSaves: 0, saveError: null,
-            items: [mockUser],
+          cities: { items: [{ id: 'spb', name: 'Санкт-Петербург' }], status: 'succeeded' as const },
+          users: {
+            items: [currentUser],
             status: 'succeeded' as const,
             error: null,
+            saveStatus: 'idle' as const,
+            pendingSaves: 0,
+            saveError: null,
           },
-          // Мокаем сессию, чтобы компонент понял, что пользователь авторизован
-          session: {
-            session: { userId: mockUser.id, token: 'mock-token' },
-          },
+          session: { session: { userId: currentUser.id, token: 'storybook' } },
         },
-      });
-
+      })
       return (
         <Provider store={store}>
-          <MemoryRouter>
-            <div style={{ maxWidth: 800, margin: '0 auto' }}>
-              <Story />
-            </div>
-          </MemoryRouter>
+          <div style={{ width: 900, padding: 60 }}>
+            <Story />
+          </div>
         </Provider>
-      );
+      )
     },
   ],
-};
+} satisfies Meta<typeof ProfilePersonal>
+export default meta
+type Story = StoryObj<typeof meta>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
+export const Default: Story = {}
