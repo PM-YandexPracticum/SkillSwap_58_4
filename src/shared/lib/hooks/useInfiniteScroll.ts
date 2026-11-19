@@ -87,9 +87,10 @@ function observeScroll(sentinel: HTMLDivElement, scrollIntent: ScrollIntent, onL
 /**
  * Бесконечная лента: сначала batch элементов, при прокрутке к концу — спиннер
  * на delayMs и ещё batch элементов. Каждая порция требует новой прокрутки.
- * При смене items или batch лента начинается сначала, текущая догрузка отменяется.
+ * При смене resetKey или batch лента начинается сначала, текущая догрузка отменяется.
  * Наблюдение сохраняется для прежнего DOM-маркера, при замене/удалении снимается.
- * items сравнивается по ссылке: производные списки нужно мемоизировать через useMemo.
+ * По умолчанию resetKey — ссылка items. Для изменяемых карточек передавайте ключ поиска/фильтров:
+ * обновление лайка и удаление карточки тогда не сворачивают уже догруженную ленту.
  * @param items полный (уже отфильтрованный и отсортированный) список
  * @param batch положительный целый размер порции — CATALOG.SCROLL_BATCH (6)
  * @param delayMs задержка спиннера в мс — CATALOG.SCROLL_DELAY_MS (1000)
@@ -98,6 +99,7 @@ export function useInfiniteScroll<T>(
   items: readonly T[],
   batch: number,
   delayMs: number,
+  resetKey: unknown = items,
 ): UseInfiniteScrollResult<T> {
   const [visibleCount, setVisibleCount] = useState(batch)
   const [isLoading, setIsLoading] = useState(false)
@@ -110,7 +112,7 @@ export function useInfiniteScroll<T>(
     scrollIntent.current = { input: false, scrolled: false }
     setVisibleCount(batch)
     setIsLoading(false)
-  }, [items, batch])
+  }, [resetKey, batch])
 
   const observation = useRef<{ node: HTMLDivElement; stop: () => void } | null>(null)
 
@@ -140,7 +142,7 @@ export function useInfiniteScroll<T>(
       setIsLoading(false)
     }, delayMs)
     return () => clearTimeout(timerId)
-  }, [isLoading, items, batch, delayMs])
+  }, [isLoading, resetKey, batch, delayMs])
 
   return { visibleItems, sentinelRef, isLoading, hasMore }
 }

@@ -5,6 +5,7 @@
   /* Colors */
   --color-text: #253017;
   --color-text-inverse: #fff; /* контрастный цвет текста */
+  --color-text-secondary: #69735d;
   --color-bg: #f9faf7; /* основной фон страницы */
   --color-bg-secondary: #fff; /* фон карточек, выпадающих полей */
   --color-neutral: #69735d;
@@ -76,13 +77,31 @@
   --container-width-narrow: 1136px;
 }
 
-/* Тёмная тема — добавить поддержку через data-theme="dark" */
+/* Палитра тёмной темы переключается одним атрибутом на корневом html-элементе. */
 [data-theme='dark'] {
   --color-bg: #0f172a;
   --color-bg-secondary: #1e293b;
   --color-text: #f1f5f9;
-  --color-text-secondary: #94a3b8;
-  --color-border: #334155;
+  --color-text-inverse: #0f172a;
+  --color-text-secondary: #cbd5e1;
+  --color-neutral: #a8b3a0;
+  --color-border: #64748b;
+  --color-hover: #334d2d;
+  --color-disabled: #334155;
+  --color-accent: #abd27a;
+  --color-accent-strong: #9bd36a;
+  --color-accent-soft: #35522f;
+  --color-error: #ff9b86;
+  --color-notification: #f18a7e;
+  --color-tag-business: #413653;
+  --color-tag-art: #51374b;
+  --color-tag-language: #4d482c;
+  --color-tag-education: #294752;
+  --color-tag-home: #503a31;
+  --color-tag-health: #304d30;
+  --color-tag-more: #374367;
+  --color-overlay: rgb(0 0 0 / 72%);
+  --shadow-image-action: 0 1px 3px rgb(0 0 0 / 60%);
 }
 
 /* ─── Reset ──────────────────────────────────────────────── */

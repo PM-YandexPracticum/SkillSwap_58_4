@@ -65,7 +65,9 @@ describe('Header', () => {
       renderHeader()
 
       expect(screen.getByRole('textbox', { name: 'Искать навык' })).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Сменить тему' })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /Включить (тёмную|светлую) тему/ }),
+      ).toBeInTheDocument()
     })
 
     it('применяет и очищает поиск через поле шапки', async () => {

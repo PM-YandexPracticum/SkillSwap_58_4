@@ -93,13 +93,14 @@ id — это `node-id` из ссылки на фрейм в Figma, он же п
 | `brands/logo.svg` | `logo` в шапке (1:2870) | Логотип SkillSwap, цвета фиксированные |
 | `brands/google.svg` | `Google` (1:2400, 1:2548) | Многоцветный логотип, цвета не меняем |
 | `brands/apple.svg` | `Apple` (1:2400, 1:2548) | Одноцветный — `currentColor`, чтобы логотип был виден и в тёмной теме |
+| `brands/github.svg` | — | Одноцветный — `currentColor`, чтобы ссылка команды была видна в обеих темах |
 
 ## Исключения из правила «только currentColor»
 
 | Файл | Почему |
 |---|---|
 | `brands/google.svg` | Логотип бренда: многоцветный, цвета оригинальные |
-| `checkbox-done.svg`, `checkbox-remove.svg` | Фон `currentColor`, галочка и минус `#fff` — по макету. Белый цвет пока фиксирован; токены P1-01 уже есть, TODO по переходу на CSS-переменную ещё не выполнен |
+| `checkbox-done.svg`, `checkbox-remove.svg` | Фон `currentColor`, галочка и минус используют `var(--color-text-inverse)` — по макету и с поддержкой обеих тем |
 
 
 Подкаталоги: [иконки категорий](categories/README.md), [иконки брендов](brands/README.md).

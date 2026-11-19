@@ -3,8 +3,8 @@ import { Navigate, useParams } from 'react-router-dom'
 
 import { selectCategories, selectCategoriesStatus } from '@/entities/category'
 import { selectCities, selectCitiesStatus } from '@/entities/city'
-import { selectSkillsStatus, selectSkillById } from '@/entities/skill'
-import { selectUsersStatus, selectUserById } from '@/entities/user'
+import { selectSkillById, selectSkillsStatus } from '@/entities/skill'
+import { selectUserById, selectUsersStatus } from '@/entities/user'
 import { ExchangeProposedModal, useProposeExchange } from '@/features/exchange-propose'
 import { ROUTES } from '@/shared/config'
 import { useAppSelector } from '@/shared/lib/store'
@@ -69,6 +69,7 @@ export function SkillPage() {
     [author, categories, cities, skill],
   )
 
+  // DataProvider protects the application route; this guard keeps isolated page usage safe too.
   const statuses = [skillsStatus, usersStatus, categoriesStatus, citiesStatus]
   if (statuses.includes('failed')) return <Navigate to={ROUTES.SERVER_ERROR} replace />
   if (statuses.some((status) => status === 'idle' || status === 'loading')) {
@@ -78,6 +79,7 @@ export function SkillPage() {
       </main>
     )
   }
+
   if (!data) return <Navigate to={ROUTES.NOT_FOUND} replace />
 
   const { cityName, categoryTitle, subcategoryTitle, learnSubcategories } = data

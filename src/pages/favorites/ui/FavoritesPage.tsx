@@ -65,6 +65,7 @@ export function FavoritesPage() {
     filteredFavoriteUsers,
     CATALOG.SCROLL_BATCH,
     CATALOG.SCROLL_DELAY_MS,
+    JSON.stringify([filters, searchQuery]),
   )
 
   const hasFavorites = favoriteUsers.length > 0

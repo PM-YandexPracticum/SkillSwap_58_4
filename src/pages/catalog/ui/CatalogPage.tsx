@@ -33,7 +33,7 @@ import { OfferCreatedModal } from '@/features/skill-create'
  * DataProvider загружает общие данные; страница отдельно запрашивает обмены для бейджей карточек.
  * Плашки, результаты и сортировка подключены к общему store в P5-05 через applyFilters.
  * P5-06: «Рекомендуем» и результаты догружаются лентой; смена фильтров, поиска
- * или сортировки даёт новый мемоизированный список, и лента начинается сначала.
+ * или сортировки меняет ключ выдачи, и лента начинается сначала. Обновление лайка порцию сохраняет.
  * Из пустых результатов сбрасывает и фильтры, и поисковую строку через их публичные действия.
  * @see Figma: 1:2861, 1:2860, 1:2819
  */
@@ -114,6 +114,7 @@ export function CatalogPage() {
         </h1>
         <CatalogView
           users={isFiltered ? filteredUsers : recommendedUsers}
+          feedKey={isFiltered ? JSON.stringify([filters, searchQuery]) : 'recommended'}
           popularUsers={popularUsers}
           newUsers={newUsers}
           results={results}

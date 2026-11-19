@@ -20,9 +20,11 @@ import styles from './CatalogView.module.css'
 export interface CatalogViewProps {
   /**
    * С `results` — найденные карточки в порядке сортировки, без них — «Рекомендуем»
-   * в случайном порядке store. Ссылка должна быть стабильной: смена списка начинает ленту сначала.
+   * в случайном порядке store. Данные карточек могут обновляться без сброса ленты через feedKey.
    */
   users: ReadonlyArray<PublicUser>
+  /** Ключ поиска/фильтров: меняется при новой выдаче, сохраняется при изменении лайков. */
+  feedKey?: string
   /** Для «Популярного»: по убыванию лайков. */
   popularUsers: ReadonlyArray<PublicUser>
   /** Для «Нового»: от новых к старым по дате регистрации. */
@@ -44,17 +46,19 @@ interface FeedSectionProps {
   title: string
   users: ReadonlyArray<PublicUser>
   headerAction?: ReactNode
+  resetKey?: string
 }
 
 /**
  * Лента по CATALOG.SCROLL_BATCH карточек.
  * При прокрутке к концу загружает следующую порцию.
  */
-function FeedSection({ title, users, headerAction }: FeedSectionProps) {
+function FeedSection({ title, users, headerAction, resetKey }: FeedSectionProps) {
   const { visibleItems, sentinelRef, isLoading, hasMore } = useInfiniteScroll(
     users,
     CATALOG.SCROLL_BATCH,
     CATALOG.SCROLL_DELAY_MS,
+    resetKey,
   )
 
   return (
@@ -77,7 +81,7 @@ function FeedSection({ title, users, headerAction }: FeedSectionProps) {
  * Пустые списки показывает EmptyState; стартовая загрузка и ошибка остаются в DataProvider.
  * @see Figma: 1:2861 (каталог), 1:2860 (результаты); пустые состояния — вне макета.
  */
-export function CatalogView({ users, popularUsers, newUsers, results }: CatalogViewProps) {
+export function CatalogView({ users, popularUsers, newUsers, results, feedKey }: CatalogViewProps) {
   const dispatch = useAppDispatch()
   const filtersCount = useAppSelector(selectActiveFiltersCount)
 
@@ -96,6 +100,7 @@ export function CatalogView({ users, popularUsers, newUsers, results }: CatalogV
               key="results"
               title={`Подходящие предложения: ${users.length}`}
               users={users}
+              resetKey={feedKey}
               headerAction={<SortToggle value={results.sort} onChange={results.onSortChange} />}
             />
             {!users.length && (
@@ -123,7 +128,7 @@ export function CatalogView({ users, popularUsers, newUsers, results }: CatalogV
               mode="expandable"
               renderItem={renderCard}
             />
-            <FeedSection key="recommended" title="Рекомендуем" users={users} />
+            <FeedSection key="recommended" title="Рекомендуем" users={users} resetKey={feedKey} />
           </>
         ) : (
           <EmptyState

@@ -58,7 +58,7 @@ const notifications = <div style={{ padding: 40, width: 436 }}>Уведомле�
 /**
  * Шапка сайта на всю ширину страницы: гость и вошедший пользователь.
  * Вид задаётся состоянием Redux. Внутри `Link`, поэтому stories обёрнуты в `MemoryRouter`.
- * Иконка темы пока без действия (фаза 9).
+ * Переключатель темы работает через общий источник; начальное значение зависит от системы и localStorage.
  */
 const meta: Meta<typeof Header> = {
   title: 'widgets/header/Header',
