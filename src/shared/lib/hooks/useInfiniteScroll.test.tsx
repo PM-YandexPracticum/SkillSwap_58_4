@@ -11,6 +11,7 @@ interface FeedProps {
   delayMs?: number
   markerKey?: string
   showMarker?: boolean
+  resetKey?: string
 }
 
 function Feed({
@@ -19,8 +20,9 @@ function Feed({
   delayMs = CATALOG.SCROLL_DELAY_MS,
   markerKey = 'initial',
   showMarker = true,
+  resetKey,
 }: FeedProps) {
-  const { visibleItems, sentinelRef, isLoading, hasMore } = useInfiniteScroll(items, batch, delayMs)
+  const { visibleItems, sentinelRef, isLoading, hasMore } = useInfiniteScroll(items, batch, delayMs, resetKey)
 
   return (
     <section aria-label="Лента">
@@ -227,6 +229,18 @@ describe('useInfiniteScroll', () => {
     rerender(<Feed items={items} />)
     observer().intersect()
     finishLoading()
+    expect(screen.getAllByRole('listitem')).toHaveLength(12)
+  })
+
+  it('сохраняет догруженную порцию при обновлении данных тех же элементов', () => {
+    const { rerender } = render(<Feed items={items} resetKey="query" />)
+    scroll()
+    observer().intersect()
+    finishLoading()
+    expect(screen.getAllByRole('listitem')).toHaveLength(12)
+
+    rerender(<Feed items={[...items]} resetKey="query" />)
+
     expect(screen.getAllByRole('listitem')).toHaveLength(12)
   })
 

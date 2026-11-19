@@ -9,20 +9,6 @@ import { RegisterStepGuard } from '@/app/router/RegisterStepGuard'
 import { RequireAuth } from '@/app/router/RequireAuth'
 import { RestoreSession } from '@/app/router/RestoreSession'
 import { DataProvider } from './DataProvider'
-import {
-  ProfileExchanges,
-  ProfileFavorites,
-  ProfilePersonal,
-  ProfileRequests,
-  ProfileSkills,
-} from '@/pages/profile'
-import {
-  RegisterLayout,
-  RegisterStep1Page,
-  RegisterStep2Page,
-  RegisterStep3Page,
-} from '@/pages/register'
-
 // Lazy-загрузка страниц — каждая страница грузится только при переходе на неё
 const CatalogPage = lazy(() => import('@/pages/catalog').then((m) => ({ default: m.CatalogPage })))
 const SkillPage = lazy(() => import('@/pages/skill').then((m) => ({ default: m.SkillPage })))
@@ -30,6 +16,33 @@ const FavoritesPage = lazy(() =>
   import('@/pages/favorites').then((m) => ({ default: m.FavoritesPage })),
 )
 const ProfilePage = lazy(() => import('@/pages/profile').then((m) => ({ default: m.ProfilePage })))
+const ProfileRequests = lazy(() =>
+  import('@/pages/profile').then((m) => ({ default: m.ProfileRequests })),
+)
+const ProfileExchanges = lazy(() =>
+  import('@/pages/profile').then((m) => ({ default: m.ProfileExchanges })),
+)
+const ProfileFavorites = lazy(() =>
+  import('@/pages/profile').then((m) => ({ default: m.ProfileFavorites })),
+)
+const ProfileSkills = lazy(() =>
+  import('@/pages/profile').then((m) => ({ default: m.ProfileSkills })),
+)
+const ProfilePersonal = lazy(() =>
+  import('@/pages/profile').then((m) => ({ default: m.ProfilePersonal })),
+)
+const RegisterLayout = lazy(() =>
+  import('@/pages/register').then((m) => ({ default: m.RegisterLayout })),
+)
+const RegisterStep1Page = lazy(() =>
+  import('@/pages/register').then((m) => ({ default: m.RegisterStep1Page })),
+)
+const RegisterStep2Page = lazy(() =>
+  import('@/pages/register').then((m) => ({ default: m.RegisterStep2Page })),
+)
+const RegisterStep3Page = lazy(() =>
+  import('@/pages/register').then((m) => ({ default: m.RegisterStep3Page })),
+)
 const AboutPage = lazy(() => import('@/pages/about').then((m) => ({ default: m.AboutPage })))
 const LoginPage = lazy(() => import('@/pages/login').then((m) => ({ default: m.LoginPage })))
 const AllSkillsPage = lazy(() =>

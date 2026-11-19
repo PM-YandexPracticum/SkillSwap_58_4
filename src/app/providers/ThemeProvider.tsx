@@ -1,14 +1,15 @@
 import type { ReactNode } from 'react'
+import { useTheme } from '@/shared/lib/theme'
 
-interface ThemeProviderProps {
+export interface ThemeProviderProps {
   children: ReactNode
 }
 
 /**
- * Применяет сохранённую тему (`data-theme` на <html>) при старте приложения.
- * ⭐ Необязательная фича (фаза 9): пока не реализована, просто отдаёт children.
+ * Поддерживает общую подписку на тему на всех маршрутах, в том числе без шапки.
+ * Первая инициализация выполняется до React-рендера в main.tsx.
  */
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  // TODO: useTheme() из features/theme-toggle
+  useTheme()
   return <>{children}</>
 }

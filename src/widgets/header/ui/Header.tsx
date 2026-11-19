@@ -9,7 +9,7 @@ import { selectHasUnread } from '@/entities/notification'
 import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react'
 import LikeIcon from '@/shared/assets/icons/like.svg?react'
 import LikeFilledIcon from '@/shared/assets/icons/like-filled.svg?react'
-import MoonIcon from '@/shared/assets/icons/moon.svg?react'
+import { ThemeToggle } from '@/features/theme-toggle'
 import NotificationIcon from '@/shared/assets/icons/notification.svg?react'
 import { ROUTES } from '@/shared/config'
 import { useAppSelector } from '@/shared/lib/store'
@@ -33,7 +33,7 @@ export interface HeaderProps {
 
 /**
  * Шапка читает состояние входа и текущего пользователя из Redux.
- * Гость: Logo, «О проекте», «Все навыки ▾» (слот `categoriesMenu`), SearchInput, иконка темы (пока без действия — фаза 9),
+ * Гость: Logo, «О проекте», «Все навыки ▾» (слот `categoriesMenu`), SearchInput, переключатель темы,
  * «Войти», «Зарегистрироваться».
  * Вошедший: вместо кнопок — колокольчик с точкой непрочитанных (слот `notifications`), сердечко → `/favorites`
  * (на странице избранного сердечко подсвечено), имя + аватар → меню «Личный кабинет» / «Выйти».
@@ -116,7 +116,7 @@ export function Header({ categoriesMenu, notifications, className }: HeaderProps
       </div>
 
       <div className={styles.actions}>
-        <IconButton ariaLabel="Сменить тему" icon={<MoonIcon className={styles.icon} />} />
+        <ThemeToggle />
 
         {isAuth ? (
           <>

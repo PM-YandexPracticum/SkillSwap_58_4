@@ -52,6 +52,7 @@ export function RegisterStep3Page() {
     [dispatch],
   )
 
+  // DataProvider protects the application route; this guard keeps isolated page usage safe too.
   if (categoriesStatus === 'failed') return <Navigate to={ROUTES.SERVER_ERROR} replace />
   if (categoriesStatus !== 'succeeded') return <Loader />
 

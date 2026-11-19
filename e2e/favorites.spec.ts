@@ -11,7 +11,7 @@ test('лайк меняет счётчик и избранное, сохраня
   await expect(
     page
       .getByRole('region', { name: 'Навык', exact: true })
-      .getByLabel(`Количество лайков: ${popularAuthor.likesCount}`, { exact: true }),
+      .getByText(`Количество лайков: ${popularAuthor.likesCount}`, { exact: true }),
   ).toBeVisible()
   await page
     .getByRole('region', { name: 'Навык', exact: true })
@@ -25,7 +25,7 @@ test('лайк меняет счётчик и избранное, сохраня
   await expect(
     page
       .getByRole('region', { name: 'Навык', exact: true })
-      .getByLabel(`Количество лайков: ${popularAuthor.likesCount + 1}`, { exact: true }),
+      .getByText(`Количество лайков: ${popularAuthor.likesCount + 1}`, { exact: true }),
   ).toBeVisible()
   await page.getByRole('link', { name: 'Избранное', exact: true }).click()
   const cards = page.getByRole('region', { name: 'Избранное', exact: true }).getByRole('article')
@@ -47,7 +47,7 @@ test('лайк меняет счётчик и избранное, сохраня
   await expect(
     page
       .getByRole('region', { name: 'Навык', exact: true })
-      .getByLabel(`Количество лайков: ${popularAuthor.likesCount}`, { exact: true }),
+      .getByText(`Количество лайков: ${popularAuthor.likesCount}`, { exact: true }),
   ).toBeVisible()
 })
 
@@ -67,7 +67,7 @@ test('сбой сохранения лайка не меняет счётчик 
   await expect(
     page
       .getByRole('region', { name: 'Навык', exact: true })
-      .getByLabel(`Количество лайков: ${popularAuthor.likesCount}`, { exact: true }),
+      .getByText(`Количество лайков: ${popularAuthor.likesCount}`, { exact: true }),
   ).toBeVisible()
   await page.reload()
   await expect(add).toHaveAttribute('aria-pressed', 'false')

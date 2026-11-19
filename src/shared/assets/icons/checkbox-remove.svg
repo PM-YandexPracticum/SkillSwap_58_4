@@ -1,4 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
   <rect width="20" height="20" x="2" y="2" fill="currentColor" rx="5"/>
-  <path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M8 12h8"/>
+  <path stroke="var(--color-text-inverse)" stroke-linecap="round" stroke-width="1.5" d="M8 12h8"/>
 </svg>
