@@ -21,6 +21,7 @@ export interface AvatarUploadProps {
    * Выбранный файл прошёл `validateImageFile` и уменьшен `fileToDataUrl` до 800 px.
    * Отдаёт готовый data URL: повторно сжимать его не нужно, `File` наружу не выходит.
    */
+  alt?: string
   onChange: (dataUrl: string) => void
   /** Внешняя ошибка поля. Ошибка выбранного файла показывается вместо неё. */
   error?: string
@@ -42,6 +43,7 @@ export interface AvatarUploadProps {
 export function AvatarUpload({
   value,
   onChange,
+  alt = 'Аватар пользователя',
   error,
   onProcessingChange,
   disabled = false,
@@ -94,7 +96,7 @@ export function AvatarUpload({
       <div className={styles.container}>
         <div className={styles.avatarWrapper}>
           {value ? (
-            <Avatar src={value} alt="Аватар пользователя" className={styles.photo} />
+            <Avatar src={value} alt={alt} className={styles.photo} />
           ) : (
             <UserCircleIcon className={styles.userIcon} aria-hidden="true" />
           )}
