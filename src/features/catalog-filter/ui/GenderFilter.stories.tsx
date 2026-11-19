@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { userEvent, within } from 'storybook/test'
 import { GenderFilter } from './GenderFilter'
+import { createStoryStore } from '../lib/createStoryStore'
+import { Provider } from 'react-redux'
 
 const meta = {
   title: 'features/catalog-filter/GenderFilter',
@@ -18,6 +20,16 @@ const meta = {
       },
     },
   },
+  decorators: [
+    (Story) => {
+      const store = createStoryStore()
+      return (
+        <Provider store={store}>
+          <Story />
+        </Provider>
+      )
+    },
+  ],
 } satisfies Meta<typeof GenderFilter>
 
 export default meta

@@ -3,6 +3,8 @@ import { userEvent, within } from 'storybook/test'
 import type { City } from '@/entities/city'
 import { loadSeed } from '@/shared/api'
 import { CityFilter } from './CityFilter'
+import { createStoryStore } from '../lib/createStoryStore'
+import { Provider } from 'react-redux'
 
 const meta = {
   title: 'features/catalog-filter/CityFilter',
@@ -30,6 +32,17 @@ const meta = {
       />
     </div>
   ),
+  decorators: [
+    (Story) => {
+      const store = createStoryStore()
+
+      return (
+        <Provider store={store}>
+          <Story />
+        </Provider>
+      )
+    },
+  ],
 } satisfies Meta<typeof CityFilter>
 
 export default meta

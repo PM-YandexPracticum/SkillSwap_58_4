@@ -6,6 +6,7 @@ import { categoriesReducer, type Category } from '@/entities/category'
 import { citiesReducer, type City } from '@/entities/city'
 import { loadSeed } from '@/shared/api'
 import { FiltersPanel } from './FiltersPanel'
+import { catalogFilterReducer } from '@/features/catalog-filter'
 
 const meta = {
   title: 'widgets/filters-panel/FiltersPanel',
@@ -36,7 +37,7 @@ const meta = {
   decorators: [
     (Story, { loaded, parameters }) => {
       const store = configureStore({
-        reducer: { categories: categoriesReducer, cities: citiesReducer },
+        reducer: { categories: categoriesReducer, cities: citiesReducer, catalogFilter: catalogFilterReducer, },
         preloadedState: {
           categories: {
             items: parameters.empty ? [] : loaded.categories,

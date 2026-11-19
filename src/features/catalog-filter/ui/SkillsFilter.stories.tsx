@@ -3,6 +3,9 @@ import { userEvent, within } from 'storybook/test'
 import type { Category } from '@/entities/category'
 import { loadSeed } from '@/shared/api'
 import { SkillsFilter } from './SkillsFilter'
+import { createStoryStore } from '../lib/createStoryStore'
+import { Provider } from 'react-redux'
+
 
 const meta = {
   title: 'features/catalog-filter/SkillsFilter',
@@ -32,6 +35,17 @@ const meta = {
       />
     </div>
   ),
+  decorators: [
+    (Story) => {
+      const store = createStoryStore()
+
+      return (
+        <Provider store={store}>
+          <Story />
+        </Provider>
+      )
+    }
+  ]
 } satisfies Meta<typeof SkillsFilter>
 
 export default meta

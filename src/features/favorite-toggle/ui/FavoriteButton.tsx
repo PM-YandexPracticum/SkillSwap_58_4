@@ -66,7 +66,8 @@ export function FavoriteButton({ userId, likesCount }: FavoriteButtonProps) {
 
   return (
     <div className={styles.favorite}>
-      <span className={styles.count} aria-label={`Количество лайков: ${likesCount}`}>
+      <span className={styles.count}>
+        <span className={styles.visuallyHidden}>Количество лайков: </span>
         {likesCount}
       </span>
       <IconButton

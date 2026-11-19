@@ -9,6 +9,7 @@ import { createUser } from '@/entities/user/testing'
 import { ROUTES } from '@/shared/config'
 import { OfferCard } from '@/widgets/offer-card'
 import { OffersSection } from '@/widgets/offers-section'
+import { ToastProvider } from '@/app/providers/ToastProvider'
 
 import { createAppStore } from './store'
 
@@ -109,43 +110,45 @@ function CatalogSections({ proposed = false }: { proposed?: boolean }) {
   })
   return (
     <Provider store={store}>
-      <MemoryRouter>
-        <Routes>
-          <Route
-            path={ROUTES.HOME}
-            element={
-              <main
-                style={{
-                  width: 1020,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 'var(--space-40)',
-                }}
-              >
-                <OffersSection
-                  title="Популярное"
-                  users={users}
-                  mode="expandable"
-                  renderItem={renderItem}
-                />
-                <OffersSection
-                  title="Новое"
-                  users={users.slice().reverse()}
-                  mode="expandable"
-                  renderItem={renderItem}
-                />
-                <OffersSection
-                  title="Рекомендуем"
-                  users={users.slice(0, 6)}
-                  mode="infinite"
-                  renderItem={renderItem}
-                />
-              </main>
-            }
-          />
-          <Route path={ROUTES.SKILL} element={<SkillDestination />} />
-        </Routes>
-      </MemoryRouter>
+      <ToastProvider>
+        <MemoryRouter>
+          <Routes>
+            <Route
+              path={ROUTES.HOME}
+              element={
+                <main
+                  style={{
+                    width: 1020,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 'var(--space-40)',
+                  }}
+                >
+                  <OffersSection
+                    title="Популярное"
+                    users={users}
+                    mode="expandable"
+                    renderItem={renderItem}
+                  />
+                  <OffersSection
+                    title="Новое"
+                    users={users.slice().reverse()}
+                    mode="expandable"
+                    renderItem={renderItem}
+                  />
+                  <OffersSection
+                    title="Рекомендуем"
+                    users={users.slice(0, 6)}
+                    mode="infinite"
+                    renderItem={renderItem}
+                  />
+                </main>
+              }
+            />
+            <Route path={ROUTES.SKILL} element={<SkillDestination />} />
+          </Routes>
+        </MemoryRouter>
+      </ToastProvider>
     </Provider>
   )
 }
