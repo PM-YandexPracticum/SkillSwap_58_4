@@ -4,11 +4,10 @@ import { describe, expect, it, vi } from 'vitest'
 import { EmptyState } from './EmptyState'
 
 describe('EmptyState', () => {
-  it('показывает заголовок и объявляет блок статусом для скринридера', () => {
+  it('показывает сообщение и объявляет блок статусом для скринридера', () => {
     render(<EmptyState title="Ничего не найдено" />)
 
-    expect(screen.getByRole('status')).toBeTruthy()
-    expect(screen.getByRole('heading', { level: 3 }).textContent).toBe('Ничего не найдено')
+    expect(screen.getByRole('status')).toHaveTextContent('Ничего не найдено')
   })
 
   it('выводит описание только когда оно передано', () => {
@@ -21,10 +20,16 @@ describe('EmptyState', () => {
 
   it('выводит иконку только когда она передана', () => {
     const { rerender } = render(<EmptyState title="Ничего не найдено" />)
-    expect(screen.queryByTestId('empty-icon')).toBeNull()
+    expect(screen.queryByRole('img', { hidden: true })).not.toBeInTheDocument()
 
-    rerender(<EmptyState title="Ничего не найдено" icon={<svg data-testid="empty-icon" />} />)
-    expect(screen.getByTestId('empty-icon')).toBeTruthy()
+    rerender(
+      <EmptyState
+        title="Ничего не найдено"
+        icon={<svg role="img" aria-label="Декоративная иконка" />}
+      />,
+    )
+    expect(screen.getByRole('img', { hidden: true })).toBeInTheDocument()
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
   })
 
   it('не рисует кнопку, если действие не передано', () => {
@@ -45,8 +50,21 @@ describe('EmptyState', () => {
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 
-  it('в компактном режиме добавляет класс на корневой блок', () => {
+  it('позволяет выполнить действие с клавиатуры', async () => {
+    const user = userEvent.setup()
+    const onClick = vi.fn()
+    render(<EmptyState title="Пока пусто" action={{ label: 'Вернуться в каталог', onClick }} />)
+
+    await user.tab()
+    expect(screen.getByRole('button', { name: 'Вернуться в каталог' })).toHaveFocus()
+    await user.keyboard('{Enter}')
+    expect(onClick).toHaveBeenCalledTimes(1)
+  })
+
+  it('в компактном режиме оставляет понятное сообщение без кнопок и заголовков', () => {
     render(<EmptyState title="Уведомлений пока нет" compact />)
-    expect(screen.getByRole('status').className).toContain('compact')
+    expect(screen.getByRole('status')).toHaveTextContent('Уведомлений пока нет')
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading')).not.toBeInTheDocument()
   })
 })

@@ -158,6 +158,7 @@ describe('FavoritesPage', () => {
     )
 
     expect(cardsOf()).toHaveLength(0)
+    expect(screen.getByRole('heading', { level: 2, name: 'Избранное' })).toBeVisible()
     expect(screen.getByRole('status')).toHaveTextContent('В избранном пока нет предложений')
     await user.click(screen.getByRole('button', { name: 'Вернуться в каталог' }))
     expect(screen.getByRole('heading', { name: 'Каталог предложений' })).toBeInTheDocument()

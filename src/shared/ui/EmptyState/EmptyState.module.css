@@ -3,49 +3,32 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--space-24);
   text-align: center;
-  padding: 40px 20px;
-  color: var(--color-text-secondary, #666);
+  padding: var(--space-40) var(--space-20);
+  color: var(--color-text);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .title {
-  margin: 16px 0 8px;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-text-primary, #333);
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  color: inherit;
 }
 
 .description {
-  margin: 0 0 24px;
-  font-size: 0.95rem;
-  max-width: 400px;
-}
-
-.button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  background-color: var(--color-primary, #6cc27f);
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.button:hover {
-  background-color: var(--color-primary-hover, #dfbc0d);
+  color: var(--color-neutral);
+  margin: 0;
+  font-size: var(--font-size-base);
 }
 
 .compact {
-  padding: 16px 12px;
-}
-
-.compact .title {
-  margin: 8px 0 4px;
-  font-size: 1rem;
-}
-
-.compact .description {
-  margin: 0;
-  font-size: 0.85rem;
+  padding: var(--space-40) 0;
+  color: var(--color-neutral);
 }

@@ -8,10 +8,9 @@ import {
   type ActiveFilterTag,
   type SortOrder,
 } from '@/features/catalog-filter'
-import { CATALOG, DATA_ERRORS } from '@/shared/config'
+import { CATALOG } from '@/shared/config'
 import { useInfiniteScroll } from '@/shared/lib/hooks'
 import { EmptyState } from '@/shared/ui/EmptyState'
-import { Loader } from '@/shared/ui/Loader'
 import { FiltersPanel } from '@/widgets/filters-panel'
 import { OfferCard } from '@/widgets/offer-card'
 import { OffersSection } from '@/widgets/offers-section'
@@ -34,6 +33,8 @@ export interface CatalogViewProps {
     sort: SortOrder
     onRemoveFilter: (id: string) => void
     onSortChange: (value: SortOrder) => void
+    /** Полный сброс поиска и фильтров из пустого результата. */
+    onReset: () => void
   }
 }
 
@@ -73,13 +74,12 @@ function FeedSection({ title, users, headerAction }: FeedSectionProps) {
 /**
  * Вёрстка каталога: панель слева, три секции либо отдельный вид результатов справа.
  * «Рекомендуем» и результаты — бесконечные ленты по 6 карточек (P5-06).
+ * Пустые списки показывает EmptyState; стартовая загрузка и ошибка остаются в DataProvider.
+ * @see Figma: 1:2861 (каталог), 1:2860 (результаты); пустые состояния — вне макета.
  */
 export function CatalogView({ users, popularUsers, newUsers, results }: CatalogViewProps) {
   const dispatch = useAppDispatch()
   const filtersCount = useAppSelector(selectActiveFiltersCount)
-  const usersStatus = useAppSelector((state) => state.users.status)
-
-  const isLoading = usersStatus === 'loading'
 
   const handleResetFilters = (): void => {
     dispatch(resetFilters())
@@ -89,11 +89,7 @@ export function CatalogView({ users, popularUsers, newUsers, results }: CatalogV
     <div className={styles.layout}>
       <FiltersPanel filtersCount={filtersCount} onReset={handleResetFilters} />
       <div className={[styles.content, results && styles.results].filter(Boolean).join(' ')}>
-        {isLoading ? (
-          <Loader className={styles.loader} />
-        ) : usersStatus === 'failed' ? (
-          <p role="alert">{DATA_ERRORS.LOAD_USERS}</p>
-        ) : results ? (
+        {results ? (
           <>
             <ActiveFilters items={results.filters} onRemove={results.onRemoveFilter} />
             <FeedSection
@@ -106,7 +102,10 @@ export function CatalogView({ users, popularUsers, newUsers, results }: CatalogV
               <EmptyState
                 title="Ничего не нашлось"
                 description="Попробуйте изменить параметры поиска или сбросить фильтры"
-                action={{ label: 'Сбросить фильтры', onClick: handleResetFilters }}
+                action={{
+                  label: 'Сбросить поиск и фильтры',
+                  onClick: results.onReset,
+                }}
               />
             )}
           </>

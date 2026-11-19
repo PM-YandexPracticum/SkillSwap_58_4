@@ -61,6 +61,7 @@ describe('CatalogView', () => {
           sort: 'newest',
           onRemoveFilter,
           onSortChange,
+          onReset: vi.fn(),
         }}
       />,
       { preloadedState: state },
@@ -83,7 +84,13 @@ describe('CatalogView', () => {
         newUsers={[]}
         results={
           results
-            ? { filters: [], sort: 'newest', onRemoveFilter: vi.fn(), onSortChange: vi.fn() }
+            ? {
+                filters: [],
+                sort: 'newest',
+                onRemoveFilter: vi.fn(),
+                onSortChange: vi.fn(),
+                onReset: vi.fn(),
+              }
             : undefined
         }
       />,
@@ -161,6 +168,7 @@ describe('CatalogView', () => {
       sort: 'newest' as const,
       onRemoveFilter: vi.fn(),
       onSortChange: vi.fn(),
+      onReset: vi.fn(),
     }
 
     beforeEach(() => {

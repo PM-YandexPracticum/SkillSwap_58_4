@@ -28,6 +28,7 @@ const renderCard = (user: PublicUser) => <OfferCard user={user} />
 /**
  * Избранное (`/favorites`, только для вошедших): пользователи из `likedUserIds` текущего пользователя,
  * FiltersPanel работает и здесь, лента с догрузкой по 6. Снятый лайк сразу убирает карточку.
+ * Пустой список и отсутствие совпадений отображает общий EmptyState; причины и действия выбирает страница.
  * @see Figma: «Избранное» (1:15855)
  */
 export function FavoritesPage() {
@@ -89,8 +90,12 @@ export function FavoritesPage() {
           mode="infinite"
         />
       ) : (
-        <section role="region" aria-label="Избранное">
+        <section className={styles.empty} aria-labelledby="favorites-empty-title">
+          <h2 className={styles.emptyTitle} id="favorites-empty-title">
+            Избранное
+          </h2>
           <EmptyState
+            className={styles.emptyState}
             title={
               hasFavorites
                 ? 'По выбранным фильтрам ничего не найдено'
