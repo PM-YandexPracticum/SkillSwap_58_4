@@ -79,10 +79,10 @@ describe('сохранение лайка в интерфейсе', () => {
     await user.click(button)
     expect(button).toBeDisabled()
     await waitFor(() => expect(button).toHaveAttribute('aria-pressed', 'true'))
-    expect(screen.getByLabelText('Количество лайков: 8')).toBeInTheDocument()
+    expect(screen.getByText('8')).toHaveTextContent(/^Количество лайков:\s*8$/)
     await user.click(button)
     await waitFor(() => expect(button).toHaveAttribute('aria-pressed', 'false'))
-    expect(screen.getByLabelText('Количество лайков: 7')).toBeInTheDocument()
+    expect(screen.getByText('7')).toHaveTextContent(/^Количество лайков:\s*7$/)
   })
 
   it('показывает ошибку без изменения счётчика и позволяет повторить', async () => {
@@ -92,7 +92,7 @@ describe('сохранение лайка в интерфейсе', () => {
     })
     await user.click(screen.getByRole('button', { name: 'Добавить в избранное' }))
     expect(await screen.findByText(DATA_ERRORS.STORAGE_FULL)).toBeInTheDocument()
-    expect(screen.getByLabelText('Количество лайков: 7')).toBeInTheDocument()
+    expect(screen.getByText('7')).toHaveTextContent(/^Количество лайков:\s*7$/)
     write.mockRestore()
     await user.click(screen.getByRole('button', { name: 'Добавить в избранное' }))
     await waitFor(() =>
