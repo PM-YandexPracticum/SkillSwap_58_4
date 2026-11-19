@@ -217,4 +217,10 @@ describe('AvatarUpload', () => {
     await waitFor(() => expect(onChange).toHaveBeenCalledWith('data:image/png;base64,me.png'))
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
+
+  it('профиль без фото показывает общую заглушку с подписью пользователя', () => {
+    render(<AvatarUpload variant="profile" alt="Мария" value={null} onChange={vi.fn()} />)
+    expect(screen.getByRole('img', { name: 'Мария' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Добавить фото' })).toBeInTheDocument()
+  })
 })

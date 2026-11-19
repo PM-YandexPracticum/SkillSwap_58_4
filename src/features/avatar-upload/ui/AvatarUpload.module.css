@@ -53,3 +53,31 @@
   color: var(--color-error);
   text-align: center;
 }
+
+.profile {
+  width: 244px;
+  flex-shrink: 0;
+}
+
+/* Профиль 1:2370: фото 244 px и кнопка редактирования 56 px. Регистрационные размеры не меняются. */
+.profile .container {
+  --avatar-upload-size: 244px;
+}
+
+.profile .avatarWrapper {
+  width: var(--avatar-upload-size);
+  height: var(--avatar-upload-size);
+}
+
+.profile .addButton {
+  width: calc(var(--space-24) + var(--space-16) * 2);
+  height: calc(var(--space-24) + var(--space-16) * 2);
+  padding: var(--space-16);
+  color: var(--color-text);
+  background-color: var(--color-accent-soft);
+}
+
+.profile .addButton svg {
+  width: var(--space-24);
+  height: var(--space-24);
+}
