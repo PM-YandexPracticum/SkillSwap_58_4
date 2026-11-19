@@ -47,16 +47,6 @@
   list-style: none;
 }
 
-.empty {
-  margin: 0;
-  padding: var(--space-40) 0; /* 40px — креатив, симметрия gap панели */
-  font-family: var(--font-main);
-  font-size: var(--font-size-base); /* 16px */
-  font-weight: var(--font-weight-regular); /* 400 */
-  color: var(--color-neutral); /* #69735D */
-  text-align: center;
-}
-
 /* Кнопка-действие секции: «Прочитать все» / «Очистить» — у правого края (1:2148) */
 .actionButton {
   display: flex;

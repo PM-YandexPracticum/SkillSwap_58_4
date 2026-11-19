@@ -105,6 +105,33 @@ describe('CatalogPage', () => {
       screen.getByRole('heading', { level: 1, name: 'Каталог предложений' }),
     ).toBeInTheDocument()
   })
+  it.each([false, true])(
+    'сбрасывает пустой поиск и возвращает каталог: дополнительные фильтры=%s',
+    async (withFilters) => {
+      const { user, store } = renderWithProviders(<CatalogPage />, {
+        preloadedState: {
+          ...ready,
+          search: { query: 'несуществующий навык' },
+          catalogFilter: {
+            mode: 'all',
+            subcategoryIds: [],
+            gender: null,
+            cityIds: withFilters ? ['нет такого города'] : [],
+            sort: 'newest',
+          },
+        },
+      })
+
+      expect(screen.getByRole('status')).toHaveTextContent('Ничего не нашлось')
+      await user.click(screen.getByRole('button', { name: 'Сбросить поиск и фильтры' }))
+
+      expect(store.getState().search.query).toBe('')
+      expect(store.getState().catalogFilter.cityIds).toEqual([])
+      expect(screen.getByRole('heading', { name: 'Рекомендуем' })).toBeInTheDocument()
+      expect(screen.queryByText('Ничего не нашлось')).not.toBeInTheDocument()
+    },
+  )
+
   describe('секции «Популярное» и «Новое» (P5-04)', () => {
     // likesCount растёт с номером, дата регистрации — наоборот: Автор 0 самый новый.
     const items = Array.from({ length: 12 }, (_, i) =>

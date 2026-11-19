@@ -23,20 +23,10 @@
 }
 
 .emptyState {
-  display: flex;
+  /* Пустой экран отдельно не нарисован; сохраняем высоту карточки предложения. */
   min-height: 368px;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-24);
-  flex-direction: column;
   border-radius: var(--radius-m);
   background: var(--color-bg-secondary);
-  color: var(--color-text);
-  text-align: center;
-}
-
-.emptyState p {
-  margin: 0;
 }
 
 .srOnly {

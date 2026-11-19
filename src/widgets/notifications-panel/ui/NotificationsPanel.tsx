@@ -1,6 +1,7 @@
 import { MarkAllReadButton } from '@/features/notifications-read'
 import { NotificationItem } from '@/entities/notification'
 import { Button } from '@/shared/ui/Button'
+import { EmptyState } from '@/shared/ui/EmptyState'
 import { Loader } from '@/shared/ui/Loader'
 import type { LoadingStatus } from '@/shared/types'
 
@@ -58,6 +59,7 @@ export interface NotificationsPanelProps {
  * Окно колокольчика: «Новые уведомления» + «Прочитать все», ниже «Просмотренные».
  * Уведомления номинальные: «Вы предложили обмен Ивану» + «Перейти» → страница навыка Ивана.
  * Просмотренные — без кнопки, не кликаются. Пусто — «Уведомлений пока нет».
+ * Пустое сообщение выводит общий EmptyState в компактном режиме без действия.
  * Открытие окна управляется снаружи через Dropdown (align="end"), панель его не рисует.
  *
  * Данные, статусы и действия передаёт MainLayout; stories используют заглушки.
@@ -100,7 +102,7 @@ export function NotificationsPanel({
           <Loader />
         </div>
       ) : isEmpty ? (
-        <p className={styles.empty}>{EMPTY_TEXT}</p>
+        <EmptyState compact title={EMPTY_TEXT} />
       ) : (
         <>
           {actionError && (

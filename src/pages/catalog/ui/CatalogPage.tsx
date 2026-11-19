@@ -13,6 +13,7 @@ import styles from './CatalogPage.module.css'
 import {
   applyFilters,
   removeFilter,
+  resetFilters,
   selectActiveFiltersCount,
   selectCatalogFilter,
   setSort,
@@ -21,7 +22,7 @@ import {
 import { selectCategories } from '@/entities/category'
 import { selectCities } from '@/entities/city'
 import { selectSkills } from '@/entities/skill'
-import { selectSearchQuery } from '@/features/skill-search'
+import { queryCleared, selectSearchQuery } from '@/features/skill-search'
 import { buildActiveFilters } from '../lib/buildActiveFilters'
 import { parseFilterRemoval } from '../lib/parseFilterRemoval'
 import { OfferCreatedModal } from '@/features/skill-create'
@@ -33,6 +34,7 @@ import { OfferCreatedModal } from '@/features/skill-create'
  * Плашки, результаты и сортировка подключены к общему store в P5-05 через applyFilters.
  * P5-06: «Рекомендуем» и результаты догружаются лентой; смена фильтров, поиска
  * или сортировки даёт новый мемоизированный список, и лента начинается сначала.
+ * Из пустых результатов сбрасывает и фильтры, и поисковую строку через их публичные действия.
  * @see Figma: 1:2861, 1:2860, 1:2819
  */
 export function CatalogPage() {
@@ -86,6 +88,11 @@ export function CatalogPage() {
     dispatch(removeFilter(parseFilterRemoval(id)))
   }
 
+  const handleResetResults = (): void => {
+    dispatch(resetFilters())
+    dispatch(queryCleared())
+  }
+
   const hasSearch = searchQuery.trim().length > 0
   const isFiltered = hasSearch || filtersCounter > 0
 
@@ -95,6 +102,7 @@ export function CatalogPage() {
         sort: filters.sort,
         onRemoveFilter: handleRemoveFilter,
         onSortChange: handleSortChange,
+        onReset: handleResetResults,
       }
     : undefined
 
