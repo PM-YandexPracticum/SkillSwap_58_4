@@ -17,6 +17,7 @@ UI-кит: базовые компоненты из макета без бизн
 - [`CredentialsForm/`](CredentialsForm/README.md) — общая вёрстка полей email/пароля, ошибок и действий
 - [`DatePicker/`](DatePicker/README.md) — компонент `DatePicker`
 - [`Dropdown/`](Dropdown/README.md) — компонент `Dropdown`
+- [`EmptyState/`](EmptyState/README.md) — сообщение пустого списка, декоративная иконка и действие; без загрузки и бизнес-логики
 - [`ErrorPage/`](ErrorPage/README.md) — общая рамка, иллюстрация, текст и действия 404/500
 - [`Field/`](Field/README.md) — общие подпись, ошибка, aria-связи и стили Input/Textarea
 - [`FileDropzone/`](FileDropzone/README.md) — компонент `FileDropzone`

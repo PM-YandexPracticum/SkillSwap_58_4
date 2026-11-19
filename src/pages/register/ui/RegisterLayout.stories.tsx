@@ -3,6 +3,8 @@ import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 import { categoriesReducer, getCategories } from '@/entities/category'
 import { citiesReducer, getCities } from '@/entities/city'
+import { usersReducer } from '@/entities/user'
+import { registerReducer } from '@/features/register'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { ROUTES } from '@/shared/config'
 import { RegisterLayout } from './RegisterLayout'
@@ -26,7 +28,12 @@ const meta = {
     (Story, context) => (
       <Provider
         store={configureStore({
-          reducer: { categories: categoriesReducer, cities: citiesReducer },
+          reducer: {
+            categories: categoriesReducer,
+            cities: citiesReducer,
+            users: usersReducer,
+            register: registerReducer,
+          },
           preloadedState: {
             categories: { items: context.loaded.categories, status: 'succeeded' as const },
             cities: { items: context.loaded.cities, status: 'succeeded' as const },

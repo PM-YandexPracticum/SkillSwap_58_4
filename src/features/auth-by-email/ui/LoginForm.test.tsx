@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 
@@ -56,6 +56,56 @@ describe('LoginForm', () => {
     expect(onSubmit).toHaveBeenCalledTimes(1)
   })
 
+  it('разрешает отправку только с корректным email и непустым паролем', async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi.fn()
+    renderForm({ onSubmit })
+    const button = screen.getByRole('button', { name: 'Войти' })
+
+    expect(button).toBeDisabled()
+    await user.type(screen.getByLabelText('Email'), 'invalid-email')
+    await user.type(screen.getByLabelText('Пароль'), 'secret123')
+    expect(button).toBeDisabled()
+
+    await user.clear(screen.getByLabelText('Email'))
+    await user.type(screen.getByLabelText('Email'), 'petrov@mail.ru')
+    await waitFor(() => expect(button).toBeEnabled())
+
+    await user.clear(screen.getByLabelText('Пароль'))
+    await waitFor(() => expect(button).toBeDisabled())
+    await user.keyboard('{Enter}')
+    expect(onSubmit).not.toHaveBeenCalled()
+  })
+
+  it('показывает ошибку формата после ухода из поля и снимает после исправления', async () => {
+    const user = userEvent.setup()
+    renderForm()
+    const email = screen.getByLabelText('Email')
+
+    await user.type(email, 'invalid-email')
+    expect(screen.queryByText('Введите корректный email')).not.toBeInTheDocument()
+    await user.tab()
+    expect(await screen.findByText('Введите корректный email')).toBeInTheDocument()
+    expect(email).toHaveAttribute('aria-invalid', 'true')
+
+    await user.clear(email)
+    await user.type(email, 'petrov@mail.ru')
+    await waitFor(() => expect(email).not.toHaveAttribute('aria-invalid'))
+    expect(screen.queryByText('Введите корректный email')).not.toBeInTheDocument()
+  })
+
+  it('нормализует email, сохраняя пароль без новых требований регистрации', async () => {
+    const user = userEvent.setup()
+    const onSubmit = vi.fn()
+    renderForm({ onSubmit })
+
+    await user.type(screen.getByLabelText('Email'), ' PETROV@MAIL.RU ')
+    await user.type(screen.getByLabelText('Пароль'), 'x')
+    await user.click(screen.getByRole('button', { name: 'Войти' }))
+
+    expect(onSubmit).toHaveBeenCalledWith({ email: 'petrov@mail.ru', password: 'x' })
+  })
+
   it('без ошибки поля не помечены как неверные', () => {
     renderForm()
 
@@ -77,7 +127,10 @@ describe('LoginForm', () => {
     const user = userEvent.setup()
     renderForm()
 
-    await user.tab()
+    await user.type(screen.getByLabelText('Email'), 'petrov@mail.ru')
+    await user.type(screen.getByLabelText('Пароль'), 'secret123')
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Войти' })).toBeEnabled())
+    await user.tab({ shift: true })
     expect(screen.getByLabelText('Email')).toHaveFocus()
     await user.tab()
     expect(screen.getByLabelText('Пароль')).toHaveFocus()

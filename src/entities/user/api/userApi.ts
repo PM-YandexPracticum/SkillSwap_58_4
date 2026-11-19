@@ -77,3 +77,33 @@ export function createUser(user: User): Promise<User> {
 export function updateUser(id: string, changes: Partial<Omit<User, 'id'>>): Promise<User> {
   return users.update(id, changes)
 }
+
+/**
+ * Избранное владельца и счётчик адресата сохраняются одной записью коллекции.
+ * Расчёт на актуальных данных внутри очереди не теряет параллельные лайки.
+ * При ошибке хранения обе записи остаются прежними; компенсация не требуется.
+ */
+export function toggleUserFavorite(currentUserId: string, targetUserId: string): Promise<User[]> {
+  return users.updateMany((items) => {
+    const currentUser = items.find((user) => user.id === currentUserId)
+    const targetUser = items.find((user) => user.id === targetUserId)
+    if (!currentUser || !targetUser || currentUserId === targetUserId) {
+      throw new Error(DATA_ERRORS.SAVE_USER)
+    }
+    const alreadyLiked = currentUser.likedUserIds.includes(targetUserId)
+    return [
+      {
+        id: currentUserId,
+        changes: {
+          likedUserIds: alreadyLiked
+            ? currentUser.likedUserIds.filter((id) => id !== targetUserId)
+            : [...currentUser.likedUserIds, targetUserId],
+        },
+      },
+      {
+        id: targetUserId,
+        changes: { likesCount: Math.max(0, targetUser.likesCount + (alreadyLiked ? -1 : 1)) },
+      },
+    ]
+  })
+}

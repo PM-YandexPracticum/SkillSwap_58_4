@@ -24,7 +24,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'P5-05: CatalogPage читает catalogFilter и searchQuery из store, применяет applyFilters и переключает вёрстку на «Подходящие предложения: N» при активном фильтре или поиске. Results и SearchResults — те же виды, но фильтры и поиск выставлены через parameters и preloadedState. Плашки и сортировка записываются в store; их управляемое поведение показано отдельно в stories ActiveFilters/SortToggle. Пустые состояния — решения вне Figma.',
+          'P5-05: CatalogPage читает catalogFilter и searchQuery из store, применяет applyFilters и переключает вёрстку на «Подходящие предложения: N» при активном фильтре или поиске. Results и SearchResults — те же виды, но фильтры и поиск выставлены через parameters и preloadedState. Плашки и сортировка записываются в store; их управляемое поведение показано отдельно в stories ActiveFilters/SortToggle. P5-06: «Рекомендуем» и результаты показывают по 6 карточек; при прокрутке к концу — спиннер на 1 с и ещё 6. Смена фильтров начинает ленту сначала. Пустые состояния — решения вне Figma.',
       },
     },
   },
@@ -109,19 +109,11 @@ export const Results: Story = {
     await expect(
       canvas.getByRole('heading', { name: /Подходящие предложения/ }),
     ).toBeInTheDocument()
-    await expect(
-      canvas.getByRole('button', { name: 'Удалить Хочу научиться' }),
-    ).toBeInTheDocument()
-    await expect(
-      canvas.getByRole('button', { name: 'Удалить Английский' }),
-    ).toBeInTheDocument()
-    await expect(
-      canvas.getByRole('button', { name: 'Сначала новые' }),
-    ).toBeInTheDocument()
+    await expect(canvas.getByRole('button', { name: 'Удалить Хочу научиться' })).toBeInTheDocument()
+    await expect(canvas.getByRole('button', { name: 'Удалить Английский' })).toBeInTheDocument()
+    await expect(canvas.getByRole('button', { name: 'Сначала новые' })).toBeInTheDocument()
     await userEvent.click(canvas.getByRole('button', { name: 'Сначала новые' }))
-    await expect(
-      canvas.getByRole('button', { name: 'Сначала старые' }),
-    ).toBeInTheDocument()
+    await expect(canvas.getByRole('button', { name: 'Сначала старые' })).toBeInTheDocument()
   },
 }
 

@@ -10,12 +10,40 @@
 
 ## Быстрый старт
 
+Требуется Node.js **20.11.1 или новее**. Команды одинаковы для Windows, macOS и Linux; запускать их нужно из корня проекта, где лежит `package.json`.
+
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
 Открой [http://localhost:5173](http://localhost:5173)
+
+`npm ci` устанавливает зависимости по `package-lock.json`, поэтому используй его после переключения ветки или если в `node_modules` не хватает пакета. Например, адаптер Yup для `react-hook-form` уже объявлен в проекте как `@hookform/resolvers` и отдельно добавлять его не нужно.
+
+Проверить установку можно так:
+
+```bash
+node -v
+npm ls @hookform/resolvers
+npm run typecheck
+```
+
+Если на Windows или macOS установка не проходит из-за старого `node_modules`, удали только эту папку и повтори `npm ci`:
+
+**Windows PowerShell:**
+
+```powershell
+Remove-Item -Recurse -Force node_modules
+npm ci
+```
+
+**macOS/Linux:**
+
+```bash
+rm -rf node_modules
+npm ci
+```
 
 ---
 

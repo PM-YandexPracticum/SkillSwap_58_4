@@ -4,6 +4,7 @@ export {
   fetchUsers,
   createNewUser,
   updateDataUser,
+  updateUserFavorite,
   type UsersState,
 } from './model/usersSlice'
 export {
@@ -13,6 +14,7 @@ export {
   selectUsersSaveError,
   selectUserById,
   selectUserByEmail,
+  selectCurrentUser,
   selectPopularUsers,
   selectNewUsers,
   selectRecommendedUsers,

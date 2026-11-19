@@ -23,9 +23,11 @@ const selectOutgoingLookup = createSelector([selectItems, selectUserId], (items,
 export const selectOutgoingExchange = (state: RootState, otherUserId: ID): Exchange | undefined =>
   selectOutgoingLookup(state)(otherUserId)
 
-/** Предлагал ли текущий пользователь обмен этому человеку (независимо от навыка). */
-export const selectHasProposed = (state: RootState, otherUserId: ID): boolean =>
-  !!selectOutgoingExchange(state, otherUserId)
+/** Полностью сохранённое исходящее предложение; незавершённое оставляет доступ к повтору. */
+export const selectHasProposed = (state: RootState, otherUserId: ID): boolean => {
+  const exchange = selectOutgoingExchange(state, otherUserId)
+  return !!exchange && !exchange.notificationPending
+}
 
 /** Общий статус операций с обменами: loading, пока есть незавершённые запросы. */
 export const selectExchangesStatus = (state: RootState) => state.exchanges.status

@@ -1,3 +1,5 @@
+import type { Ref } from 'react'
+
 import { MultiSelect } from '@/shared/ui/MultiSelect'
 import { Select } from '@/shared/ui/Select'
 
@@ -18,6 +20,10 @@ export interface CategorySubcategorySelectProps {
   categoryError?: string
   /** Ошибка поля подкатегории; `error` сохраняет обратную совместимость. */
   subcategoryError?: string
+  /** Уход фокуса из поля подкатегорий, включая его раскрытый список. */
+  onSubcategoryBlur?: () => void
+  /** Ссылка на поле подкатегорий для фокусировки ошибки формы. */
+  subcategoryRef?: Ref<HTMLButtonElement>
   error?: string
 }
 
@@ -61,6 +67,8 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
           error={props.categoryError ?? props.error}
         />
         <Select
+          ref={props.subcategoryRef}
+          onBlur={props.onSubcategoryBlur}
           label={props.subcategoryLabel}
           placeholder="Выберите подкатегорию"
           options={subcategoryOptions}
@@ -94,6 +102,8 @@ export function CategorySubcategorySelect(props: CategorySubcategorySelectProps)
       />
 
       <MultiSelect
+        ref={props.subcategoryRef}
+        onBlur={props.onSubcategoryBlur}
         label={props.subcategoryLabel}
         placeholder="Выберите подкатегорию"
         options={subcategoryOptions}

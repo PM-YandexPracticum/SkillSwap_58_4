@@ -16,12 +16,19 @@ export interface NotificationsState {
   status: LoadingStatus
   pendingRequests: number
   error: string | null
+  /**
+   * Ошибка именно первоначальной загрузки (`fetchNotifications`).
+   * Нужна, чтобы окно уведомлений показывало «Повторить» только для неё,
+   * а ошибки «Прочитать все» / «Очистить» — отдельным баннером без повтора.
+   */
+  loadError: string | null
 }
 const initialState: NotificationsState = {
   items: [],
   status: 'idle',
   pendingRequests: 0,
   error: null,
+  loadError: null,
 }
 type ThunkConfig = { state: RootState; rejectValue: string }
 
@@ -74,32 +81,31 @@ export const ensureExchangeNotification = createAsyncThunk<Notification, Notific
 /** Прочитать новые уведомления текущего пользователя. Чужие записи не затрагиваются. */
 export const markAllRead = createAsyncThunk<Notification[], void, ThunkConfig>(
   'notifications/markAllRead',
-  async (_, { getState, dispatch, rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     const userId = getState().session.session?.userId
     if (!userId) return rejectWithValue(DATA_ERRORS.SIGN_IN)
     try {
       return await markAllNotificationsRead(userId)
     } catch (error) {
-      // Несколько записей сохраняются по очереди: при ошибке восстанавливаем фактическое состояние базы.
-      await dispatch(fetchNotifications())
       return rejectWithValue(saveError(error, DATA_ERRORS.READ_NOTIFICATIONS))
     }
   },
+  { condition: (_, { getState }) => getState().notifications.pendingRequests === 0 },
 )
 
 /** Удалить новые и просмотренные уведомления только владельца текущей сессии. */
 export const clearAllNotifications = createAsyncThunk<string[], void, ThunkConfig>(
   'notifications/clearAll',
-  async (_, { getState, dispatch, rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     const userId = getState().session.session?.userId
     if (!userId) return rejectWithValue(DATA_ERRORS.SIGN_IN)
     try {
       return await clearNotifications(userId)
     } catch (error) {
-      await dispatch(fetchNotifications())
       return rejectWithValue(saveError(error, DATA_ERRORS.CLEAR_NOTIFICATIONS))
     }
   },
+  { condition: (_, { getState }) => getState().notifications.pendingRequests === 0 },
 )
 
 /** Сохранённые уведомления. Видимость по владельцу — в селекторах, запись — только через API. */
@@ -137,8 +143,12 @@ export const notificationsSlice = createSlice({
           markAllRead.pending,
           clearAllNotifications.pending,
         ),
-        (state) => {
+        (state, action) => {
+          // Любая операция начинается с чистой ошибкой, как и раньше.
           if (state.pendingRequests === 0) state.error = null
+          // Новый запуск загрузки сбрасывает старую ошибку загрузки —
+          // иначе кнопка «Повторить» висела бы даже после успешной загрузки.
+          if (fetchNotifications.pending.match(action)) state.loadError = null
           state.pendingRequests += 1
           state.status = 'loading'
         },
@@ -168,7 +178,11 @@ export const notificationsSlice = createSlice({
         (state, action) => {
           state.pendingRequests = Math.max(0, state.pendingRequests - 1)
           state.status = state.pendingRequests > 0 ? 'loading' : 'failed'
-          state.error = action.payload ?? DATA_ERRORS.LOAD_NOTIFICATIONS
+          const message = action.payload ?? DATA_ERRORS.LOAD_NOTIFICATIONS
+          state.error = message
+          // Ошибку загрузки дублируем в loadError — панель по ней покажет «Повторить».
+          // Ошибки операций остаются только в error.
+          if (fetchNotifications.rejected.match(action)) state.loadError = message
         },
       )
   },

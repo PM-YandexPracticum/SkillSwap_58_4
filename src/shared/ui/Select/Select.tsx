@@ -1,4 +1,13 @@
-import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useId,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from 'react'
 
 import CrossIcon from '@/shared/assets/icons/cross.svg?react'
 import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react'
@@ -15,6 +24,8 @@ export interface SelectProps {
   /** Управляемое значение; для выбора «Не указан» передайте вариант с value: null. */
   value: string | null
   onChange: (value: string | null) => void
+  /** Вызывается один раз при уходе фокуса за пределы всего поля и списка. */
+  onBlur?: () => void
   /** Поиск по подписи варианта. Кнопка «×» очищает запрос и выбранное значение. */
   searchable?: boolean
   error?: string
@@ -28,23 +39,30 @@ export interface SelectProps {
  * Не загружает данные и не управляет связью категории с подкатегорией.
  * @see Figma: «Регистрация 2 шаг» — «Пол» (1:1585), поиск «Город» (1:1629).
  */
-export function Select({
-  label,
-  placeholder = 'Не указан',
-  options,
-  value,
-  onChange,
-  searchable = false,
-  error,
-  disabled = false,
-  defaultOpen = false,
-}: SelectProps) {
+export const Select = forwardRef<HTMLInputElement | HTMLButtonElement, SelectProps>(function Select(
+  {
+    label,
+    placeholder = 'Не указан',
+    options,
+    value,
+    onChange,
+    onBlur,
+    searchable = false,
+    error,
+    disabled = false,
+    defaultOpen = false,
+  },
+  ref,
+) {
   const [isOpen, setIsOpen] = useState(defaultOpen && !disabled)
   const [activeValue, setActiveValue] = useState<string | null | undefined>()
   const [searchValue, setSearchValue] = useState('')
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  useImperativeHandle(ref, () => (searchable ? searchInputRef.current! : triggerRef.current!), [
+    searchable,
+  ])
   const listRef = useRef<HTMLUListElement>(null)
   const id = useId()
   const listboxId = `${id}-listbox`
@@ -152,7 +170,10 @@ export function Select({
       className={[styles.root, expanded ? styles.rootOpen : ''].filter(Boolean).join(' ')}
       onKeyDown={handleKeyDown}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) close()
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          close()
+          onBlur?.()
+        }
       }}
     >
       {label && (
@@ -269,4 +290,4 @@ export function Select({
       )}
     </div>
   )
-}
+})
