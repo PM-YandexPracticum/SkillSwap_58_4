@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { userEvent, within } from 'storybook/test'
 import { ModeFilter } from './ModeFilter'
+import { createStoryStore } from '../lib/createStoryStore'
+import { Provider } from 'react-redux'
 
 const meta = {
   title: 'features/catalog-filter/ModeFilter',
@@ -18,6 +20,16 @@ const meta = {
       },
     },
   },
+  decorators: [
+    (Story) => {
+      const store = createStoryStore()
+      return (
+        <Provider store = {store}>
+          <Story />
+        </Provider>
+      )
+    }
+  ]
 } satisfies Meta<typeof ModeFilter>
 
 export default meta
