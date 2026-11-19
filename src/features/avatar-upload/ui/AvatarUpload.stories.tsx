@@ -45,3 +45,8 @@ export const WithPhoto: Story = { args: { value: IMAGE_PLACEHOLDERS.AVATAR } }
 
 /** Ошибка поля под аватаром */
 export const WithError: Story = { args: { error: 'Файл больше 1 МБ' } }
+
+/** Фото профиля 1:2370 с крупной кнопкой редактирования. */
+export const Profile: Story = {
+  args: { variant: 'profile', value: IMAGE_PLACEHOLDERS.AVATAR, alt: 'Мария' },
+}

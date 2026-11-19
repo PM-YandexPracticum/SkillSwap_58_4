@@ -37,7 +37,7 @@ const meta = {
       story: { inline: false, height: '680px' },
       description: {
         component:
-          'Окно «Ваше предложение» на `shared/ui/Modal`: слева данные навыка и кнопки, справа галерея с мини-превью. Данные и адреса фото приходят пропсами. «Редактировать» (и Esc) возвращает к форме, «Готово» вызывает onConfirm; сохранение и завершение подключаются в P6-06.',
+          'Окно «Ваше предложение» на `shared/ui/Modal`: слева данные навыка и кнопки, справа галерея с мини-превью. «Готово» вызывает onConfirm. Во время сохранения кнопки, Esc и закрытие по фону заблокированы. После ошибки доступны повтор и возврат к форме; запись выполняет родитель.',
       },
     },
   },
@@ -53,6 +53,15 @@ export const OneImage: Story = { args: { images: ['/images/skills/s01-1.jpg'] } 
 
 /** Без фото — только текст и кнопки */
 export const NoImages: Story = { args: { images: [] } }
+
+export const Saving: Story = { args: { isBusy: true } }
+
+export const SaveError: Story = {
+  args: {
+    error:
+      'Не хватает места в браузере, чтобы сохранить данные. Уменьшите фото или сбросьте данные сайта',
+  },
+}
 
 function LiveModal(args: SkillPreviewModalProps) {
   const [isOpen, setIsOpen] = useState(args.isOpen)

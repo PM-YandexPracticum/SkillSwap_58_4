@@ -11,10 +11,12 @@ import { createUser } from '@/entities/user/testing'
 import { notificationsReducer } from '@/entities/notification'
 import { createNotification } from '@/entities/notification/testing'
 
+import { VALIDATION } from '@/shared/config'
+
 import { Header } from './Header'
 
 const account = createUser({ name: 'Мария', avatarUrl: '/images/avatars/u02.jpg' })
-const makeStore = (authorized: boolean, hasUnread: boolean) =>
+const makeStore = (authorized: boolean, hasUnread: boolean, name = account.name) =>
   configureStore({
     reducer: {
       search: searchReducer,
@@ -25,7 +27,7 @@ const makeStore = (authorized: boolean, hasUnread: boolean) =>
     preloadedState: {
       session: { session: authorized ? { userId: account.id, token: 'storybook' } : null },
       users: {
-        items: [account],
+        items: [{ ...account, name }],
         status: 'succeeded' as const,
         error: null,
         saveStatus: 'idle' as const,
@@ -37,6 +39,7 @@ const makeStore = (authorized: boolean, hasUnread: boolean) =>
         status: 'succeeded' as const,
         pendingRequests: 0,
         error: null,
+        loadError: null,
       },
     },
   })
@@ -65,7 +68,13 @@ const meta: Meta<typeof Header> = {
   args: { categoriesMenu },
   decorators: [
     (Story, { parameters }) => (
-      <Provider store={makeStore(Boolean(parameters.authorized), Boolean(parameters.hasUnread))}>
+      <Provider
+        store={makeStore(
+          Boolean(parameters.authorized),
+          Boolean(parameters.hasUnread),
+          parameters.userName,
+        )}
+      >
         <MemoryRouter>
           <Story />
         </MemoryRouter>
@@ -132,3 +141,8 @@ export const MenuOpen: Story = {
 }
 
 export const UserMenuOpen: Story = MenuOpen
+
+/** Краевой случай без отдельного фрейма: максимальная длина имени по схеме регистрации. */
+export const LongName: Story = {
+  parameters: { ...Authorized.parameters, userName: 'Ш'.repeat(VALIDATION.NAME.MAX) },
+}

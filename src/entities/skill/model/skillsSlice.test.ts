@@ -1,7 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { DATA_ERRORS, MOCK_DB } from '@/shared/config'
 import { createSkill } from '../testing'
-import { fetchSkills, skillsReducer, createNewSkill, getSkills, type SkillsState } from '..'
+import {
+  fetchSkills,
+  skillsReducer,
+  createNewSkill,
+  updateDataSkill,
+  getSkills,
+  type SkillsState,
+} from '..'
 
 const initial: SkillsState = {
   saveStatus: 'idle' as const,
@@ -153,6 +160,30 @@ describe('fetchSkills — параллельный запрос', () => {
 const makeStore = () => configureStore({ reducer: { skills: skillsReducer } })
 
 describe('сохранение навыков (P4-06)', () => {
+  it('обновляет сохранённый навык без дубля, а при отказе оставляет прежние данные', async () => {
+    const store = makeStore()
+    await store.dispatch(createNewSkill(skill)).unwrap()
+    const previous = store.getState().skills.items
+    const storage = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('quota', 'QuotaExceededError')
+    })
+    const changes = { images: ['data:image/jpeg;base64,smaller'] }
+
+    const failed = await store.dispatch(updateDataSkill({ id: skill.id, changes }))
+
+    expect(failed.payload).toBe(DATA_ERRORS.STORAGE_FULL)
+    expect(store.getState().skills.items).toBe(previous)
+    expect((await getSkills()).find((item) => item.id === skill.id)).toEqual(skill)
+    storage.mockRestore()
+    await store.dispatch(updateDataSkill({ id: skill.id, changes })).unwrap()
+    expect(store.getState().skills.items).toEqual([{ ...skill, ...changes }])
+    expect(store.getState().skills).toMatchObject({
+      saveStatus: 'succeeded',
+      saveError: null,
+      pendingSaves: 0,
+    })
+  })
+
   it('пишет в базу до обновления store, не меняет статус загрузки и читается новым store', async () => {
     const store = makeStore()
     await store.dispatch(fetchSkills()).unwrap()

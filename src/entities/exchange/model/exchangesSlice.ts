@@ -30,6 +30,12 @@ export const fetchExchanges = createAsyncThunk<Exchange[], void, { rejectValue: 
   },
 )
 
+/** Одна попытка при входе на страницу; failed повторяется, loading/succeeded не дублируются. */
+export const loadExchangesIfNeeded = () => (dispatch: AppDispatch, getState: () => RootState) => {
+  const status = getState().exchanges.status
+  if (status === 'idle' || status === 'failed') return dispatch(fetchExchanges())
+}
+
 /** Сначала сохраняет предложение в «базу», затем обновляет store. Без сессии запись запрещена. */
 export const addExchange = createAsyncThunk<
   Exchange,

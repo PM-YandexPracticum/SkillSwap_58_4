@@ -50,7 +50,9 @@ export function renderWithProviders(
     return (
       <Provider store={store}>
         <ToastProvider>
-          <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+          <MemoryRouter initialEntries={[route]} useTransitions={false}>
+            {children}
+          </MemoryRouter>
         </ToastProvider>
       </Provider>
     )

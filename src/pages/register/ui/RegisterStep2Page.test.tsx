@@ -31,6 +31,7 @@ const emptyDraft: RegisterDraft = {
   learnCategoryIds: [],
   learnSubcategoryIds: [],
   skill: null,
+  completion: null,
 }
 
 const originalScrollIntoView = Element.prototype.scrollIntoView
@@ -127,7 +128,13 @@ describe('RegisterStep2Page', () => {
 
   it('не стирает данные шага 1', async () => {
     const { user, store } = renderStep({
-      register: { completedStep: 1, draft: emptyDraft },
+      register: {
+        completedStep: 1,
+        draft: emptyDraft,
+        completionStatus: 'idle',
+        completionError: null,
+        completionRequestId: null,
+      },
     })
 
     await user.click(screen.getByRole('button', { name: 'Назад' }))
@@ -142,6 +149,9 @@ describe('RegisterStep2Page', () => {
     renderStep({
       register: {
         completedStep: 2,
+        completionStatus: 'idle',
+        completionError: null,
+        completionRequestId: null,
         draft: {
           ...emptyDraft,
           name: 'Ирина',

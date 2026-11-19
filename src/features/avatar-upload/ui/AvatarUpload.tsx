@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent } from 'react'
 
+import GalleryEditIcon from '@/shared/assets/icons/gallery-edit.svg?react'
 import AddIcon from '@/shared/assets/icons/add.svg?react'
 import UserCircleIcon from '@/shared/assets/icons/user-circle.svg?react'
 import { VALIDATION } from '@/shared/config'
@@ -17,11 +18,14 @@ const READ_ERROR = 'Не удалось загрузить фото. Попро�
 export interface AvatarUploadProps {
   /** Текущее фото: путь (`/images/avatars/u17.jpg`) или data URL */
   value: string | null
+  /** Размер и кнопка: регистрация — 72 px с «+», профиль — 244 px с редактированием. */
+  variant?: 'registration' | 'profile'
+  /** Подпись фотографии для скринридера. */
+  alt?: string
   /**
    * Выбранный файл прошёл `validateImageFile` и уменьшен `fileToDataUrl` до 800 px.
    * Отдаёт готовый data URL: повторно сжимать его не нужно, `File` наружу не выходит.
    */
-  alt?: string
   onChange: (dataUrl: string) => void
   /** Внешняя ошибка поля. Ошибка выбранного файла показывается вместо неё. */
   error?: string
@@ -31,19 +35,21 @@ export interface AvatarUploadProps {
 }
 
 /**
- * Аватар второго шага регистрации: блок 72 px, внутри user-circle или фото и кнопка «+» 16 px.
+ * Общий загрузчик аватара: компактный для регистрации и крупный для профиля.
+ * variant меняет только оформление, проверка и чтение файла остаются общими.
  * Кнопка открывает выбор файла (jpg, png, webp до 1 МБ). Файл проверяет `validateImageFile`:
  * тексты ошибок «Только JPG, PNG или WEBP» / «Файл больше 1 МБ» показываются под аватаром.
  * Подходящий файл читает `fileToDataUrl`, пока идёт чтение, кнопка недоступна, `onProcessingChange` сообщает об этом форме.
  * После размонтирования результат и ошибка чтения игнорируются.
  * Компонент не знает про черновик: фото сохраняет тот, кто его использует (регистрация — P6-04,
  * личные данные в кабинете — P7-06).
- * @see Figma: «Регистрация 2 шаг» (1:1497, блок `Icon+Add`).
+ * @see Figma: «Регистрация 2 шаг» (1:1497, блок `Icon+Add`), «Личные данные» (1:2370).
  */
 export function AvatarUpload({
   value,
   onChange,
   alt = 'Аватар пользователя',
+  variant = 'registration',
   error,
   onProcessingChange,
   disabled = false,
@@ -92,10 +98,12 @@ export function AvatarUpload({
   }
 
   return (
-    <div className={styles.root}>
+    <div
+      className={[styles.root, variant === 'profile' && styles.profile].filter(Boolean).join(' ')}
+    >
       <div className={styles.container}>
         <div className={styles.avatarWrapper}>
-          {value ? (
+          {value || variant === 'profile' ? (
             <Avatar src={value} alt={alt} className={styles.photo} />
           ) : (
             <UserCircleIcon className={styles.userIcon} aria-hidden="true" />
@@ -103,7 +111,13 @@ export function AvatarUpload({
 
           <IconButton
             ariaLabel={value ? 'Изменить фото' : 'Добавить фото'}
-            icon={<AddIcon aria-hidden="true" />}
+            icon={
+              variant === 'profile' ? (
+                <GalleryEditIcon aria-hidden="true" />
+              ) : (
+                <AddIcon aria-hidden="true" />
+              )
+            }
             className={styles.addButton}
             disabled={disabled || isLoading}
             aria-busy={isLoading}

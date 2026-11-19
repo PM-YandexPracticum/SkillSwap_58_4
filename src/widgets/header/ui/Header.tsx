@@ -1,18 +1,18 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 
 import { SearchInput } from '@/features/skill-search'
 import { LogoutButton } from '@/features/logout'
 import { selectIsAuth } from '@/entities/session'
 import { selectCurrentUser } from '@/entities/user'
-import { fetchNotifications, selectHasUnread } from '@/entities/notification'
+import { selectHasUnread } from '@/entities/notification'
 import ChevronDownIcon from '@/shared/assets/icons/chevron-down.svg?react'
 import LikeIcon from '@/shared/assets/icons/like.svg?react'
 import LikeFilledIcon from '@/shared/assets/icons/like-filled.svg?react'
 import MoonIcon from '@/shared/assets/icons/moon.svg?react'
 import NotificationIcon from '@/shared/assets/icons/notification.svg?react'
 import { ROUTES } from '@/shared/config'
-import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import { useAppSelector } from '@/shared/lib/store'
 import { Avatar } from '@/shared/ui/Avatar'
 import { Button } from '@/shared/ui/Button'
 import { Dropdown } from '@/shared/ui/Dropdown'
@@ -42,7 +42,7 @@ export interface HeaderProps {
  */
 export function Header({ categoriesMenu, notifications, className }: HeaderProps) {
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
+  const location = useLocation()
   const isAuth = useAppSelector(selectIsAuth)
   const currentUser = useAppSelector(selectCurrentUser)
   const hasUnread = useAppSelector(selectHasUnread)
@@ -52,6 +52,7 @@ export function Header({ categoriesMenu, notifications, className }: HeaderProps
   const categoriesTriggerRef = useRef<HTMLButtonElement>(null)
   const userTriggerRef = useRef<HTMLButtonElement>(null)
   const notificationsPanelId = useId()
+  const notificationsTriggerRef = useRef<HTMLSpanElement>(null)
   const hasCategoriesMenu = Boolean(categoriesMenu)
   const hasNotifications = Boolean(notifications)
   const isCategoriesOpen = openMenu === 'categories' && hasCategoriesMenu
@@ -60,15 +61,7 @@ export function Header({ categoriesMenu, notifications, className }: HeaderProps
 
   useEffect(() => {
     setOpenMenu(null)
-  }, [isAuth, currentUser?.id])
-
-  useEffect(() => {
-    if (!isAuth) return
-    // Свежий статус при dispatch исключает повторную загрузку в StrictMode.
-    void dispatch((dispatch, getState) => {
-      if (getState().notifications.status === 'idle') return dispatch(fetchNotifications())
-    })
-  }, [dispatch, isAuth])
+  }, [isAuth, currentUser?.id, location.key])
 
   const toggle = (menu: OpenMenu) => setOpenMenu((current) => (current === menu ? null : menu))
   const closer = (menu: OpenMenu) => () =>
@@ -128,11 +121,12 @@ export function Header({ categoriesMenu, notifications, className }: HeaderProps
         {isAuth ? (
           <>
             <Dropdown
+              className={styles.notificationsPopover}
               align="end"
               isOpen={isNotificationsOpen}
               onClose={closer('notifications')}
               trigger={
-                <span className={styles.bell}>
+                <span className={styles.bell} ref={notificationsTriggerRef}>
                   <IconButton
                     ariaLabel={hasUnread ? 'Уведомления, есть новые' : 'Уведомления'}
                     icon={<NotificationIcon className={styles.icon} />}
@@ -144,7 +138,16 @@ export function Header({ categoriesMenu, notifications, className }: HeaderProps
                 </span>
               }
             >
-              <div id={notificationsPanelId} role="region" aria-label="Уведомления">
+              <div
+                id={notificationsPanelId}
+                role="region"
+                aria-label="Уведомления"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape')
+                    notificationsTriggerRef.current?.querySelector('button')?.focus()
+                }}
+              >
                 {notifications}
               </div>
             </Dropdown>
@@ -173,7 +176,9 @@ export function Header({ categoriesMenu, notifications, className }: HeaderProps
                   aria-controls={isUserMenuOpen ? userMenuId : undefined}
                   onClick={() => toggle('user')}
                 >
-                  {currentUser?.name}
+                  <span className={styles.userName} title={currentUser?.name}>
+                    {currentUser?.name}
+                  </span>
                   <Avatar src={currentUser?.avatarUrl ?? null} alt="" size="sm" />
                 </button>
               }
