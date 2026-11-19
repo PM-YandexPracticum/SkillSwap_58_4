@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { createNotification } from '@/entities/notification/testing'
+import { DATA_ERRORS } from '@/shared/config'
 
 import { NotificationsPanel } from './NotificationsPanel'
 
@@ -13,19 +14,21 @@ const RECIPIENT_NAME = 'Ивану'
 const MOCK_CREATED_AT = '2026-05-23T10:00:00.000Z'
 
 /** Строка панели: уведомление из фабрики + подготовленное имя */
-const createItem = (overrides: Partial<NotificationWithName> = {}): NotificationWithName =>
-  ({
-    ...createNotification({ createdAt: MOCK_CREATED_AT }),
-    userName: RECIPIENT_NAME,
-    ...overrides,
-  }) as NotificationWithName
+const createItem = (overrides: Partial<NotificationWithName> = {}): NotificationWithName => ({
+  ...createNotification({ createdAt: MOCK_CREATED_AT }),
+  userName: RECIPIENT_NAME,
+  ...overrides,
+})
 
 /**
  * Окно колокольчика — фрейм 1:2190 (экран с открытой панелью — 1:2148).
  * «Новые уведомления» с «Прочитать все», ниже «Просмотренные» с «Очистить».
  * Записи распределяются по isRead; пусто — «Уведомлений пока нет».
  *
- * По P3-15 обработчики — заглушки: сохранение прочтения — P4-07, подключение к шапке — P7-05.
+ * LoadError — ошибка загрузки, MarkAllReadError, ClearError — ошибки операции;
+ * Эти состояния добавлены по аудиту P7-05; в макете их нет.
+ * Обработчики — заглушки для изолированной демонстрации. В приложении подключение к шапке
+ * и Redux выполняет MainLayout (P7-05).
  */
 const meta: Meta<typeof NotificationsPanel> = {
   title: 'widgets/notifications-panel/NotificationsPanel',
@@ -47,6 +50,9 @@ const meta: Meta<typeof NotificationsPanel> = {
   ],
   args: {
     notifications: [],
+    status: 'succeeded',
+    loadError: null,
+    actionError: null,
     onMarkAllRead: () => {},
     onClear: () => {},
     onGo: () => {},
@@ -88,3 +94,55 @@ export const OnlyRead: Story = {
 
 /** Пустая панель: «Уведомлений пока нет», секций и кнопок нет */
 export const Empty: Story = {}
+
+/** Первоначальная загрузка не выглядит как пустой список. */
+export const Loading: Story = { args: { status: 'loading' } }
+
+/** Операция идёт: список остаётся, «Прочитать все» и «Очистить» недоступны. */
+export const Busy: Story = {
+  args: {
+    status: 'loading',
+    notifications: [createItem({ id: 'n1' }), createItem({ id: 'n2', isRead: true })],
+  },
+}
+
+/**
+ * Ошибка загрузки: вместо списка — сообщение и «Повторить», данных нет.
+ * Текст — из `DATA_ERRORS.LOAD_NOTIFICATIONS`, как в приложении.
+ * Состояния нет в макете 1:2148 — добавлено по аудиту P7-05.
+ */
+export const LoadError: Story = {
+  args: {
+    status: 'failed',
+    loadError: DATA_ERRORS.LOAD_NOTIFICATIONS,
+    onRetry: () => {},
+  },
+}
+
+/**
+ * Ошибка «Прочитать все»: текст над секцией «Новые уведомления», список не скрыт.
+ * Не из макета 1:2148 — добавлено в P7-05 (аудит 13.11.2026).
+ */
+export const MarkAllReadError: Story = {
+  args: {
+    notifications: [
+      createItem({ id: 'n1', isRead: false }),
+      createItem({ id: 'n2', isRead: true }),
+    ],
+    actionError: DATA_ERRORS.READ_NOTIFICATIONS,
+  },
+}
+
+/**
+ * Ошибка «Очистить»: тот же вид, но текст про очистку.
+ * Не из макета 1:2148 — добавлено в P7-05 (аудит 13.11.2026).
+ */
+export const ClearError: Story = {
+  args: {
+    notifications: [
+      createItem({ id: 'n1', isRead: false }),
+      createItem({ id: 'n2', isRead: true }),
+    ],
+    actionError: DATA_ERRORS.CLEAR_NOTIFICATIONS,
+  },
+}

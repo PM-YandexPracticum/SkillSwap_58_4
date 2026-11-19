@@ -1,5 +1,5 @@
 import type { City } from './types'
-import { selectCities, selectCitiesStatus, selectCityById } from './selectors'
+import { selectCities, selectCitiesStatus, selectCityById, getCityName } from './selectors'
 
 const CITIES: City[] = [
   { id: 'msk', name: 'Москва' },
@@ -35,5 +35,37 @@ describe('city selectors', () => {
     it('работает на пустом справочнике', () => {
       expect(selectCityById(makeState({ items: [] }), 'msk')).toBeUndefined()
     })
+  })
+})
+
+describe('единое имя города', () => {
+  it('согласует имя для карточки и страницы, включая отсутствующий город', () => {
+    const cities = Object.freeze([
+      { id: 'z', name: 'Зеленоград' },
+      { id: 'a', name: 'Анапа' },
+    ])
+    const state = makeState({ items: [...cities] })
+    expect(getCityName(cities, 'a')).toBe(selectCityById(state, 'a')?.name)
+    expect(getCityName(cities, 'unknown')).toBe('Город не указан')
+    expect(getCityName([], 'a')).toBe('Город не указан')
+    expect(cities.map((city) => city.id)).toEqual(['z', 'a'])
+  })
+
+  it('переиспользует индекс и обновляет подпись после изменения справочника', () => {
+    const key = vi.fn(() => 'a')
+    const cities = [
+      {
+        get id() {
+          return key()
+        },
+        name: 'Анапа',
+      },
+    ]
+    expect(getCityName(cities, 'a')).toBe('Анапа')
+    key.mockClear()
+    expect(selectCityById(makeState({ items: cities }), 'a')?.name).toBe('Анапа')
+    expect(getCityName(cities, 'unknown')).toBe('Город не указан')
+    expect(key).not.toHaveBeenCalled()
+    expect(getCityName([{ id: 'a', name: 'Новое имя' }], 'a')).toBe('Новое имя')
   })
 })

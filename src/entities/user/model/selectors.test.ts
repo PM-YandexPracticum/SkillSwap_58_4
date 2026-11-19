@@ -1,5 +1,4 @@
 import { createTestStore } from '@/app/test/createTestStore'
-import { createSkill } from '@/entities/skill/testing'
 import { createUser } from '../testing'
 import {
   selectUsers,
@@ -8,14 +7,14 @@ import {
   selectUsersSaveError,
   selectUserById,
   selectUserByEmail,
+  selectCurrentUser,
   selectPopularUsers,
   selectNewUsers,
   selectRecommendedUsers,
-  selectSimilarUsers,
 } from '..'
 import type { User } from './types'
 
-const makeState = (items: User[], skills: ReturnType<typeof createSkill>[] = []): RootState =>
+const makeState = (items: User[]): RootState =>
   createTestStore({
     users: {
       saveStatus: 'idle' as const,
@@ -25,141 +24,60 @@ const makeState = (items: User[], skills: ReturnType<typeof createSkill>[] = [])
       status: 'idle',
       error: null,
     },
-    skills: {
-      saveStatus: 'idle' as const,
-      pendingSaves: 0,
-      saveError: null,
-      items: skills,
-      status: 'idle',
-      error: null,
-    },
   }).getState()
 
-describe('selectSimilarUsers', () => {
-  const author = createUser({ id: 'author', teachSkillId: 'current' })
-  const similar = createUser({ id: 'similar', teachSkillId: 'similar-skill' })
-  const other = createUser({
-    id: 'other',
-    teachSkillId: 'other-skill',
-    learnSubcategoryIds: ['music'],
-  })
-  const currentSkill = createSkill({
-    id: 'current',
-    authorId: author.id,
-    categoryId: 'creativity',
-    subcategoryId: 'music',
-  })
-  const similarSkill = createSkill({ ...currentSkill, id: 'similar-skill', authorId: similar.id })
-  const otherSkill = createSkill({
-    ...currentSkill,
-    id: 'other-skill',
-    authorId: other.id,
-    subcategoryId: 'photo',
-  })
-  const users = [author, similar, other]
-  const skills = [currentSkill, similarSkill, otherSkill]
-
-  it('выбирает других авторов той же подкатегории, а не категории или желаний учиться', () => {
-    const result = selectSimilarUsers(makeState(users, skills), currentSkill.id)
-
-    expect(result.map((user) => user.id)).toEqual([similar.id])
-  })
-
-  it('возвращает публичные данные без пароля', () => {
-    const result = selectSimilarUsers(makeState(users, skills), currentSkill.id)
-
-    expect(result[0]).not.toHaveProperty('password')
-    expect(result[0].name).toBe(similar.name)
-  })
-
-  it('пропускает отсутствующий навык и ссылку на чужое предложение', () => {
-    const state = makeState(
-      [
-        ...users,
-        createUser({ id: 'missing', teachSkillId: 'missing' }),
-        createUser({ id: 'wrong-author', teachSkillId: similarSkill.id }),
-      ],
-      skills,
-    )
-
-    expect(selectSimilarUsers(state, currentSkill.id).map((user) => user.id)).toEqual([similar.id])
-  })
-
-  it.each(['', 'unknown'])('без текущего навыка «%s» возвращает пустой список', (skillId) => {
-    expect(selectSimilarUsers(makeState(users, skills), skillId)).toEqual([])
-  })
-
-  it('не считает отсутствующие подкатегории совпадением', () => {
-    const state = makeState(
-      users,
-      skills.map((skill) => ({ ...skill, subcategoryId: '' })),
-    )
-
-    expect(selectSimilarUsers(state, currentSkill.id)).toEqual([])
-  })
-
-  it.each([
-    ['без пользователей', [], skills],
-    ['без навыков', users, []],
-    ['без похожих', [author, other], [currentSkill, otherSkill]],
-    ['без автора похожего предложения', [author], skills],
-  ] as const)('%s возвращает пустой список', (_name, records, offers) => {
-    expect(selectSimilarUsers(makeState([...records], [...offers]), currentSkill.id)).toEqual([])
-  })
-
-  it('сохраняет порядок пользователей и не меняет исходные данные', () => {
-    const another = createUser({ id: 'another', teachSkillId: 'another-skill' })
-    const state = makeState(
-      [another, author, similar],
-      [...skills, createSkill({ ...similarSkill, id: another.teachSkillId, authorId: another.id })],
-    )
-    const originalUsers = state.users.items
-    const originalSkills = state.skills.items
-    Object.freeze(originalUsers)
-    Object.freeze(originalSkills)
-
-    expect(selectSimilarUsers(state, currentSkill.id).map((user) => user.id)).toEqual([
-      another.id,
-      similar.id,
-    ])
-    expect(state.users.items).toBe(originalUsers)
-    expect(state.skills.items).toBe(originalSkills)
-    expect(state.users.items.map((user) => user.id)).toEqual([another.id, author.id, similar.id])
-  })
-
-  it('сохраняет ссылку при повторном вызове и изменении постороннего слайса', () => {
-    const state = makeState(users, skills)
-    const result = selectSimilarUsers(state, currentSkill.id)
-
-    expect(selectSimilarUsers(state, currentSkill.id)).toBe(result)
+describe('Тестирование селекторов пользователей', () => {
+  it('отдаёт текущего пользователя без пароля, сохраняя ссылку при обновлении другого пользователя', () => {
+    const current = createUser({ id: 'current' })
+    const other = createUser({ id: 'other' })
+    const state = {
+      ...makeState([current, other]),
+      session: { session: { userId: current.id, token: 'mock' } },
+    }
+    const result = selectCurrentUser(state)
+    expect(result?.id).toBe(current.id)
+    expect(result).not.toHaveProperty('password')
     expect(
-      selectSimilarUsers({ ...state, cities: { items: [], status: 'loading' } }, currentSkill.id),
+      selectCurrentUser({
+        ...state,
+        users: { ...state.users, items: [current, { ...other, name: 'Новое имя' }] },
+      }),
     ).toBe(result)
   })
 
-  it('при смене навыка исключает нового автора и подбирает его подкатегорию', () => {
-    const state = makeState(users, skills)
-
-    expect(selectSimilarUsers(state, currentSkill.id).map((user) => user.id)).toEqual([similar.id])
-    expect(selectSimilarUsers(state, similarSkill.id).map((user) => user.id)).toEqual([author.id])
-    expect(selectSimilarUsers(state, otherSkill.id)).toEqual([])
+  it('возвращает null для гостя и для неизвестного пользователя в сессии', () => {
+    const state = makeState([createUser({ id: 'current' })])
+    expect(selectCurrentUser({ ...state, session: { session: null } })).toBeNull()
+    expect(
+      selectCurrentUser({
+        ...state,
+        session: { session: { userId: 'missing', token: 'mock' } },
+      }),
+    ).toBeNull()
   })
 
-  it('пересчитывает результат после обновления навыков', () => {
-    const state = makeState(users, skills)
-    expect(selectSimilarUsers(state, currentSkill.id)).toHaveLength(1)
-    const updated = makeState(users, [currentSkill, { ...similarSkill, subcategoryId: 'photo' }])
+  it('обновляет текущего пользователя при смене сессии, изменении профиля и выходе', () => {
+    const current = createUser({ id: 'current', name: 'Иван' })
+    const other = createUser({ id: 'other', name: 'Анна' })
+    const state = {
+      ...makeState([current, other]),
+      session: { session: { userId: current.id, token: 'mock' } },
+    }
+    const initial = selectCurrentUser(state)
+    const updated = selectCurrentUser({
+      ...state,
+      users: { ...state.users, items: [{ ...current, name: 'Пётр' }, other] },
+    })
 
-    expect(selectSimilarUsers(updated, currentSkill.id)).toEqual([])
+    expect(updated?.name).toBe('Пётр')
+    expect(updated).not.toBe(initial)
+    expect(updated).not.toHaveProperty('password')
+    expect(
+      selectCurrentUser({ ...state, session: { session: { userId: other.id, token: 'other' } } }),
+    ).toMatchObject({ id: other.id, name: other.name })
+    expect(selectCurrentUser({ ...state, session: { session: null } })).toBeNull()
   })
 
-  it('пересчитывает результат после удаления пользователя', () => {
-    expect(selectSimilarUsers(makeState(users, skills), currentSkill.id)).toHaveLength(1)
-    expect(selectSimilarUsers(makeState([author], skills), currentSkill.id)).toEqual([])
-  })
-})
-
-describe('Тестирование селекторов пользователей', () => {
   it('возвращает статус загрузки', () => {
     const state = makeState([])
     expect(selectUsersStatus({ ...state, users: { ...state.users, status: 'failed' } })).toBe(

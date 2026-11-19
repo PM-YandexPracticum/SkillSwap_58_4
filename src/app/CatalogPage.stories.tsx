@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Provider } from 'react-redux'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { expect, fn, userEvent, within } from 'storybook/test'
+import { expect, userEvent, within } from 'storybook/test'
 import type { Category } from '@/entities/category'
 import type { City } from '@/entities/city'
 import type { Skill } from '@/entities/skill'
@@ -24,7 +24,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'P3-10: одна CatalogPage в MainLayout для всех состояний. Данные из базы: «Популярное» по лайкам, «Новое» по дате регистрации. Results и SearchResults — статичные виды результатов; обработчики плашек и сортировки записываются в Actions. Их управляемое поведение показано отдельно в stories ActiveFilters/SortToggle. P5-02 сохраняет выбор панели в store, а применение к списку и результаты — P5-05. Пустые состояния — решения вне Figma.',
+          'P5-05: CatalogPage читает catalogFilter и searchQuery из store, применяет applyFilters и переключает вёрстку на «Подходящие предложения: N» при активном фильтре или поиске. Results и SearchResults — те же виды, но фильтры и поиск выставлены через parameters и preloadedState. Плашки и сортировка записываются в store; их управляемое поведение показано отдельно в stories ActiveFilters/SortToggle. P5-06: «Рекомендуем» и результаты показывают по 6 карточек; при прокрутке к концу — спиннер на 1 с и ещё 6. Смена фильтров начинает ленту сначала. Пустые состояния — решения вне Figma.',
       },
     },
   },
@@ -40,10 +40,10 @@ const meta = {
     },
   ],
   decorators: [
-    (Story, { args, loaded, parameters }) => {
-      const users = parameters.empty
-        ? []
-        : (loaded.users as User[]).slice(0, args.results ? CATALOG.SECTION_EXPANDED : undefined)
+    (Story, { loaded, parameters }) => {
+      const slice = parameters.results ? CATALOG.SECTION_EXPANDED : undefined
+      const users = parameters.empty ? [] : (loaded.users as User[]).slice(0, slice)
+
       const store = createAppStore({
         users: {
           saveStatus: 'idle' as const,
@@ -54,6 +54,13 @@ const meta = {
           error: null,
         },
         search: { query: parameters.searchQuery ?? '' },
+        catalogFilter: {
+          mode: parameters.mode ?? 'all',
+          subcategoryIds: parameters.subcategoryIds ?? [],
+          gender: parameters.gender ?? null,
+          cityIds: parameters.cityIds ?? [],
+          sort: 'newest' as const,
+        },
         skills: {
           saveStatus: 'idle' as const,
           pendingSaves: 0,
@@ -66,6 +73,7 @@ const meta = {
         cities: { items: loaded.cities, status: 'succeeded' },
         exchanges: { items: [], status: 'succeeded', pendingRequests: 0, error: null },
       })
+
       return (
         <Provider store={store}>
           <MemoryRouter>
@@ -80,53 +88,67 @@ const meta = {
     },
   ],
 } satisfies Meta<typeof CatalogPage>
+
 export default meta
 type Story = StoryObj<typeof meta>
+
 export const Default: Story = {}
+
 export const Results: Story = {
-  args: {
-    results: {
-      filters: [
-        { id: 'mode', label: 'Хочу научиться' },
-        { id: 'english', label: 'Английский' },
-      ],
-      sort: 'newest',
-      onRemoveFilter: fn(),
-      onSortChange: fn(),
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    await userEvent.click(canvas.getByRole('radio', { name: 'Хочу научиться' }))
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Развернуть категорию «Иностранные языки»' }),
-    )
-    await userEvent.click(canvas.getByRole('checkbox', { name: /^Английский$/ }))
-    await expect(canvas.getByRole('radio', { name: 'Хочу научиться' })).toBeChecked()
-    await expect(canvas.getByRole('checkbox', { name: /^Английский$/ })).toBeChecked()
-  },
   parameters: {
+    results: true,
+    mode: 'learn' as const,
+    subcategoryIds: ['english'] as const,
     design: {
       type: 'figma',
       url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2860',
     },
   },
-}
-export const SearchResults: Story = {
-  args: {
-    results: { filters: [], sort: 'newest', onRemoveFilter: fn(), onSortChange: fn() },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(
+      canvas.getByRole('heading', { name: /Подходящие предложения/ }),
+    ).toBeInTheDocument()
+    await expect(canvas.getByRole('button', { name: 'Удалить Хочу научиться' })).toBeInTheDocument()
+    await expect(canvas.getByRole('button', { name: 'Удалить Английский' })).toBeInTheDocument()
+    await expect(canvas.getByRole('button', { name: 'Сначала новые' })).toBeInTheDocument()
+    await userEvent.click(canvas.getByRole('button', { name: 'Сначала новые' }))
+    await expect(canvas.getByRole('button', { name: 'Сначала старые' })).toBeInTheDocument()
   },
+}
+
+export const SearchResults: Story = {
   parameters: {
+    results: true,
     searchQuery: 'Игра на барабанах',
     design: {
       type: 'figma',
       url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2819',
     },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(
+      canvas.getByRole('heading', { name: /Подходящие предложения/ }),
+    ).toBeInTheDocument()
+  },
 }
+
 export const Empty: Story = { parameters: { empty: true } }
+
 export const EmptyResults: Story = {
-  args: Results.args,
-  parameters: { empty: true },
-  play: Results.play,
+  parameters: {
+    empty: true,
+    results: true,
+    mode: 'learn' as const,
+    subcategoryIds: ['english'] as const,
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2860',
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByRole('status')).toHaveTextContent('Ничего не нашлось')
+  },
 }

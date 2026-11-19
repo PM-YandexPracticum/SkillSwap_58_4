@@ -1,7 +1,13 @@
 import { createTestStore } from '@/app/test/createTestStore'
 import { createExchange, getExchanges } from '../api/exchangeApi'
 import * as exchangeApi from '../api/exchangeApi'
-import { addExchange, fetchExchanges, exchangesReducer } from './exchangesSlice'
+import {
+  addExchange,
+  completeExchangeProposal,
+  fetchExchanges,
+  loadExchangesIfNeeded,
+  exchangesReducer,
+} from './exchangesSlice'
 import { selectHasProposed, selectExchangesStatus, selectExchangesError } from './selectors'
 import type { Exchange } from './types'
 
@@ -17,6 +23,34 @@ const signedInStore = () => {
 }
 
 describe('exchangesSlice', () => {
+  it('повторяет failed один раз, не дублирует активную загрузку и не повторяется после успеха', async () => {
+    const store = signedInStore()
+    store.dispatch(fetchExchanges.rejected(new Error('offline'), 'old'))
+    const read = vi.spyOn(exchangeApi, 'getExchanges').mockResolvedValue([exchange])
+    try {
+      const pending = store.dispatch(loadExchangesIfNeeded())
+      expect(store.dispatch(loadExchangesIfNeeded())).toBeUndefined()
+      await pending
+      expect(store.getState().exchanges.items).toEqual([exchange])
+      expect(store.dispatch(loadExchangesIfNeeded())).toBeUndefined()
+      expect(read).toHaveBeenCalledTimes(1)
+    } finally {
+      read.mockRestore()
+    }
+  })
+
+  it('повторная ошибка заканчивает попытку без фонового цикла', async () => {
+    const store = signedInStore()
+    const read = vi.spyOn(exchangeApi, 'getExchanges').mockRejectedValue(new Error('offline'))
+    try {
+      await store.dispatch(loadExchangesIfNeeded())
+      expect(store.getState().exchanges.status).toBe('failed')
+      expect(store.getState().exchanges.pendingRequests).toBe(0)
+      expect(read).toHaveBeenCalledTimes(1)
+    } finally {
+      read.mockRestore()
+    }
+  })
   it('загружает обмены из базы, отмечает loading и succeeded', async () => {
     const store = signedInStore()
     const loading = store.dispatch(fetchExchanges())
@@ -60,6 +94,30 @@ describe('exchangesSlice', () => {
       expect((await getExchanges()).some((item) => item.id === exchange.id)).toBe(false)
     },
   )
+
+  it('завершает запись уведомления в базе и store', async () => {
+    const store = signedInStore()
+    await store.dispatch(addExchange({ ...exchange, notificationPending: true })).unwrap()
+    await store.dispatch(completeExchangeProposal(exchange.id)).unwrap()
+    expect(store.getState().exchanges.items[0].notificationPending).toBe(false)
+    expect(
+      (await getExchanges()).find((item) => item.id === exchange.id)?.notificationPending,
+    ).toBe(false)
+    expect(selectExchangesStatus(store.getState())).toBe('succeeded')
+  })
+
+  it.each([null, 'other-owner'])('не завершает чужой обмен при сессии %s', async (userId) => {
+    await createExchange({ ...exchange, notificationPending: true })
+    const store = createTestStore({
+      session: { session: userId ? { userId, token: 'test' } : null },
+    })
+    await expect(
+      store.dispatch(completeExchangeProposal(exchange.id)).unwrap(),
+    ).rejects.toBeTruthy()
+    expect(
+      (await getExchanges()).find((item) => item.id === exchange.id)?.notificationPending,
+    ).toBe(true)
+  })
 
   it('после ошибки загрузки сохраняет прежний список и статус failed', () => {
     const initial = {

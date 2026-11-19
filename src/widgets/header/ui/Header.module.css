@@ -111,6 +111,8 @@
 }
 
 .user {
+  --header-user-name-max-width: 180px; /* Длинное допустимое имя не сжимает поиск. */
+
   display: flex;
   align-items: center;
   gap: var(--space-12);
@@ -119,6 +121,13 @@
   line-height: var(--space-24);
   letter-spacing: 0.02em;
   color: var(--color-text);
+}
+
+.userName {
+  max-width: var(--header-user-name-max-width);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .menu {
@@ -148,6 +157,13 @@
 /* Центрируем панель под триггером; Dropdown удерживает её внутри окна. */
 .categoriesPopover {
   left: calc(50% - var(--container-width-narrow) / 2);
+  border: 0;
+  max-height: calc(100dvh - var(--space-100) - var(--space-20));
+  overflow-y: auto;
+}
+
+/* Длинный список остаётся доступен в пределах desktop-окна; рамку рисует сама панель. */
+.notificationsPopover {
   border: 0;
   max-height: calc(100dvh - var(--space-100) - var(--space-20));
   overflow-y: auto;

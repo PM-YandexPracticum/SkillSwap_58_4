@@ -2,7 +2,8 @@ import type { Gender } from '@/entities/user'
 
 /**
  * Данные, накопленные по всем шагам. Хранятся в Redux, поэтому только сериализуемые значения:
- * файлы фото (`File`) не кладём в store — здесь только их превью `blob:`; сами файлы держит страница регистрации.
+ * файлы (`File`) в store не кладём. Фото хранятся как готовые data URL: их уже проверил
+ * `validateImageFile` и уменьшил `fileToDataUrl`, при сохранении (P6-06) повторно их не сжимаем.
  */
 export interface RegisterDraft {
   /** Шаг 1 — учётные данные */
@@ -10,6 +11,7 @@ export interface RegisterDraft {
   password: string
   /** Шаг 2 — «Расскажите немного о себе» */
   name: string
+  /** Аватар: готовый data URL (до 800 px; небольшое фото сохраняет исходный формат) или `null` */
   avatarPreviewUrl: string | null
   birthDate: string
   gender: Gender | null
@@ -24,6 +26,13 @@ export interface RegisterDraft {
     categoryId: string
     subcategoryId: string
     description: string
+    /** фото навыка: готовые data URL */
     imagePreviewUrls: string[]
+  } | null
+  /** Стабильные данные попытки для повтора после отказа записи или отмены запроса. */
+  completion: {
+    userId: string
+    skillId: string
+    createdAt: string
   } | null
 }

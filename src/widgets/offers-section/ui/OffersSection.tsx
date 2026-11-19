@@ -1,8 +1,9 @@
-import { useId, useState, type ReactNode } from 'react'
+import { useId, useState, type ReactNode, type Ref } from 'react'
 
 import type { PublicUser } from '@/entities/user'
 import ChevronRight from '@/shared/assets/icons/chevron-right.svg?react'
 import { CATALOG } from '@/shared/config'
+import { Loader } from '@/shared/ui/Loader'
 
 import styles from './OffersSection.module.css'
 
@@ -11,15 +12,22 @@ export interface OffersSectionProps {
   /** Дополнительное действие заголовка, например сортировка результатов. */
   headerAction?: ReactNode
   users: ReadonlyArray<PublicUser>
-  /** `expandable` — 3 ⇄ 9; `infinite` — все переданные карточки, догрузка подключается в P5-06 */
+  /** `expandable` — 3 ⇄ 9; `infinite` — все переданные карточки, порцию задаёт страница */
   mode: 'expandable' | 'infinite'
   /** Карточку передаёт страница: виджет не импортирует другой виджет */
   renderItem: (user: PublicUser) => ReactNode
+  /** Только `infinite`: показать спиннер под сеткой, пока догружается порция. */
+  isLoading?: boolean
+  /** Только `infinite`: есть ещё карточки — выводим маркер конца ленты. */
+  hasMore?: boolean
+  /** Только `infinite`: ref маркера из `useInfiniteScroll`. */
+  sentinelRef?: Ref<HTMLDivElement>
 }
 
 /**
  * Сетка по три карточки. «Популярное» и «Новое» плавно раскрываются с 3 до 9 и обратно.
- * Секции независимы; в режиме ленты показывает все переданные карточки без собственной загрузки.
+ * Секции независимы. В режиме ленты показывает переданные карточки, а под сеткой —
+ * спиннер догрузки и пустой маркер конца ленты; саму догрузку выполняет страница.
  * @see Figma: «Популярное» (1:2872), «Новое» (1:2880), «Рекомендуем» (1:2888)
  */
 export function OffersSection({
@@ -28,7 +36,11 @@ export function OffersSection({
   mode,
   renderItem,
   headerAction,
+  isLoading = false,
+  hasMore = false,
+  sentinelRef,
 }: OffersSectionProps) {
+  const infinite = mode === 'infinite'
   const id = useId()
   const [expanded, setExpanded] = useState(false)
   const expandable = mode === 'expandable' && users.length > CATALOG.SECTION_COLLAPSED
@@ -79,6 +91,14 @@ export function OffersSection({
             </div>
           </div>
         </div>
+      )}
+      {infinite && isLoading && (
+        <div className={styles.loading}>
+          <Loader />
+        </div>
+      )}
+      {infinite && hasMore && sentinelRef && (
+        <div ref={sentinelRef} className={styles.sentinel} aria-hidden="true" />
       )}
     </section>
   )

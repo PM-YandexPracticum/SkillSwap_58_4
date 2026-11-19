@@ -39,7 +39,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Сетка 3 колонки, промежутки 24 px. Нажмите «Смотреть все»: 3 → максимум 9 → 3; учитывается reduced motion. Секция принимает renderItem от страницы, потому что виджеты не импортируют соседние виджеты. В infinite загрузка не выполняется: это P5-06.',
+          'Сетка 3 колонки, промежутки 24 px. Нажмите «Смотреть все»: 3 → максимум 9 → 3; учитывается reduced motion. Секция принимает renderItem от страницы, потому что виджеты не импортируют соседние виджеты. В infinite секция сама не грузит: порцию, спиннер и маркер конца ленты передаёт страница через useInfiniteScroll (P5-06). Живая догрузка — в app/CatalogPage.',
       },
     },
   },
@@ -60,4 +60,22 @@ export const Default: Story = {}
 export const Empty: Story = { args: { users: [] } }
 export const ThreeCards: Story = { args: { users: users.slice(0, 3) } }
 export const FiveCards: Story = { args: { users: users.slice(0, 5) } }
-export const Feed: Story = { args: { title: 'Рекомендуем', mode: 'infinite' } }
+export const Feed: Story = {
+  args: { title: 'Рекомендуем', mode: 'infinite', users: users.slice(0, 6), hasMore: true },
+}
+/** Пользователь докрутил до конца ленты: под сеткой спиннер, пока догружаются ещё 6 карточек. */
+export const FeedLoading: Story = {
+  args: {
+    title: 'Рекомендуем',
+    mode: 'infinite',
+    users: users.slice(0, 6),
+    isLoading: true,
+    hasMore: true,
+  },
+  parameters: {
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/40gXmyAoxwwnb9kBxI5B8y/SkillSwap-Red.1-?node-id=1-2888',
+    },
+  },
+}

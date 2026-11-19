@@ -9,6 +9,8 @@ export interface CredentialsFormProps {
   /** Доступное название формы */
   label: string
   submitLabel: string
+  /** Доступность отправки определяет вызывающая форма. */
+  submitDisabled?: boolean
   onSubmit: FormEventHandler<HTMLFormElement>
   /** Атрибуты полей и ref, в том числе результат register() из react-hook-form */
   emailInput: InputProps & RefAttributes<HTMLInputElement>
@@ -27,6 +29,7 @@ export interface CredentialsFormProps {
 export function CredentialsForm({
   label,
   submitLabel,
+  submitDisabled,
   onSubmit,
   emailInput,
   passwordInput,
@@ -73,7 +76,9 @@ export function CredentialsForm({
         )}
       </div>
       <div className={styles.actions}>
-        <Button type="submit">{submitLabel}</Button>
+        <Button type="submit" disabled={submitDisabled}>
+          {submitLabel}
+        </Button>
         <div className={styles.footer}>{children}</div>
       </div>
     </form>

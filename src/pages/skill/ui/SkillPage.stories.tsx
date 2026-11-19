@@ -6,9 +6,12 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { categoriesReducer, type Category } from '@/entities/category'
 import { citiesReducer, type City } from '@/entities/city'
 import { exchangesReducer, type ExchangesState } from '@/entities/exchange'
+import { notificationsReducer, type NotificationsState } from '@/entities/notification'
 import { skillsReducer, type Skill } from '@/entities/skill'
 import { sessionReducer } from '@/entities/session'
 import { usersReducer, type User } from '@/entities/user'
+import { favoriteToggleReducer } from '@/features/favorite-toggle'
+import { ToastContext } from '@/shared/lib/toast'
 import { loadSeed } from '@/shared/api'
 import { getSkillRoute, ROUTES } from '@/shared/config'
 
@@ -36,7 +39,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Страница получает навык, автора и справочники из Redux. P7-02: selectSimilarUsers подбирает других авторов той же подкатегории; без совпадений блок скрыт. «Предложить обмен» пока показывает состояния из P3-09; реальная логика обмена остаётся в P7-03.',
+          'Страница получает навык, автора и справочники из Redux. P7-02: selectSimilarUsers подбирает других авторов той же подкатегории; без совпадений блок скрыт. P7-03 подключает обмен, уведомление, toast и окно подтверждения через API P4-07.',
       },
     },
   },
@@ -66,7 +69,9 @@ function renderAt(skillId: string): Story['render'] {
         skills: skillsReducer,
         users: usersReducer,
         exchanges: exchangesReducer,
+        notifications: notificationsReducer,
         session: sessionReducer,
+        favoriteToggle: favoriteToggleReducer,
       },
       preloadedState: {
         cities: { items: [...cities], status: 'succeeded' as const },
@@ -99,15 +104,24 @@ function renderAt(skillId: string): Story['render'] {
           pendingRequests: 0,
           error: null,
         } satisfies ExchangesState,
+        notifications: {
+          items: [],
+          status: 'succeeded' as const,
+          pendingRequests: 0,
+          error: null,
+          loadError: null,
+        } satisfies NotificationsState,
       },
     })
     return (
       <Provider store={store}>
-        <MemoryRouter initialEntries={[getSkillRoute(skillId)]}>
-          <Routes>
-            <Route path={ROUTES.SKILL} element={<SkillPage />} />
-          </Routes>
-        </MemoryRouter>
+        <ToastContext.Provider value={{ showToast: () => {}, removeToast: () => {} }}>
+          <MemoryRouter initialEntries={[getSkillRoute(skillId)]}>
+            <Routes>
+              <Route path={ROUTES.SKILL} element={<SkillPage />} />
+            </Routes>
+          </MemoryRouter>
+        </ToastContext.Provider>
       </Provider>
     )
   }

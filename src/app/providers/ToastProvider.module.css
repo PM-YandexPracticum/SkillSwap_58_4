@@ -1,6 +1,6 @@
 .notifications {
   position: fixed;
-  z-index: 5;
+  z-index: var(--z-toast);
   bottom: var(--space-24);
   left: var(--space-36);
   display: flex;

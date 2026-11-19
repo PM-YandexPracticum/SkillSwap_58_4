@@ -1,7 +1,9 @@
 import { screen } from '@testing-library/react'
+import { StrictMode } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
+import { registerReducer } from '@/features/register'
 import { ROUTES } from '@/shared/config'
 import { RegisterLayout } from './RegisterLayout'
 import { RegisterStep1Page } from './RegisterStep1Page'
@@ -35,7 +37,7 @@ describe('RegisterLayout', () => {
     expect(screen.getByRole('heading', { level: 2, name: title })).toBeInTheDocument()
   })
 
-  it('«Далее» открывает второй шаг и обновляет индикатор без сохранения данных', async () => {
+  it('«Далее» открывает второй шаг, сохраняет данные и обновляет индикатор', async () => {
     const { user, store } = renderWithProviders(<RegistrationRoutes />, {
       route: ROUTES.REGISTER_STEP_1,
     })
@@ -46,8 +48,8 @@ describe('RegisterLayout', () => {
 
     expect(screen.getByText('Шаг 2 из 3')).toBeInTheDocument()
     expect(screen.getByText('Содержимое шага 2')).toBeInTheDocument()
-    expect(store.getState().register.draft.email).toBe('')
-    expect(store.getState().register.completedStep).toBe(0)
+    expect(store.getState().register.draft.email).toBe('user@example.com')
+    expect(store.getState().register.completedStep).toBe(1)
   })
 
   it('на шаге 1 ссылка входа открывает /login', async () => {
@@ -60,5 +62,31 @@ describe('RegisterLayout', () => {
     )
     await user.click(screen.getByRole('link', { name: 'Войти' }))
     expect(screen.getByRole('heading', { name: 'Вход' })).toBeInTheDocument()
+  })
+
+  it('не сбрасывает черновик при повторном монтировании StrictMode', () => {
+    const { store } = renderWithProviders(
+      <StrictMode>
+        <RegistrationRoutes />
+      </StrictMode>,
+      {
+        route: ROUTES.REGISTER_STEP_2,
+        preloadedState: {
+          register: {
+            draft: {
+              ...registerReducer(undefined, { type: '@@init' }).draft,
+              email: 'new@mail.ru',
+            },
+            completedStep: 1,
+            completionStatus: 'idle',
+            completionError: null,
+            completionRequestId: null,
+          },
+        },
+      },
+    )
+
+    expect(store.getState().register.draft.email).toBe('new@mail.ru')
+    expect(store.getState().register.completedStep).toBe(1)
   })
 })

@@ -6,10 +6,10 @@
 | Файл | Фаза |
 |---|---|
 | [phase-00-foundation.md](phase-00-foundation.md) | 0. Фундамент ✅ |
-| [phase-01-preparation.md](phase-01-preparation.md) | 1. Подготовка |
-| [phase-02-ui-kit.md](phase-02-ui-kit.md) | 2. UI-кит |
-| [phase-03-layout.md](phase-03-layout.md) | 3. Вёрстка блоков и страниц |
-| [phase-04-data.md](phase-04-data.md) | 4. Данные и вход |
+| [phase-01-preparation.md](phase-01-preparation.md) | 1. Подготовка ✅ |
+| [phase-02-ui-kit.md](phase-02-ui-kit.md) | 2. UI-кит ✅ |
+| [phase-03-layout.md](phase-03-layout.md) | 3. Вёрстка блоков и страниц ✅ |
+| [phase-04-data.md](phase-04-data.md) | 4. Данные и вход ✅ |
 | [phase-05-catalog.md](phase-05-catalog.md) | 5. Каталог и избранное |
 | [phase-06-register.md](phase-06-register.md) | 6. Регистрация |
 | [phase-07-skill-profile.md](phase-07-skill-profile.md) | 7. Навык, обмен, профиль |
@@ -41,6 +41,8 @@
 - **Issue:** [#N](...)                         ← появляется, когда карточка создана на доске
 - **Готово, когда:** ...                      ← «Acceptance criteria» (+ общий критерий фазы)
 ```
+
+В начале каждого файла фазы после цели находится блок **«Архитектурная роль фазы»**. Он отвечает на пять одинаковых вопросов: за что отвечает фаза, что подключает, что использует, чего не дублирует и какой результат передаёт дальше. Статусы и конкретные файлы остаются в описаниях задач ниже.
 
 Задача сделана — ставим ✅ после названия: `### P2-02 · Кнопки Button и IconButton ✅ 🟢`.
 

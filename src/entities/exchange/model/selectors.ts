@@ -1,4 +1,6 @@
+import { createLookup } from '@/shared/lib/createLookup'
 import { createSelector } from '@reduxjs/toolkit'
+import type { Exchange } from './types'
 import type { ID } from '@/shared/types'
 
 const selectItems = (state: RootState) => state.exchanges.items
@@ -9,15 +11,22 @@ export const selectExchanges = createSelector([selectItems, selectUserId], (item
   userId ? items.filter((item) => item.fromUserId === userId || item.toUserId === userId) : [],
 )
 
-/** Предлагал ли текущий пользователь обмен этому человеку (независимо от навыка). */
+/** Индекс исходящих предложений перестраивается только при смене списка или владельца. */
+const selectOutgoingLookup = createSelector([selectItems, selectUserId], (items, userId) =>
+  createLookup(
+    userId ? items.filter((item) => item.fromUserId === userId) : [],
+    (item) => item.toUserId,
+  ),
+)
+
+/** Исходящий обмен, включая незавершённую запись уведомления; поиск O(log n). */
+export const selectOutgoingExchange = (state: RootState, otherUserId: ID): Exchange | undefined =>
+  selectOutgoingLookup(state)(otherUserId)
+
+/** Полностью сохранённое исходящее предложение; незавершённое оставляет доступ к повтору. */
 export const selectHasProposed = (state: RootState, otherUserId: ID): boolean => {
-  const userId = selectUserId(state)
-  return (
-    !!userId &&
-    state.exchanges.items.some(
-      (item) => item.fromUserId === userId && item.toUserId === otherUserId,
-    )
-  )
+  const exchange = selectOutgoingExchange(state, otherUserId)
+  return !!exchange && !exchange.notificationPending
 }
 
 /** Общий статус операций с обменами: loading, пока есть незавершённые запросы. */

@@ -21,6 +21,7 @@ export interface UserProfileCardProps {
  * Расширенная карточка автора на странице навыка: блок `UserSummary` (аватар, имя, «город, возраст»),
  * «О себе» (только если заполнено — `user.about`) и чипы навыков, как в UserCard.
  * Данные о городе, навыке и подкатегориях приходят пропсами — их соберёт страница навыка (P3-09, P7-01) селекторами P4-02.
+ * Число видимых чипов и расчёт «+N» используют CATALOG.CARD_LEARN_TAGS, как UserCard.
  * Образец устройства, stories и тестов — UserCard (P3-01).
  * @see Figma: «Страница навыка» (1:2764), левая колонка
  */
@@ -32,14 +33,14 @@ export function UserProfileCard(_props: UserProfileCardProps) {
       (subcategory: UserCardTag & { id: string }, index: number): ReactNode => {
         if (index === CATALOG.CARD_LEARN_TAGS) {
           return (
-            <li key={index} className={styles.subcategoriesMoreElement}>
-              <Tag label={`+${subcategories.length - 2}`} color={'more'} />
+            <li key="more" className={styles.subcategoriesMoreElement}>
+              <Tag label={`+${subcategories.length - CATALOG.CARD_LEARN_TAGS}`} color={'more'} />
             </li>
           )
         }
         if (index < CATALOG.CARD_LEARN_TAGS) {
           return (
-            <li key={index} className={styles.subcategoriesElement}>
+            <li key={subcategory.id} className={styles.subcategoriesElement}>
               <Chip title={subcategory.title} categoryId={subcategory.categoryId} />
             </li>
           )

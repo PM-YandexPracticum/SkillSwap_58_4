@@ -39,9 +39,10 @@
   align-items: center;
   gap: var(--space-8);
   padding: var(--space-16) var(--space-20); /* 16px 20px — Figma: 1:1761 */
-  border: 1px dashed var(--color-neutral); /* #69735D */
+
+  /* Прозрачность 80% из макета оставляем у рамки, а не у текста: согласованная правка контраста P3-13. */
+  border: 1px dashed color-mix(in srgb, var(--color-neutral) 80%, transparent);
   border-radius: var(--radius-s); /* 12px */
-  opacity: 0.8; /* Figma: 1:1761 — Opacity 80% */
   cursor: pointer;
   transition:
     border-color 0.15s ease,
@@ -51,14 +52,12 @@
 
 .zone:hover {
   border-color: var(--zone-border-hover);
-  opacity: 1; /* Креатив — при наведении зона «оживает» */
   box-shadow: var(--zone-hover-glow);
 }
 
 .zone.dragging {
   border-color: var(--zone-border-drag); /* #508826 */
   border-style: solid; /* Креатив — при перетаскивании пунктир сменяется сплошной */
-  opacity: 1;
   box-shadow: var(--zone-hover-glow); /* Креатив — свечение как у hover */
 }
 
@@ -85,7 +84,9 @@
   border: none;
   background: none;
   font: inherit; /* наследует от .zone */
-  color: var(--color-accent-strong); /* #508826 */
+
+  /* Чуть темнее акцента: исходный токен даёт только 4.29:1 на белом при 16 px. */
+  color: color-mix(in srgb, var(--color-accent-strong) 90%, var(--color-text));
   cursor: pointer;
 }
 

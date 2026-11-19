@@ -1,3 +1,10 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+}
+
 .container {
   /* Геометрия Icon+Add 1:1502; в общей шкале нет размера 72 px. */
   --avatar-upload-size: 72px;
@@ -38,4 +45,11 @@
   color: var(--color-text-inverse);
   background-color: var(--color-accent);
   border-radius: var(--radius-l);
+}
+
+.error {
+  max-width: 320px;
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+  text-align: center;
 }

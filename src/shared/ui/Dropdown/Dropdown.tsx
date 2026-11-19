@@ -35,7 +35,7 @@ export interface DropdownProps {
  * - по умолчанию под триггером, выровнен по его левому краю (для кнопки «Все навыки»);
  * - `align="end"` - по правому краю (для уведомлений и меню пользователя справа в шапке);
  * - если поповер не помещается в окно, он сдвигается так, чтобы до края окна
- *   оставалось `EDGE_GAP`, как в макете.
+ *   оставалось `EDGE_GAP`, как в макете; положение пересчитывается и при resize.
  */
 export function Dropdown({
   trigger,
@@ -68,13 +68,16 @@ export function Dropdown({
     const el = popoverRef.current
     if (!isOpen || !el) return
 
-    // убираем прошлый сдвиг, иначе замер покажет уже сдвинутое положение
-    el.style.translate = ''
-
-    const { left, right } = el.getBoundingClientRect()
-    const shift = getEdgeShift(left, right, document.documentElement.clientWidth)
-
-    el.style.translate = shift ? `${shift}px 0` : ''
+    const reposition = () => {
+      // Замеряем исходное положение, чтобы сдвиги не накапливались.
+      el.style.translate = ''
+      const { left, right } = el.getBoundingClientRect()
+      const shift = getEdgeShift(left, right, document.documentElement.clientWidth)
+      el.style.translate = shift ? `${shift}px 0` : ''
+    }
+    reposition()
+    window.addEventListener('resize', reposition)
+    return () => window.removeEventListener('resize', reposition)
   }, [isOpen, align, children])
 
   return (

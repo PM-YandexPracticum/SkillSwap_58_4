@@ -1,3 +1,4 @@
+import { createLookup } from '@/shared/lib/createLookup'
 import { createSelector } from '@reduxjs/toolkit'
 import type { ID } from '@/shared/types'
 import type { PublicUser, User } from './types'
@@ -9,6 +10,19 @@ function toPublicUser({ password: _password, ...publicUser }: User): PublicUser 
 }
 
 const selectStoredUsers = (state: RootState) => state.users.items
+
+/**
+ * Общий источник данных текущего пользователя для шапки и других потребителей.
+ * Возвращает PublicUser без пароля или null; изменения других записей не меняют результат.
+ * Наличие сессии определяет selectIsAuth, её проверка и очистка находятся в app/router.
+ */
+export const selectCurrentUser = createSelector(
+  (state: RootState) => {
+    const userId = state.session.session?.userId
+    return userId ? selectStoredUsers(state).find((user) => user.id === userId) : undefined
+  },
+  (user): PublicUser | null => (user ? toPublicUser(user) : null),
+)
 
 /** Все пользователи без паролей; ссылка стабильна, пока список в store не изменился. */
 export const selectUsers = createSelector([selectStoredUsers], (users): PublicUser[] =>
@@ -24,9 +38,13 @@ export const selectUsersSaveStatus = (state: RootState) => state.users.saveStatu
 /** Понятная ошибка последней группы записей, сбрасывается новой попыткой. */
 export const selectUsersSaveError = (state: RootState) => state.users.saveError
 
+const selectUsersLookup = createSelector([selectUsers], (users) =>
+  createLookup(users, (user) => user.id),
+)
+
 /** Пользователь для компонента по id; undefined, если его нет. */
 export const selectUserById = (state: RootState, userId: ID): PublicUser | undefined =>
-  selectUsers(state).find((user) => user.id === userId)
+  selectUsersLookup(state)(userId)
 
 /**
  * Полная запись только для логики входа (P4-09) и проверки уникальности email (P4-06).
@@ -50,31 +68,3 @@ export const selectNewUsers = createSelector([selectUsers], (users): PublicUser[
 
 /** Порядок один раз перемешан в fetchUsers; лайки и чтение селектора его не меняют. */
 export const selectRecommendedUsers = selectUsers
-
-/**
- * Похожие предложения для `/skill/:id`: другие авторы с предлагаемым навыком той же подкатегории.
- * Порядок пользователей сохраняется; отсутствующие навыки и ссылки на чужой навык пропускаются.
- * Читает skills из RootState без импорта соседней сущности (правило FSD).
- * Возвращает PublicUser[] без паролей и сохраняет ссылку при неизменных пользователях, навыках и id.
- */
-export const selectSimilarUsers = createSelector(
-  [
-    selectUsers,
-    (state: RootState) => state.skills.items,
-    (_state: RootState, skillId: ID) => skillId,
-  ],
-  (users, skills, skillId): PublicUser[] => {
-    const skillsById = new Map(skills.map((skill) => [skill.id, skill]))
-    const currentSkill = skillsById.get(skillId)
-    if (!currentSkill?.subcategoryId) return []
-
-    return users.filter((user) => {
-      const teachSkill = skillsById.get(user.teachSkillId)
-      return (
-        user.id !== currentSkill.authorId &&
-        teachSkill?.authorId === user.id &&
-        teachSkill.subcategoryId === currentSkill.subcategoryId
-      )
-    })
-  },
-)

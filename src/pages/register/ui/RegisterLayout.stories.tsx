@@ -3,11 +3,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 import { categoriesReducer, getCategories } from '@/entities/category'
 import { citiesReducer, getCities } from '@/entities/city'
+import { usersReducer } from '@/entities/user'
+import { registerReducer } from '@/features/register'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { ROUTES } from '@/shared/config'
 import { RegisterLayout } from './RegisterLayout'
 import { RegisterStep1Page } from './RegisterStep1Page'
 import { RegisterStep2Page } from './RegisterStep2Page'
+import { RegisterStep3Page } from './RegisterStep3Page'
 
 const meta = {
   title: 'pages/register/RegisterLayout',
@@ -25,7 +28,12 @@ const meta = {
     (Story, context) => (
       <Provider
         store={configureStore({
-          reducer: { categories: categoriesReducer, cities: citiesReducer },
+          reducer: {
+            categories: categoriesReducer,
+            cities: citiesReducer,
+            users: usersReducer,
+            register: registerReducer,
+          },
           preloadedState: {
             categories: { items: context.loaded.categories, status: 'succeeded' as const },
             cities: { items: context.loaded.cities, status: 'succeeded' as const },
@@ -41,10 +49,7 @@ const meta = {
               <Route element={<Story />}>
                 <Route path={ROUTES.REGISTER_STEP_1} element={<RegisterStep1Page />} />
                 <Route path={ROUTES.REGISTER_STEP_2} element={<RegisterStep2Page />} />
-                <Route
-                  path={ROUTES.REGISTER_STEP_3}
-                  element={<p>Место для формы шага 3 — P3-13</p>}
-                />
+                <Route path={ROUTES.REGISTER_STEP_3} element={<RegisterStep3Page />} />
               </Route>
             </Routes>
           </div>

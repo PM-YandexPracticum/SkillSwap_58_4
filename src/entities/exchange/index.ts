@@ -2,12 +2,15 @@ export type { Exchange } from './model/types'
 export {
   exchangesReducer,
   fetchExchanges,
+  loadExchangesIfNeeded,
   addExchange,
+  completeExchangeProposal,
   type ExchangesState,
 } from './model/exchangesSlice'
 export {
   selectExchanges,
   selectHasProposed,
+  selectOutgoingExchange,
   selectExchangesStatus,
   selectExchangesError,
 } from './model/selectors'

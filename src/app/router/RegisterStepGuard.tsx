@@ -1,17 +1,29 @@
 import type { ReactNode } from 'react'
+import { Navigate } from 'react-router-dom'
 
-interface RegisterStepGuardProps {
+import { selectCompletedStep } from '@/features/register'
+import { ROUTES } from '@/shared/config'
+import { useAppSelector } from '@/shared/lib/store'
+
+export interface RegisterStepGuardProps {
   /** Какой это шаг: 2 или 3 */
   step: 2 | 3
   children: ReactNode
 }
 
 /**
- * Каркас защиты шагов 2 и 3 регистрации; пока возвращает содержимое без проверки.
- * В P6-01 нужно проверить `selectCompletedStep` и перенаправить на `/register/step-1`,
- * если предыдущий шаг не пройден (`selectCompletedStep` < step − 1).
+ * Защита шагов 2 и 3 регистрации по прогрессу: доступ после завершения предыдущего шага.
+ * Если предыдущий шаг не пройден (`selectCompletedStep` < step − 1) — перенаправляет на `/register/step-1`
+ * с `replace`, чтобы «Назад» браузера не возвращал на закрытый шаг. Пройденные шаги открываются свободно,
+ * поэтому «Назад» на шаг 2 из шага 3 работает. Состояние не сохраняется между перезагрузками:
+ * без черновика прямой вход на шаг 2 или 3 всегда ведёт на шаг 1.
  */
-export function RegisterStepGuard({ children }: RegisterStepGuardProps) {
-  // TODO: useAppSelector(selectCompletedStep) → <Navigate to={ROUTES.REGISTER_STEP_1} replace />
+export function RegisterStepGuard({ step, children }: RegisterStepGuardProps) {
+  const completedStep = useAppSelector(selectCompletedStep)
+
+  if (completedStep < step - 1) {
+    return <Navigate to={ROUTES.REGISTER_STEP_1} replace />
+  }
+
   return <>{children}</>
 }

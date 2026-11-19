@@ -3,6 +3,7 @@ export {
   notificationsReducer,
   fetchNotifications,
   addNotification,
+  ensureExchangeNotification,
   markAllRead,
   clearAllNotifications,
   type NotificationsState,
@@ -12,6 +13,7 @@ export {
   selectHasUnread,
   selectNotificationsStatus,
   selectNotificationsError,
+  selectNotificationsLoadError,
 } from './model/selectors'
 export {
   getNotifications,

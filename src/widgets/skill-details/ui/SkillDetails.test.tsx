@@ -1,6 +1,7 @@
-import { render, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import { renderWithProviders } from '@/app/test/renderWithProviders'
 import { createSkill } from '@/entities/skill/testing'
 import { createUser } from '@/entities/user/testing'
 
@@ -38,7 +39,7 @@ const props: SkillDetailsProps = {
 
 describe('SkillDetails', () => {
   it('показывает карточку автора: имя, город, «О себе», чему хочет научиться', () => {
-    render(<SkillDetails {...props} />)
+    renderWithProviders(<SkillDetails {...props} />)
 
     expect(screen.getByRole('heading', { name: 'Иван' })).toBeInTheDocument()
     expect(screen.getByText(/^Санкт-Петербург, /)).toBeInTheDocument()
@@ -48,7 +49,7 @@ describe('SkillDetails', () => {
   })
 
   it('показывает блок навыка: название, «Категория / Подкатегория», описание', () => {
-    render(<SkillDetails {...props} />)
+    renderWithProviders(<SkillDetails {...props} />)
 
     expect(screen.getByRole('heading', { level: 1, name: 'Игра на барабанах' })).toBeInTheDocument()
     expect(screen.getByText('Творчество и искусство / Музыка и звук')).toBeInTheDocument()
@@ -56,7 +57,7 @@ describe('SkillDetails', () => {
   })
 
   it('навык автора — в «Может научить» карточки автора', () => {
-    render(<SkillDetails {...props} />)
+    renderWithProviders(<SkillDetails {...props} />)
 
     const teach = screen.getByRole('heading', { name: 'Может научить' })
       .parentElement as HTMLElement
@@ -64,7 +65,7 @@ describe('SkillDetails', () => {
   })
 
   it('кладёт картинки навыка в галерею', () => {
-    render(<SkillDetails {...props} />)
+    renderWithProviders(<SkillDetails {...props} />)
 
     const slides = within(screen.getByTestId('carousel')).getAllByRole('img', {
       name: /^Игра на барабанах — фото \d+$/,
@@ -73,7 +74,7 @@ describe('SkillDetails', () => {
   })
 
   it('показывает лайк со счётчиком автора, «Поделиться» и «Больше опций»', () => {
-    render(<SkillDetails {...props} />)
+    renderWithProviders(<SkillDetails {...props} />)
 
     expect(screen.getByRole('button', { name: 'Добавить в избранное' })).toBeInTheDocument()
     expect(screen.getByText('158')).toBeInTheDocument()
@@ -83,7 +84,7 @@ describe('SkillDetails', () => {
 
   it('«Поделиться» и «Больше опций» — заглушки: клик ничего не ломает', async () => {
     const user = userEvent.setup()
-    render(<SkillDetails {...props} />)
+    renderWithProviders(<SkillDetails {...props} />)
 
     await user.click(screen.getByRole('button', { name: 'Поделиться' }))
     await user.click(screen.getByRole('button', { name: 'Больше опций' }))
@@ -94,7 +95,7 @@ describe('SkillDetails', () => {
   it('«Предложить обмен» вызывает onProposeExchange', async () => {
     const user = userEvent.setup()
     const onProposeExchange = vi.fn()
-    render(<SkillDetails {...props} onProposeExchange={onProposeExchange} />)
+    renderWithProviders(<SkillDetails {...props} onProposeExchange={onProposeExchange} />)
 
     await user.click(screen.getByRole('button', { name: 'Предложить обмен' }))
 
@@ -102,14 +103,14 @@ describe('SkillDetails', () => {
   })
 
   it('когда обмен предложен — вместо «Предложить обмен» неактивная «Обмен предложен»', () => {
-    render(<SkillDetails {...props} isExchangeProposed />)
+    renderWithProviders(<SkillDetails {...props} isExchangeProposed />)
 
     expect(screen.getByRole('button', { name: 'Обмен предложен' })).toBeDisabled()
     expect(screen.queryByRole('button', { name: 'Предложить обмен' })).not.toBeInTheDocument()
   })
 
   it('без «О себе» не показывает пустой блок', () => {
-    render(<SkillDetails {...props} author={createUser({ ...author, about: '' })} />)
+    renderWithProviders(<SkillDetails {...props} author={createUser({ ...author, about: '' })} />)
 
     expect(screen.queryByText('Люблю ритм')).not.toBeInTheDocument()
   })

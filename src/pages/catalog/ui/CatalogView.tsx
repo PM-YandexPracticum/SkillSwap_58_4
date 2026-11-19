@@ -1,4 +1,4 @@
-// src/pages/catalog/ui/CatalogView.tsx
+import type { ReactNode } from 'react'
 import type { PublicUser } from '@/entities/user'
 import {
   ActiveFilters,
@@ -9,21 +9,26 @@ import {
   type SortOrder,
 } from '@/features/catalog-filter'
 import { CATALOG, DATA_ERRORS } from '@/shared/config'
+import { useInfiniteScroll } from '@/shared/lib/hooks'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { Loader } from '@/shared/ui/Loader'
 import { FiltersPanel } from '@/widgets/filters-panel'
 import { OfferCard } from '@/widgets/offer-card'
 import { OffersSection } from '@/widgets/offers-section'
-import styles from './CatalogView.module.css'
 import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import styles from './CatalogView.module.css'
 
 export interface CatalogViewProps {
+  /**
+   * С `results` — найденные карточки в порядке сортировки, без них — «Рекомендуем»
+   * в случайном порядке store. Ссылка должна быть стабильной: смена списка начинает ленту сначала.
+   */
   users: ReadonlyArray<PublicUser>
   /** Для «Популярного»: по убыванию лайков. */
   popularUsers: ReadonlyArray<PublicUser>
   /** Для «Нового»: от новых к старым по дате регистрации. */
   newUsers: ReadonlyArray<PublicUser>
-  /** Отдельное состояние вёрстки. Подбор данных и обработчики подключаются в P5-05. */
+  /** Отдельное состояние вёрстки. Вывод результатов фильтрации и поиска. */
   results?: {
     filters: ReadonlyArray<ActiveFilterTag>
     sort: SortOrder
@@ -34,10 +39,40 @@ export interface CatalogViewProps {
 
 const renderCard = (user: PublicUser) => <OfferCard user={user} />
 
+interface FeedSectionProps {
+  title: string
+  users: ReadonlyArray<PublicUser>
+  headerAction?: ReactNode
+}
+
+/**
+ * Лента по CATALOG.SCROLL_BATCH карточек.
+ * При прокрутке к концу загружает следующую порцию.
+ */
+function FeedSection({ title, users, headerAction }: FeedSectionProps) {
+  const { visibleItems, sentinelRef, isLoading, hasMore } = useInfiniteScroll(
+    users,
+    CATALOG.SCROLL_BATCH,
+    CATALOG.SCROLL_DELAY_MS,
+  )
+
+  return (
+    <OffersSection
+      title={title}
+      users={visibleItems}
+      mode="infinite"
+      renderItem={renderCard}
+      headerAction={headerAction}
+      isLoading={isLoading}
+      hasMore={hasMore}
+      sentinelRef={sentinelRef}
+    />
+  )
+}
+
 /**
  * Вёрстка каталога: панель слева, три секции либо отдельный вид результатов справа.
- * Порядок списков задаёт контейнер; раскрытие и сетку переиспользуем из OffersSection.
- * @see Figma: 1:2861, 1:2860, 1:2819
+ * «Рекомендуем» и результаты — бесконечные ленты по 6 карточек (P5-06).
  */
 export function CatalogView({ users, popularUsers, newUsers, results }: CatalogViewProps) {
   const dispatch = useAppDispatch()
@@ -48,10 +83,8 @@ export function CatalogView({ users, popularUsers, newUsers, results }: CatalogV
 
   const handleResetFilters = (): void => {
     dispatch(resetFilters())
-    /* сброс плашек выбранных фильтров будет в P5-05*/
   }
 
-  /* Рендер секции Подходящие предложения (с использованием стора) будет реализован в P5-05 */
   return (
     <div className={styles.layout}>
       <FiltersPanel filtersCount={filtersCount} onReset={handleResetFilters} />
@@ -63,11 +96,10 @@ export function CatalogView({ users, popularUsers, newUsers, results }: CatalogV
         ) : results ? (
           <>
             <ActiveFilters items={results.filters} onRemove={results.onRemoveFilter} />
-            <OffersSection
+            <FeedSection
+              key="results"
               title={`Подходящие предложения: ${users.length}`}
               users={users}
-              mode="infinite"
-              renderItem={renderCard}
               headerAction={<SortToggle value={results.sort} onChange={results.onSortChange} />}
             />
             {!users.length && (
@@ -92,12 +124,7 @@ export function CatalogView({ users, popularUsers, newUsers, results }: CatalogV
               mode="expandable"
               renderItem={renderCard}
             />
-            <OffersSection
-              title="Рекомендуем"
-              users={users.slice(0, CATALOG.SCROLL_BATCH)}
-              mode="infinite"
-              renderItem={renderCard}
-            />
+            <FeedSection key="recommended" title="Рекомендуем" users={users} />
           </>
         ) : (
           <EmptyState

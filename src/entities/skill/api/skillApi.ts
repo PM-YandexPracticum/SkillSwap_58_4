@@ -41,3 +41,8 @@ export function getSkillById(id: string): Promise<Skill | undefined> {
 export function createSkill(skill: Skill): Promise<Skill> {
   return skills.create(skill)
 }
+
+/** Обновляет запись навыка, сохраняя её id. */
+export function updateSkill(id: string, changes: Partial<Omit<Skill, 'id'>>): Promise<Skill> {
+  return skills.update(id, changes)
+}

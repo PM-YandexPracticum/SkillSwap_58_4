@@ -1,5 +1,10 @@
+import { configureStore } from '@reduxjs/toolkit'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
+import { sessionReducer } from '@/entities/session'
+import { usersReducer } from '@/entities/user'
+import { ROUTES } from '@/shared/config'
 import { LoginPage } from './LoginPage'
 
 const meta = {
@@ -14,13 +19,20 @@ const meta = {
     },
   },
   decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <div style={{ maxWidth: 1136, margin: '0 auto' }}>
-          <Story />
-        </div>
-      </MemoryRouter>
-    ),
+    (Story) => {
+      const store = configureStore({
+        reducer: { users: usersReducer, session: sessionReducer },
+      })
+      return (
+        <Provider store={store}>
+          <MemoryRouter initialEntries={[ROUTES.LOGIN]}>
+            <div style={{ maxWidth: 1136, margin: '0 auto' }}>
+              <Story />
+            </div>
+          </MemoryRouter>
+        </Provider>
+      )
+    },
   ],
 } satisfies Meta<typeof LoginPage>
 export default meta

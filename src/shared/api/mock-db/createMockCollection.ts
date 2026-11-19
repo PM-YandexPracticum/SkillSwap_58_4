@@ -19,10 +19,22 @@ export interface MockCollection<T extends WithId> {
   getById(id: string): Promise<T | undefined>
   /** Добавить запись. @throws {Error} если запись с таким id уже есть */
   create(item: T): Promise<T>
+  /** Атомарно вернуть существующую запись по ключу либо создать новую, не меняя существующую. */
+  createIfAbsent(item: T, keyOf: (item: T) => string): Promise<T>
   /** Изменить поля записи — возвращает новую запись. @throws {Error} если id не найден */
   update(id: string, changes: Partial<Omit<T, 'id'>>): Promise<T>
+  /**
+   * Читает актуальные данные в очереди и сохраняет несколько изменений одной записью.
+   * По умолчанию возвращает изменённые записи; selectResult выбирает ответ из итогового снимка.
+   */
+  updateMany(
+    getChanges: (items: readonly T[]) => readonly { id: string; changes: Partial<Omit<T, 'id'>> }[],
+    selectResult?: (items: readonly T[]) => readonly T[],
+  ): Promise<T[]>
   /** Удалить запись. Если её нет — ничего не происходит */
   remove(id: string): Promise<void>
+  /** Пакетно удалить записи, для которых `match` вернул `true` (P7-05); остальные не трогает. Возвращает id удалённых. */
+  removeMany(match: (item: Readonly<T>) => boolean): Promise<string[]>
 }
 
 /**
@@ -36,7 +48,7 @@ export interface MockCollectionOptions<T extends WithId = WithId> {
   /** Проверяет обязательные поля записи после JSON.parse. */
   validate?: ItemGuard<T>
   /** Ограничения сущности перед create/update. Проверка и запись выполняются в одной очереди. */
-  validateWrite?: (item: Readonly<T>, items: readonly T[]) => void
+  validateWrite?: (item: Readonly<T>, items: readonly T[], operation: 'create' | 'update') => void
 }
 
 /** Очередь действий каждой коллекции: следующее начинается, когда закончилось предыдущее */
@@ -178,35 +190,58 @@ export function createMockCollection<T extends WithId>(
     return enqueue(key, action)
   }
 
+  function insert(list: T[], item: T): T {
+    const created = clone(item)
+    assertValidItem(created, validate, name)
+    validateWrite?.(created, list, 'create')
+    if (list.some((existing) => existing.id === item.id)) {
+      throw new Error(`Запись с id «${item.id}» уже есть в коллекции «${name}»`)
+    }
+    writeList(key, [...list, created])
+    return clone(created)
+  }
+
+  const updateMany: MockCollection<T>['updateMany'] = (getChanges, selectResult) =>
+    respond(async () => {
+      const list = await read()
+      const changes = getChanges(clone(list))
+      if (changes.length === 0) return clone([...(selectResult?.(list) ?? [])])
+      const currentById = new Map(list.map((item) => [item.id, item]))
+      const updatedById = new Map<string, T>()
+      for (const { id, changes: fields } of changes) {
+        const current = currentById.get(id)
+        if (!current) throw new Error(`Запись с id «${id}» не найдена в коллекции «${name}»`)
+        if (updatedById.has(id))
+          throw new Error(`Повтор id «${id}» в изменениях коллекции «${name}»`)
+        const updated = { ...current, ...clone(fields), id }
+        assertValidItem(updated, validate, name)
+        updatedById.set(id, updated)
+      }
+      const next = list.map((item) => updatedById.get(item.id) ?? item)
+      for (const updated of updatedById.values()) validateWrite?.(updated, next, 'update')
+      writeList(key, next)
+      return clone([...(selectResult ? selectResult(next) : updatedById.values())])
+    })
+
   return {
     getAll: () => respond(read),
     getById: (id) => respond(async () => (await read()).find((item) => item.id === id)),
-    create: (item) =>
-      respond(async () => {
+    create: (item) => respond(async () => insert(await read(), item)),
+    createIfAbsent: (item, keyOf) => {
+      const input = clone(item)
+      return respond(async () => {
+        assertValidItem(input, validate, name)
         const list = await read()
-        if (list.some((existing) => existing.id === item.id)) {
-          throw new Error(`Запись с id «${item.id}» уже есть в коллекции «${name}»`)
-        }
-        const created = clone(item)
-        assertValidItem(created, validate, name)
-        validateWrite?.(created, list)
-        writeList(key, [...list, created])
-        return clone(created)
-      }),
-    update: (id, changes) =>
-      respond(async () => {
-        const list = await read()
-        const current = list.find((item) => item.id === id)
-        if (!current) throw new Error(`Запись с id «${id}» не найдена в коллекции «${name}»`)
-        const updated: T = { ...current, ...clone(changes), id }
-        assertValidItem(updated, validate, name)
-        validateWrite?.(updated, list)
-        writeList(
-          key,
-          list.map((item) => (item.id === id ? updated : item)),
-        )
-        return clone(updated)
-      }),
+        const key = keyOf(input)
+        const existing = list.find((saved) => keyOf(saved) === key)
+        return existing ? clone(existing) : insert(list, input)
+      })
+    },
+    update: (id, changes) => {
+      const input = clone(changes)
+      return updateMany(() => [{ id, changes: input }]).then(([updated]) => updated)
+    },
+    updateMany,
     remove: (id) =>
       respond(async () => {
         const list = await read()
@@ -216,6 +251,18 @@ export function createMockCollection<T extends WithId>(
             list.filter((item) => item.id !== id),
           )
         }
+      }),
+    removeMany: (match) =>
+      respond(async () => {
+        const list = await read()
+        const removed: string[] = []
+        const remaining: T[] = []
+        for (const item of list) {
+          if (match(item)) removed.push(item.id)
+          else remaining.push(item)
+        }
+        if (removed.length) writeList(key, remaining)
+        return removed
       }),
   }
 }

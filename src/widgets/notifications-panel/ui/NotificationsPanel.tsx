@@ -1,11 +1,12 @@
 import { MarkAllReadButton } from '@/features/notifications-read'
 import { NotificationItem } from '@/entities/notification'
 import { Button } from '@/shared/ui/Button'
+import { EmptyState } from '@/shared/ui/EmptyState'
+import { Loader } from '@/shared/ui/Loader'
+import type { LoadingStatus } from '@/shared/types'
+import type { NotificationWithName } from '../model/types'
 
 import styles from './NotificationsPanel.module.css'
-
-import type { Notification } from '@/entities/notification'
-import { EmptyState } from '@/shared/ui/EmptyState'
 
 /** Заголовок раздела новых уведомлений */
 const TITLE_NEW = 'Новые уведомления'
@@ -19,57 +20,70 @@ const BUTTON_CLEAR = 'Очистить'
 /** Пустое состояние */
 const EMPTY_TEXT = 'Уведомлений пока нет'
 
-/**
- * Строка панели: `Notification` + имя в дательном падеже для фразы
- * «Вы предложили обмен Ивану». Склонение — на вызывающей стороне.
- */
-export type NotificationWithName = Notification & { userName: string }
+/** Кнопка повтора при ошибке загрузки */
+const BUTTON_RETRY = 'Повторить'
+
+export type { NotificationWithName } from '../model/types'
 
 export interface NotificationsPanelProps {
-  /** Все уведомления: разделяются по isRead на новые и просмотренные */
   notifications: NotificationWithName[]
-  /** «Прочитать все» — в P3-15 заглушка, в P7-05 dispatch */
+  status?: LoadingStatus
+  loadError?: string | null
+  actionError?: string | null
+  onRetry?: () => void
   onMarkAllRead: () => void
-  /** «Очистить» — в P3-15 заглушка, сохранение — P4-07 */
   onClear: () => void
-  /** «Перейти» — ведёт к карточке навыка адресата; подключение в P7-05 */
   onGo: (id: string) => void
 }
 
-/**
- * Окно колокольчика: «Новые уведомления» + «Прочитать все», ниже «Просмотренные».
- * Уведомления номинальные: «Вы предложили обмен Ивану» + «Перейти» → страница навыка Ивана.
- * Просмотренные — без кнопки, не кликаются. Пусто — «Уведомлений пока нет».
- * Открытие окна управляется снаружи через Dropdown (align="end"), панель его не рисует.
- *
- * По P3-15 «Прочитать все» и «Очистить» — обычные кнопки без логики:
- * в stories и тестах передаём функции-заглушки. Сохранение прочтения — P4-07,
- * подключение к шапке — P7-05.
- *
- * @see Figma: 1:2190 (окно), 1:2148 (экран с открытой панелью)
- */
 export function NotificationsPanel({
   notifications,
+  status = 'succeeded',
+  loadError = null,
+  actionError = null,
+  onRetry,
   onMarkAllRead,
   onClear,
   onGo,
 }: NotificationsPanelProps) {
   const unread = notifications.filter((notification) => !notification.isRead)
   const read = notifications.filter((notification) => notification.isRead)
-  const isEmpty = notifications.length === 0
+
+  const isEmpty = status === 'succeeded' && notifications.length === 0
+  const isLoadFailed = loadError !== null
+  const isFirstLoading = status === 'loading' && notifications.length === 0
 
   return (
     <div className={styles.panel}>
-      {isEmpty ? (
-        <EmptyState compact title={EMPTY_TEXT}></EmptyState>
+      {isLoadFailed ? (
+        <div className={styles.error} role="alert">
+          <p className={styles.errorText}>{loadError}</p>
+          {onRetry && (
+            <Button variant="secondary" onClick={onRetry} disabled={status === 'loading'}>
+              {BUTTON_RETRY}
+            </Button>
+          )}
+        </div>
+      ) : isFirstLoading ? (
+        <div className={styles.loading}>
+          <Loader />
+        </div>
+      ) : isEmpty ? (
+        <EmptyState compact title={EMPTY_TEXT} />
       ) : (
         <>
+          {actionError && (
+            <p className={styles.actionError} role="alert">
+              {actionError}
+            </p>
+          )}
+
           {unread.length > 0 && (
             <section className={styles.section}>
               <header className={styles.header}>
                 <h2 className={styles.title}>{TITLE_NEW}</h2>
                 <div className={styles.actionButton}>
-                  <MarkAllReadButton onClick={onMarkAllRead} />
+                  <MarkAllReadButton onClick={onMarkAllRead} disabled={status === 'loading'} />
                 </div>
               </header>
               <ul className={styles.list}>
@@ -85,12 +99,13 @@ export function NotificationsPanel({
               </ul>
             </section>
           )}
+
           {read.length > 0 && (
             <section className={styles.section}>
               <header className={styles.header}>
                 <h2 className={styles.title}>{TITLE_READ}</h2>
                 <div className={styles.actionButton}>
-                  <Button variant="ghost" onClick={onClear}>
+                  <Button variant="ghost" onClick={onClear} disabled={status === 'loading'}>
                     {BUTTON_CLEAR}
                   </Button>
                 </div>

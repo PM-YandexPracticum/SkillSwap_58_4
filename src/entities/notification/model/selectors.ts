@@ -17,3 +17,5 @@ export const selectHasUnread = createSelector([selectNotifications], (items) =>
 export const selectNotificationsStatus = (state: RootState) => state.notifications.status
 /** Понятная пользователю ошибка группы операций или null. */
 export const selectNotificationsError = (state: RootState) => state.notifications.error
+/** Ошибка именно первоначальной загрузки (для кнопки «Повторить»); ошибки операций — в selectNotificationsError. */
+export const selectNotificationsLoadError = (state: RootState) => state.notifications.loadError

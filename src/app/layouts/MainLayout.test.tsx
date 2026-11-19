@@ -1,13 +1,23 @@
-import { screen, within } from '@testing-library/react'
-import { Route, Routes } from 'react-router-dom'
+import { lazy, StrictMode, Suspense } from 'react'
+import userEvent from '@testing-library/user-event'
+import { Provider } from 'react-redux'
+import { act, render, screen, within } from '@testing-library/react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import { renderWithProviders } from '@/app/test/renderWithProviders'
+import { createTestStore } from '@/app/test/createTestStore'
+import { RequireAuth } from '@/app/router/RequireAuth'
+import { startSession } from '@/entities/session'
+import { fetchUsers } from '@/entities/user'
+import { createUser } from '@/entities/user/testing'
+import { fetchNotifications } from '@/entities/notification'
 import { selectSearchQuery } from '@/features/skill-search'
-import { ROUTES } from '@/shared/config'
+import { ROUTES, STORAGE_KEYS } from '@/shared/config'
 import { AllSkillsPage } from '@/pages/all-skills'
 import categories from '../../../public/db/categories.json'
 import { AuthLayout } from './AuthLayout'
 import { MainLayout } from './MainLayout'
+import { ToastProvider } from '@/app/providers/ToastProvider'
 
 function renderLayout() {
   return renderWithProviders(
@@ -39,6 +49,161 @@ function renderLayout() {
 }
 
 describe('MainLayout', () => {
+  it.each([ROUTES.PROFILE, ROUTES.FAVORITES])(
+    'выход с %s очищает сессию до завершения загрузки главной',
+    async (route) => {
+      let finishLoading!: (module: { default: () => JSX.Element }) => void
+      const page = new Promise<{ default: () => JSX.Element }>((resolve) => {
+        finishLoading = resolve
+      })
+      const Home = lazy(() => page)
+      const account = createUser()
+      const store = createTestStore()
+      store.dispatch(fetchUsers.fulfilled([account], 'users'))
+      store.dispatch(startSession(account.id))
+      store.dispatch(fetchNotifications.fulfilled([], 'notifications'))
+      window.history.replaceState(null, '', route)
+      const user = userEvent.setup()
+      const { unmount } = render(
+        <StrictMode>
+          <Provider store={store}>
+            <ToastProvider>
+              <BrowserRouter useTransitions={false}>
+                <Suspense fallback={<p>Загрузка главной</p>}>
+                  <Routes>
+                    <Route element={<MainLayout />}>
+                      <Route path={ROUTES.HOME} element={<Home />} />
+                      <Route
+                        path={route}
+                        element={
+                          <RequireAuth>
+                            <h1>Закрытая страница</h1>
+                          </RequireAuth>
+                        }
+                      />
+                    </Route>
+                    <Route path={ROUTES.LOGIN} element={<h1>Вход</h1>} />
+                  </Routes>
+                </Suspense>
+              </BrowserRouter>
+            </ToastProvider>
+          </Provider>
+        </StrictMode>,
+      )
+      try {
+        await user.click(screen.getByRole('button', { name: account.name }))
+        await user.click(screen.getByRole('button', { name: 'Выйти' }))
+        expect(screen.getByText('Загрузка главной')).toBeInTheDocument()
+        expect(store.getState().session.session).toBeNull()
+        expect(localStorage.getItem(STORAGE_KEYS.SESSION)).toBeNull()
+        await act(async () => {
+          finishLoading({ default: () => <h1>Главная</h1> })
+          await page
+        })
+        expect(await screen.findByRole('heading', { name: 'Главная' })).toBeInTheDocument()
+        expect(window.location.pathname).toBe(ROUTES.HOME)
+      } finally {
+        finishLoading({ default: () => <h1>Главная</h1> })
+        unmount()
+        window.history.replaceState(null, '', ROUTES.HOME)
+      }
+    },
+  )
+
+  it.each([ROUTES.HOME, ROUTES.PROFILE, ROUTES.FAVORITES])(
+    'выход с %s не создаёт промежуточного перехода на вход',
+    async (route) => {
+      const account = createUser()
+      const store = createTestStore()
+      store.dispatch(fetchUsers.fulfilled([account], 'users'))
+      store.dispatch(startSession(account.id))
+      store.dispatch(fetchNotifications.fulfilled([], 'notifications'))
+      window.history.replaceState(null, '', route)
+      const replaceState = vi.spyOn(window.history, 'replaceState')
+      const user = userEvent.setup()
+      const { unmount } = render(
+        <StrictMode>
+          <Provider store={store}>
+            <ToastProvider>
+              <BrowserRouter useTransitions={false}>
+                <Routes>
+                  <Route element={<MainLayout />}>
+                    <Route path={ROUTES.HOME} element={<h1>Главная</h1>} />
+                    <Route
+                      path={ROUTES.PROFILE}
+                      element={
+                        <RequireAuth>
+                          <h1>Профиль</h1>
+                        </RequireAuth>
+                      }
+                    />
+                    <Route
+                      path={ROUTES.FAVORITES}
+                      element={
+                        <RequireAuth>
+                          <h1>Избранное</h1>
+                        </RequireAuth>
+                      }
+                    />
+                  </Route>
+                  <Route path={ROUTES.LOGIN} element={<h1>Вход</h1>} />
+                </Routes>
+              </BrowserRouter>
+            </ToastProvider>
+          </Provider>
+        </StrictMode>,
+      )
+      try {
+        await user.click(screen.getByRole('button', { name: account.name }))
+        replaceState.mockClear()
+        await user.click(screen.getByRole('button', { name: 'Выйти' }))
+
+        expect(await screen.findByRole('heading', { name: 'Главная' })).toBeInTheDocument()
+        expect(store.getState().session.session).toBeNull()
+        expect(replaceState.mock.calls.map(([, , url]) => url)).toEqual([ROUTES.HOME])
+      } finally {
+        unmount()
+        replaceState.mockRestore()
+        window.history.replaceState(null, '', ROUTES.HOME)
+      }
+    },
+  )
+
+  it.each([ROUTES.PROFILE, ROUTES.FAVORITES])(
+    'выход из меню на %s открывает главную и сразу меняет шапку на гостевую',
+    async (route) => {
+      const account = createUser()
+      const store = createTestStore()
+      store.dispatch(fetchUsers.fulfilled([account], 'users'))
+      store.dispatch(startSession(account.id))
+      store.dispatch(fetchNotifications.fulfilled([], 'notifications'))
+      const { user } = renderWithProviders(
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route path={ROUTES.HOME} element={<h1>Главная</h1>} />
+            <Route
+              path={route}
+              element={
+                <RequireAuth>
+                  <h1>Закрытая страница</h1>
+                </RequireAuth>
+              }
+            />
+          </Route>
+          <Route path={ROUTES.LOGIN} element={<h1>Вход</h1>} />
+        </Routes>,
+        { store, route },
+      )
+      const header = within(screen.getByRole('banner'))
+      await user.click(header.getByRole('button', { name: account.name }))
+      await user.click(header.getByRole('button', { name: 'Выйти' }))
+
+      expect(screen.getByRole('heading', { name: 'Главная' })).toBeInTheDocument()
+      expect(header.getByRole('button', { name: 'Войти' })).toBeInTheDocument()
+      expect(store.getState().session.session).toBeNull()
+    },
+  )
+
   it('показывает шапку, страницу и подвал с единственной основной областью', () => {
     renderLayout()
 

@@ -1,3 +1,6 @@
+import { createSelector } from '@reduxjs/toolkit'
+import { createLookup } from '@/shared/lib/createLookup'
+import { getSubcategoryLookup } from '../lib/findSubcategories'
 import type { ID } from '@/shared/types'
 
 /** Все категории */
@@ -6,24 +9,20 @@ export const selectCategories = (state: RootState) => state.categories.items
 /** Статус загрузки справочника */
 export const selectCategoriesStatus = (state: RootState) => state.categories.status
 
-/** Подкатегория по id (или undefined, если не найдена) */
-export const selectSubcategoryById = (state: RootState, subcategoryId: ID) => {
-  for (const category of state.categories.items) {
-    const found = category.subcategories.find((sub) => sub.id === subcategoryId)
-    if (found) return found
-  }
-  return undefined
+const selectCategoryLookup = createSelector([selectCategories], (categories) =>
+  createLookup(categories, (category) => category.id),
+)
+
+/** Подкатегория через общий индекс. */
+export const selectSubcategoryById = (state: RootState, subcategoryId: ID) =>
+  getSubcategoryLookup(selectCategories(state))(subcategoryId)
+
+/** Категория подкатегории; оба поиска используют кешируемые индексы. */
+export const selectCategoryBySubcategoryId = (state: RootState, subcategoryId: ID) => {
+  const subcategory = selectSubcategoryById(state, subcategoryId)
+  return subcategory ? selectCategoryLookup(state)(subcategory.categoryId) : undefined
 }
 
-/** Категория, к которой относится подкатегория (или undefined) */
-export const selectCategoryBySubcategoryId = (state: RootState, subcategoryId: ID) =>
-  state.categories.items.find((category) =>
-    category.subcategories.some((sub) => sub.id === subcategoryId),
-  )
-
-/**
- * Цвет категории для чипа навыка (или undefined).
- * Для подкатегории сначала найдите её категорию: `selectCategoryBySubcategoryId`.
- */
+/** Цвет категории или undefined, если категория отсутствует. */
 export const selectCategoryColor = (state: RootState, categoryId: ID): string | undefined =>
-  state.categories.items.find((category) => category.id === categoryId)?.color
+  selectCategoryLookup(state)(categoryId)?.color
