@@ -3,17 +3,8 @@ import { userEvent, within } from 'storybook/test'
 import type { City } from '@/entities/city'
 import { loadSeed } from '@/shared/api'
 import { CityFilter } from './CityFilter'
-import { configureStore } from '@reduxjs/toolkit'
+import { createStoryStore } from '../lib/createStoryStore'
 import { Provider } from 'react-redux'
-
-import { catalogFilterReducer } from '../model/catalogFilterSlice'
-
-const createStoryStore = () =>
-  configureStore({
-    reducer: {
-      catalogFilter: catalogFilterReducer,
-    },
-  })
 
 const meta = {
   title: 'features/catalog-filter/CityFilter',
