@@ -13,10 +13,10 @@ import {
 } from '@/features/catalog-filter'
 import { selectFavoriteIds } from '@/features/favorite-toggle'
 import { queryCleared, selectSearchQuery } from '@/features/skill-search'
-import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
 import { CATALOG, ROUTES } from '@/shared/config'
 import { useInfiniteScroll } from '@/shared/lib/hooks'
-import { Button } from '@/shared/ui/Button'
+import { useAppDispatch, useAppSelector } from '@/shared/lib/store'
+import { EmptyState } from '@/shared/ui/EmptyState'
 import { FiltersPanel } from '@/widgets/filters-panel'
 import { OfferCard } from '@/widgets/offer-card'
 import { OffersSection } from '@/widgets/offers-section'
@@ -32,20 +32,19 @@ const renderCard = (user: PublicUser) => <OfferCard user={user} />
  */
 export function FavoritesPage() {
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
   const users = useAppSelector(selectUsers)
   const favoriteIds = useAppSelector(selectFavoriteIds)
-
-  const favoriteUsers = useMemo(
-    () => users.filter((user) => favoriteIds.includes(user.id)),
-    [users, favoriteIds],
-  )
-
   const skills = useAppSelector(selectSkills)
   const filters = useAppSelector(selectCatalogFilter)
   const searchQuery = useAppSelector(selectSearchQuery)
   const filtersCount = useAppSelector(selectActiveFiltersCount)
 
-  const dispatch = useAppDispatch()
+  const favoriteUsers = useMemo(
+    () => users.filter((user) => favoriteIds.includes(user.id)),
+    [users, favoriteIds],
+  )
 
   useEffect(() => {
     void dispatch(loadExchangesIfNeeded())
@@ -72,6 +71,7 @@ export function FavoritesPage() {
   return (
     <main className={styles.container}>
       <h1 className={styles.srOnly}>Избранное</h1>
+
       <FiltersPanel
         className={styles.filters}
         filtersCount={filtersCount}
@@ -89,24 +89,18 @@ export function FavoritesPage() {
           mode="infinite"
         />
       ) : (
-        // P8-03 заменит представление на общий EmptyState; выбор состояния остаётся у страницы.
-        <section className={styles.empty} aria-labelledby="favorites-empty-title">
-          <h2 className={styles.emptyTitle} id="favorites-empty-title">
-            Избранное
-          </h2>
-          <div className={styles.emptyState} role="status">
-            <p>
-              {hasFavorites
+        <section role="region" aria-label="Избранное">
+          <EmptyState
+            title={
+              hasFavorites
                 ? 'По выбранным фильтрам ничего не найдено'
-                : 'В избранном пока нет предложений'}
-            </p>
-            <Button
-              variant="secondary"
-              onClick={hasFavorites ? handleResetFilters : () => navigate(ROUTES.HOME)}
-            >
-              {hasFavorites ? 'Сбросить поиск и фильтры' : 'Вернуться в каталог'}
-            </Button>
-          </div>
+                : 'В избранном пока нет предложений'
+            }
+            action={{
+              label: hasFavorites ? 'Сбросить поиск и фильтры' : 'Вернуться в каталог',
+              onClick: hasFavorites ? handleResetFilters : () => navigate(ROUTES.HOME),
+            }}
+          />
         </section>
       )}
     </main>
