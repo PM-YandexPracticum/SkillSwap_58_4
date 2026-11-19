@@ -11,6 +11,7 @@ import { loadSeed } from '@/shared/api'
 import { CATALOG } from '@/shared/config'
 import { createAppStore } from './store'
 import { MainLayout } from './layouts/MainLayout'
+import { ToastProvider } from '@/app/providers/ToastProvider'
 
 const meta = {
   title: 'app/CatalogPage',
@@ -76,13 +77,15 @@ const meta = {
 
       return (
         <Provider store={store}>
-          <MemoryRouter>
-            <Routes>
-              <Route element={<MainLayout />}>
-                <Route path="/" element={<Story />} />
-              </Route>
-            </Routes>
-          </MemoryRouter>
+          <ToastProvider>
+            <MemoryRouter>
+              <Routes>
+                <Route element={<MainLayout />}>
+                  <Route path="/" element={<Story />} />
+                </Route>
+              </Routes>
+            </MemoryRouter>
+          </ToastProvider>
         </Provider>
       )
     },
