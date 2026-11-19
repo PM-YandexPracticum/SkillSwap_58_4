@@ -69,5 +69,5 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-neutral);
+  color: var(--color-text);
 }
