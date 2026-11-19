@@ -10,10 +10,10 @@
 | [phase-02-ui-kit.md](phase-02-ui-kit.md) | 2. UI-кит ✅ |
 | [phase-03-layout.md](phase-03-layout.md) | 3. Вёрстка блоков и страниц ✅ |
 | [phase-04-data.md](phase-04-data.md) | 4. Данные и вход ✅ |
-| [phase-05-catalog.md](phase-05-catalog.md) | 5. Каталог и избранное |
-| [phase-06-register.md](phase-06-register.md) | 6. Регистрация |
-| [phase-07-skill-profile.md](phase-07-skill-profile.md) | 7. Навык, обмен, профиль |
-| [phase-08-finish.md](phase-08-finish.md) | 8. Финиш |
+| [phase-05-catalog.md](phase-05-catalog.md) | 5. Каталог и избранное ✅ |
+| [phase-06-register.md](phase-06-register.md) | 6. Регистрация ✅ |
+| [phase-07-skill-profile.md](phase-07-skill-profile.md) | 7. Навык, обмен, профиль ✅ |
+| [phase-08-finish.md](phase-08-finish.md) | 8. Финиш ✅ |
 | [phase-09-extras.md](phase-09-extras.md) | 9. Доп. фичи ⭐ |
 
 ## Значки
@@ -22,7 +22,7 @@
 |---|---|
 | 🟢 🟡 🔴 | Уровень: лёгкая, средняя, сложная (подробнее — в [roadmap.md](../roadmap.md#уровни-задач)) |
 | 👑 | Только тимлид (меняет `package.json` или общие настройки) |
-| ✅ | Задача сделана и влита в `develop` |
+| ✅ | Задача завершена и принята; отдельное решение о принятии P8-07 без изменений кода отражено в отчёте |
 | **Уже готово:** | Часть задачи уже сделана заранее — это **не** делаем заново, только дописываем остальное |
 
 ## Формат задачи
