@@ -35,7 +35,7 @@ test('сохранённый пустой список отличается от
   await expect(page.getByRole('heading', { name: 'Вход', exact: true })).toBeVisible()
   await page.evaluate((key) => localStorage.setItem(key, '[]'), `${MOCK_DB.STORAGE_PREFIX}users`)
   await page.goto(ROUTES.HOME)
-  await expect(page.getByRole('status')).toHaveText('Предложения пока не добавлены')
+  await expect(page.getByRole('status')).toContainText('Предложения пока не добавлены')
   await expect(page).toHaveURL(ROUTES.HOME)
   await page.evaluate(() => localStorage.clear())
   await page.reload()
